@@ -9,6 +9,8 @@ public:
 	OP_SessionRequest_Packet() 
 		: ProtocolPacket() {
 		RegisterElements();
+
+		opcode = OP_SessionRequest;
 	}
 
 	uint32_t UnknownA;

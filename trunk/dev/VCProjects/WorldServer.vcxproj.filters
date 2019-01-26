@@ -149,5 +149,8 @@
     <ClInclude Include="..\..\source\common\CRC16.h">
       <Filter>common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_SessionResponse_Packet.h">
+      <Filter>common\Packets\ProtocolPackets</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

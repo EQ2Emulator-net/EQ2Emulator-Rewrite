@@ -66,7 +66,7 @@ bool Server::Process() {
 	std::map<std::string, Stream*>::iterator stream_itr;
 	int num;
 	int length;
-	unsigned char buffer[2048];
+	unsigned char* buffer = new unsigned char[2048];
 	sockaddr_in from;
 	int socklen = sizeof(sockaddr_in);
 	timeval sleep_time;
@@ -86,12 +86,12 @@ bool Server::Process() {
 
 	if (FD_ISSET(Sock, &readset)) {
 #ifdef _WIN32
-		if ((length = recvfrom(Sock, (char*)buffer, sizeof(buffer), 0, (struct sockaddr*)&from, (int*)&socklen)) < 0)
+		if ((length = recvfrom(Sock, (char*)buffer, 2048, 0, (struct sockaddr*)&from, (int*)&socklen)) < 0)
 #else
 		if ((length = recvfrom(Sock, buffer, 2048, 0, (sockaddr*)&from, (socklen_t*)&socklen)) < 0)
 #endif // _WIN32
 		{
-			LogError(LOG_NET, 0, "recvfrom error");
+			LogError(LOG_NET, 0, "recvfrom error (%i)", WSAGetLastError());
 			return false;
 		}
 		else {

@@ -22,7 +22,9 @@ public:
 
 	uint16_t GetOpcode() { return opcode; }
 
-private:
+protected:
 	uint16_t opcode;
+
+private:
 
 };
