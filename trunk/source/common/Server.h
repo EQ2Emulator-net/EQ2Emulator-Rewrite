@@ -15,11 +15,12 @@ public:
 
 	bool Process();
 
+	static int Sock;
 protected:
 	virtual Stream* GetNewStream(unsigned int ip, unsigned short port);
 
 private:
-	int Sock;
+	
 	unsigned int Port;
 	static unsigned int InitializeCount;
 

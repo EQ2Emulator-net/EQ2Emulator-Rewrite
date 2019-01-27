@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdint.h>
 
 class Stream {
 public:
@@ -9,11 +10,15 @@ public:
 	void SetLastPacketTime(unsigned int time) { LastPacketTime = time; }
 
 protected:
-	unsigned int LastPacketTime;
-	unsigned int ReceivedPackets;
+	void WritePacket(int socket, unsigned char* buffer, int length);
+
+
+	int32_t LastPacketTime;
+	int32_t ReceivedPackets;
+	int32_t SentPackets;
 
 private:
-	unsigned int RemoteIP;
-	unsigned short RemotePort;
+	int32_t RemoteIP;
+	int16_t RemotePort;
 
 };

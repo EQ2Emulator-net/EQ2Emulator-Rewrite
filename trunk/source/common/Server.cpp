@@ -9,6 +9,7 @@
 #endif
 
 unsigned int Server::InitializeCount = 0;
+int Server::Sock = 0; // remove when done testing
 
 Server::Server() {
 	Server::InitializeCount++;

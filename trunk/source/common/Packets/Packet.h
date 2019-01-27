@@ -23,7 +23,7 @@ public:
 		}
 	}
 
-	unsigned char* Write() {
+	uint32_t Write(unsigned char*& writeBuffer) {
 		uint32_t size = 0;
 		for (size_t i = 0; i < elements.size(); i++) {
 			size += elements[i]->GetSize();
@@ -33,12 +33,14 @@ public:
 			delete[] buffer;
 
 		buffer = new unsigned char[size];
-		unsigned char* writeBuffer = buffer;
+		offset = 0;
 		for (size_t i = 0; i < elements.size(); i++) {
-			elements[i]->WriteElement(writeBuffer);
+			elements[i]->WriteElement(buffer, offset);
 		}
 
-		return buffer;
+		writeBuffer = buffer;
+
+		return size;
 	}
 
 protected:

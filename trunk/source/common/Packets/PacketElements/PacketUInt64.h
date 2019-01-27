@@ -14,9 +14,9 @@ public:
 		offset += 8;
 	}
 
-	void WriteElement(unsigned char* outbuf) {
-		memcpy(outbuf, &element, 8);
-		outbuf += 8;
+	void WriteElement(unsigned char* outbuf, uint32_t& offset) {
+		memcpy(outbuf + offset, &element, 8);
+		offset += 8;
 	}
 
 	uint32_t GetSize() {

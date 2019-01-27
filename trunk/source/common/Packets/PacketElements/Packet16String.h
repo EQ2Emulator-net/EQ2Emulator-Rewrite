@@ -19,12 +19,12 @@ public:
 		offset += size;
 	}
 
-	void WriteElement(unsigned char* outbuf) {
+	void WriteElement(unsigned char* outbuf, uint32_t& offset) {
 		uint16_t size = element.length();
-		memcpy(outbuf, &size, 2);
-		outbuf += 2;
-		memcpy(outbuf, element.c_str(), size);
-		outbuf += size;
+		memcpy(outbuf + offset, &size, 2);
+		offset += 2;
+		memcpy(outbuf + offset, element.c_str(), size);
+		offset += size;
 	}
 
 	uint32_t GetSize() {

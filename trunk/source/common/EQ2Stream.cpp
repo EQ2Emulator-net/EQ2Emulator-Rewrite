@@ -4,6 +4,10 @@
 #include "Packets/ProtocolPackets/OP_SessionRequest_Packet.h"
 #include "Packets//ProtocolPackets/OP_SessionResponse_Packet.h"
 #include "CRC16.h"
+#include "util.h"
+
+// Remove when done testing
+#include"Server.h"
 
 #ifdef _WIN32
 	#include <WinSock2.h>
@@ -45,8 +49,9 @@ void EQ2Stream::ProcessPacket(unsigned char* data, unsigned int length) {
 		MaxLength = ntohl(p.MaxLength);
 		NextInSeq = 0;
 		Key = 0x33624702;
-
 		LogDebug(LOG_NET, 0, "OP_SessionRequest unknowna: %u, Session: %u, MaxLength: %u", p.UnknownA, p.Session, p.MaxLength);
+
+		SendSessionResponse();
 		break;
 	}
 	default:
@@ -88,4 +93,16 @@ void EQ2Stream::SendSessionResponse() {
 		Response->Format |= FLAG_ENCODED;*/
 
 	Response.Key = htonl(Key);
+
+
+	// Every thing below is temporary, just to test sending a packet out
+	uint16_t op = htons(Response.GetOpcode());
+	unsigned char* temp_buffer = nullptr;
+	uint32_t size = Response.Write(temp_buffer);
+	unsigned char* buffer = new unsigned char[size + 2];
+	memcpy(buffer, &op, 2);
+	memcpy(buffer + 2, temp_buffer, size);
+	WritePacket(Server::Sock, buffer, size + 2);
+
+	DumpBytes(buffer, size + 2);
 }
