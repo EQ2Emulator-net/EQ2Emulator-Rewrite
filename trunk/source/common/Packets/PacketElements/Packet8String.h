@@ -2,7 +2,7 @@
 
 #include "../PacketElement.h"
 
-class Packet8String : public PacketElement{
+class Packet8String : public PacketElement {
 public:
 	Packet8String(std::string& in_element) : element(in_element) {
 
@@ -10,13 +10,26 @@ public:
 
 	~Packet8String() = default;
 
-	void ReadElement(unsigned char* srcbuf, uint32_t& offset) {
+	bool ReadElement(unsigned char* srcbuf, uint32_t& offset, uint32_t bufsize) {
+		//Bounds check
+		if (offset + sizeof(uint8_t) >= bufsize) {
+			return false;
+		}
+
 		uint8_t size = 0;
-		memcpy(&size, srcbuf + offset, 1);
+		memcpy(&size, srcbuf + offset, sizeof(uint8_t));
+
+		if (offset + sizeof(uint8_t) + size >= bufsize) {
+			return false;
+		}
+
 		offset += 1;
 
-		element.assign((char*)srcbuf + offset, size);
+
+		element.assign(reinterpret_cast<const char*>(srcbuf) + offset, size);
 		offset += size;
+
+		return true;
 	}
 
 	void WriteElement(unsigned char* outbuf, uint32_t& offset) {

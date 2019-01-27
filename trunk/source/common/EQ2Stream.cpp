@@ -43,7 +43,7 @@ void EQ2Stream::ProcessPacket(unsigned char* data, unsigned int length) {
 	switch (opcode) {
 	case OP_SessionRequest: {
 		OP_SessionRequest_Packet p;
-		p.Read(data, offset);
+		p.Read(data, offset, length);
 		
 		Session = ntohl(p.Session);
 		MaxLength = ntohl(p.MaxLength);

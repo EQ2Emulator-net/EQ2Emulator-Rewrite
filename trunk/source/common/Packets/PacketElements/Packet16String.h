@@ -10,13 +10,24 @@ public:
 
 	~Packet16String() = default;
 
-	void ReadElement(unsigned char* srcbuf, uint32_t& offset) {
+	bool ReadElement(unsigned char* srcbuf, uint32_t& offset, uint32_t bufsize) {
+		//Bounds Check
+		if (offset + sizeof(uint16_t) >= bufsize) {
+			return false;
+		}
+
 		uint16_t size = 0;
-		memcpy(&size, srcbuf + offset, 2);
+		memcpy(&size, srcbuf + offset, sizeof(uint16_t));
+
+		if (offset + sizeof(uint16_t) + size >= bufsize) {
+			return false;
+		}
+
 		offset += 2;
 
 		element.assign((char*)srcbuf + offset, size);
 		offset += size;
+		return true;
 	}
 
 	void WriteElement(unsigned char* outbuf, uint32_t& offset) {

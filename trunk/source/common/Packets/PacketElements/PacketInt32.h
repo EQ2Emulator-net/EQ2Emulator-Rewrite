@@ -9,9 +9,15 @@ public:
 	}
 	~PacketInt32() = default;
 
-	void ReadElement(unsigned char* srcbuf, uint32_t& offset) {
+	bool ReadElement(unsigned char* srcbuf, uint32_t& offset, uint32_t bufsize) {
+		if (!BoundsCheckRead(offset, bufsize)) {
+			return false;
+		}
+
 		memcpy(&element, srcbuf + offset, 4);
 		offset += 4;
+
+		return true;
 	}
 
 	void WriteElement(unsigned char* outbuf, uint32_t& offset) {
