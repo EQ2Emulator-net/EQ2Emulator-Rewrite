@@ -11,15 +11,16 @@ public:
 
 		for (size_t i = 0; i < elements.size(); i++)
 			delete elements[i];
-
-		elements.clear();
 	}
 
-	void Read(unsigned char* in_buf, uint32_t off) {
+	void Read(unsigned char* in_buf, uint32_t off, uint32_t bufsize) {
 		buffer = in_buf;
 		offset = off;
 		for (size_t i = 0; i < elements.size(); i++) {
-			elements[i]->ReadElement(buffer, offset);
+			if (!elements[i]->ReadElement(buffer, offset, bufsize)) {
+				//Error message?
+				break;
+			}
 		}
 	}
 
