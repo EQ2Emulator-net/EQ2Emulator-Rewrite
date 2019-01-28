@@ -12,6 +12,10 @@
 Stream::Stream(unsigned int ip, unsigned short port) {
 	RemoteIP = ip;
 	RemotePort = port;
+
+	LastPacketTime = 0;
+	ReceivedPackets = 0;
+	SentPackets = 0;
 }
 
 void Stream::Process(unsigned char* buffer, unsigned int length) {

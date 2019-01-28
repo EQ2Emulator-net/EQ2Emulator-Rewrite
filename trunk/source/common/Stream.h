@@ -13,12 +13,12 @@ protected:
 	void WritePacket(int socket, unsigned char* buffer, int length);
 
 
-	int32_t LastPacketTime;
-	int32_t ReceivedPackets;
-	int32_t SentPackets;
+	uint32_t LastPacketTime;
+	uint32_t ReceivedPackets;
+	uint32_t SentPackets;
 
 private:
-	int32_t RemoteIP;
-	int16_t RemotePort;
+	uint32_t RemoteIP;
+	uint16_t RemotePort;
 
 };

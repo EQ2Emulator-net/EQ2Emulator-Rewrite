@@ -12,14 +12,14 @@ public:
 
 	bool ReadElement(unsigned char* srcbuf, uint32_t& offset, uint32_t bufsize) {
 		//Bounds Check
-		if (offset + sizeof(uint16_t) >= bufsize) {
+		if (offset + sizeof(uint16_t) > bufsize) {
 			return false;
 		}
 
 		uint16_t size = 0;
 		memcpy(&size, srcbuf + offset, sizeof(uint16_t));
 
-		if (offset + sizeof(uint16_t) + size >= bufsize) {
+		if (offset + sizeof(uint16_t) + size > bufsize) {
 			return false;
 		}
 
@@ -31,7 +31,7 @@ public:
 	}
 
 	void WriteElement(unsigned char* outbuf, uint32_t& offset) {
-		uint16_t size = element.length();
+		uint16_t size = (uint16_t)element.length();
 		memcpy(outbuf + offset, &size, 2);
 		offset += 2;
 		memcpy(outbuf + offset, element.c_str(), size);
@@ -39,7 +39,7 @@ public:
 	}
 
 	uint32_t GetSize() {
-		return element.length() + 2;
+		return (uint32_t)(element.length() + 2);
 	}
 
 private:

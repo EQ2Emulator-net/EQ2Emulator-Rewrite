@@ -191,6 +191,7 @@
     <ClInclude Include="..\..\source\common\Packets\PacketElements\Packet16String.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\Packet32String .h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\Packet8String.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketElements.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt16.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt32.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt64.h" />
@@ -200,8 +201,13 @@
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketUInt64.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketUInt8.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPacket.h" />
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_ClientSessionUpdate_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_KeepAlive_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_ServerSessionUpdate_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_SessionDisconnect_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_SessionRequest_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_SessionResponse_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\ProtocolPackets.h" />
     <ClInclude Include="..\..\source\common\Server.h" />
     <ClInclude Include="..\..\source\common\stdio.h" />
     <ClInclude Include="..\..\source\common\Stream.h" />

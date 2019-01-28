@@ -38,7 +38,7 @@ bool Server::Open(bool tcp) {
 	address.sin_port = htons(Port);
 	address.sin_addr.s_addr = htonl(INADDR_ANY);
 
-	Sock = socket(AF_INET, SOCK_DGRAM, 0);
+	Sock = (int)socket(AF_INET, SOCK_DGRAM, 0);
 	if (Sock < 0) {
 		LogError(LOG_NET, 0, "Failed to open socket. (%i)", WSAGetLastError());
 		return false;
@@ -98,7 +98,7 @@ bool Server::Process() {
 		else {
 			LogError(LOG_NET, 0, "received %i", length);
 			char temp[25];
-			sprintf(temp, "%u.%d", ntohl(from.sin_addr.S_un.S_addr), ntohs(from.sin_port));
+			sprintf(temp, "%u.%d", ntohl(from.sin_addr.s_addr), ntohs(from.sin_port));
 			LogError(LOG_NET, 0, "temp = %s", temp);
 			if ((stream_itr = Streams.find(temp)) == Streams.end()) {
 				LogError(LOG_NET, 0, "new stream");

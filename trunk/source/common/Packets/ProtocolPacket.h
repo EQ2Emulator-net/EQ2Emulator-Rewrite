@@ -7,8 +7,8 @@ static const char OP_SessionResponse		= 0x02;
 static const char OP_Combined				= 0x03;
 static const char OP_SessionDisconnect		= 0x05;
 static const char OP_KeepAlive				= 0x06;
-static const char OP_ServerKeyRequest		= 0x07;
-static const char OP_SessionStatResponse	= 0x08;
+static const char OP_ClientSessionUpdate	= 0x07;
+static const char OP_ServerSessionUpdate	= 0x08;
 static const char OP_Packet					= 0x09;
 static const char OP_Fragment				= 0x0D;
 static const char OP_OutOfOrderAck			= 0x11;
@@ -21,9 +21,13 @@ public:
 	ProtocolPacket();
 
 	uint16_t GetOpcode() { return opcode; }
+	uint32_t Write(unsigned char*& writeBuffer) override;
+
+	static ProtocolPacket* GetProtocolPacket(unsigned char* in_buff, uint32_t len);
 
 protected:
 	uint16_t opcode;
+	bool HasCRC;
 
 private:
 

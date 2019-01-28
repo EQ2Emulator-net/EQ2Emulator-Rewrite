@@ -1,8 +1,6 @@
 #include "EQ2Stream.h"
 #include "log.h"
-#include "Packets/ProtocolPacket.h"
-#include "Packets/ProtocolPackets/OP_SessionRequest_Packet.h"
-#include "Packets//ProtocolPackets/OP_SessionResponse_Packet.h"
+#include "Packets/ProtocolPackets/ProtocolPackets.h"
 #include "CRC16.h"
 #include "util.h"
 
@@ -31,27 +29,45 @@ void EQ2Stream::Process(unsigned char* data, unsigned int length) {
 	Stream::Process(data, length);
 	// TODO: Validate crc and decompress or decode
 
-	ProcessPacket(data, length);
+	ProtocolPacket* p = ProtocolPacket::GetProtocolPacket(data, length);
+	if (p) {
+		ProcessPacket(p);
+		delete p;
+	}
 }
 
-void EQ2Stream::ProcessPacket(unsigned char* data, unsigned int length) {
-	uint32_t offset = 2;
+void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
+	LogDebug(LOG_NET, 0, "ProtocolPacket Received, opcode: %u", p->GetOpcode());
 
-	uint16_t opcode = ntohs(*(uint16_t*)data);
-
-	LogDebug(LOG_NET, 0, "ProtocolPacket Received, opcode: %u", opcode);
-	switch (opcode) {
+	switch (p->GetOpcode()) {
 	case OP_SessionRequest: {
-		OP_SessionRequest_Packet p;
-		p.Read(data, offset, length);
+		OP_SessionRequest_Packet* request = (OP_SessionRequest_Packet*)p;
 		
-		Session = ntohl(p.Session);
-		MaxLength = ntohl(p.MaxLength);
+		Session = ntohl(request->Session);
+		MaxLength = ntohl(request->MaxLength);
 		NextInSeq = 0;
 		Key = 0x33624702;
-		LogDebug(LOG_NET, 0, "OP_SessionRequest unknowna: %u, Session: %u, MaxLength: %u", p.UnknownA, p.Session, p.MaxLength);
+		LogDebug(LOG_NET, 0, "OP_SessionRequest unknowna: %u, Session: %u, MaxLength: %u", request->UnknownA, request->Session, request->MaxLength);
 
 		SendSessionResponse();
+		break;
+	}
+	case OP_SessionDisconnect: {
+		OP_SessionDisconnect_Packet* disconnect = (OP_SessionDisconnect_Packet*)p;
+		SendDisconnect(disconnect->Reason);
+		break;
+	}
+	case OP_KeepAlive: {
+		SendKeepAlive();
+		break;
+	}
+	case OP_ClientSessionUpdate: {
+		OP_ClientSessionUpdate_Packet* update = (OP_ClientSessionUpdate_Packet*)p;
+		//AdjustRates(ntohl(Stats->average_delta));
+		SendServerSessionUpdate(update->RequestID);
+		/*if(!crypto->isEncrypted())
+			SendKeyRequest();
+		*/
 		break;
 	}
 	default:
@@ -96,13 +112,56 @@ void EQ2Stream::SendSessionResponse() {
 
 
 	// Every thing below is temporary, just to test sending a packet out
-	uint16_t op = htons(Response.GetOpcode());
-	unsigned char* temp_buffer = nullptr;
-	uint32_t size = Response.Write(temp_buffer);
-	unsigned char* buffer = new unsigned char[size + 2];
-	memcpy(buffer, &op, 2);
-	memcpy(buffer + 2, temp_buffer, size);
-	WritePacket(Server::Sock, buffer, size + 2);
+	unsigned char* buffer = nullptr;
+	uint32_t size = Response.Write(buffer);
+	WritePacket(Server::Sock, buffer, size);
+	DumpBytes(buffer, size);
+}
 
-	DumpBytes(buffer, size + 2);
+void EQ2Stream::SendDisconnect(uint16_t reason) {
+	OP_SessionDisconnect_Packet disconnect;
+	disconnect.Session = htonl(Session);
+	disconnect.Reason = reason;
+
+	// Every thing below is temporary, just to test sending a packet out
+	unsigned char* buffer = nullptr;
+	uint32_t size = disconnect.Write(buffer);
+	*(uint16_t*)(buffer + (size - 2)) = htons((uint16_t)CRC16(buffer, size - 2, Key));
+
+	WritePacket(Server::Sock, buffer, size);
+	DumpBytes(buffer, size);
+}
+
+void EQ2Stream::SendKeepAlive() {
+	OP_KeepAlive_Packet keepAlive;
+
+	// Every thing below is temporary, just to test sending a packet out
+	unsigned char* buffer = nullptr;
+	uint32_t size = keepAlive.Write(buffer);
+	*(uint16_t*)(buffer + (size - 2)) = htons((uint16_t)CRC16(buffer, size - 2, Key));
+
+	WritePacket(Server::Sock, buffer, size);
+	DumpBytes(buffer, size);
+}
+
+void EQ2Stream::SendServerSessionUpdate(uint16_t requestID) {
+	OP_ServerSessionUpdate_Packet update;
+
+	uint32_t sent = ntohl(SentPackets);
+	uint32_t received = ntohl(ReceivedPackets);
+
+	update.RequestID = requestID;
+	update.CurrentTime = 0; // Update to timer when added
+	update.SentPackets = sent;
+	update.SentPackets2 = sent;
+	update.ReceivedPackets = received;
+	update.ReceivedPackets2 = received;
+
+	// Every thing below is temporary, just to test sending a packet out
+	unsigned char* buffer = nullptr;
+	uint32_t size = update.Write(buffer);
+	*(uint16_t*)(buffer + (size - 2)) = htons((uint16_t)CRC16(buffer, size - 2, Key));
+
+	WritePacket(Server::Sock, buffer, size);
+	DumpBytes(buffer, size);
 }

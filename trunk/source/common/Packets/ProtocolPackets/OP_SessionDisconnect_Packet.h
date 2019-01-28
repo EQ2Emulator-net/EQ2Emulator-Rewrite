@@ -3,24 +3,22 @@
 #include "../ProtocolPacket.h"
 #include "../PacketElements/PacketElements.h"
 
-class OP_SessionRequest_Packet : public ProtocolPacket {
+class OP_SessionDisconnect_Packet : public ProtocolPacket {
 public:
-	OP_SessionRequest_Packet() 
+	OP_SessionDisconnect_Packet()
 		: ProtocolPacket() {
 		RegisterElements();
 
-		opcode = OP_SessionRequest;
+		opcode = OP_SessionDisconnect;
+		HasCRC = true;
 	}
 
-	uint32_t UnknownA;
 	uint32_t Session;
-	uint32_t MaxLength;
+	uint16_t Reason;
 
 private:
 	void RegisterElements() {
-		elements.push_back(new PacketUInt32(UnknownA));
 		elements.push_back(new PacketUInt32(Session));
-		elements.push_back(new PacketUInt32(MaxLength));
+		elements.push_back(new PacketUInt16(Reason));
 	}
-
 };

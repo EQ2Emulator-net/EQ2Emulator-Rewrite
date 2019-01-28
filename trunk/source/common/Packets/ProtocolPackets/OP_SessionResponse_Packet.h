@@ -1,8 +1,7 @@
 #pragma once
 
 #include "../ProtocolPacket.h"
-#include "../PacketElements/PacketUInt32.h"
-#include "../PacketElements/PacketUInt8.h"
+#include "../PacketElements/PacketElements.h"
 
 class OP_SessionResponse_Packet : public ProtocolPacket {
 public:

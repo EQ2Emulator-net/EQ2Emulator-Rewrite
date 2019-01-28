@@ -2,6 +2,7 @@
 
 #include "PacketElement.h"
 #include <vector>
+#include "../log.h"
 
 class Packet {
 public:
@@ -18,13 +19,13 @@ public:
 		offset = off;
 		for (size_t i = 0; i < elements.size(); i++) {
 			if (!elements[i]->ReadElement(buffer, offset, bufsize)) {
-				//Error message?
+				LogError(LOG_PACKET, 0, "Reading an element went out of bounds");
 				break;
 			}
 		}
 	}
 
-	uint32_t Write(unsigned char*& writeBuffer) {
+	virtual uint32_t Write(unsigned char*& writeBuffer) {
 		uint32_t size = 0;
 		for (size_t i = 0; i < elements.size(); i++) {
 			size += elements[i]->GetSize();
