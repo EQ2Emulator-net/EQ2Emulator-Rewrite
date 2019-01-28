@@ -12,14 +12,14 @@ public:
 
 	bool ReadElement(unsigned char* srcbuf, uint32_t& offset, uint32_t bufsize) {
 		//Bounds Check
-		if (offset + sizeof(uint16_t) >= bufsize) {
+		if (offset + sizeof(uint16_t) > bufsize) {
 			return false;
 		}
 
 		uint16_t size = 0;
 		memcpy(&size, srcbuf + offset, sizeof(uint16_t));
 
-		if (offset + sizeof(uint16_t) + size >= bufsize) {
+		if (offset + sizeof(uint16_t) + size > bufsize) {
 			return false;
 		}
 
