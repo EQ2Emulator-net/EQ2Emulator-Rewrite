@@ -3,9 +3,7 @@
 #include "Packets/ProtocolPackets/ProtocolPackets.h"
 #include "CRC16.h"
 #include "util.h"
-
-// Remove when done testing
-#include"Server.h"
+#include "Server.h"
 
 #ifdef _WIN32
 	#include <WinSock2.h>
@@ -23,6 +21,10 @@ EQ2Stream::EQ2Stream(unsigned int ip, unsigned short port) : Stream(ip, port) {
 	NextAckToSend = -1;
 	LastAckSent = -1;
 	LastSeqSent = -1;
+	Compressed = false;
+	Encoded = false;
+
+	crypto.setRC4Key(0);
 }
 
 void EQ2Stream::Process(unsigned char* data, unsigned int length) {
@@ -96,6 +98,26 @@ bool EQ2Stream::ValidateCRC(unsigned char* buffer, uint16_t length, uint32_t key
 	return valid;
 }
 
+void EQ2Stream::WritePacket(ProtocolPacket* p) {
+	unsigned char* buffer = nullptr;
+	uint32_t size = p->Write(buffer);
+	if (p->GetOpcode() != OP_SessionRequest && p->GetOpcode() != OP_SessionResponse) {
+		if (Compressed) {
+
+		}
+
+		if (Encoded) {
+
+		}
+
+		*(uint16_t*)(buffer + (size - 2)) = htons((uint16_t)CRC16(buffer, size - 2, Key));
+	}
+
+	// The dump is for debugging, remove when this all works
+	DumpBytes(buffer, size);
+	Stream::WritePacket(server->GetSocket(), buffer, size);
+}
+
 void EQ2Stream::SendSessionResponse() {
 	OP_SessionResponse_Packet Response;
 	Response.Session = htonl(Session);
@@ -103,19 +125,17 @@ void EQ2Stream::SendSessionResponse() {
 	Response.UnknownA = 2;
 	Response.Format = 0;
 
-	/*if (compressed)
-		Response->Format |= FLAG_COMPRESSED;
-	if (encoded)
-		Response->Format |= FLAG_ENCODED;*/
+	if (Compressed)
+		Response.Format |= FLAG_COMPRESSED;
+	if (Encoded)
+		Response.Format |= FLAG_ENCODED;
 
 	Response.Key = htonl(Key);
 
 
 	// Every thing below is temporary, just to test sending a packet out
-	unsigned char* buffer = nullptr;
-	uint32_t size = Response.Write(buffer);
-	WritePacket(Server::Sock, buffer, size);
-	DumpBytes(buffer, size);
+	WritePacket(&Response);
+	
 }
 
 void EQ2Stream::SendDisconnect(uint16_t reason) {
@@ -124,24 +144,15 @@ void EQ2Stream::SendDisconnect(uint16_t reason) {
 	disconnect.Reason = reason;
 
 	// Every thing below is temporary, just to test sending a packet out
-	unsigned char* buffer = nullptr;
-	uint32_t size = disconnect.Write(buffer);
-	*(uint16_t*)(buffer + (size - 2)) = htons((uint16_t)CRC16(buffer, size - 2, Key));
-
-	WritePacket(Server::Sock, buffer, size);
-	DumpBytes(buffer, size);
+	WritePacket(&disconnect);
+	server->StreamDisconnected(this); // this deletes the stream (client)
 }
 
 void EQ2Stream::SendKeepAlive() {
 	OP_KeepAlive_Packet keepAlive;
 
 	// Every thing below is temporary, just to test sending a packet out
-	unsigned char* buffer = nullptr;
-	uint32_t size = keepAlive.Write(buffer);
-	*(uint16_t*)(buffer + (size - 2)) = htons((uint16_t)CRC16(buffer, size - 2, Key));
-
-	WritePacket(Server::Sock, buffer, size);
-	DumpBytes(buffer, size);
+	WritePacket(&keepAlive);
 }
 
 void EQ2Stream::SendServerSessionUpdate(uint16_t requestID) {
@@ -158,10 +169,5 @@ void EQ2Stream::SendServerSessionUpdate(uint16_t requestID) {
 	update.ReceivedPackets2 = received;
 
 	// Every thing below is temporary, just to test sending a packet out
-	unsigned char* buffer = nullptr;
-	uint32_t size = update.Write(buffer);
-	*(uint16_t*)(buffer + (size - 2)) = htons((uint16_t)CRC16(buffer, size - 2, Key));
-
-	WritePacket(Server::Sock, buffer, size);
-	DumpBytes(buffer, size);
+	WritePacket(&update);
 }

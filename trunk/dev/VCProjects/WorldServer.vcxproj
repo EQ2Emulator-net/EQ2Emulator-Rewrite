@@ -167,10 +167,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\common\CRC16.cpp" />
+    <ClCompile Include="..\..\source\common\Crypto.cpp" />
     <ClCompile Include="..\..\source\common\EQ2Stream.cpp" />
     <ClCompile Include="..\..\source\common\io.cpp" />
     <ClCompile Include="..\..\source\common\log.cpp" />
+    <ClCompile Include="..\..\source\common\Packets\EQ2Packet.cpp" />
     <ClCompile Include="..\..\source\common\Packets\ProtocolPacket.cpp" />
+    <ClCompile Include="..\..\source\common\RC4.cpp" />
     <ClCompile Include="..\..\source\common\Server.cpp" />
     <ClCompile Include="..\..\source\common\stdio.cpp" />
     <ClCompile Include="..\..\source\common\Stream.cpp" />
@@ -183,9 +186,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\common\CRC16.h" />
+    <ClInclude Include="..\..\source\common\Crypto.h" />
     <ClInclude Include="..\..\source\common\EQ2Stream.h" />
     <ClInclude Include="..\..\source\common\io.h" />
     <ClInclude Include="..\..\source\common\log.h" />
+    <ClInclude Include="..\..\source\common\Packets\EQ2Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElement.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\Packet16String.h" />
@@ -203,11 +208,13 @@
     <ClInclude Include="..\..\source\common\Packets\ProtocolPacket.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_ClientSessionUpdate_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_KeepAlive_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_Packet_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_ServerSessionUpdate_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_SessionDisconnect_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_SessionRequest_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_SessionResponse_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\ProtocolPackets.h" />
+    <ClInclude Include="..\..\source\common\RC4.h" />
     <ClInclude Include="..\..\source\common\Server.h" />
     <ClInclude Include="..\..\source\common\stdio.h" />
     <ClInclude Include="..\..\source\common\Stream.h" />

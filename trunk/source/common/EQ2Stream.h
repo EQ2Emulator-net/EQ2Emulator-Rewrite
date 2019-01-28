@@ -3,7 +3,12 @@
 #include "Stream.h"
 #include <stdint.h>
 
+#include "Crypto.h"
+
 class ProtocolPacket;
+
+#define FLAG_COMPRESSED	0x01
+#define FLAG_ENCODED	0x04
 
 class EQ2Stream : public Stream {
 public:
@@ -31,5 +36,11 @@ private:
 	void SendDisconnect(uint16_t reason);
 	void SendKeepAlive();
 	void SendServerSessionUpdate(uint16_t requestID);
+
+	void WritePacket(ProtocolPacket* p);
+
+	Crypto crypto;
+	bool Compressed;
+	bool Encoded;
 
 };

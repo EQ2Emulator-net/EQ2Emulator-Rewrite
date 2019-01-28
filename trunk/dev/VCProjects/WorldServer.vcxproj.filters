@@ -19,6 +19,12 @@
     <Filter Include="common\Packets\ProtocolPackets">
       <UniqueIdentifier>{0d6e2b19-83ea-4438-9f98-82af112e1383}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\Packets">
+      <UniqueIdentifier>{b77330e3-33fd-4ab6-8980-5125d29b9cf7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common\Packets\EQ2Packets">
+      <UniqueIdentifier>{321acc09-f80c-4634-870f-4c5a780a1aec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\common\io.cpp">
@@ -61,6 +67,15 @@
       <Filter>common\Packets</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\common\CRC16.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Packets\EQ2Packet.cpp">
+      <Filter>common\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Crypto.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\RC4.cpp">
       <Filter>common</Filter>
     </ClCompile>
   </ItemGroup>
@@ -168,6 +183,18 @@
       <Filter>common\Packets\ProtocolPackets</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_ServerSessionUpdate_Packet.h">
+      <Filter>common\Packets\ProtocolPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EQ2Packet.h">
+      <Filter>common\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Crypto.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\RC4.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_Packet_Packet.h">
       <Filter>common\Packets\ProtocolPackets</Filter>
     </ClInclude>
   </ItemGroup>

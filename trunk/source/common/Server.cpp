@@ -9,9 +9,11 @@
 #endif
 
 unsigned int Server::InitializeCount = 0;
-int Server::Sock = 0; // remove when done testing
 
 Server::Server() {
+	Sock = 0;
+	Port = 0;
+
 	Server::InitializeCount++;
 #ifdef _WIN32
 	if (Server::InitializeCount == 1) {
@@ -103,6 +105,7 @@ bool Server::Process() {
 			if ((stream_itr = Streams.find(temp)) == Streams.end()) {
 				LogError(LOG_NET, 0, "new stream");
 				Stream* s = GetNewStream(from.sin_addr.s_addr, from.sin_port);
+				s->SetServer(this);
 				Streams[temp] = s;
 				s->Process(buffer, length);
 				//s->SetLastPacketTime();
@@ -125,4 +128,20 @@ bool Server::Process() {
 
 Stream* Server::GetNewStream(unsigned int ip, unsigned short port) {
 	return new Stream(ip, port);
+}
+
+void Server::StreamDisconnected(Stream* stream) {
+	std::map<std::string, Stream*>::iterator stream_itr;
+	char temp[25];
+	sprintf(temp, "%u.%d", ntohl(stream->GetIP()), ntohs(stream->GetPort()));
+	if ((stream_itr = Streams.find(temp)) != Streams.end()) {
+		LogDebug(LOG_NET, 0, "Removing client.");
+		Streams.erase(stream_itr);
+		delete stream;
+	}
+	else {
+		LogDebug(LOG_NET, 0, "Stream not found in disconnect.");
+		if (stream)
+			delete stream;
+	}
 }

@@ -1,5 +1,5 @@
 #include "Stream.h"
-
+#include "Server.h"
 #include "util.h"
 #include "log.h"
 

@@ -14,13 +14,15 @@ public:
 	bool Open(unsigned int port, bool tcp = false) { Port = port; return Open(tcp); }
 
 	bool Process();
+	int GetSocket() { return Sock; }
 
-	static int Sock;
+	void StreamDisconnected(Stream* stream);
+	
 protected:
 	virtual Stream* GetNewStream(unsigned int ip, unsigned short port);
 
 private:
-	
+	int Sock;
 	unsigned int Port;
 	static unsigned int InitializeCount;
 
