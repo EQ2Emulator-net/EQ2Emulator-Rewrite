@@ -15,6 +15,6 @@ public:
 
 
 	virtual bool BoundsCheckRead(uint32_t offset, uint32_t bufsize) {
-		return offset + GetSize() > bufsize;
+		return offset + GetSize() <= bufsize;
 	}
 };

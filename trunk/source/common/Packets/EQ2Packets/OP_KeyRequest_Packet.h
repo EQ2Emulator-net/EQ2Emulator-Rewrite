@@ -2,10 +2,11 @@
 
 #include "../EQ2Packet.h"
 #include "../PacketElements/PacketElements.h"
+#include "OpcodeManager.h"
 
 class OP_KeyRequest_Packet : public EQ2Packet {
 public:
-	OP_KeyRequest_Packet()
+	OP_KeyRequest_Packet(uint16_t version)
 		: EQ2Packet() {
 		RegisterElements();
 
@@ -73,3 +74,5 @@ private:
 		elements.push_back(new PacketUInt8(Exponent));
 	}
 };
+
+RegisterEmuOpcode("OP_WSLoginRequestMsg", OP_KeyRequest_Packet);

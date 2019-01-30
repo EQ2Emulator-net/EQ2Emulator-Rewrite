@@ -10,7 +10,7 @@ public:
 	~PacketUInt8() = default;
 
 	bool ReadElement(unsigned char* srcbuf, uint32_t& offset, uint32_t bufsize) {
-		if (BoundsCheckRead(offset, bufsize)) {
+		if (!BoundsCheckRead(offset, bufsize)) {
 			return false;
 		}
 

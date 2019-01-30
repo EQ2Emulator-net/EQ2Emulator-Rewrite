@@ -500,7 +500,7 @@ void EQ2Stream::SendServerSessionUpdate(uint16_t requestID) {
 
 #include "Packets/EQ2Packets/OP_KeyRequest_Packet.h"
 void EQ2Stream::SendKeyRequest() {
-	OP_KeyRequest_Packet* req = new OP_KeyRequest_Packet();
+	OP_KeyRequest_Packet* req = new OP_KeyRequest_Packet(ClientVersion);
 	unsigned char* buf = nullptr;
 	req->Write(buf);
 	EQ2QueuePacket(req, true);

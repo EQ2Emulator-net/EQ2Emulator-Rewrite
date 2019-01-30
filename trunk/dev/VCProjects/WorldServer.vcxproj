@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -183,6 +183,7 @@
     <ClCompile Include="..\..\source\common\io.cpp" />
     <ClCompile Include="..\..\source\common\log.cpp" />
     <ClCompile Include="..\..\source\common\Packets\EQ2Packet.cpp" />
+    <ClCompile Include="..\..\source\common\Packets\EQ2Packets\OpcodeManager.cpp" />
     <ClCompile Include="..\..\source\common\Packets\ProtocolPacket.cpp" />
     <ClCompile Include="..\..\source\common\RC4.cpp" />
     <ClCompile Include="..\..\source\common\Server.cpp" />
@@ -203,6 +204,7 @@
     <ClInclude Include="..\..\source\common\io.h" />
     <ClInclude Include="..\..\source\common\log.h" />
     <ClInclude Include="..\..\source\common\Packets\EQ2Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\EQ2Packets\OpcodeManager.h" />
     <ClInclude Include="..\..\source\common\Packets\EQ2Packets\OP_KeyRequest_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElement.h" />
