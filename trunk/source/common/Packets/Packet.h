@@ -42,15 +42,18 @@ public:
 
 		writeBuffer = buffer;
 
+		Size = size;
 		return size;
 	}
+
+	unsigned char* buffer;
+	uint32_t Size;
 
 protected:
 	Packet() : buffer(nullptr) {
 		offset = 0;
 	}
 
-	unsigned char* buffer;
 	uint32_t offset;
 	std::vector<PacketElement*> elements;
 };

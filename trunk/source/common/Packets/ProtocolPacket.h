@@ -22,12 +22,25 @@ public:
 
 	uint16_t GetOpcode() { return opcode; }
 	uint32_t Write(unsigned char*& writeBuffer) override;
+	uint16_t GetSequence() { return sequence; }
+	void SetSequence(uint16_t seq) { sequence = seq; }
+	uint16_t GetVersion() { return version; }
+	void SetVersion(uint16_t new_version) { version = new_version; }
+	uint32_t GetSentTime() { return SentTime; }
+	void SetSentTime(uint32_t time) { SentTime = time; }
+	//bool Combine(const ProtocolPacket *rhs);
 
 	static ProtocolPacket* GetProtocolPacket(unsigned char* in_buff, uint32_t len);
+	static uint32_t Compress(const unsigned char *buffer, const uint32_t length, unsigned char *newbuf, uint32_t newbufsize);
+	static void ChatDecode(unsigned char *buffer, int size, int DecodeKey);
+	static void ChatEncode(unsigned char *buffer, int size, int EncodeKey);
 
 protected:
 	uint16_t opcode;
+	uint16_t sequence;
+	uint16_t version;
 	bool HasCRC;
+	uint32_t SentTime;
 
 private:
 

@@ -21,10 +21,11 @@ public:
 protected:
 	virtual Stream* GetNewStream(unsigned int ip, unsigned short port);
 
+	std::map<std::string, Stream*> Streams;
+
 private:
 	int Sock;
 	unsigned int Port;
 	static unsigned int InitializeCount;
 
-	std::map<std::string, Stream*> Streams;
 };

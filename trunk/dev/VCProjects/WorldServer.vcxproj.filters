@@ -78,6 +78,9 @@
     <ClCompile Include="..\..\source\common\RC4.cpp">
       <Filter>common</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\common\timer.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\common\io.h">
@@ -196,6 +199,15 @@
     </ClInclude>
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_Packet_Packet.h">
       <Filter>common\Packets\ProtocolPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_Ack_Packet.h">
+      <Filter>common\Packets\ProtocolPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\timer.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EQ2Packets\OP_KeyRequest_Packet.h">
+      <Filter>common\Packets\EQ2Packets</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

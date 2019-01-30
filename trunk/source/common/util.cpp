@@ -1,13 +1,20 @@
 #include <stdio.h>
 #include "string.h"
 #include <ctype.h>
+#include <zlib.h>
+#include <iostream>
+#include <map>
+
 #if defined(_WIN32)
-# include <Windows.h>
-# include <process.h>
+	# include <Windows.h>
+	# include <process.h>
 #else
-# include <unistd.h>
+	# include <unistd.h>
 #endif
+
 #include "util.h"
+
+extern std::map<uint16_t, uint16_t> EQOpcodeVersions;
 
 /**
 * @brief Sleeps for the given number of milliseconds.
@@ -85,60 +92,6 @@ const char * GetElapsedTime(time_t seconds, char *dst, unsigned int size) {
         
 }
 
-/*
-void CopyUInt8(char *buf, int *offset, uint8_t value) {
-    memcpy(buf + *offset, &value, sizeof(value));
-    *offset += sizeof(value);
-}
-
-void CopyUInt16(char *buf, int *offset, uint16_t value) {
-    memcpy(buf + *offset, &value, sizeof(value));
-    *offset += sizeof(value);
-}
-
-void CopyUInt32(char *buf, int *offset, uint32_t value) {
-    memcpy(buf + *offset, &value, sizeof(value));
-    *offset += sizeof(value);
-}
-
-void CopyString(char *buf, int *offset, const char *value, int size) {
-    strlcpy(buf + *offset, value, size);
-    *offset += size;
-}
-
-uint8_t ReadUInt8(const char *buf, int *offset) {
-    uint8_t value;
-
-    memcpy(&value, buf + *offset, sizeof(value));
-    *offset += sizeof(value);
-
-    return value;
-}
-
-uint16_t ReadUInt16(const char *buf, int *offset) {
-    uint16_t value;
-
-    memcpy(&value, buf + *offset, sizeof(value));
-    *offset += sizeof(value);
-
-    return value;
-}
-
-uint32_t ReadUInt32(const char *buf, int *offset) {
-    uint32_t value;
-
-    memcpy(&value, buf + *offset, sizeof(value));
-    *offset += sizeof(value);
-
-    return value;
-}
-
-void ReadString(char *value, int size, const char *buf, int *offset) {
-    strlcpy(value, buf + *offset, size);
-    *offset += size;
-}
-*/
-
 void DumpBytes(const unsigned char *bytes, unsigned int len) {
     unsigned int i, j;
 
@@ -188,4 +141,86 @@ void UpdateWindowTitle(const char *title) {
     printf("\033]0;%s\007", title);
     fflush(stdout);
 #endif
+}
+
+int Deflate(unsigned char* in_data, int in_length, unsigned char* out_data, int max_out_length) {
+	z_stream zstream;
+	int zerror;
+
+	zstream.next_in = in_data;
+	zstream.avail_in = in_length;
+	zstream.zalloc = Z_NULL;
+	zstream.zfree = Z_NULL;
+	zstream.opaque = Z_NULL;
+	deflateInit(&zstream, Z_FINISH);
+	zstream.next_out = out_data;
+	zstream.avail_out = max_out_length;
+	zerror = deflate(&zstream, Z_FINISH);
+
+	if (zerror == Z_STREAM_END) {
+		deflateEnd(&zstream);
+		return zstream.total_out;
+	}
+	else {
+		std::cout << "Error: Deflate: deflate() returned " << zerror << " '";
+		if (zstream.msg)
+			std::cout << zstream.msg;
+		std::cout << "'" << std::endl;
+		zerror = deflateEnd(&zstream);
+		return 0;
+	}
+}
+
+int Inflate(unsigned char* indata, int indatalen, unsigned char* outdata, int outdatalen, bool iQuiet) {
+	z_stream zstream;
+	int zerror = 0;
+	int i;
+
+	zstream.next_in = indata;
+	zstream.avail_in = indatalen;
+	zstream.next_out = outdata;
+	zstream.avail_out = outdatalen;
+	zstream.zalloc = Z_NULL;
+	zstream.zfree = Z_NULL;
+	zstream.opaque = Z_NULL;
+
+	i = inflateInit2(&zstream, 15);
+	if (i != Z_OK) {
+		return 0;
+	}
+
+	zerror = inflate(&zstream, Z_FINISH);
+
+	if (zerror == Z_STREAM_END) {
+		inflateEnd(&zstream);
+		return zstream.total_out;
+	}
+	else {
+		if (!iQuiet) {
+			std::cout << "Error: Inflate: inflate() returned " << zerror << " '";
+			if (zstream.msg)
+				std::cout << zstream.msg;
+			std::cout << "'" << std::endl;
+		}
+
+		if (zerror == -4 && zstream.msg == 0) {
+			return 0;
+		}
+
+		zerror = inflateEnd(&zstream);
+		return 0;
+	}
+}
+
+uint16_t GetOpcodeVersion(uint16_t version) {
+	uint16_t ret = version;
+	std::map<uint16_t, uint16_t>::iterator itr;
+	for (itr = EQOpcodeVersions.begin(); itr != EQOpcodeVersions.end(); itr++) {
+		if (version >= itr->first && version <= itr->second) {
+			ret = itr->first;
+			break;
+		}
+	}
+
+	return ret;
 }

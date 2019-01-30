@@ -6,3 +6,5 @@
 #include "OP_KeepAlive_Packet.h"			// 0x06
 #include "OP_ClientSessionUpdate_Packet.h"	// 0x07
 #include "OP_ServerSessionUpdate_Packet.h"	// 0x08
+#include "OP_Packet_Packet.h"				// 0x09
+#include "OP_Ack_Packet.h"					// 0x15

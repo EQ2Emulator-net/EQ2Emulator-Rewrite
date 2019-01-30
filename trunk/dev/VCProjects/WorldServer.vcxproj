@@ -72,15 +72,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>..\..\source\depends\zlib\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\source\depends\zlib\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>..\..\source\depends\zlib\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\source\depends\zlib\lib\win64-debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>..\..\source\depends\zlib\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\source\depends\zlib\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>..\..\source\depends\zlib\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\source\depends\zlib\lib;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -97,6 +105,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -115,7 +124,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>ws2_32.lib;legacy_stdio_definitions.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;zlibstat.lib;legacy_stdio_definitions.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -140,6 +149,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <LinkTimeCodeGeneration />
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -163,6 +173,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <LinkTimeCodeGeneration />
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -179,6 +190,7 @@
     <ClCompile Include="..\..\source\common\Stream.cpp" />
     <ClCompile Include="..\..\source\common\string.cpp" />
     <ClCompile Include="..\..\source\common\time.cpp" />
+    <ClCompile Include="..\..\source\common\timer.cpp" />
     <ClCompile Include="..\..\source\common\util.cpp" />
     <ClCompile Include="..\..\source\WorldServer\main.cpp" />
     <ClCompile Include="..\..\source\WorldServer\WorldServer\Client.cpp" />
@@ -191,6 +203,7 @@
     <ClInclude Include="..\..\source\common\io.h" />
     <ClInclude Include="..\..\source\common\log.h" />
     <ClInclude Include="..\..\source\common\Packets\EQ2Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\EQ2Packets\OP_KeyRequest_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElement.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\Packet16String.h" />
@@ -206,6 +219,7 @@
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketUInt64.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketUInt8.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPacket.h" />
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_Ack_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_ClientSessionUpdate_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_KeepAlive_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_Packet_Packet.h" />
@@ -220,6 +234,7 @@
     <ClInclude Include="..\..\source\common\Stream.h" />
     <ClInclude Include="..\..\source\common\string.h" />
     <ClInclude Include="..\..\source\common\time.h" />
+    <ClInclude Include="..\..\source\common\timer.h" />
     <ClInclude Include="..\..\source\common\util.h" />
     <ClInclude Include="..\..\source\common\version.h" />
     <ClInclude Include="..\..\source\WorldServer\WorldServer\Client.h" />
