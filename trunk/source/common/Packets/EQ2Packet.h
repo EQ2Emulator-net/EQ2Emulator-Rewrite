@@ -3,7 +3,12 @@
 #include <stdint.h>
 #include "Packet.h"
 
+class PacketAllocatorBase;
+class OpcodeManager;
+
 class EQ2Packet : public Packet {
+	friend OpcodeManager;
+
 public:
 	EQ2Packet();
 
@@ -12,6 +17,8 @@ public:
 	uint16_t GetOpcode() { return opcode; }
 	uint8_t PreparePacket(uint16_t MaxLen);
 	uint32_t serialize(unsigned char *dest) const;
+
+	void FindOpcode();
 
 	bool PacketPrepared;
 	bool PacketEncrypted;
@@ -23,5 +30,4 @@ protected:
 
 private:
 	uint16_t Version;
-
 };

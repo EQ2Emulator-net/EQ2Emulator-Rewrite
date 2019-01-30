@@ -6,6 +6,7 @@
 #include <cassert>
 #include <utility>
 #include "../EQ2Packet.h"
+#include <typeindex>
 
 class PacketAllocatorBase {
 protected:
@@ -33,6 +34,9 @@ class OpcodeManager {
 private:
 	//<name, allocator>
 	std::map<std::string, PacketAllocatorBase*> allocators;
+	
+	//<type_index, allocator>
+	std::map<std::type_index, PacketAllocatorBase*> type_map;
 
 	typedef std::pair<int16_t, int16_t> versionRange_t;
 
@@ -47,13 +51,14 @@ public:
 		}
 	}
 
-	void RegisterAllocator(const char* name, PacketAllocatorBase* allocator) {
-		assert(allocators.count(name) == 0);
+	void RegisterAllocator(const char* name, PacketAllocatorBase* allocator, std::type_index t) {
+		assert(allocators.count(name) == 0 && type_map.count(t) == 0);
 
 		allocators[name] = allocator;
+		type_map[t] = allocator;
 	}
 
-	static void RegisterEmuOpcodeHelper(const char* name, PacketAllocatorBase* allocator);
+	static void RegisterEmuOpcodeHelper(const char* name, PacketAllocatorBase* allocator, std::type_index t);
 
 	void RegisterVersionOpcode(const char* name, int16_t range_low, int16_t range_high, int16_t opcode) {
 		auto itr = allocators.find(name);
@@ -66,19 +71,43 @@ public:
 		versions[range][opcode] = itr->second;
 	}
 
-	Packet* GetPacketForVersion(int16_t version, int16_t opcode) {
-		Packet* ret = nullptr;
+	EQ2Packet* GetPacketForVersion(int16_t version, int16_t opcode) {
+		EQ2Packet* ret = nullptr;
 		for (auto& itr : versions) {
 			versionRange_t range = itr.first;
 			if (range.first <= version && range.second >= version) {
 				auto op = itr.second.find(opcode);
 				if (op != itr.second.end()) {
 					ret = op->second->Create(version);
+					ret->opcode = opcode;
 				}
 				break;
 			}
 		}
 		return ret;
+	}
+
+	void SetOpcodeForPacket(EQ2Packet* packet) {
+		auto itr = type_map.find(typeid(*packet));
+		assert(("Please register this packet class with an opcode.", itr != type_map.end()));
+
+		PacketAllocatorBase* allocator = itr->second;
+		for (auto& itr : versions) {
+			uint16_t version = packet->GetVersion();
+			versionRange_t range = itr.first;
+			if (range.first <= version && range.second >= version) {
+				for (auto& op : itr.second) {
+					if (op.second == allocator) {
+						packet->opcode = op.first;
+						return;
+					}
+				}
+				assert(("Could not find an opcode for this packet! Check it out.", false));
+				break;
+			}
+		}
+
+		LogDebug(LOG_PACKET, 0, "Could not find a version range for version %u", packet->GetVersion());
 	}
 };
 
@@ -87,7 +116,7 @@ class OpcodeRegistrar {
 	static_assert(std::is_base_of<EQ2Packet, T>::value, "Tried to register an Opcode for a non packet type!");
 public:
 	OpcodeRegistrar(const char* name) {
-		OpcodeManager::RegisterEmuOpcodeHelper(name, new PacketAllocator<T>);
+		OpcodeManager::RegisterEmuOpcodeHelper(name, new PacketAllocator<T>, typeid(T));
 	}
 };
 

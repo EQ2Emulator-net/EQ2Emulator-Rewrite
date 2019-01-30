@@ -1,5 +1,6 @@
 #include "EQ2Packet.h"
 #include "../util.h"
+#include "../Packets/EQ2Packets/OpcodeManager.h"
 
 #ifdef _WIN32
 	#include <WinSock2.h>
@@ -71,4 +72,10 @@ uint32_t EQ2Packet::serialize(unsigned char *dest) const {
 	memcpy(dest + app_opcode_size, buffer, Size);
 
 	return Size + app_opcode_size;
+}
+
+extern OpcodeManager* g_OpcodeManager;
+
+void EQ2Packet::FindOpcode() {
+	g_OpcodeManager->SetOpcodeForPacket(this);
 }

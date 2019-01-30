@@ -149,10 +149,14 @@ void EQ2Stream::EQ2QueuePacket(EQ2Packet* app, bool attempted_combine) {
 			SendPacket(app);
 		}
 	}
+	else {
+		delete app;
+	}
 }
 
 void EQ2Stream::PreparePacket(EQ2Packet* app, uint8_t offset) {
 	app->SetVersion(ClientVersion);
+	app->FindOpcode();
 	CompressedOffset = 0;
 
 #ifdef LE_DEBUG
