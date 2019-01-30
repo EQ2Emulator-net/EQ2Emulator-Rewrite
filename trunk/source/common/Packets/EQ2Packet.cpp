@@ -74,8 +74,6 @@ uint32_t EQ2Packet::serialize(unsigned char *dest) const {
 	return Size + app_opcode_size;
 }
 
-extern OpcodeManager* g_OpcodeManager;
-
 void EQ2Packet::FindOpcode() {
-	g_OpcodeManager->SetOpcodeForPacket(this);
+	OpcodeManager::GetGlobal()->SetOpcodeForPacket(this);
 }

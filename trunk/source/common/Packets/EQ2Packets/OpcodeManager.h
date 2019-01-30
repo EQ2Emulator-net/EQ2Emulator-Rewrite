@@ -58,6 +58,7 @@ public:
 		type_map[t] = allocator;
 	}
 
+	static OpcodeManager* GetGlobal();
 	static void RegisterEmuOpcodeHelper(const char* name, PacketAllocatorBase* allocator, std::type_index t);
 
 	void RegisterVersionOpcode(const char* name, int16_t range_low, int16_t range_high, int16_t opcode) {
