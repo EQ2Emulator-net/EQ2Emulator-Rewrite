@@ -4,7 +4,7 @@
 
 class PacketInt8 : public PacketElement {
 public:
-	PacketInt8(int8_t& in_int) : element(in_int) {
+	PacketInt8(int8_t& in_int) : element(&in_int) {
 
 	}
 	~PacketInt8() = default;
@@ -14,22 +14,22 @@ public:
 			return false;
 		}
 
-		memcpy(&element, srcbuf + offset, 1);
-		offset += 1;
+		memcpy(element, srcbuf + offset, count);
+		offset += count;
 
 		return true;
 	}
 
 	void WriteElement(unsigned char* outbuf, uint32_t& offset) {
-		memcpy(outbuf + offset, &element, 1);
-		offset += 1;
+		memcpy(outbuf + offset, element, count);
+		offset += count;
 	}
 
 	uint32_t GetSize() {
-		return 1;
+		return sizeof(int8_t) * count;
 	}
 
 private:
-	int8_t& element;
+	int8_t* element;
 
 };

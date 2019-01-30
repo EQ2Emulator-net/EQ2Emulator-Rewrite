@@ -18,3 +18,17 @@
 // Floats
 
 // Color
+
+//Register macros, these are intended to be used from RegisterElements()
+#define PushElementForRegistration(e, n) { auto pe = e; elements.push_back(e); pe->SetName(n); }
+#define Register8String(e) PushElementForRegistration(new Packet8String(e), #e) 
+#define Register16String(e) PushElementForRegistration(new Packet16String(e), #e)  
+#define Register32String(e) PushElementForRegistration(new Packet32String(e), #e) 
+#define RegisterUInt8(e) PushElementForRegistration(new PacketUInt8(e), #e)  
+#define RegisterUInt16(e) PushElementForRegistration(new PacketUInt16(e), #e) 
+#define RegisterUInt32(e) PushElementForRegistration(new PacketUInt32(e), #e)  
+#define RegisterUInt64(e) PushElementForRegistration(new PacketUInt64(e), #e) 
+#define RegisterInt8(e) PushElementForRegistration(new PacketInt8(e), #e) 
+#define RegisterInt16(e) PushElementForRegistration(new PacketInt16(e), #e) 
+#define RegisterInt32(e) PushElementForRegistration(new PacketInt32(e), #e)  
+#define RegisterInt64(e) PushElementForRegistration(new PacketInt64(e), #e)  

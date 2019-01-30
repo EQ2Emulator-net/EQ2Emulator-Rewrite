@@ -54,24 +54,24 @@ public:
 
 private:
 	void RegisterElements() {
-		elements.push_back(new PacketUInt32(_Size));
-		elements.push_back(new PacketUInt32(Blah1));
-		elements.push_back(new PacketUInt32(Blah2));
-		elements.push_back(new PacketUInt32(Blah3));
-		elements.push_back(new PacketUInt32(Blah4));
-		elements.push_back(new PacketUInt32(Blah5));
-		elements.push_back(new PacketUInt32(Blah6));
-		elements.push_back(new PacketUInt32(Blah7));
-		elements.push_back(new PacketUInt32(Blah8));
-		elements.push_back(new PacketUInt32(Blah9));
-		elements.push_back(new PacketUInt32(Blah10));
-		elements.push_back(new PacketUInt32(Blah11));
-		elements.push_back(new PacketUInt32(Blah12));
-		elements.push_back(new PacketUInt32(Blah13));
-		elements.push_back(new PacketUInt32(Blah14));
-		elements.push_back(new PacketUInt32(Blah15));
-		elements.push_back(new PacketUInt32(Exponent_len));
-		elements.push_back(new PacketUInt8(Exponent));
+		RegisterUInt32(_Size);
+		RegisterUInt32(Blah1);
+		RegisterUInt32(Blah2);
+		RegisterUInt32(Blah3);
+		RegisterUInt32(Blah4);
+		RegisterUInt32(Blah5);
+		RegisterUInt32(Blah6);
+		RegisterUInt32(Blah7);
+		RegisterUInt32(Blah8);
+		RegisterUInt32(Blah9);
+		RegisterUInt32(Blah10);
+		RegisterUInt32(Blah11);
+		RegisterUInt32(Blah12);
+		RegisterUInt32(Blah13);
+		RegisterUInt32(Blah14);
+		RegisterUInt32(Blah15);
+		RegisterUInt32(Exponent_len);
+		RegisterUInt8(Exponent);
 	}
 };
 

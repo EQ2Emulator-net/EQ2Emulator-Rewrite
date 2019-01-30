@@ -4,7 +4,7 @@
 
 class PacketInt16 : public PacketElement {
 public:
-	PacketInt16(int16_t& in_int) : element(in_int) {
+	PacketInt16(int16_t& in_int) : element(&in_int) {
 
 	}
 	~PacketInt16() = default;
@@ -14,22 +14,24 @@ public:
 			return false;
 		}
 
-		memcpy(&element, srcbuf + offset, 2);
-		offset += 2;
+		uint32_t readSize = sizeof(int16_t) * count;
+		memcpy(element, srcbuf + offset, readSize);
+		offset += readSize;
 
 		return true;
 	}
 
 	void WriteElement(unsigned char* outbuf, uint32_t& offset) {
-		memcpy(outbuf + offset, &element, 2);
-		offset += 2;
+		uint32_t writeSize = sizeof(int16_t) * count;
+		memcpy(outbuf + offset, element, writeSize);
+		offset += writeSize;
 	}
 
 	uint32_t GetSize() {
-		return 2;
+		return sizeof(int16_t) * count;
 	}
 
 private:
-	int16_t& element;
+	int16_t* element;
 
 };
