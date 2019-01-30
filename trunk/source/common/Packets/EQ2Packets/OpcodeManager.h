@@ -103,7 +103,7 @@ public:
 					}
 				}
 				assert(("Could not find an opcode for this packet! Check it out.", false));
-				break;
+				return;
 			}
 		}
 
