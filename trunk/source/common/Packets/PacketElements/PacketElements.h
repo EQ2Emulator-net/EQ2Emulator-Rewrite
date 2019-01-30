@@ -20,7 +20,7 @@
 // Color
 
 //Register macros, these are intended to be used from RegisterElements()
-#define PushElementForRegistration(e, n) { auto pe = e; elements.push_back(e); pe->SetName(n); }
+#define PushElementForRegistration(e, n) (elements.push_back(e), elements.back()->SetName(n), elements.back())
 #define Register8String(e) PushElementForRegistration(new Packet8String(e), #e) 
 #define Register16String(e) PushElementForRegistration(new Packet16String(e), #e)  
 #define Register32String(e) PushElementForRegistration(new Packet32String(e), #e) 
