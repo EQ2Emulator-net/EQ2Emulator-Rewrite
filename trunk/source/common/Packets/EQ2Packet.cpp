@@ -13,7 +13,7 @@ EQ2Packet::EQ2Packet() {
 }
 
 uint8_t EQ2Packet::PreparePacket(uint16_t MaxLen) {
-	uint16_t OpcodeVersion = GetOpcodeVersion(Version);
+	FindOpcode();
 
 	// stops a crash for incorrect version
 	/*if (EQOpcodeManager.count(OpcodeVersion) == 0) {
