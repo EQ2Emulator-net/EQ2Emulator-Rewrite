@@ -62,8 +62,12 @@ ProtocolPacket* ProtocolPacket::GetProtocolPacket(unsigned char* in_buff, uint32
 		ret = new OP_ClientSessionUpdate_Packet();
 		break;
 	}
+	case OP_Ack: {
+		ret = new OP_Ack_Packet();
+		break;
+	}
 	default: {
-		LogError(LOG_PACKET, 0, "Unknown protocol packet upcode %u", opcode);
+		LogError(LOG_PACKET, 0, "Unknown protocol packet opcode %u", opcode);
 		if (in_buff)
 			delete[] in_buff;
 
