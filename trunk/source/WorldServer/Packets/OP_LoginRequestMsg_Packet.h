@@ -44,7 +44,7 @@ public:
 	std::string Unknown1;
 	std::string Username;
 	std::string Password;
-	uint8_t Unknown2[10];
+	uint8_t Unknown2[8];
 	uint16_t Version;
 	uint16_t Unknown3;
 	uint32_t Unknown4;
@@ -59,9 +59,8 @@ private:
 		Register16String(Unknown1);
 		Register16String(Username);
 		Register16String(Password);
-		for (uint8_t i = 0; i < 10; i++) {
-			RegisterUInt8(Unknown2[i]);
-		}
+		uint8_t& ukn2 = Unknown2[0];
+		RegisterUInt8(ukn2)->SetCount(8);
 		RegisterUInt16(Version);
 		RegisterUInt16(Unknown3);
 		RegisterUInt32(Unknown4);

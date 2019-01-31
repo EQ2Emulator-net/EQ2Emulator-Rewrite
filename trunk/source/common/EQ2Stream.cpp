@@ -606,6 +606,7 @@ bool EQ2Stream::HandleEmbeddedPacket(ProtocolPacket* p, uint16_t offset, uint16_
 	return false;
 }
 
+#include "../WorldServer/Packets/OP_LoginRequestMsg_Packet.h"
 EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size, uint16_t opcode) {
 	EQ2Packet* ret = nullptr;
 	crypto.RC4Decrypt(data, size);
@@ -619,7 +620,16 @@ EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size, u
 		memcpy(&opcode, data, sizeof(uint8_t));
 	}
 	
-	ret = OpcodeManager::GetGlobal()->GetPacketForVersion(ClientVersion, opcode);
+	if (ClientVersion == 0) {
+		if (opcode == 0) {
+			ret = new OP_LoginRequestMsg_Packet(1);
+			ret->Read(data, offset, size - offset);
+			DumpBytes(data + offset, size - offset);
+		}
+	}
+	else {
+		ret = OpcodeManager::GetGlobal()->GetPacketForVersion(ClientVersion, opcode);
+	}
 	/*
 	if (opcode == OP_Packet) {
 		ret = new OP_Packet_Packet(data + offset, size - offset);
