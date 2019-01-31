@@ -20,6 +20,14 @@ public:
 		HasCRC = true;
 	}
 
+	OP_Packet_Packet(const unsigned char* buf, uint32_t len)
+		: ProtocolPacket(buf, len) {
+		RegisterElements();
+
+		opcode = OP_Packet;
+		HasCRC = true;
+	}
+
 	uint32_t Write(unsigned char*& writeBuffer) {
 		uint16_t op = htons(opcode);
 		memcpy(buffer, &op, 2);

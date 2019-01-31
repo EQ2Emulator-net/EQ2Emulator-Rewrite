@@ -1,6 +1,7 @@
 #include "ProtocolPacket.h"
 #include "ProtocolPackets/ProtocolPackets.h"
 #include "../util.h"
+#include "EQ2Packet.h"
 
 #ifdef _WIN32
 	#include <WinSock2.h>
@@ -10,6 +11,19 @@
 
 ProtocolPacket::ProtocolPacket() {
 	HasCRC = false;
+}
+
+ProtocolPacket::ProtocolPacket(const unsigned char* buf, uint32_t len) {
+	if (len > 0) {
+		Size = len;
+		buffer = new unsigned char[Size];
+		if (buf) {
+			memcpy(buffer, buf, Size);
+		}
+		else {
+			memset(buffer, 0, Size);
+		}
+	}
 }
 
 uint32_t ProtocolPacket::Write(unsigned char*& writeBuffer) {
@@ -62,6 +76,10 @@ ProtocolPacket* ProtocolPacket::GetProtocolPacket(unsigned char* in_buff, uint32
 		ret = new OP_ClientSessionUpdate_Packet();
 		break;
 	}
+	case OP_Packet: {
+		ret = new OP_Packet_Packet(in_buff + offset, len - offset - 2); // -2 to trim the crc
+		break;
+	}
 	case OP_Ack: {
 		ret = new OP_Ack_Packet();
 		break;
@@ -75,7 +93,7 @@ ProtocolPacket* ProtocolPacket::GetProtocolPacket(unsigned char* in_buff, uint32
 	}
 	}
 
-	if (ret)
+	if (ret && opcode != OP_Packet)
 		ret->Read(in_buff, offset, len);
 
 	return ret;
@@ -177,3 +195,25 @@ void ProtocolPacket::ChatEncode(unsigned char *buffer, int size, int EncodeKey) 
 	}
 	return result;
 }*/
+
+EQ2Packet* ProtocolPacket::MakeApplicationPacket(uint8_t opcode_size) const {
+	EQ2Packet* ret = nullptr;
+
+	/*res->app_opcode_size = (opcode_size == 0) ? EQApplicationPacket::default_opcode_size : opcode_size;
+	if (res->app_opcode_size == 1) {
+		res->pBuffer = new unsigned char[size + 1];
+		memcpy(res->pBuffer + 1, pBuffer, size);
+		*(res->pBuffer) = htons(opcode) & 0xff;
+		res->opcode = opcode & 0xff;
+		res->size = size + 1;
+	}
+	else {
+		res->pBuffer = new unsigned char[size];
+		memcpy(res->pBuffer, pBuffer, size);
+		res->opcode = opcode;
+		res->size = size;
+	}
+
+	res->copyInfo(this);*/
+	return ret;
+}

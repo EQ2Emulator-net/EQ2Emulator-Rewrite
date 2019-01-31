@@ -215,5 +215,11 @@
     <ClInclude Include="..\..\source\common\Packets\EQ2Packets\OpcodeManager.h">
       <Filter>common\Packets\EQ2Packets</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_AppCombined_Packet.h">
+      <Filter>common\Packets\ProtocolPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_LoginRequestMsg_Packet.h">
+      <Filter>source\Packets</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

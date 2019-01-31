@@ -35,6 +35,7 @@ typedef enum {
 class EQ2Stream : public Stream {
 public:
 	EQ2Stream(unsigned int ip, unsigned short port);
+	~EQ2Stream();
 
 	void Process(unsigned char* data, unsigned int length) override;
 
@@ -50,10 +51,13 @@ public:
 
 	void Write();
 
+	void SetVersion(uint16_t version) { ClientVersion = version; }
+	uint16_t GetVersion() { return ClientVersion; }
+
 	std::deque<EQ2Packet*> combine_queue; // public in old code?
 
 protected:
-	virtual bool HandlePacket();
+	EQ2Packet* PopPacket(); // InboundQueuePop
 
 	uint32_t Key;
 	uint32_t Session;
@@ -85,6 +89,15 @@ private:
 	uint8_t EQ2_Compress(EQ2Packet* app, uint8_t offset = 3);
 	void SetMaxAckReceived(uint32_t seq);
 	void SetLastAckSent(int32_t seq);
+	void AdjustRates(uint32_t average_delta);
+	int8_t CompareSequence(uint16_t expected_seq, uint16_t seq);
+	void SetNextAckToSend(uint32_t seq);
+	uint16_t processRSAKey(ProtocolPacket *p);
+	bool HandleEmbeddedPacket(ProtocolPacket* p, uint16_t offset = 2, uint16_t length = 0);
+	EQ2Packet* ProcessEncryptedData(unsigned char* data, uint32_t size, uint16_t opcode);
+	EQ2Packet* ProcessEncryptedPacket(ProtocolPacket *p);
+	void InboundQueuePush(EQ2Packet* p);
+	void InboundQueueClear();
 
 	// Send functions
 	void SendAck(uint16_t seq);
@@ -104,5 +117,7 @@ private:
 	deque<ProtocolPacket*> NonSequencedQueue;
 	deque<ProtocolPacket*> SequencedQueue;
 	deque<ProtocolPacket*> ResendQueue;
+	// Packes waiting to be processed
+	deque<EQ2Packet *> InboundQueue;
 
 };

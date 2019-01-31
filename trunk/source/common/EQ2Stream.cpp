@@ -5,6 +5,7 @@
 #include "util.h"
 #include "Server.h"
 #include "timer.h"
+#include "Packets/EQ2Packets/OpcodeManager.h"
 
 #ifdef _WIN32
 	#include <WinSock2.h>
@@ -30,6 +31,29 @@ EQ2Stream::EQ2Stream(unsigned int ip, unsigned short port) : Stream(ip, port) {
 	DecayRate = DECAYBASE / 250;
 	BytesWritten = 0;
 	crypto.setRC4Key(0);
+}
+
+EQ2Stream::~EQ2Stream() {
+
+	if (CombinedAppPacket)
+		delete CombinedAppPacket;
+
+	while (NonSequencedQueue.size()) {
+		delete NonSequencedQueue.front();
+		NonSequencedQueue.pop_front();
+	}
+
+	while (SequencedQueue.size()) {
+		delete SequencedQueue.front();
+		SequencedQueue.pop_front();
+	}
+	
+	while (ResendQueue.size()) {
+		delete ResendQueue.front();
+		ResendQueue.pop_front();
+	}
+
+	InboundQueueClear();
 }
 
 void EQ2Stream::Process(unsigned char* data, unsigned int length) {
@@ -71,11 +95,45 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 	}
 	case OP_ClientSessionUpdate: {
 		OP_ClientSessionUpdate_Packet* update = (OP_ClientSessionUpdate_Packet*)p;
-		//AdjustRates(ntohl(Stats->average_delta));
+		AdjustRates(ntohl(update->AverageDelta));
 		SendServerSessionUpdate(update->RequestID);
 		if(!crypto.isEncrypted())
 			SendKeyRequest();
 		
+		break;
+	}
+	case OP_Packet: {
+		LogDebug(LOG_PACKET, 0, "OP_Packet_Packet Dump");
+		OP_Packet_Packet* pp = (OP_Packet_Packet*)p;
+		DumpBytes(pp->buffer, pp->Size);
+		uint16_t seq = ntohs(*(uint16_t*)(pp->buffer));
+		int8_t check = CompareSequence(NextInSeq, seq);
+
+		LogDebug(LOG_PACKET, 0, "seq = %u, NextInSeq = %u, check = %i", seq, NextInSeq, check);
+		if (check > 0) {
+			// Future
+			LogDebug(LOG_PACKET, 0, "Future packet");
+		}
+		else if (check < 0) {
+			// Past
+			LogDebug(LOG_PACKET, 0, "Past packet");
+		}
+		else {
+			SetNextAckToSend(seq);
+			NextInSeq++;
+
+			if (HandleEmbeddedPacket(pp))
+				break;
+			if (crypto.getRC4Key() == 0 && pp && pp->Size >= 70) {
+				processRSAKey(pp);
+			}
+			else if (crypto.isEncrypted() && pp) {
+				EQ2Packet* newpacket = ProcessEncryptedPacket(p);
+				if (newpacket) {
+					InboundQueuePush(newpacket);
+				}
+			}
+		}
 		break;
 	}
 	case OP_Ack: {
@@ -83,14 +141,40 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 		SetMaxAckReceived(ack->Sequence);
 		break;
 	}
+	case OP_AppCombined: {
+		uint32_t processed = 0;
+		uint32_t subpacket_length = 0;
+		EQ2Packet* newpacket = 0;
+		uint8_t offset = 0;
+		int count = 0;
+
+		while (processed < p->Size) {
+			count++;
+			if ((subpacket_length = (unsigned char)*(p->buffer + processed)) == 0xff) {
+				subpacket_length = ntohs(*(uint16_t *)(p->buffer + processed + 1));
+				offset = 3;
+			}
+			else
+				offset = 1;
+
+			if (crypto.getRC4Key() == 0 && p->Size >= 70) {
+				processRSAKey(p);
+			}
+			else if (crypto.isEncrypted()) {
+				if (!HandleEmbeddedPacket(p, processed + offset, subpacket_length)) {
+					newpacket = ProcessEncryptedData(p->buffer + processed + offset, subpacket_length, 0x19);// (uint16_t)OP_AppCombined);
+					if (newpacket) {
+						InboundQueuePush(newpacket);
+					}
+				}
+			}
+			processed += subpacket_length + offset;
+		}
+		break;
+	}
 	default:
 		break;
 	}
-}
-
-bool EQ2Stream::HandlePacket() {
-	LogError(LOG_NET, 0, "HandlePacket should be overriden");
-	return false;
 }
 
 bool EQ2Stream::ValidateCRC(unsigned char* buffer, uint16_t length, uint32_t key) {
@@ -443,12 +527,159 @@ void EQ2Stream::SetLastAckSent(int32_t seq) {
 	//MAcks.unlock();
 }
 
+void EQ2Stream::AdjustRates(uint32_t average_delta) {
+	if (average_delta) {
+		//MRate.lock();
+		RateThreshold = RATEBASE / average_delta;
+		DecayRate = DECAYBASE / average_delta;
+		//MRate.unlock();
+	}
+}
+
+int8_t EQ2Stream::CompareSequence(uint16_t expected_seq, uint16_t seq) {
+	if (expected_seq == seq) {
+		// Curent
+		return 0;
+	}
+	else if ((seq > expected_seq/* && (uint32_t)seq < ((uint32_t)expected_seq + EQ2Stream::MaxWindowSize)) || seq < (expected_seq - EQ2Stream::MaxWindowSize*/)) { // No clue what this MaxWindowSize is for, set to 2048 in old code
+		// Future
+		return 1;
+	}
+	else {
+		// Past
+		return -1;
+	}
+}
+
+void EQ2Stream::SetNextAckToSend(uint32_t seq) {
+	//MAcks.lock();
+	NextAckToSend = seq;
+	//MAcks.unlock();
+}
+
+uint16_t EQ2Stream::processRSAKey(ProtocolPacket *p) {
+	if (p->buffer[0] == 0)
+		crypto.setRC4Key(Crypto::RSADecrypt(p->buffer + 62, 8));
+	else
+		crypto.setRC4Key(Crypto::RSADecrypt(p->buffer + 61, 8));
+	return 0;
+}
+
+bool EQ2Stream::HandleEmbeddedPacket(ProtocolPacket* p, uint16_t offset, uint16_t length) {
+	if (p && p->Size >= ((uint32_t)(offset + 2))) {
+		if (p->buffer[offset] == 0 && p->buffer[offset + 1] == 0x19) {
+			if (length == 0)
+				length = p->Size - 2 - offset;
+			else
+				length -= 2;
+#ifdef LE_DEBUG
+			LogWrite(PACKET__DEBUG, 0, "Packet", "Creating OP_AppCombined Packet!");
+#endif
+			ProtocolPacket* subp = new OP_AppCombined_Packet(p->buffer + 2 + offset, length);
+			LogDebug(LOG_PACKET, 0, "OP_AppCombine_Packet");
+			DumpBytes(subp->buffer, subp->Size);
+			//subp->copyInfo(p);
+			ProcessPacket(subp);
+			delete subp;
+			return true;
+		}
+		else if (p->buffer[offset] == 0 && p->buffer[offset + 1] == 0) {
+			if (length == 0)
+				length = p->Size - 1 - offset;
+			else
+				length--;
+#ifdef LE_DEBUG
+			LogWrite(PACKET__DEBUG, 0, "Packet", "Creating Opcode 0 Packet!");
+			DumpPacket(p->pBuffer + 1 + offset, length);
+#endif
+			EQ2Packet* newpacket = ProcessEncryptedData(p->buffer + 1 + offset, length, OP_Packet);
+			if (newpacket) {
+				LogInfo(LOG_PACKET, 0, "Decrypted packet");
+				DumpBytes(newpacket->buffer, newpacket->Size);
+				InboundQueuePush(newpacket);
+			}
+			else
+				LogError(LOG_PACKET, 0, "No Packet!");
+			return true;
+		}
+	}
+	return false;
+}
+
+EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size, uint16_t opcode) {
+	EQ2Packet* ret = nullptr;
+	crypto.RC4Decrypt(data, size);
+	uint8_t offset = 0;
+	if (data[0] == 0xFF && size > 2) {
+		offset = 3;
+		memcpy(&opcode, data + sizeof(uint8_t), sizeof(uint16_t));
+	}
+	else {
+		offset = 1;
+		memcpy(&opcode, data, sizeof(uint8_t));
+	}
+	
+	ret = OpcodeManager::GetGlobal()->GetPacketForVersion(ClientVersion, opcode);
+	/*
+	if (opcode == OP_Packet) {
+		ret = new OP_Packet_Packet(data + offset, size - offset);
+	}
+	else if (opcode == OP_AppCombined) {
+		ret = new OP_AppCombined_Packet(data + offset, size - offset);
+	}
+	else {
+		DumpBytes(data, size);
+		LogError(LOG_PACKET, 0, "ProcessEncryptedData() couldn't handle the given opcode (%u)", opcode);
+	}
+	*/
+
+	return ret;
+}
+
+EQ2Packet* EQ2Stream::ProcessEncryptedPacket(ProtocolPacket *p) {
+	EQ2Packet* ret = NULL;
+	if (p->GetOpcode() == OP_Packet && p->Size > 2)
+		ret = ProcessEncryptedData(p->buffer + 2, p->Size - 2, p->GetOpcode());
+	else
+		ret = ProcessEncryptedData(p->buffer, p->Size, p->GetOpcode());
+	return ret;
+}
+
+void EQ2Stream::InboundQueuePush(EQ2Packet* p) {
+	//MInboundQueue.lock();
+	InboundQueue.push_back(p);
+	//MInboundQueue.unlock();
+}
+
+EQ2Packet* EQ2Stream::PopPacket() {
+	EQ2Packet *p = NULL;
+
+	//MInboundQueue.lock();
+	if (InboundQueue.size()) {
+		p = InboundQueue.front();
+		InboundQueue.pop_front();
+	}
+	//MInboundQueue.unlock();
+	if (p)
+		p->SetVersion(ClientVersion);
+	return p;
+}
+
+void EQ2Stream::InboundQueueClear() {
+	//MInboundQueue.lock();
+	while (InboundQueue.size()) {
+		delete InboundQueue.front();
+		InboundQueue.pop_front();
+	}
+	//MInboundQueue.unlock();
+}
+
 void EQ2Stream::SendAck(uint16_t seq) {
 	uint16_t Seq = htons(seq);
 	SetLastAckSent(seq);
-	OP_Ack_Packet ack;
-	ack.Sequence = seq;
-	NonSequencedPush(&ack);
+	OP_Ack_Packet* ack = new OP_Ack_Packet();
+	ack->Sequence = seq;
+	NonSequencedPush(ack);
 }
 
 void EQ2Stream::SendSessionResponse() {

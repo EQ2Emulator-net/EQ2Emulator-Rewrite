@@ -15,3 +15,14 @@ bool WorldServer::ProcessClientWrite() {
 
 	return ret;
 }
+
+bool WorldServer::ProcessClients() {
+	bool ret = true;
+
+	std::map<std::string, Stream*>::iterator stream_itr;
+	for (stream_itr = Streams.begin(); stream_itr != Streams.end(); stream_itr++) {
+		((Client*)stream_itr->second)->Process();
+	}
+
+	return ret;
+}

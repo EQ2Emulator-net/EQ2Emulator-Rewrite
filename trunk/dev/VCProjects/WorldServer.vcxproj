@@ -222,6 +222,7 @@
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketUInt8.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPacket.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_Ack_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_AppCombined_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_ClientSessionUpdate_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_KeepAlive_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_Packet_Packet.h" />
@@ -239,6 +240,7 @@
     <ClInclude Include="..\..\source\common\timer.h" />
     <ClInclude Include="..\..\source\common\util.h" />
     <ClInclude Include="..\..\source\common\version.h" />
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_LoginRequestMsg_Packet.h" />
     <ClInclude Include="..\..\source\WorldServer\WorldServer\Client.h" />
     <ClInclude Include="..\..\source\WorldServer\WorldServer\WorldServer.h" />
   </ItemGroup>

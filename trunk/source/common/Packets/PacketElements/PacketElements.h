@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include <stdint.h>
+
 // Strings
 #include "Packet8String.h"
 #include "Packet16String.h"

@@ -5,6 +5,7 @@
 
 class PacketAllocatorBase;
 class OpcodeManager;
+class Client;
 
 class EQ2Packet : public Packet {
 	friend OpcodeManager;
@@ -19,6 +20,8 @@ public:
 	uint32_t serialize(unsigned char *dest) const;
 
 	void FindOpcode();
+
+	virtual void HandlePacket(Client* client);
 
 	bool PacketPrepared;
 	bool PacketEncrypted;

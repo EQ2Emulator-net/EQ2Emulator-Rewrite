@@ -6,6 +6,11 @@ Client::Client(unsigned int ip, unsigned short port) : EQ2Stream(ip, port) {
 
 }
 
-bool Client::HandlePacket() {
-	return true;
+void Client::Process() {
+	EQ2Packet* p = nullptr;
+	while (p = PopPacket()) {
+		p->HandlePacket(this);
+		delete p;
+		p = nullptr;
+	}
 }

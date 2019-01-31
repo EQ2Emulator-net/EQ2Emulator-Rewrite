@@ -77,3 +77,7 @@ uint32_t EQ2Packet::serialize(unsigned char *dest) const {
 void EQ2Packet::FindOpcode() {
 	OpcodeManager::GetGlobal()->SetOpcodeForPacket(this);
 }
+
+void EQ2Packet::HandlePacket(Client* client) {
+
+}

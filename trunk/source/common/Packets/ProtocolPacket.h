@@ -16,9 +16,12 @@ static const char OP_Ack					= 0x15;
 static const char OP_AppCombined			= 0x19;
 static const char OP_OutOfSession			= 0x1D;
 
+class EQ2Packet;
+
 class ProtocolPacket : public Packet {
 public:
 	ProtocolPacket();
+	ProtocolPacket(const unsigned char* buf, uint32_t len);
 
 	uint16_t GetOpcode() { return opcode; }
 	uint32_t Write(unsigned char*& writeBuffer) override;
@@ -34,6 +37,7 @@ public:
 	static uint32_t Compress(const unsigned char *buffer, const uint32_t length, unsigned char *newbuf, uint32_t newbufsize);
 	static void ChatDecode(unsigned char *buffer, int size, int DecodeKey);
 	static void ChatEncode(unsigned char *buffer, int size, int EncodeKey);
+	EQ2Packet *MakeApplicationPacket(uint8_t opcode_size = 0) const;
 
 protected:
 	uint16_t opcode;

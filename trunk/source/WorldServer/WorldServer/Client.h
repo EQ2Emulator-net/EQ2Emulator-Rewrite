@@ -6,8 +6,9 @@ class Client : public EQ2Stream {
 public:
 	Client(unsigned int ip, unsigned short port);
 
+	void Process();
+
 protected:
-	bool HandlePacket() override;
 
 private:
 
