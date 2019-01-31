@@ -59,7 +59,7 @@ EQ2Stream::~EQ2Stream() {
 	InboundQueueClear();
 }
 
-void EQ2Stream::Process(unsigned char* data, unsigned int length) {
+void EQ2Stream::Process(const unsigned char* data, unsigned int length) {
 	Stream::Process(data, length);
 	// TODO: Validate crc and decompress or decode
 
@@ -609,9 +609,7 @@ bool EQ2Stream::HandleEmbeddedPacket(ProtocolPacket* p, uint16_t offset, uint16_
 	return false;
 }
 
-#include "../WorldServer/Packets/OP_LoginRequestMsg_Packet.h"
 EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size, uint16_t opcode) {
-	EQ2Packet* ret = nullptr;
 	crypto.RC4Decrypt(data, size);
 	uint32_t offset = 0;
 	if (data[0] == 0xFF && size > 2) {
@@ -620,7 +618,7 @@ EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size, u
 	}
 	else {
 		offset = 1;
-		memcpy(&opcode, data, sizeof(uint8_t));
+		opcode = data[0];
 	}
 	
 	if (ClientVersion == 0) {
@@ -646,26 +644,18 @@ EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size, u
 
 			//21 Bytes is the remaining size for the 1208 client, I'm assuming the largest struct before the change
 			uint16_t struct_version = remaining_size > 21 ? 1212 : 1;
-			ret = new OP_LoginRequestMsg_Packet(struct_version);
+
+			//We want to handle this packet now because other packets rely on the version set from it
+			OP_LoginRequestMsg_Packet p(struct_version);
+
+
+			p.Read(data, offset, size);
+			p.HandlePacket(static_cast<Client*>(this));
+			return nullptr;
 		}
 	}
-	else {
-		ret = OpcodeManager::GetGlobal()->GetPacketForVersion(ClientVersion, opcode);
-	}
-	/*
-	if (opcode == OP_Packet) {
-		ret = new OP_Packet_Packet(data + offset, size - offset);
-	}
-	else if (opcode == OP_AppCombined) {
-		ret = new OP_AppCombined_Packet(data + offset, size - offset);
-	}
-	else {
-		DumpBytes(data, size);
-		LogError(LOG_PACKET, 0, "ProcessEncryptedData() couldn't handle the given opcode (%u)", opcode);
-	}
-	*/
 
-	return ret;
+	return OpcodeManager::GetGlobal()->GetPacketForVersion(ClientVersion, opcode);
 }
 
 EQ2Packet* EQ2Stream::ProcessEncryptedPacket(ProtocolPacket *p) {

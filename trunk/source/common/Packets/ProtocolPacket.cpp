@@ -54,8 +54,8 @@ uint32_t ProtocolPacket::Write(unsigned char*& writeBuffer) {
 	return size;
 }
 
-ProtocolPacket* ProtocolPacket::GetProtocolPacket(unsigned char* in_buff, uint32_t len) {
-	ProtocolPacket* ret = nullptr;;
+ProtocolPacket* ProtocolPacket::GetProtocolPacket(const unsigned char* in_buff, uint32_t len) {
+	ProtocolPacket* ret = nullptr;
 	uint16_t opcode = ntohs(*(uint16_t*)in_buff);
 	uint32_t offset = 2;
 
@@ -86,9 +86,6 @@ ProtocolPacket* ProtocolPacket::GetProtocolPacket(unsigned char* in_buff, uint32
 	}
 	default: {
 		LogError(LOG_PACKET, 0, "Unknown protocol packet opcode %u", opcode);
-		if (in_buff)
-			delete[] in_buff;
-
 		break;
 	}
 	}

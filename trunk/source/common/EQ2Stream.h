@@ -37,7 +37,7 @@ public:
 	EQ2Stream(unsigned int ip, unsigned short port);
 	~EQ2Stream();
 
-	void Process(unsigned char* data, unsigned int length) override;
+	void Process(const unsigned char* data, unsigned int length) override;
 
 	void EQ2QueuePacket(EQ2Packet* app, bool attempted_combine = false);
 

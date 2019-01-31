@@ -190,6 +190,7 @@
     <ClCompile Include="..\..\source\common\stdio.cpp" />
     <ClCompile Include="..\..\source\common\Stream.cpp" />
     <ClCompile Include="..\..\source\common\string.cpp" />
+    <ClCompile Include="..\..\source\common\thread.cpp" />
     <ClCompile Include="..\..\source\common\time.cpp" />
     <ClCompile Include="..\..\source\common\timer.cpp" />
     <ClCompile Include="..\..\source\common\util.cpp" />
@@ -236,6 +237,7 @@
     <ClInclude Include="..\..\source\common\stdio.h" />
     <ClInclude Include="..\..\source\common\Stream.h" />
     <ClInclude Include="..\..\source\common\string.h" />
+    <ClInclude Include="..\..\source\common\thread.h" />
     <ClInclude Include="..\..\source\common\time.h" />
     <ClInclude Include="..\..\source\common\timer.h" />
     <ClInclude Include="..\..\source\common\util.h" />

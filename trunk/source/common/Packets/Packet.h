@@ -14,11 +14,10 @@ public:
 			delete elements[i];
 	}
 
-	void Read(unsigned char* in_buf, uint32_t off, uint32_t bufsize) {
-		buffer = in_buf;
+	void Read(const unsigned char* in_buf, uint32_t off, uint32_t bufsize) {
 		offset = off;
 		for (size_t i = 0; i < elements.size(); i++) {
-			if (!elements[i]->ReadElement(buffer, offset, bufsize)) {
+			if (!elements[i]->ReadElement(in_buf, offset, bufsize)) {
 				LogError(LOG_PACKET, 0, "Reading an element went out of bounds");
 				break;
 			}

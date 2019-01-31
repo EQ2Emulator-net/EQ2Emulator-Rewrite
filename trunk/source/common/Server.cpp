@@ -69,7 +69,7 @@ bool Server::Process() {
 	std::map<std::string, Stream*>::iterator stream_itr;
 	int num;
 	int length;
-	unsigned char* buffer = new unsigned char[2048];
+	unsigned char buffer[2048];
 	sockaddr_in from;
 	int socklen = sizeof(sockaddr_in);
 	timeval sleep_time;

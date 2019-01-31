@@ -84,6 +84,9 @@
     <ClCompile Include="..\..\source\common\Packets\EQ2Packets\OpcodeManager.cpp">
       <Filter>common\Packets\EQ2Packets</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\common\thread.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\common\io.h">
@@ -220,6 +223,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\WorldServer\Packets\OP_LoginRequestMsg_Packet.h">
       <Filter>source\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\thread.h">
+      <Filter>common</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

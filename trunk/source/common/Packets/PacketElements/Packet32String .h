@@ -10,7 +10,7 @@ public:
 
 	~Packet32String() = default;
 
-	bool ReadElement(unsigned char* srcbuf, uint32_t& offset, uint32_t bufsize) {
+	bool ReadElement(const unsigned char* srcbuf, uint32_t& offset, uint32_t bufsize) {
 		for (int i = 0; i < count; i++) {
 			//Bounds check
 			if (offset + sizeof(uint32_t) > bufsize) {

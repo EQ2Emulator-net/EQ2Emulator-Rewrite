@@ -18,7 +18,7 @@ Stream::Stream(unsigned int ip, unsigned short port) {
 	SentPackets = 0;
 }
 
-void Stream::Process(unsigned char* buffer, unsigned int length) {
+void Stream::Process(const unsigned char* buffer, unsigned int length) {
 	ReceivedPackets++;
 
 	DumpBytes(buffer, length);

@@ -8,7 +8,7 @@ class Stream {
 public:
 	Stream(unsigned int ip, unsigned short port);
 
-	virtual void Process(unsigned char* data, unsigned int length);
+	virtual void Process(const unsigned char* data, unsigned int length);
 	void SetLastPacketTime(unsigned int time) { LastPacketTime = time; }
 	void SetServer(Server* serv) { server = serv; }
 	uint32_t GetIP() { return RemoteIP; }
