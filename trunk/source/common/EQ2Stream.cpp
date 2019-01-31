@@ -633,12 +633,19 @@ EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size, u
 			uint32_t tmp_offset = offset;
 
 			for (int i = 0; i < 4; i++) {
-				e.ReadElement(data, tmp_offset, size - tmp_offset);
+				e.ReadElement(data, tmp_offset, size);
 			}
 
 			uint32_t remaining_size = size - tmp_offset;
 
-			uint16_t struct_version = remaining_size >= 29 ? 1212 : 1;
+			//Factor out the STATION string16 that gets sent for most client versions except really early ones
+			if (remaining_size >= 9) {
+				//7 char bytes + the 2 byte size
+				remaining_size -= 9;
+			}
+
+			//21 Bytes is the remaining size for the 1208 client, I'm assuming the largest struct before the change
+			uint16_t struct_version = remaining_size > 21 ? 1212 : 1;
 			ret = new OP_LoginRequestMsg_Packet(struct_version);
 		}
 	}
