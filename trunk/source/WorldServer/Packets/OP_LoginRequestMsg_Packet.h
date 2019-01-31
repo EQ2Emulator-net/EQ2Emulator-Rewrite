@@ -8,10 +8,15 @@
 class OP_LoginRequestMsg_Packet : public EQ2Packet {
 public:
 	OP_LoginRequestMsg_Packet(uint16_t version)
-		: EQ2Packet() {
+		: EQ2Packet(version) {
 		RegisterElements();
 
 		opcode = 0;
+
+		Unknown2a[0] = 0;
+		Unknown2a[1] = 0;
+
+		memset(Unknown5, 0, sizeof(Unknown5));
 	}
 
 	/*	
@@ -44,10 +49,13 @@ public:
 	std::string Unknown1;
 	std::string Username;
 	std::string Password;
+	std::string Unknown6;
 	uint8_t Unknown2[8];
+	uint8_t Unknown2a[2];
 	uint16_t Version;
 	uint16_t Unknown3;
 	uint32_t Unknown4;
+	uint8_t Unknown5[7];
 
 	void HandlePacket(Client* client) {
 		client->SetVersion(Version);
@@ -59,12 +67,24 @@ private:
 		Register16String(Unknown1);
 		Register16String(Username);
 		Register16String(Password);
-		uint8_t& ukn2 = Unknown2[0];
-		RegisterUInt8(ukn2)->SetCount(8);
+		uint8_t& Unknown2 = this->Unknown2[0];
+		RegisterUInt8(Unknown2)->SetCount(8);
+
+		if (GetVersion() >= 1212) {
+			uint8_t& Unknown2a = this->Unknown2a[0];
+			RegisterUInt8(Unknown2a)->SetCount(2);
+		}
+
 		RegisterUInt16(Version);
 		RegisterUInt16(Unknown3);
 		RegisterUInt32(Unknown4);
+
+		if (GetVersion() >= 1212) {
+			uint8_t& Unknown5 = this->Unknown5[0];
+			RegisterUInt8(Unknown5)->SetCount(7);
+			Register16String(Unknown6);
+		}
 	}
 };
 
-RegisterEmuOpcode("OP_LoginRequestMsg", OP_LoginRequestMsg_Packet);
+RegisterWorldStruct("OP_LoginRequestMsg", OP_LoginRequestMsg_Packet);

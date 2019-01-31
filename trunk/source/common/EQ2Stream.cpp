@@ -6,6 +6,8 @@
 #include "Server.h"
 #include "timer.h"
 #include "Packets/EQ2Packets/OpcodeManager.h"
+#include "../WorldServer/Packets/OP_LoginRequestMsg_Packet.h"
+#include "../common/Packets/PacketElements/PacketElements.h"
 
 #ifdef _WIN32
 	#include <WinSock2.h>
@@ -26,6 +28,7 @@ EQ2Stream::EQ2Stream(unsigned int ip, unsigned short port) : Stream(ip, port) {
 	Compressed = false;
 	Encoded = false;
 	CombinedAppPacket = nullptr;
+	ClientVersion = 0;
 
 	RateThreshold = RATEBASE / 250;
 	DecayRate = DECAYBASE / 250;
@@ -610,7 +613,7 @@ bool EQ2Stream::HandleEmbeddedPacket(ProtocolPacket* p, uint16_t offset, uint16_
 EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size, uint16_t opcode) {
 	EQ2Packet* ret = nullptr;
 	crypto.RC4Decrypt(data, size);
-	uint8_t offset = 0;
+	uint32_t offset = 0;
 	if (data[0] == 0xFF && size > 2) {
 		offset = 3;
 		memcpy(&opcode, data + sizeof(uint8_t), sizeof(uint16_t));
@@ -622,9 +625,21 @@ EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size, u
 	
 	if (ClientVersion == 0) {
 		if (opcode == 0) {
-			ret = new OP_LoginRequestMsg_Packet(1);
-			ret->Read(data, offset, size - offset);
-			DumpBytes(data + offset, size - offset);
+			//Since this packet is what sets the version and that moves around, we need to try and determine the struct
+			//Find the approximate size of the packet not including strings to take a guess
+			string tmp;
+			Packet16String e(tmp);
+
+			uint32_t tmp_offset = offset;
+
+			for (int i = 0; i < 4; i++) {
+				e.ReadElement(data, tmp_offset, size - tmp_offset);
+			}
+
+			uint32_t remaining_size = size - tmp_offset;
+
+			uint16_t struct_version = remaining_size >= 29 ? 1212 : 1;
+			ret = new OP_LoginRequestMsg_Packet(struct_version);
 		}
 	}
 	else {

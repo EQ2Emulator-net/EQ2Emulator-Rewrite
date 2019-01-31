@@ -27,5 +27,3 @@ void UpdateWindowTitle(const char *title);
 
 int Deflate(unsigned char* in_data, int in_length, unsigned char* out_data, int max_out_length);
 int Inflate(unsigned char* indata, int indatalen, unsigned char* outdata, int outdatalen, bool iQuiet = true);
-
-uint16_t GetOpcodeVersion(uint16_t version);

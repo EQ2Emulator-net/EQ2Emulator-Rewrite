@@ -211,16 +211,3 @@ int Inflate(unsigned char* indata, int indatalen, unsigned char* outdata, int ou
 		return 0;
 	}
 }
-
-uint16_t GetOpcodeVersion(uint16_t version) {
-	uint16_t ret = version;
-	std::map<uint16_t, uint16_t>::iterator itr;
-	for (itr = EQOpcodeVersions.begin(); itr != EQOpcodeVersions.end(); itr++) {
-		if (version >= itr->first && version <= itr->second) {
-			ret = itr->first;
-			break;
-		}
-	}
-
-	return ret;
-}

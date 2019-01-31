@@ -8,8 +8,9 @@
 	#include <arpa/inet.h>
 #endif
 
-EQ2Packet::EQ2Packet() {
+EQ2Packet::EQ2Packet(uint16_t version) {
 	app_opcode_size = 2;
+	Version = version;
 }
 
 uint8_t EQ2Packet::PreparePacket(uint16_t MaxLen) {

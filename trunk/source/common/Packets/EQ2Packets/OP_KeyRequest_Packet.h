@@ -7,7 +7,7 @@
 class OP_KeyRequest_Packet : public EQ2Packet {
 public:
 	OP_KeyRequest_Packet(uint16_t version)
-		: EQ2Packet() {
+		: EQ2Packet(version) {
 		RegisterElements();
 
 		opcode = 2;
@@ -75,4 +75,4 @@ private:
 	}
 };
 
-RegisterEmuOpcode("OP_WSLoginRequestMsg", OP_KeyRequest_Packet);
+RegisterWorldStruct("OP_WSLoginRequestMsg", OP_KeyRequest_Packet);

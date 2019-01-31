@@ -5,6 +5,6 @@ OpcodeManager* OpcodeManager::GetGlobal() {
 	return &Manager;
 }
 
-void OpcodeManager::RegisterEmuOpcodeHelper(const char* name, PacketAllocatorBase* allocator, std::type_index t) {
-	GetGlobal()->RegisterAllocator(name, allocator, t);
+void OpcodeManager::RegisterEmuOpcodeHelper(const char* name, PacketAllocatorBase* allocator, std::type_index t, const char* outfile) {
+	GetGlobal()->RegisterAllocator(name, allocator, t, outfile);
 }

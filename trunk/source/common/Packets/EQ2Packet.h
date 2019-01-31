@@ -11,8 +11,6 @@ class EQ2Packet : public Packet {
 	friend OpcodeManager;
 
 public:
-	EQ2Packet();
-
 	void SetVersion(uint16_t new_version) { Version = new_version; }
 	uint16_t GetVersion() { return Version; }
 	uint16_t GetOpcode() { return opcode; }
@@ -28,6 +26,8 @@ public:
 	bool EQ2Compressed;
 
 protected:
+	EQ2Packet(uint16_t version);;
+
 	uint8_t app_opcode_size;
 	uint16_t opcode;
 

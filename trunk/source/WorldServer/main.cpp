@@ -10,8 +10,6 @@
 
 #include "WorldServer/WorldServer.h"
 
-std::map<uint16_t, uint16_t> EQOpcodeVersions;
-
 int main(int argc, char **argv)
 {
 	bool success = true;
