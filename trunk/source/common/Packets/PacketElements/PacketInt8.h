@@ -1,8 +1,9 @@
 #pragma once
 
 #include "../PacketElement.h"
+#include "PacketArray.h"
 
-class PacketInt8 : public PacketElement {
+class PacketInt8 : public PacketElement, public PacketArraySize {
 public:
 	PacketInt8(int8_t& in_int) : element(&in_int) {
 
@@ -16,6 +17,11 @@ public:
 
 		memcpy(element, srcbuf + offset, count);
 		offset += count;
+
+		//Array size handling
+		if (myArray) {
+			myArray->SetArraySize(element[0]);
+		}
 
 		return true;
 	}

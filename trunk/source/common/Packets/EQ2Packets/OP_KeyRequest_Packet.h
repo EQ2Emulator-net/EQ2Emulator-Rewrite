@@ -72,6 +72,14 @@ private:
 		RegisterUInt32(Blah15);
 		RegisterUInt32(Exponent_len);
 		RegisterUInt8(Exponent);
+
+		struct Derp : public PacketSubstruct {
+
+		};
+
+		std::vector<Derp> test;
+		RegisterArray(test, Derp);
+		
 	}
 };
 

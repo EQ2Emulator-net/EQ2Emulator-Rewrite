@@ -17,9 +17,11 @@ public:
 		for (auto& itr : elements) {
 			if (!itr->ReadElement(srcbuf, offset, bufsize)) {
 				LogError(LOG_PACKET, 0, "Reading an element went out of bounds in packet substruct %s", name ? name : "");
-				break;
+				return false;
 			}
 		}
+
+		return true;
 	}
 
 	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {

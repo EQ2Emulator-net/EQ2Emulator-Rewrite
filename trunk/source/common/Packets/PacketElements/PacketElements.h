@@ -40,4 +40,5 @@
 #define RegisterInt16(e) PushElementForRegistration(new PacketInt16(e), #e) 
 #define RegisterInt32(e) PushElementForRegistration(new PacketInt32(e), #e)  
 #define RegisterInt64(e) PushElementForRegistration(new PacketInt64(e), #e)  
-#define RegisterSubstruct(e) PushElementForRegistration(new PacketSubstructParent(e), #e);
+#define RegisterSubstruct(e) PushElementForRegistration(new PacketSubstructParent(e), #e)
+#define RegisterArray(e, t) PushElementForRegistration(new PacketArray<t>(e), #e)

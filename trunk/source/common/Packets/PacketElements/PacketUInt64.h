@@ -1,8 +1,9 @@
 #pragma once
 
 #include "../PacketElement.h"
+#include "PacketArray.h"
 
-class PacketUInt64 : public PacketElement {
+class PacketUInt64 : public PacketElement, public PacketArraySize {
 public:
 	PacketUInt64(uint64_t& in_int) : element(&in_int) {
 
@@ -17,6 +18,11 @@ public:
 		uint32_t readSize = sizeof(uint64_t) * count;
 		memcpy(element, srcbuf + offset, readSize);
 		offset += readSize;
+
+		//Array size handling
+		if (myArray) {
+			myArray->SetArraySize(static_cast<uint32_t>(element[0]));
+		}
 
 		return true;
 	}

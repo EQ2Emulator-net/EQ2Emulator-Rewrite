@@ -2,7 +2,7 @@
 
 #include "../PacketElement.h"
 
-class PacketUInt16 : public PacketElement {
+class PacketUInt16 : public PacketElement, public PacketArraySize {
 public:
 	PacketUInt16(uint16_t& in_int) : element(&in_int) {
 
@@ -17,6 +17,11 @@ public:
 		uint32_t readSize = sizeof(uint16_t) * count;
 		memcpy(element, srcbuf + offset, readSize);
 		offset += readSize;
+
+		//Array size handling
+		if (myArray) {
+			myArray->SetArraySize(element[0]);
+		}
 		
 		return true;
 	}
