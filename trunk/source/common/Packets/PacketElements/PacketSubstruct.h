@@ -58,8 +58,12 @@ public:
 
 	bool ReadElement(const unsigned char* srcbuf, uint32_t& offset, uint32_t bufsize) override {
 		for (int i = 0; i < count; i++) {
-			substructs[i].ReadElement(srcbuf, offset, bufsize);
+			if (!substructs[i].ReadElement(srcbuf, offset, bufsize)) {
+				return false;
+			}
 		}
+
+		return true;
 	}
 
 	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
