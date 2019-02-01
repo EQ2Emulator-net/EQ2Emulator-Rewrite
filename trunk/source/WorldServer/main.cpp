@@ -9,21 +9,32 @@
 
 
 #include "WorldServer/WorldServer.h"
+#include "Database/WorldDatabase.h"
+
+WorldDatabase database;
 
 int main(int argc, char **argv)
 {
 	bool success = true;
 	bool looping = true; // Need to move this out at some point
-
-
+	WorldServer s;
+	
 	LogStart();
 	LogSetPrefix("EQ2Emu-WorldServer");
-
-	WorldServer s;
-
 	LogInfo(LOG_INIT, 0, "Starting %s v%d.%d %s", EQ2_NAME, EQ2_VERSION_MAJOR, EQ2_VERSION_MINOR, EVE_VERSION_PHASE);
 
-	success = s.Open(9100, false);
+	// TODO: config reader
+
+	if (success)
+		success = database.Start();
+
+	if (success) {
+		LogDebug(LOG_DATABASE, 0, "Loading opcodes...");
+		success = database.LoadOpcodes();
+	}
+
+	if (success)
+		success = s.Open(9100, false);
 
 	while (success && looping) {
 		Timer::SetCurrentTime();
@@ -37,6 +48,10 @@ int main(int argc, char **argv)
 
 		SleepMS(5);
 	}
+
+	LogInfo(LOG_GENERAL, 0, "Shutting down...");
+
+	database.Stop();
 
 	LogStop();
 #if defined(_WIN32)

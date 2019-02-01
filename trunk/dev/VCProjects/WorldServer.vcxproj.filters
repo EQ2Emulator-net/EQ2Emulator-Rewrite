@@ -25,6 +25,9 @@
     <Filter Include="common\Packets\EQ2Packets">
       <UniqueIdentifier>{321acc09-f80c-4634-870f-4c5a780a1aec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\Database">
+      <UniqueIdentifier>{d9d95d31-e18f-475a-bd2d-39a81480554f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\common\io.cpp">
@@ -86,6 +89,15 @@
     </ClCompile>
     <ClCompile Include="..\..\source\common\thread.cpp">
       <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\database.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\database-result.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\WorldServer\Database\WorldDatabase.cpp">
+      <Filter>source\Database</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -226,6 +238,21 @@
     </ClInclude>
     <ClInclude Include="..\..\source\common\thread.h">
       <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\database.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\database-result.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\Database\WorldDatabase.h">
+      <Filter>source\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EQ2Packets\OP_LoginReplyMsg_Packet.h">
+      <Filter>common\Packets\EQ2Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEQ2Color.h">
+      <Filter>common\Packets\PacketElements</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

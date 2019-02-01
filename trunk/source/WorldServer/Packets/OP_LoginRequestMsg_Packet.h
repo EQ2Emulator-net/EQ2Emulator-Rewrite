@@ -59,6 +59,11 @@ public:
 
 	void HandlePacket(Client* client) {
 		client->SetVersion(Version);
+
+		if (Password == "")
+			Password = AccessCode;
+
+		client->LogIn(Username, Password);
 	}
 
 private:

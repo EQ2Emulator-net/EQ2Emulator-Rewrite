@@ -655,7 +655,13 @@ EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size, u
 		}
 	}
 
-	return OpcodeManager::GetGlobal()->GetPacketForVersion(ClientVersion, opcode);
+	EQ2Packet* ret = OpcodeManager::GetGlobal()->GetPacketForVersion(ClientVersion, opcode);
+	if (ret)
+		ret->Read(data, offset, size - offset);
+	else
+		LogDebug(LOG_PACKET, 0, "Unhandled opcode %u", opcode);
+
+	return ret;
 }
 
 EQ2Packet* EQ2Stream::ProcessEncryptedPacket(ProtocolPacket *p) {

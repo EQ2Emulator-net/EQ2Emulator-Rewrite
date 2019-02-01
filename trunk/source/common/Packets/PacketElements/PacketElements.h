@@ -21,6 +21,7 @@
 // Floats
 
 // Color
+#include "PacketEQ2Color.h"
 
 //Register macros, these are intended to be used from RegisterElements()
 #define PushElementForRegistration(e, n) (elements.push_back(e), elements.back()->SetName(n), elements.back())
