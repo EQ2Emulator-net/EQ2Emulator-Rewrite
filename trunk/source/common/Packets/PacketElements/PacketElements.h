@@ -23,6 +23,10 @@
 // Color
 #include "PacketEQ2Color.h"
 
+// Misc
+#include "PacketArray.h"
+#include "PacketSubstruct.h"
+
 //Register macros, these are intended to be used from RegisterElements()
 #define PushElementForRegistration(e, n) (elements.push_back(e), elements.back()->SetName(n), elements.back())
 #define Register8String(e) PushElementForRegistration(new Packet8String(e), #e) 
@@ -36,3 +40,4 @@
 #define RegisterInt16(e) PushElementForRegistration(new PacketInt16(e), #e) 
 #define RegisterInt32(e) PushElementForRegistration(new PacketInt32(e), #e)  
 #define RegisterInt64(e) PushElementForRegistration(new PacketInt64(e), #e)  
+#define RegisterSubstruct(e) PushElementForRegistration(new PacketSubstructParent(e), #e);

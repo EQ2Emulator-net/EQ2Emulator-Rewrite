@@ -13,7 +13,7 @@ public:
 	}
 
 	OP_AppCombined_Packet(const unsigned char* buf, uint32_t len)
-		: ProtocolPacket(buf, len) {
+		: ProtocolPacket() {
 		RegisterElements();
 
 		opcode = OP_AppCombined;

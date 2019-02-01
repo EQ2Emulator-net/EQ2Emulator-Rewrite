@@ -254,5 +254,11 @@
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEQ2Color.h">
       <Filter>common\Packets\PacketElements</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketArray.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketSubstruct.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

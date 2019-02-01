@@ -93,7 +93,7 @@ public:
 		return ret;
 	}
 
-	void SetOpcodeForPacket(EQ2Packet* packet) {
+	bool SetOpcodeForPacket(EQ2Packet* packet) {
 		auto itr = type_map.find(typeid(*packet));
 		assert(("Please register this packet class with an opcode.", itr != type_map.end()));
 
@@ -105,15 +105,16 @@ public:
 				for (auto& op : itr.second) {
 					if (op.second == allocator) {
 						packet->opcode = op.first;
-						return;
+						return true;
 					}
 				}
 				assert(("Could not find an opcode for this packet! Check it out.", false));
-				return;
+				return false;
 			}
 		}
 
 		LogDebug(LOG_PACKET, 0, "Could not find a version range for version %u", packet->GetVersion());
+		return false;
 	}
 };
 

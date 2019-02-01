@@ -218,12 +218,14 @@
     <ClInclude Include="..\..\source\common\Packets\PacketElements\Packet16String.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\Packet32String .h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\Packet8String.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketArray.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketElements.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEQ2Color.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt16.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt32.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt64.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt8.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketSubstruct.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketUInt16.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketUInt32.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketUInt64.h" />

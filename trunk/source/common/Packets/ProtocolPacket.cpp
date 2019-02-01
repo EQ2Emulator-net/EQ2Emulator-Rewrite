@@ -2,6 +2,7 @@
 #include "ProtocolPackets/ProtocolPackets.h"
 #include "../util.h"
 #include "EQ2Packet.h"
+#include "../Crypto.h"
 
 #ifdef _WIN32
 	#include <WinSock2.h>
@@ -13,51 +14,24 @@ ProtocolPacket::ProtocolPacket() {
 	HasCRC = false;
 }
 
-ProtocolPacket::ProtocolPacket(const unsigned char* buf, uint32_t len) {
-	if (len > 0) {
-		Size = len;
-		buffer = new unsigned char[Size];
-		if (buf) {
-			memcpy(buffer, buf, Size);
-		}
-		else {
-			memset(buffer, 0, Size);
-		}
-	}
+uint32_t ProtocolPacket::CalculateSize() {
+	return Packet::CalculateSize() + HasCRC ? 4 : 2;
 }
 
-uint32_t ProtocolPacket::Write(unsigned char*& writeBuffer) {
-	uint32_t size = 0;
-	for (size_t i = 0; i < elements.size(); i++) {
-		size += elements[i]->GetSize();
-	}
-
-	size += 2; // opcode
-	
-	if (HasCRC)
-		size +=2;
-
-	if (buffer)
-		delete[] buffer;
-
-	buffer = new unsigned char[size];
-
+uint32_t ProtocolPacket::Write(unsigned char* writeBuffer) {	
 	uint16_t op = htons(opcode);
-	memcpy(buffer, &op, 2);
-	offset = 2;
-	for (size_t i = 0; i < elements.size(); i++) {
-		elements[i]->WriteElement(buffer, offset);
-	}
-
-	writeBuffer = buffer;
-
-	return size;
+	memcpy(writeBuffer, &op, 2);
+	return 2;
 }
 
-ProtocolPacket* ProtocolPacket::GetProtocolPacket(const unsigned char* in_buff, uint32_t len) {
+ProtocolPacket* ProtocolPacket::GetProtocolPacket(const unsigned char* in_buff, uint32_t len, uint16_t version, Crypto& crypto) {
 	ProtocolPacket* ret = nullptr;
 	uint16_t opcode = ntohs(*(uint16_t*)in_buff);
 	uint32_t offset = 2;
+
+	if (crypto.getRC4Key() == 0 && opcode == OP_Packet && len >= 70) {
+		crypto.ReadRSAKey(in_buff + offset);
+	}
 
 	switch (opcode) {
 	case OP_SessionRequest: {
@@ -77,7 +51,8 @@ ProtocolPacket* ProtocolPacket::GetProtocolPacket(const unsigned char* in_buff, 
 		break;
 	}
 	case OP_Packet: {
-		ret = new OP_Packet_Packet(in_buff + offset, len - offset - 2); // -2 to trim the crc
+		DumpBytes(in_buff + offset, len - offset - 2);
+		ret = new OP_Packet_Packet(in_buff + offset, len - offset - 2, version); // -2 to trim the crc
 		break;
 	}
 	case OP_Ack: {

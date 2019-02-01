@@ -1,6 +1,7 @@
 #include "EQ2Packet.h"
 #include "../util.h"
 #include "../Packets/EQ2Packets/OpcodeManager.h"
+#include <zlib.h>
 
 #ifdef _WIN32
 	#include <WinSock2.h>
@@ -13,72 +14,63 @@ EQ2Packet::EQ2Packet(uint16_t version) {
 	Version = version;
 }
 
-uint8_t EQ2Packet::PreparePacket(uint16_t MaxLen) {
-	FindOpcode();
-
-	// stops a crash for incorrect version
-	/*if (EQOpcodeManager.count(OpcodeVersion) == 0) {
-		LogError(LOG_PACKET, 0, "Version %u is not listed in the opcodes table.", Version);
-		return -1;
-	}*/
-
-	PacketPrepared = true;
-
-	uint16_t login_opcode = 2;// EQOpcodeManager[OpcodeVersion]->EmuToEQ(login_op);
-	uint8_t offset = 0;
-	//one of the int16s is for the seq, other is for the EQ2 opcode and compressed flag (OP_Packet is the header, not the opcode)
-	uint32_t new_size = Size + sizeof(uint16_t) + sizeof(uint8_t);
-	bool oversized = false;
-	if (login_opcode != 2) {
-		new_size += sizeof(uint8_t); //for opcode
-		if (login_opcode >= 255) {
-			new_size += sizeof(uint16_t);
-			oversized = true;
-		}
-		else
-			login_opcode = ntohs(login_opcode);
-	}
-	unsigned char* new_buffer = new unsigned char[new_size];
-	memset(new_buffer, 0, new_size);
-	unsigned char* ptr = new_buffer + sizeof(uint16_t); // sequence is first
-	if (login_opcode != 2) {
-		if (oversized) {
-			ptr += sizeof(uint8_t); //compressed flag
-			uint8_t addon = 0xff;
-			memcpy(ptr, &addon, sizeof(uint8_t));
-			ptr += sizeof(uint8_t);
-		}
-		memcpy(ptr, &login_opcode, sizeof(uint16_t));
-		ptr += sizeof(uint16_t);
-	}
-	else {
-		memcpy(ptr, &login_opcode, sizeof(uint8_t));
-		ptr += sizeof(uint8_t);
-	}
-	memcpy(ptr, buffer, Size);
-	if (buffer)
-		delete[] buffer;
-	buffer = new_buffer;
-	offset = new_size - Size - 1;
-	Size = new_size;
-	return offset;
-}
-
-uint32_t EQ2Packet::serialize(unsigned char *dest) const {
-	if (app_opcode_size == 1)
-		*(unsigned char *)dest = (uint8_t)opcode;
-	else
-		*(uint16_t *)dest = opcode;
-
-	memcpy(dest + app_opcode_size, buffer, Size);
-
-	return Size + app_opcode_size;
-}
-
-void EQ2Packet::FindOpcode() {
-	OpcodeManager::GetGlobal()->SetOpcodeForPacket(this);
+bool EQ2Packet::FindOpcode() {
+	return OpcodeManager::GetGlobal()->SetOpcodeForPacket(this);
 }
 
 void EQ2Packet::HandlePacket(Client* client) {
 
+}
+
+uint8_t EQ2Packet::CompressPacket(z_stream& stream) {
+	unsigned char* pDataPtr = buffer + 3;
+	Bytef deflate_buff[4096];
+	stream.next_in = pDataPtr;
+	stream.avail_in = size - 3;
+
+	int32_t total_bytes_written = 0;
+
+	for (;;) {
+		stream.next_out = deflate_buff;
+		stream.avail_out = sizeof(deflate_buff);
+		if (deflate(&stream, Z_SYNC_FLUSH) != Z_OK) {
+			break;
+		}
+
+		int32_t bytes_written = sizeof(deflate_buff) - stream.avail_out;
+		memcpy(pDataPtr, deflate_buff, bytes_written);
+		pDataPtr += bytes_written;
+		total_bytes_written += bytes_written;
+
+		unsigned int bytes_remaining = 0;
+		if (stream.avail_in == 0 && (deflatePending(&stream, &bytes_remaining, Z_NULL), bytes_remaining == 0)) {
+			break;
+		}
+	}
+
+	//We don't necessarily need to trash the old buffer just truncate the size
+	//remember to add the first 3 bytes we skipped over!
+	size = total_bytes_written + 3;
+	EQ2Compressed = true;
+
+	//start_offset - 1, if this needs to change make sure you know what all is dependent on the return value
+	return 2;
+}
+
+void EQ2Packet::EncryptPacket(Crypto& crypto) {
+	if (size > 2 && crypto.isEncrypted()) {
+		PacketEncrypted = true;
+		crypto.RC4Encrypt(buffer + 2, size - 2);
+
+		if (buffer[2] == 0) {
+			unsigned char* new_buffer = new unsigned char[size + 1];
+			//The first 2 bytes are the sequence which we don't need to set here
+			//memcpy(new_buffer, buffer, 2);
+			new_buffer[2] = 0;
+			memcpy(new_buffer + 3, buffer + 2, size - 2);
+			delete[] buffer;
+			buffer = new_buffer;
+			size += 1;
+		}
+	}
 }

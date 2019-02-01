@@ -14,8 +14,7 @@ public:
 			delete elements[i];
 	}
 
-	void Read(const unsigned char* in_buf, uint32_t off, uint32_t bufsize) {
-		offset = off;
+	void Read(const unsigned char* in_buf, uint32_t offset, uint32_t bufsize) {
 		for (size_t i = 0; i < elements.size(); i++) {
 			if (!elements[i]->ReadElement(in_buf, offset, bufsize)) {
 				LogError(LOG_PACKET, 0, "Reading an element went out of bounds");
@@ -24,35 +23,51 @@ public:
 		}
 	}
 
-	virtual uint32_t Write(unsigned char*& writeBuffer) {
-		uint32_t size = 0;
-		for (size_t i = 0; i < elements.size(); i++) {
-			size += elements[i]->GetSize();
-		}
+	uint32_t Write() {
+		uint32_t size = CalculateSize();
 
-		if (buffer)
+		if (buffer && this->size != size) {
 			delete[] buffer;
+			this->size = size;
+		}
 
 		buffer = new unsigned char[size];
-		offset = 0;
-		for (size_t i = 0; i < elements.size(); i++) {
-			elements[i]->WriteElement(buffer, offset);
+
+		return Write(buffer);
+	}
+
+	virtual uint32_t Write(unsigned char* writeBuffer) {
+		//Should probably do a size check here but we won't ever see this code so do it yourself, YOLO!
+		uint32_t offset = 0;
+		for (auto& e : elements) {
+			e->WriteElement(buffer, offset);
 		}
 
-		writeBuffer = buffer;
+		//offset is effectively the number of bytes written
+		return offset;
+	}
 
-		Size = size;
+	const unsigned char* GetBuffer() {
+		return buffer;
+	}
+
+	uint32_t GetBufferSize() {
 		return size;
 	}
 
-	unsigned char* buffer;
-	uint32_t Size;
-
-protected:
-	Packet() : buffer(nullptr) {
-		offset = 0;
+	virtual uint32_t CalculateSize() {
+		uint32_t ret = 0;
+		for (auto& e : elements) {
+			ret += e->GetSize();
+		}
+		return ret;
 	}
 
-	uint32_t offset;
+protected:
+	Packet() : buffer(nullptr), size(0) {
+	}
 	std::vector<PacketElement*> elements;
+
+	unsigned char* buffer;
+	uint32_t size;
 };
