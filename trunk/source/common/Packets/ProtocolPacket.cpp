@@ -3,6 +3,7 @@
 #include "../util.h"
 #include "EQ2Packet.h"
 #include "../Crypto.h"
+#include "../CRC16.h"
 
 #ifdef _WIN32
 	#include <WinSock2.h>
@@ -72,7 +73,17 @@ ProtocolPacket* ProtocolPacket::GetProtocolPacket(const unsigned char* in_buff, 
 }
 
 // Copy and paste from old code
-uint32_t ProtocolPacket::Compress(const unsigned char *buffer, const uint32_t length, unsigned char *newbuf, uint32_t newbufsize) {
+//EDIT theFoof changed from static function to just use internal buffer
+uint32_t ProtocolPacket::Compress() {
+	unsigned char newbuf[1024];
+	uint32_t newbufsize = sizeof(newbuf);
+	uint32_t length = size;
+
+	//Our buffer has 2 bytes extra on it, we don't want to compress that
+	if (HasCRC) {
+		length -= 2;
+	}
+
 	uint32_t flag_offset = 1, newlength;
 	newbuf[0] = buffer[0];
 	if (buffer[0] == 0) {
@@ -80,7 +91,7 @@ uint32_t ProtocolPacket::Compress(const unsigned char *buffer, const uint32_t le
 		newbuf[1] = buffer[1];
 	}
 	if (length > 30) {
-		newlength = Deflate(const_cast<unsigned char *>(buffer + flag_offset), length - flag_offset, newbuf + flag_offset + 1, newbufsize);
+		newlength = Deflate(buffer + flag_offset, length - flag_offset, newbuf + flag_offset + 1, newbufsize);
 		*(newbuf + flag_offset) = 0x5a;
 		newlength += flag_offset + 1;
 	}
@@ -89,6 +100,19 @@ uint32_t ProtocolPacket::Compress(const unsigned char *buffer, const uint32_t le
 		*(newbuf + flag_offset) = 0xa5;
 		newlength = length + 1;
 	}
+
+	//Add our 2 crc bytes back in
+	if (HasCRC) {
+		newlength += 2;
+	}
+
+	if (size < newlength) {
+		delete[] buffer;
+		buffer = new unsigned char[newlength];
+	}
+
+	memcpy(buffer, newbuf, newlength);
+	size = newlength;
 
 	return newlength;
 }
@@ -115,7 +139,14 @@ void ProtocolPacket::ChatDecode(unsigned char *buffer, int size, int DecodeKey) 
 	}
 }
 
-void ProtocolPacket::ChatEncode(unsigned char *buffer, int size, int EncodeKey) {
+void ProtocolPacket::ChatEncode(int32_t EncodeKey) {
+	int32_t size = this->size;
+
+	//We don't want to include our crc
+	if (HasCRC) {
+		size -= 2;
+	}
+
 	if (buffer[1] != 0x01 && buffer[0] != 0x02 && buffer[0] != 0x1d) {
 		int Key = EncodeKey;
 		char *test = (char*)malloc(size);
@@ -188,4 +219,16 @@ EQ2Packet* ProtocolPacket::MakeApplicationPacket(uint8_t opcode_size) const {
 
 	res->copyInfo(this);*/
 	return ret;
+}
+
+void ProtocolPacket::WriteCRC(uint32_t Key) {
+	if (!HasCRC) {
+		return;
+	}
+
+	uint32_t dataLength = size - 2;
+
+	uint16_t crc = static_cast<uint16_t>(CRC16(buffer, dataLength, Key));
+	crc = htons(crc);
+	memcpy(buffer + dataLength, &crc, 2);
 }

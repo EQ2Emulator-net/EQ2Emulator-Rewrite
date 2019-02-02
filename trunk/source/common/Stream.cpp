@@ -24,7 +24,7 @@ void Stream::Process(const unsigned char* buffer, unsigned int length) {
 	DumpBytes(buffer, length);
 }
 
-void Stream::WritePacket(int socket, unsigned char* buffer, int length) {
+void Stream::WritePacket(int socket, const unsigned char* buffer, int length) {
 	sockaddr_in address;
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = RemoteIP;

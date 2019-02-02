@@ -199,26 +199,24 @@ bool EQ2Stream::ValidateCRC(unsigned char* buffer, uint16_t length, uint32_t key
 }
 
 void EQ2Stream::WritePacket(ProtocolPacket* p) {
-	unsigned char* buffer = nullptr;
-	unsigned char tmpbuffer[1024];
-	uint32_t size = p->Write(buffer);
+	p->Packet::Write();
 	if (p->GetOpcode() != OP_SessionRequest && p->GetOpcode() != OP_SessionResponse) {
 		if (Compressed) {
-			uint32_t newlen = ProtocolPacket::Compress(buffer, size, tmpbuffer, 1024);
-			memcpy(buffer, tmpbuffer, newlen);
-			size = newlen + 2; // +2 for the crc
+			p->Compress();
 		}
 
 		if (Encoded) {
-			ProtocolPacket::ChatEncode(buffer, size - 2, Key); // -2 to remove the crc
+			p->ChatEncode(Key);
 		}
 
-		*(uint16_t*)(buffer + (size - 2)) = htons((uint16_t)CRC16(buffer, size - 2, Key));
+		p->WriteCRC(Key);
 	}
 
 	// The dump is for debugging, remove when this all works
-	DumpBytes(buffer, size);
-	Stream::WritePacket(server->GetSocket(), buffer, size);
+	const unsigned char* buf = p->GetBuffer();
+	uint32_t bufSize = p->GetBufferSize();
+	DumpBytes(buf, bufSize);
+	Stream::WritePacket(server->GetSocket(), buf, bufSize);
 }
 
 // Copy & paste from old code

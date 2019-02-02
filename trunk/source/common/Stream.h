@@ -15,7 +15,7 @@ public:
 	uint16_t GetPort() { return RemotePort; }
 
 protected:
-	void WritePacket(int socket, unsigned char* buffer, int length);
+	void WritePacket(int socket, const unsigned char* buffer, int length);
 
 
 	uint32_t LastPacketTime;

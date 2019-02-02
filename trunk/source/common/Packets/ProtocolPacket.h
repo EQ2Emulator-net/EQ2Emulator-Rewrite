@@ -33,10 +33,11 @@ public:
 	void DecryptPacket(Crypto& p, uint16_t offset, uint16_t length) { p.RC4Decrypt(buffer + offset, length); }
 
 	static ProtocolPacket* GetProtocolPacket(const unsigned char* in_buff, uint32_t len, uint16_t version, Crypto& crypto);
-	static uint32_t Compress(const unsigned char *buffer, const uint32_t length, unsigned char *newbuf, uint32_t newbufsize);
+	uint32_t Compress();
 	static void ChatDecode(unsigned char *buffer, int size, int DecodeKey);
-	static void ChatEncode(unsigned char *buffer, int size, int EncodeKey);
+	void ChatEncode(int32_t EncodeKey);
 	EQ2Packet *MakeApplicationPacket(uint8_t opcode_size = 0) const;
+	void WriteCRC(uint32_t Key);
 
 	uint32_t CalculateSize() override;
 
