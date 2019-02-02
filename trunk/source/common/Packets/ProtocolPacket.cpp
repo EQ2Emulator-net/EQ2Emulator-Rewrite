@@ -21,9 +21,7 @@ uint32_t ProtocolPacket::CalculateSize() {
 
 uint32_t ProtocolPacket::Write(unsigned char* writeBuffer) {	
 	uint32_t offset = WriteOpcode(writeBuffer);
-	DumpBytes(writeBuffer, offset);
 	offset += Packet::Write(writeBuffer + offset);
-	DumpBytes(writeBuffer, offset);
 	return offset;
 }
 
