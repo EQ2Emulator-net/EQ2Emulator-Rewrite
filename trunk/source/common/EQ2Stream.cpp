@@ -65,11 +65,78 @@ EQ2Stream::~EQ2Stream() {
 	InboundQueueClear();
 }
 
+ProtocolPacket* EQ2Stream::CreateProtocolPacket(const unsigned char* in_buff, uint32_t len) {
+	ProtocolPacket* ret = nullptr;
+	uint16_t opcode = ntohs(*(uint16_t*)in_buff);
+	uint32_t offset = 2;
+
+	if (crypto.getRC4Key() == 0 && opcode == OP_Packet && len >= 70) {
+		crypto.ReadRSAKey(in_buff + offset);
+	}
+
+	switch (opcode) {
+	case OP_SessionRequest: {
+		ret = new OP_SessionRequest_Packet();
+		break;
+	}
+	case OP_SessionDisconnect: {
+		ret = new OP_SessionDisconnect_Packet();
+		break;
+	}
+	case OP_KeepAlive: {
+		ret = new OP_KeepAlive_Packet();
+		break;
+	}
+	case OP_ClientSessionUpdate: {
+		ret = new OP_ClientSessionUpdate_Packet();
+		break;
+	}
+	case OP_Packet: {
+		uint16_t sequence;
+		memcpy(&sequence, in_buff + offset, 2);
+		sequence = ntohs(sequence);
+
+		int8_t check = CompareSequence(NextInSeq, sequence);
+		LogDebug(LOG_PACKET, 0, "seq = %u, NextInSeq = %u, check = %i", sequence, NextInSeq, check);
+		if (check > 0) {
+			// Future
+			LogDebug(LOG_PACKET, 0, "Future packet");
+			break;
+		}
+		else if (check < 0) {
+			// Past
+			LogDebug(LOG_PACKET, 0, "Past packet");
+			break;
+		}
+
+		SetNextAckToSend(sequence);
+		NextInSeq++;
+		DumpBytes(in_buff + offset, len - offset - 2);
+
+		ret = new OP_Packet_Packet(in_buff + offset, len - offset - 2, ClientVersion, crypto); // -2 to trim the crc
+		break;
+	}
+	case OP_Ack: {
+		ret = new OP_Ack_Packet();
+		break;
+	}
+	default: {
+		LogError(LOG_PACKET, 0, "Unknown protocol packet opcode %u", opcode);
+		break;
+	}
+	}
+
+	if (ret && opcode != OP_Packet)
+		ret->Read(in_buff, offset, len);
+
+	return ret;
+}
+
 void EQ2Stream::Process(const unsigned char* data, unsigned int length) {
 	Stream::Process(data, length);
 	// TODO: Validate crc and decompress or decode
 
-	ProtocolPacket* p = ProtocolPacket::GetProtocolPacket(data, length, ClientVersion, crypto);
+	ProtocolPacket* p = CreateProtocolPacket(data, length);
 
 	if (p) {
 		ProcessPacket(p);
@@ -115,33 +182,44 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 	case OP_Packet: {
 		LogDebug(LOG_PACKET, 0, "OP_Packet_Packet Dump");
 		OP_Packet_Packet* pp = (OP_Packet_Packet*)p;
-		//DumpBytes(pp->GetBuffer(), pp->GetBufferSize());
-		uint16_t seq = pp->GetSequence();
-		int8_t check = CompareSequence(NextInSeq, seq);
+#ifdef DEBUG
+		pp->DumpPacket();
+#endif
+		//uint16_t seq = pp->GetSequence();
+		//int8_t check = CompareSequence(NextInSeq, seq);
 
-		LogDebug(LOG_PACKET, 0, "seq = %u, NextInSeq = %u, check = %i", seq, NextInSeq, check);
-		if (check > 0) {
-			// Future
-			LogDebug(LOG_PACKET, 0, "Future packet");
-		}
-		else if (check < 0) {
-			// Past
-			LogDebug(LOG_PACKET, 0, "Past packet");
-		}
-		else {
-			SetNextAckToSend(seq);
-			NextInSeq++;
+		//LogDebug(LOG_PACKET, 0, "seq = %u, NextInSeq = %u, check = %i", seq, NextInSeq, check);
+		//if (check > 0) {
+		//	// Future
+		//	LogDebug(LOG_PACKET, 0, "Future packet");
+		//}
+		//else if (check < 0) {
+		//	// Past
+		//	LogDebug(LOG_PACKET, 0, "Past packet");
+		//}
+		//else {
+			//SetNextAckToSend(seq);
+			//NextInSeq++;
 
-			if (HandleEmbeddedPacket(pp))
-				break;
-			
-			if (crypto.isEncrypted() && pp) {
-				EQ2Packet* newpacket = ProcessEncryptedPacket(p);
-				if (newpacket) {
-					InboundQueuePush(newpacket);
+			if (pp->combined_p) {
+				while (EQ2Packet* p = pp->combined_p->PopPacket()) {
+					InboundQueuePush(p);
 				}
 			}
-		}
+			else if (pp->p) {
+				InboundQueuePush(pp->p);
+			}
+
+			//if (HandleEmbeddedPacket(pp))
+				//break;
+			
+			//if (crypto.isEncrypted() && pp) {
+			//	EQ2Packet* newpacket = ProcessEncryptedPacket(p);
+			//	if (newpacket) {
+			//		InboundQueuePush(newpacket);
+			//	}
+			//}
+		//}
 		break;
 	}
 	case OP_Ack: {
@@ -490,48 +568,48 @@ void EQ2Stream::SetNextAckToSend(uint32_t seq) {
 	//MAcks.unlock();
 }
 
-bool EQ2Stream::HandleEmbeddedPacket(ProtocolPacket* p, uint16_t offset, uint16_t length) {
-	if (p && p->GetBufferSize() >= ((uint32_t)(offset + 2))) {
-		const unsigned char* buf = p->GetBuffer();
-		if (buf[offset] == 0 && buf[offset + 1] == 0x19) {
-			if (length == 0)
-				length = p->GetBufferSize() - 2 - offset;
-			else
-				length -= 2;
-#ifdef LE_DEBUG
-			LogWrite(PACKET__DEBUG, 0, "Packet", "Creating OP_AppCombined Packet!");
-#endif
-			ProtocolPacket* subp = new OP_AppCombined_Packet(buf + 2 + offset, length);
-			LogDebug(LOG_PACKET, 0, "OP_AppCombine_Packet");
-			//DumpBytes(subp->GetBuffer(), subp->Size);
-			//subp->copyInfo(p);
-			ProcessPacket(subp);
-			delete subp;
-			return true;
-		}
-		else if (buf[offset] == 0 && buf[offset + 1] == 0) {
-			if (length == 0)
-				length = p->GetBufferSize() - 1 - offset;
-			else
-				length--;
-#ifdef LE_DEBUG
-			LogWrite(PACKET__DEBUG, 0, "Packet", "Creating Opcode 0 Packet!");
-			DumpPacket(p->pBuffer + 1 + offset, length);
-#endif
-			p->DecryptPacket(crypto, 1 + offset, length);
-			EQ2Packet* newpacket = ProcessEncryptedData(buf + 1 + offset, length, OP_Packet);
-			if (newpacket) {
-				LogInfo(LOG_PACKET, 0, "Decrypted packet");
-				DumpBytes(newpacket->GetBuffer(), newpacket->GetBufferSize());
-				InboundQueuePush(newpacket);
-			}
-			else
-				LogError(LOG_PACKET, 0, "No Packet!");
-			return true;
-		}
-	}
-	return false;
-}
+//bool EQ2Stream::HandleEmbeddedPacket(ProtocolPacket* p, uint16_t offset, uint16_t length) {
+//	if (p && p->GetBufferSize() >= ((uint32_t)(offset + 2))) {
+//		const unsigned char* buf = p->GetBuffer();
+//		if (buf[offset] == 0 && buf[offset + 1] == 0x19) {
+//			if (length == 0)
+//				length = p->GetBufferSize() - 2 - offset;
+//			else
+//				length -= 2;
+//#ifdef LE_DEBUG
+//			LogWrite(PACKET__DEBUG, 0, "Packet", "Creating OP_AppCombined Packet!");
+//#endif
+//			ProtocolPacket* subp = new OP_AppCombined_Packet(buf + 2 + offset, length);
+//			LogDebug(LOG_PACKET, 0, "OP_AppCombine_Packet");
+//			//DumpBytes(subp->GetBuffer(), subp->Size);
+//			//subp->copyInfo(p);
+//			ProcessPacket(subp);
+//			delete subp;
+//			return true;
+//		}
+//		else if (buf[offset] == 0 && buf[offset + 1] == 0) {
+//			if (length == 0)
+//				length = p->GetBufferSize() - 1 - offset;
+//			else
+//				length--;
+//#ifdef LE_DEBUG
+//			LogWrite(PACKET__DEBUG, 0, "Packet", "Creating Opcode 0 Packet!");
+//			DumpPacket(p->pBuffer + 1 + offset, length);
+//#endif
+//			p->DecryptPacket(crypto, 1 + offset, length);
+//			EQ2Packet* newpacket = ProcessEncryptedData(buf + 1 + offset, length, OP_Packet);
+//			if (newpacket) {
+//				LogInfo(LOG_PACKET, 0, "Decrypted packet");
+//				DumpBytes(newpacket->GetBuffer(), newpacket->GetBufferSize());
+//				InboundQueuePush(newpacket);
+//			}
+//			else
+//				LogError(LOG_PACKET, 0, "No Packet!");
+//			return true;
+//		}
+//	}
+//	return false;
+//}
 
 EQ2Packet* EQ2Stream::ProcessEncryptedData(const unsigned char* data, uint32_t size, uint16_t opcode) {
 	uint32_t offset = 0;

@@ -4,6 +4,8 @@
 #include "../PacketElements/PacketElements.h"
 #include "../EQ2Packet.h"
 #include "../EQ2Packets/OpcodeManager.h"
+#include "OP_AppCombined_Packet.h"
+#include "../../Crypto.h"
 
 #ifdef _WIN32
 	#include <WinSock2.h>
@@ -19,9 +21,10 @@ public:
 		opcode = OP_Packet;
 		HasCRC = true;
 		p = nullptr;
+		combined_p = nullptr;
 	}
 
-	OP_Packet_Packet(const unsigned char* buf, uint32_t len, uint16_t version)
+	OP_Packet_Packet(const unsigned char* buf, uint32_t len, uint16_t version, Crypto& crypto)
 		: ProtocolPacket() {
 
 		opcode = OP_Packet;
@@ -32,21 +35,17 @@ public:
 		sequence = ntohs(sequence);
 		uint32_t offset = 2;
 
-		//Make an EQ2Packet here?
-		uint16_t dataOp = buf[offset];
-		if (dataOp == 255) {
-			offset += 1;
-			//oversized
-			memcpy(&dataOp, buf + offset, 2);
+		//Check if this packet is combined
+		if (buf[offset] == 0x00 && buf[offset + 1] == 0x19) {
 			offset += 2;
+			//This packet is combined! Create it
+			combined_p = new OP_AppCombined_Packet(buf + offset, len - offset, crypto);
+			return;
 		}
-		
+
+		//This packet is not combined, try to read it
 		if (version != 0) {
-			//Handle crypto from here?
-			p = nullptr;
-			//p = OpcodeManager::GetGlobal()->GetPacketForVersion(version, dataOp);
-			//p->SetOpcode(dataOp);
-			//p->Read(buf, offset, len);
+			p = EQ2Packet::Create(buf + offset, len - offset, crypto, version);
 		}
 	}
 
@@ -55,11 +54,15 @@ public:
 		opcode = OP_Packet;
 		HasCRC = true;
 		p = packet;
+		combined_p = nullptr;
 	}
 
 	~OP_Packet_Packet() {
 		if (p) {
 			delete p;
+		}
+		if (combined_p) {
+			delete combined_p;
 		}
 	}
 
@@ -91,6 +94,6 @@ public:
 		return ret;
 	}
 
-private:
 	EQ2Packet* p;
+	OP_AppCombined_Packet* combined_p;
 };

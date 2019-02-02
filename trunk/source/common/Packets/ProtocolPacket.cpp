@@ -31,53 +31,6 @@ uint32_t ProtocolPacket::WriteOpcode(unsigned char* writeBuffer) {
 	return 2;
 }
 
-ProtocolPacket* ProtocolPacket::GetProtocolPacket(const unsigned char* in_buff, uint32_t len, uint16_t version, Crypto& crypto) {
-	ProtocolPacket* ret = nullptr;
-	uint16_t opcode = ntohs(*(uint16_t*)in_buff);
-	uint32_t offset = 2;
-
-	if (crypto.getRC4Key() == 0 && opcode == OP_Packet && len >= 70) {
-		crypto.ReadRSAKey(in_buff + offset);
-	}
-
-	switch (opcode) {
-	case OP_SessionRequest: {
-		ret = new OP_SessionRequest_Packet();
-		break;
-	}
-	case OP_SessionDisconnect: {
-		ret = new OP_SessionDisconnect_Packet();
-		break;
-	}
-	case OP_KeepAlive: {
-		ret = new OP_KeepAlive_Packet();
-		break;
-	}
-	case OP_ClientSessionUpdate: {
-		ret = new OP_ClientSessionUpdate_Packet();
-		break;
-	}
-	case OP_Packet: {
-		DumpBytes(in_buff + offset, len - offset - 2);
-		ret = new OP_Packet_Packet(in_buff + offset, len - offset - 2, version); // -2 to trim the crc
-		break;
-	}
-	case OP_Ack: {
-		ret = new OP_Ack_Packet();
-		break;
-	}
-	default: {
-		LogError(LOG_PACKET, 0, "Unknown protocol packet opcode %u", opcode);
-		break;
-	}
-	}
-
-	if (ret && opcode != OP_Packet)
-		ret->Read(in_buff, offset, len);
-
-	return ret;
-}
-
 // Copy and paste from old code
 //EDIT theFoof changed from static function to just use internal buffer
 uint32_t ProtocolPacket::Compress() {

@@ -54,6 +54,8 @@ public:
 	void SetVersion(uint16_t version) { ClientVersion = version; }
 	uint16_t GetVersion() { return ClientVersion; }
 
+	ProtocolPacket* CreateProtocolPacket(const unsigned char* in_buff, uint32_t len);
+
 	std::deque<EQ2Packet*> combine_queue; // public in old code?
 
 protected:

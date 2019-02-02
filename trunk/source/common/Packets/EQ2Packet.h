@@ -13,6 +13,7 @@ class EQ2Packet : public Packet {
 	friend OpcodeManager;
 
 public:
+	~EQ2Packet();
 	void SetVersion(uint16_t new_version) { Version = new_version; }
 	uint16_t GetVersion() { return Version; }
 	uint16_t GetOpcode() { return opcode; }
@@ -43,13 +44,24 @@ public:
 		return Packet::Write(buf + offset) + offset;
 	}
 
+	static EQ2Packet* Create(const unsigned char* buf, uint32_t length, Crypto& crypto, uint16_t version);
+
 	uint32_t CalculateSize() override {
 		return Packet::CalculateSize() + (opcode >= 255 ? 3 : 1);
 	}
 
+	void DumpBytes();
+
 	bool PacketPrepared;
 	bool PacketEncrypted;
 	bool EQ2Compressed;
+
+	//This is to save/dump the bytes of incoming packets
+#ifdef DEBUG
+	void DumpPacket();
+	unsigned char* packet_buf;
+	uint32_t packet_size;
+#endif
 
 protected:
 	EQ2Packet(uint16_t version);

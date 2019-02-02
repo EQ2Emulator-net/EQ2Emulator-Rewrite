@@ -2,6 +2,7 @@
 #include "../util.h"
 #include "../Packets/EQ2Packets/OpcodeManager.h"
 #include <zlib.h>
+#include "../util.h"
 
 #ifdef _WIN32
 	#include <WinSock2.h>
@@ -12,6 +13,19 @@
 EQ2Packet::EQ2Packet(uint16_t version) {
 	app_opcode_size = 2;
 	Version = version;
+
+#ifdef DEBUG
+	packet_buf = nullptr;
+	packet_size = 0;
+#endif
+}
+
+EQ2Packet::~EQ2Packet() {
+#ifdef DEBUG
+	if (packet_buf) {
+		delete[] packet_buf;
+	}
+#endif
 }
 
 bool EQ2Packet::FindOpcode() {
@@ -74,3 +88,57 @@ void EQ2Packet::EncryptPacket(Crypto& crypto) {
 		}
 	}
 }
+
+EQ2Packet* EQ2Packet::Create(const unsigned char* buf, uint32_t length, Crypto& crypto, uint16_t version) {
+	uint32_t offset = 1;
+	if (buf[0] == 0 && buf[1] == 0) {
+		//Zero opcode packet
+		length -= 1;
+		offset += 1;
+	}
+
+	if (crypto.isEncrypted()) {
+		crypto.RSADecrypt(buf, length);
+	}
+
+	uint16_t dataOp = buf[0];
+	if (dataOp == 255) {
+		//oversized
+		memcpy(&dataOp, buf + 1, 2);
+		offset += 2;
+	}
+
+	EQ2Packet* p = OpcodeManager::GetGlobal()->GetPacketForVersion(version, dataOp);
+	if (p) {
+		p->Read(buf + offset, 0, length);
+
+#ifdef DEBUG
+		unsigned char* cpy = new unsigned char[length];
+		memcpy(cpy, buf + offset, length);
+		p->packet_buf = cpy;
+		p->packet_size = length;
+#endif
+	}
+
+	return p;
+}
+
+void EQ2Packet::DumpBytes() {
+	//add 4 bytes for protocol op and sequence just to keep it looking consistent
+	uint32_t outsize = CalculateSize() + 4;
+
+	unsigned char* tmp = new unsigned char[outsize];
+	memset(tmp, 0, 4);
+	tmp[1] = 0x09;
+	Write(tmp + 4);
+	::DumpBytes(tmp, outsize);
+	delete[] tmp;
+}
+
+#ifdef DEBUG
+void EQ2Packet::DumpPacket() {
+	if (packet_buf) {
+		::DumpBytes(packet_buf, packet_size);
+	}
+}
+#endif

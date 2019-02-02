@@ -33,7 +33,6 @@ public:
 	//bool Combine(const ProtocolPacket *rhs);
 	void DecryptPacket(Crypto& p, uint16_t offset, uint16_t length) { p.RC4Decrypt(buffer + offset, length); }
 
-	static ProtocolPacket* GetProtocolPacket(const unsigned char* in_buff, uint32_t len, uint16_t version, Crypto& crypto);
 	uint32_t Compress();
 	static void ChatDecode(unsigned char *buffer, int size, int DecodeKey);
 	void ChatEncode(int32_t EncodeKey);
