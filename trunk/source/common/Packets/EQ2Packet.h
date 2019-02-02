@@ -44,7 +44,7 @@ public:
 	}
 
 	uint32_t CalculateSize() override {
-		return Packet::CalculateSize() + opcode >= 255 ? 3 : 1;
+		return Packet::CalculateSize() + (opcode >= 255 ? 3 : 1);
 	}
 
 	bool PacketPrepared;

@@ -23,6 +23,7 @@ class ProtocolPacket : public Packet {
 public:
 	uint16_t GetOpcode() { return opcode; }
 	uint32_t Write(unsigned char* writeBuffer) override;
+	uint32_t WriteOpcode(unsigned char* writeBuffer);
 	uint16_t GetSequence() { return sequence; }
 	void SetSequence(uint16_t seq) { sequence = seq; }
 	uint16_t GetVersion() { return version; }

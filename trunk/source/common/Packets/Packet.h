@@ -3,6 +3,7 @@
 #include "PacketElement.h"
 #include <vector>
 #include "../log.h"
+#include "../util.h"
 
 class Packet {
 public:
@@ -47,7 +48,7 @@ public:
 		//Should probably do a size check here but we won't ever see this code so do it yourself, YOLO!
 		uint32_t offset = 0;
 		for (auto& e : elements) {
-			e->WriteElement(buffer, offset);
+			e->WriteElement(writeBuffer, offset);
 		}
 
 		//offset is effectively the number of bytes written

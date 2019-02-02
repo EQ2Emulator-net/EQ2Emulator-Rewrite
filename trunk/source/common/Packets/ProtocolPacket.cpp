@@ -16,10 +16,18 @@ ProtocolPacket::ProtocolPacket() {
 }
 
 uint32_t ProtocolPacket::CalculateSize() {
-	return Packet::CalculateSize() + HasCRC ? 4 : 2;
+	return Packet::CalculateSize() + (HasCRC ? 4 : 2);
 }
 
 uint32_t ProtocolPacket::Write(unsigned char* writeBuffer) {	
+	uint32_t offset = WriteOpcode(writeBuffer);
+	DumpBytes(writeBuffer, offset);
+	offset += Packet::Write(writeBuffer + offset);
+	DumpBytes(writeBuffer, offset);
+	return offset;
+}
+
+uint32_t ProtocolPacket::WriteOpcode(unsigned char* writeBuffer) {
 	uint16_t op = htons(opcode);
 	memcpy(writeBuffer, &op, 2);
 	return 2;

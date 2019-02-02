@@ -425,6 +425,7 @@ void EQ2Stream::Write() {
 
 	while (SeqReadyToSend.size()) {
 		WritePacket(SeqReadyToSend.front());
+		delete SeqReadyToSend.front();
 		SeqReadyToSend.pop_front();
 	}
 }
@@ -637,7 +638,7 @@ void EQ2Stream::SendAck(uint16_t seq) {
 }
 
 void EQ2Stream::SendSessionResponse() {
-	OP_SessionResponse_Packet* Response = new OP_SessionResponse_Packet();;
+	OP_SessionResponse_Packet* Response = new OP_SessionResponse_Packet();
 	Response->Session = htonl(Session);
 	Response->MaxLength = htonl(MaxLength);
 	Response->UnknownA = 2;
@@ -689,7 +690,6 @@ void EQ2Stream::SendServerSessionUpdate(uint16_t requestID) {
 #include "Packets/EQ2Packets/OP_KeyRequest_Packet.h"
 void EQ2Stream::SendKeyRequest() {
 	OP_KeyRequest_Packet* req = new OP_KeyRequest_Packet(ClientVersion);
-	unsigned char* buf = nullptr;
-	req->Write(buf);
+	req->Packet::Write();
 	EQ2QueuePacket(req, true);
 }

@@ -64,10 +64,14 @@ public:
 	}
 
 	uint32_t Write(unsigned char* writeBuffer) override {
-		uint32_t offset = ProtocolPacket::Write(writeBuffer);
+		uint32_t offset = WriteOpcode(writeBuffer);
 		memcpy(writeBuffer + offset, &sequence, 2);
 		offset += 2;
-		return offset + p->Write(writeBuffer + offset);
+
+		if (p) {
+			offset += p->Write(writeBuffer + offset);
+		}
+		return offset;
 	}
 
 	uint32_t Write(EQ2Packet* packet) {
@@ -80,7 +84,11 @@ public:
 
 	uint32_t CalculateSize() override {
 		//Add 2 bytes for the sequence
-		return ProtocolPacket::CalculateSize() + p->CalculateSize() + 2;
+		uint32_t ret = ProtocolPacket::CalculateSize() + 2;
+		if (p) {
+			ret += p->CalculateSize();
+		}
+		return ret;
 	}
 
 private:
