@@ -5,7 +5,7 @@
 #include <type_traits>
 #include <vector>
 
-class PacketArrayBase {
+class PacketArrayBase : public PacketElement {
 protected:
 	PacketArrayBase() = default;
 	virtual ~PacketArrayBase() = default;
@@ -14,6 +14,8 @@ public:
 	virtual void SetArraySize(uint32_t size) = 0;
 };
 
+//Just a note to self for xml structs
+//You can use dynamic_cast<PacketArraySize*>(this) in a PacketElement function to check if we derive from this class
 class PacketArraySize {
 protected:
 	PacketArrayBase* myArray;
@@ -29,7 +31,7 @@ public:
 
 //This element should link to a vector (or vectors) of an object derived from PacketSubstruct
 template <typename T>
-class PacketArray : public PacketElement, public PacketArrayBase {
+class PacketArray : public PacketArrayBase {
 	static_assert(std::is_base_of<PacketSubstruct, T>::value, "PacketArray must use a class derived from PacketSubtruct for its template!");
 
 public:

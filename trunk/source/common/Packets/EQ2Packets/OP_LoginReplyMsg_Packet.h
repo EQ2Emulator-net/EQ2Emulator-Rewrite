@@ -96,12 +96,8 @@ private:
 		RegisterUInt8(Unknown8)->SetCount(3);					//<Data ElementName = "unknown8" Type = "int8" Size = "3" / > < !--possibly related to rave_unknown but can't confirm-->
 		RegisterUInt8(Unknown9);
 		RegisterUInt8(Unknown10);
-		PacketElement* e = RegisterUInt8(NumClassItems);
-		static_cast<PacketUInt8*>(e)->SetMyArray(dynamic_cast<PacketArrayBase*>(RegisterArray(ClassItems, ClassItem)));
-
-		PacketElement* e2 = RegisterUInt8(UnknownArraySize);
-		static_cast<PacketUInt8*>(e2)->SetMyArray(dynamic_cast<PacketArrayBase*>(RegisterArray(UnknownArray2, UnknownArray)));
-
+		RegisterUInt8(NumClassItems)->SetMyArray(RegisterArray(ClassItems, ClassItem));
+		RegisterUInt8(UnknownArraySize)->SetMyArray(RegisterArray(UnknownArray2, UnknownArray));
 		RegisterUInt32(Unknown11);
 		RegisterUInt32(SubscriptionLevel);
 		RegisterUInt32(RaceFlag);
