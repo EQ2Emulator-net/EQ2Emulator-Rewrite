@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../EQ2Packet.h"
+#include "../PacketElements/PacketElements.h"
 #include "OpcodeManager.h"
 
 class OP_LoginReplyMsg_Packet : public EQ2Packet {
@@ -11,9 +12,102 @@ public:
 
 	}
 
+	uint8_t Response;
+	std::string Unknown;
+	uint8_t ParentalControlFlag;
+	uint32_t ParentalControlTimer;
+	uint8_t Unknown2;					//<Data ElementName = "unknown2" Type = "int8" Size = "8" / >
+	uint32_t AccountID;
+	std::string Unknown3;
+	uint8_t ResetAppearance;
+	uint8_t DoNotForceSoga;
+	uint8_t Unknown4;
+	uint16_t Unknown5;
+	uint8_t Unknown6;					//<Data ElementName = "unknown6" Type = "int8" Size = "5" / >
+	uint32_t Unknown7;
+	uint8_t RaceUnknown;
+	uint8_t Unknown8;					//<Data ElementName = "unknown8" Type = "int8" Size = "3" / > < !--possibly related to rave_unknown but can't confirm-->
+	uint8_t Unknown9;
+	uint8_t Unknown10;
+	uint8_t NumClassItems;				//<Data ElementName = "num_class_items" Type = "int8" IfVariableSet = "unknown10" Size = "1" / >
+	struct ClassItem : public PacketSubstruct {
+		uint8_t ClassID;
+		struct StartingItem : public PacketSubstruct {
+			uint16_t ModelID;
+			uint8_t SlotID;
+			uint8_t UseColor;
+			uint8_t UseHighlightColor;
+			EQ2Color ModelColor;
+			EQ2Color ModelHighlightColor;
+
+			StartingItem() {
+				RegisterUInt16(ModelID);
+				RegisterUInt8(SlotID);
+				RegisterUInt8(UseColor);
+				RegisterUInt8(UseHighlightColor);
+				RegisterEQ2Color(ModelColor);
+				RegisterEQ2Color(ModelHighlightColor);
+			}
+		};
+		std::vector<StartingItem> StartingItems;
+
+		ClassItem() {
+			RegisterUInt8(ClassID);
+			RegisterArray(StartingItems, StartingItem);
+		}
+	};
+	std::vector<ClassItem> ClassItems;
+	uint8_t UnknownArraySize;
+	struct UnknownArray : public PacketSubstruct {
+		uint32_t Array2Unknown;
+
+		UnknownArray() {
+			RegisterElements();
+		}
+
+		void RegisterElements() {
+			RegisterUInt32(Array2Unknown);
+		}
+	};
+	std::vector<UnknownArray> UnknownArray2;
+	uint32_t Unknown11;
+	uint32_t SubscriptionLevel;
+	uint32_t RaceFlag;
+	uint32_t ClassFlag;
+	std::string Password;
+	std::string Username;
+
 private:
 	void RegisterElements() {
+		RegisterUInt8(Response);
+		Register16String(Unknown);
+		RegisterUInt8(ParentalControlFlag);
+		RegisterUInt32(ParentalControlTimer);
+		RegisterUInt8(Unknown2)->SetCount(8);
+		RegisterUInt32(AccountID);
+		Register16String(Unknown3);
+		RegisterUInt8(ResetAppearance);
+		RegisterUInt8(DoNotForceSoga);
+		RegisterUInt8(Unknown4);
+		RegisterUInt16(Unknown5);
+		RegisterUInt8(Unknown6)->SetCount(5);
+		RegisterUInt32(Unknown7);
+		RegisterUInt8(RaceUnknown);
+		RegisterUInt8(Unknown8)->SetCount(3);					//<Data ElementName = "unknown8" Type = "int8" Size = "3" / > < !--possibly related to rave_unknown but can't confirm-->
+		RegisterUInt8(Unknown9);
+		RegisterUInt8(Unknown10);
+		PacketElement* e = RegisterUInt8(NumClassItems);
+		static_cast<PacketUInt8*>(e)->SetMyArray(dynamic_cast<PacketArrayBase*>(RegisterArray(ClassItems, ClassItem)));
 
+		PacketElement* e2 = RegisterUInt8(UnknownArraySize);
+		static_cast<PacketUInt8*>(e2)->SetMyArray(dynamic_cast<PacketArrayBase*>(RegisterArray(UnknownArray2, UnknownArray)));
+
+		RegisterUInt32(Unknown11);
+		RegisterUInt32(SubscriptionLevel);
+		RegisterUInt32(RaceFlag);
+		RegisterUInt32(ClassFlag);
+		Register16String(Password);
+		Register16String(Username);
 	}
 };
 
