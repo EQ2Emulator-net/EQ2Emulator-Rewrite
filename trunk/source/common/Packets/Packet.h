@@ -26,10 +26,17 @@ public:
 	uint32_t Write() {
 		uint32_t size = CalculateSize();
 
-		if (buffer && this->size != size) {
-			delete[] buffer;
-			this->size = size;
+		if (buffer) {
+			if (this->size < size) {
+				delete[] buffer;
+			}
+			else {
+				this->size = size;
+				return Write(buffer);
+			}
 		}
+
+		this->size = size;
 
 		buffer = new unsigned char[size];
 
