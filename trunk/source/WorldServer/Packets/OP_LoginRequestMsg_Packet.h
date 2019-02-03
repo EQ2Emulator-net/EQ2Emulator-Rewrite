@@ -92,4 +92,4 @@ private:
 	}
 };
 
-RegisterWorldStruct("OP_LoginRequestMsg", OP_LoginRequestMsg_Packet);
+RegisterWorldStruct("OP_LoginRequestMsg", OP_LoginRequestMsg_Packet, 1, 1212);

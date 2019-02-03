@@ -134,12 +134,13 @@ template<typename T>
 class OpcodeRegistrar {
 	static_assert(std::is_base_of<EQ2Packet, T>::value, "Tried to register an Opcode for a non packet type!");
 public:
-	OpcodeRegistrar(const char* opName, const char* outfile) {
+	OpcodeRegistrar(const char* opName, const char* outfile, int32_t* versions, int32_t version_count) {
 		OpcodeManager::RegisterEmuOpcodeHelper(opName, new PacketAllocator<T>, typeid(T), outfile);
 	}
 };
 
 //Use this macro on a global scope to auto construct this object on program start
 //n is the opcode name, pt is the packet class
-#define RegisterEmuOpcode(n, pt, f) OpcodeRegistrar<pt> zUNIQUENAMEz ## pt ## (n, f)
-#define RegisterWorldStruct(n, pt) RegisterEmuOpcode(n, pt, "WorldStructs.xml")
+#define RegisterEmuOpcode(n, pt, f, ...) int32_t zUNIQUENAMEVERz ## pt ##[] = { __VA_ARGS__ };\
+OpcodeRegistrar<pt> zUNIQUENAMEz ## pt ## (n, f, zUNIQUENAMEVERz ## pt, sizeof(zUNIQUENAMEVERz ## pt) / sizeof(int32_t))
+#define RegisterWorldStruct(n, pt, ...) RegisterEmuOpcode(n, pt, "WorldStructs.xml", __VA_ARGS__)

@@ -107,7 +107,7 @@ private:
 	}
 };
 
-RegisterWorldStruct("OP_LoginReplyMsg", OP_LoginReplyMsg_Packet);
+RegisterWorldStruct("OP_LoginReplyMsg", OP_LoginReplyMsg_Packet, 1);
 
 /*
 <Struct Name = "LS_LoginReplyMsg" ClientVersion = "1" OpcodeName = "OP_LoginReplyMsg">

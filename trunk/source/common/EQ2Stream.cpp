@@ -284,37 +284,30 @@ void EQ2Stream::PreparePacket(EQ2Packet* app, uint8_t offset) {
 }
 
 uint8_t EQ2Stream::EQ2_Compress(EQ2Packet* app, uint8_t offset) {
-
-#ifdef LE_DEBUG
-	LogWrite(PACKET__DEBUG, 0, "Packet", "Before Compress in %s, line %i:", __FUNCTION__, __LINE__);
-	DumpPacket(app);
-#endif
-
-	unsigned char* pDataPtr = app->buffer + offset;
-	unsigned char* deflate_buff = new unsigned char[app->Size];
-	//MCompressData.lock();
+	unsigned char* pDataPtr = app->buffer + 3;
+	Bytef deflate_buff[4096];
 	stream.next_in = pDataPtr;
-	stream.avail_in = app->Size - offset;
-	stream.next_out = deflate_buff;
-	stream.avail_out = app->Size;
+	stream.avail_in = app->Size - 3;
 
-	deflate(&stream, Z_SYNC_FLUSH);
-	uint32_t newsize = app->Size - stream.avail_out;
-	if (app->buffer)
-		delete[] app->buffer;
+	int32_t total_bytes_written = 0;
 
-	app->Size = newsize + offset;
-	app->buffer = new unsigned char[app->Size];
-	app->buffer[(offset - 1)] = 1;
-	memcpy(app->buffer + offset, deflate_buff, newsize);
-	//MCompressData.unlock();
-	if (deflate_buff)
-		delete[] deflate_buff;
+	for (;;) {
+		stream.next_out = deflate_buff;
+		stream.avail_out = sizeof(deflate_buff);
+		if (deflate(&stream, Z_SYNC_FLUSH) != Z_OK) {
+			break;
+		}
 
-#ifdef LE_DEBUG
-	LogWrite(PACKET__DEBUG, 0, "Packet", "After Compress in %s, line %i:", __FUNCTION__, __LINE__);
-	DumpPacket(app);
-#endif
+		int32_t bytes_written = sizeof(deflate_buff) - stream.avail_out;
+		memcpy(pDataPtr, deflate_buff, bytes_written);
+		pDataPtr += bytes_written;
+		total_bytes_written += bytes_written;
+
+		unsigned int bytes_remaining = 0;
+		if (stream.avail_in == 0 && (deflatePending(&stream, &bytes_remaining, Z_NULL), bytes_remaining == 0)) {
+			break;
+		}
+	}
 
 	return offset - 1;
 }
@@ -717,7 +710,7 @@ void EQ2Stream::SendAck(uint16_t seq) {
 }
 
 void EQ2Stream::SendSessionResponse() {
-	OP_SessionResponse_Packet* Response = new OP_SessionResponse_Packet();;
+	OP_SessionResponse_Packet* Response = new OP_SessionResponse_Packet();
 	Response->Session = htonl(Session);
 	Response->MaxLength = htonl(MaxLength);
 	Response->UnknownA = 2;
