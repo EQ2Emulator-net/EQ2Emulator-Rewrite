@@ -99,6 +99,9 @@
     <ClCompile Include="..\..\source\WorldServer\Database\WorldDatabase.cpp">
       <Filter>source\Database</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\common\ConfigReader.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\common\io.h">
@@ -259,6 +262,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketSubstruct.h">
       <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\ConfigReader.h">
+      <Filter>common</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

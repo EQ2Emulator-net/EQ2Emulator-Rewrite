@@ -3,6 +3,7 @@
 
 #ifdef _WIN32
 	#include <WinSock2.h>
+	#include <Ws2tcpip.h>
 	#include <io.h>
 #else
 	#include <sys/socket.h>
@@ -13,6 +14,7 @@ unsigned int Server::InitializeCount = 0;
 Server::Server() {
 	Sock = 0;
 	Port = 0;
+	Host = 0;
 
 	Server::InitializeCount++;
 #ifdef _WIN32
@@ -32,13 +34,21 @@ Server::~Server() {
 #endif
 }
 
+void Server::SetHost(const char* host) {
+	Host = inet_addr(host);
+}
+
+void Server::SetPort(unsigned int port) {
+	Port = port;
+}
+
 bool Server::Open(bool tcp) {
 	sockaddr_in address;
 
 	memset((char*)&address, 0, sizeof(address));
 	address.sin_family = AF_INET;
 	address.sin_port = htons(Port);
-	address.sin_addr.s_addr = htonl(INADDR_ANY);
+	address.sin_addr.s_addr = Host;//htonl(INADDR_ANY);
 
 	Sock = (int)socket(AF_INET, SOCK_DGRAM, 0);
 	if (Sock < 0) {
@@ -60,7 +70,9 @@ bool Server::Open(bool tcp) {
 	fcntl(Sock, F_SETFL, O_NONBLOCK);
 #endif
 
-	LogInfo(LOG_NET, 0, "Listening on %u:%u", address.sin_addr.s_addr, ntohs(address.sin_port));
+	in_addr in;
+	in.s_addr = Host;
+	LogInfo(LOG_NET, 0, "Listening on %s:%u", inet_ntoa(in), ntohs(address.sin_port));
 	return true;
 }
 

@@ -93,6 +93,18 @@ public:
 		return ret;
 	}
 
+	bool HasVersion(int16_t version) {
+		bool ret = false;
+		for (auto& itr : versions) {
+			versionRange_t range = itr.first;
+			if (range.first <= version && range.second >= version) {
+				ret = true;
+				break;
+			}
+		}
+		return ret;
+	}
+
 	bool SetOpcodeForPacket(EQ2Packet* packet) {
 		auto itr = type_map.find(typeid(*packet));
 		assert(("Please register this packet class with an opcode.", itr != type_map.end()));

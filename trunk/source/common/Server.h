@@ -10,13 +10,15 @@ public:
 	Server();
 	~Server();
 
-	bool Open(bool tcp);
-	bool Open(unsigned int port, bool tcp = false) { Port = port; return Open(tcp); }
+	bool Open(bool tcp = false);
 
 	bool Process();
 	int GetSocket() { return Sock; }
 
 	void StreamDisconnected(Stream* stream);
+
+	void SetHost(const char* host);
+	void SetPort(unsigned int port);
 	
 protected:
 	virtual Stream* GetNewStream(unsigned int ip, unsigned short port);
@@ -26,6 +28,7 @@ protected:
 private:
 	int Sock;
 	unsigned int Port;
+	unsigned int Host;
 	static unsigned int InitializeCount;
 
 };

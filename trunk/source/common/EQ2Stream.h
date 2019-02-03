@@ -55,6 +55,7 @@ public:
 	uint16_t GetVersion() { return ClientVersion; }
 
 	ProtocolPacket* CreateProtocolPacket(const unsigned char* in_buff, uint32_t len);
+	void QueuePacket(EQ2Packet* p);
 
 	std::deque<EQ2Packet*> combine_queue; // public in old code?
 

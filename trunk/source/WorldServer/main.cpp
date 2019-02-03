@@ -10,6 +10,7 @@
 
 #include "WorldServer/WorldServer.h"
 #include "Database/WorldDatabase.h"
+#include "../common/ConfigReader.h"
 
 WorldDatabase database;
 
@@ -24,6 +25,8 @@ int main(int argc, char **argv)
 	LogInfo(LOG_INIT, 0, "Starting %s v%d.%d %s", EQ2_NAME, EQ2_VERSION_MAJOR, EQ2_VERSION_MINOR, EVE_VERSION_PHASE);
 
 	// TODO: config reader
+	ConfigReader cr(&s, &database);
+	success = cr.ReadConfig("world-config.xml");
 
 	if (success)
 		success = database.Start();
@@ -34,7 +37,7 @@ int main(int argc, char **argv)
 	}
 
 	if (success)
-		success = s.Open(9100, false);
+		success = s.Open();
 
 	while (success && looping) {
 		Timer::SetCurrentTime();

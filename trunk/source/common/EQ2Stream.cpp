@@ -707,6 +707,11 @@ void EQ2Stream::InboundQueueClear() {
 	//MInboundQueue.unlock();
 }
 
+void EQ2Stream::QueuePacket(EQ2Packet* p) {
+	p->Packet::Write();
+	EQ2QueuePacket(p, true);
+}
+
 void EQ2Stream::SendAck(uint16_t seq) {
 	uint16_t Seq = htons(seq);
 	SetLastAckSent(seq);

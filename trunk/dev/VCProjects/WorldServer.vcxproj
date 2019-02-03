@@ -177,6 +177,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\source\common\ConfigReader.cpp" />
     <ClCompile Include="..\..\source\common\CRC16.cpp" />
     <ClCompile Include="..\..\source\common\Crypto.cpp" />
     <ClCompile Include="..\..\source\common\database-result.cpp" />
@@ -202,6 +203,7 @@
     <ClCompile Include="..\..\source\WorldServer\WorldServer\WorldServer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\source\common\ConfigReader.h" />
     <ClInclude Include="..\..\source\common\CRC16.h" />
     <ClInclude Include="..\..\source\common\Crypto.h" />
     <ClInclude Include="..\..\source\common\database-result.h" />

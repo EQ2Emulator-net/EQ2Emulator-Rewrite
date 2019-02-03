@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <time.h>
+#include <string>
 #if defined(_WIN32)
 #else
 # include <unistd.h>
@@ -27,3 +28,8 @@ void UpdateWindowTitle(const char *title);
 
 int Deflate(unsigned char* in_data, int in_length, unsigned char* out_data, int max_out_length);
 int Inflate(unsigned char* indata, int indatalen, unsigned char* outdata, int outdatalen, bool iQuiet = true);
+
+std::string appStrError(int err_num = 0);
+bool IsUnsignedInt(const char *str);
+
+#define atoul(str) strtoul(str, NULL, 10)

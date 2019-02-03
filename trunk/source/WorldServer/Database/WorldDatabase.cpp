@@ -26,7 +26,7 @@ bool WorldDatabase::Start() {
 	SetCallbacks(&callbacks);
 
 	// temp until config reader
-	std::string host = "127.0.0.1";
+	/*std::string host = "127.0.0.1";
 	uint16_t port = 3306;
 	std::string user = "rewrite";
 	std::string pass = "1234";
@@ -35,10 +35,10 @@ bool WorldDatabase::Start() {
 	SetPort(port);
 	SetUser(user.c_str());
 	SetPassword(pass.c_str());
-	SetDatabase(db.c_str());
+	SetDatabase(db.c_str());*/
 
 	if (Connect()) {
-		LogInfo(LOG_DATABASE, 0, "Connected to MySQL server at %s:%u", host.c_str(), port);
+		LogInfo(LOG_DATABASE, 0, "Connected to MySQL server at %s:%u", GetHost(), GetPort());
 		return true;
 	}
 

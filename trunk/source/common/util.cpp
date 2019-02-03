@@ -14,8 +14,6 @@
 
 #include "util.h"
 
-extern std::map<uint16_t, uint16_t> EQOpcodeVersions;
-
 /**
 * @brief Sleeps for the given number of milliseconds.
 *
@@ -210,4 +208,40 @@ int Inflate(unsigned char* indata, int indatalen, unsigned char* outdata, int ou
 		zerror = inflateEnd(&zstream);
 		return 0;
 	}
+}
+
+std::string appStrError(int err_num) {
+	char errbuf[512];
+	if (err_num == 0) {
+		err_num = errno;
+	}
+
+#ifdef _WIN32
+	if (strerror_s(errbuf, sizeof(errbuf), err_num) != 0) {
+		return "appStrError : strerror_s unsuccessful!";
+	}
+#elif (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600) && ! _GNU_SOURCE
+	if (strerror_r(err_num, errbuf, sizeof(errbuf)) != 0) {
+		return "appStrError : strerror_s unsuccessful!";
+	}
+#else
+	return strerror_r(err_num, errbuf, sizeof(errbuf));
+#endif
+
+	return errbuf;
+}
+
+bool IsUnsignedInt(const char *str) {
+	int i = 0;
+
+	if (str[0] == '\0')
+		return false;
+
+	while (str[i] != '\0') {
+		if (str[i] < 48 || str[i] > 57)
+			return false;
+		++i;
+	}
+
+	return true;
 }
