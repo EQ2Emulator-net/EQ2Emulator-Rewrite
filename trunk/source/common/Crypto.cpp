@@ -20,7 +20,7 @@
 #include "Crypto.h"
 #include <string>
 
-uint64_t Crypto::RSADecrypt(const unsigned char* text, uint16_t size){
+uint64_t Crypto::RSADecrypt(unsigned char* text, uint16_t size){
 	uint64_t ret = 0;
 	unsigned char* buffer = new unsigned char[8];
 	for(int i=7;i>=0;i--)

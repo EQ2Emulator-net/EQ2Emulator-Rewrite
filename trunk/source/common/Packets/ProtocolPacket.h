@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Packet.h"
-#include "../Crypto.h"
 
 static const char OP_SessionRequest			= 0x01;
 static const char OP_SessionResponse		= 0x02;
@@ -21,9 +20,11 @@ class EQ2Packet;
 
 class ProtocolPacket : public Packet {
 public:
+	ProtocolPacket();
+	ProtocolPacket(const unsigned char* buf, uint32_t len);
+
 	uint16_t GetOpcode() { return opcode; }
-	uint32_t Write(unsigned char* writeBuffer) override;
-	uint32_t WriteOpcode(unsigned char* writeBuffer);
+	uint32_t Write(unsigned char*& writeBuffer) override;
 	uint16_t GetSequence() { return sequence; }
 	void SetSequence(uint16_t seq) { sequence = seq; }
 	uint16_t GetVersion() { return version; }
@@ -31,19 +32,14 @@ public:
 	uint32_t GetSentTime() { return SentTime; }
 	void SetSentTime(uint32_t time) { SentTime = time; }
 	//bool Combine(const ProtocolPacket *rhs);
-	void DecryptPacket(Crypto& p, uint16_t offset, uint16_t length) { p.RC4Decrypt(buffer + offset, length); }
 
-	uint32_t Compress();
+	static ProtocolPacket* GetProtocolPacket(const unsigned char* in_buff, uint32_t len);
+	static uint32_t Compress(const unsigned char *buffer, const uint32_t length, unsigned char *newbuf, uint32_t newbufsize);
 	static void ChatDecode(unsigned char *buffer, int size, int DecodeKey);
-	void ChatEncode(int32_t EncodeKey);
+	static void ChatEncode(unsigned char *buffer, int size, int EncodeKey);
 	EQ2Packet *MakeApplicationPacket(uint8_t opcode_size = 0) const;
-	void WriteCRC(uint32_t Key);
-
-	uint32_t CalculateSize() override;
 
 protected:
-	ProtocolPacket();
-
 	uint16_t opcode;
 	uint16_t sequence;
 	uint16_t version;

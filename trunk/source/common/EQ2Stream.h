@@ -47,15 +47,14 @@ public:
 	bool CheckActive() { return GetState() == ESTABLISHED; }
 	bool CheckClosed() { return GetState() == CLOSED; }
 
-	void PreparePacket(EQ2Packet* app);
+	void PreparePacket(EQ2Packet* app, uint8_t offset = 0);
 
 	void Write();
 
 	void SetVersion(uint16_t version) { ClientVersion = version; }
 	uint16_t GetVersion() { return ClientVersion; }
 
-	ProtocolPacket* CreateProtocolPacket(const unsigned char* in_buff, uint32_t len);
-	void QueuePacket(EQ2Packet* p);
+	void QueuePacket(EQ2Packet* packet);
 
 	std::deque<EQ2Packet*> combine_queue; // public in old code?
 
@@ -84,17 +83,20 @@ protected:
 private:
 	void ProcessPacket(ProtocolPacket* p);
 	bool ValidateCRC(unsigned char* buffer, uint16_t length, uint32_t key);
+	void EncryptPacket(EQ2Packet* app, uint8_t compress_offset, uint8_t offset);
 	void SendPacket(EQ2Packet* p);
 	void SequencedPush(ProtocolPacket* p);
 	void NonSequencedPush(ProtocolPacket* p);
 	void WritePacket(ProtocolPacket* p);
+	uint8_t EQ2_Compress(EQ2Packet* app, uint8_t offset = 3);
 	void SetMaxAckReceived(uint32_t seq);
 	void SetLastAckSent(int32_t seq);
 	void AdjustRates(uint32_t average_delta);
 	int8_t CompareSequence(uint16_t expected_seq, uint16_t seq);
 	void SetNextAckToSend(uint32_t seq);
+	uint16_t processRSAKey(ProtocolPacket *p);
 	bool HandleEmbeddedPacket(ProtocolPacket* p, uint16_t offset = 2, uint16_t length = 0);
-	EQ2Packet* ProcessEncryptedData(const unsigned char* data, uint32_t size, uint16_t opcode);
+	EQ2Packet* ProcessEncryptedData(unsigned char* data, uint32_t size, uint16_t opcode);
 	EQ2Packet* ProcessEncryptedPacket(ProtocolPacket *p);
 	void InboundQueuePush(EQ2Packet* p);
 	void InboundQueueClear();

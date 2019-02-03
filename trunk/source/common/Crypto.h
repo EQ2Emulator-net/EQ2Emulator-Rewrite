@@ -40,7 +40,7 @@ public:
 			delete server;
 	}
 
-	static uint64_t RSADecrypt(const unsigned char* text, uint16_t size);
+	static uint64_t RSADecrypt(unsigned char* text, uint16_t size);
 	void RC4Encrypt(unsigned char* text, uint32_t size);
 	void RC4Decrypt(unsigned char* text, uint32_t size);
 	uint64_t getRC4Key() { return rc4_key; }
@@ -62,15 +62,6 @@ public:
 				delete server;
 		}
 	}
-
-	uint16_t ReadRSAKey(const unsigned char* buf) {
-		if (buf[0] == 0)
-			setRC4Key(Crypto::RSADecrypt(buf + 62, 8));
-		else
-			setRC4Key(Crypto::RSADecrypt(buf + 61, 8));
-		return 0;
-	}
-
 	bool isEncrypted() { return encrypted; }
 	void setEncrypted(bool in_val) { encrypted = in_val; }
 
