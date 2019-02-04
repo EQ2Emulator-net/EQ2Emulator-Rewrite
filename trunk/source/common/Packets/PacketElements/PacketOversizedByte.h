@@ -68,7 +68,12 @@ public:
 				offset += 2;
 			}
 			else {
-				outbuf[offset++] = static_cast<uint8_t>(val);
+				uint8_t newVal = static_cast<uint8_t>(val);
+				if (bSigned && sval < 0) {
+					//Our new value is negative, set the sign bit
+					newVal |= 0x80;
+				}
+				outbuf[offset++] = newVal;
 			}
 		}
 	}
