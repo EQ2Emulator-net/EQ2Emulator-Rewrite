@@ -102,6 +102,9 @@
     <ClCompile Include="..\..\source\common\ConfigReader.cpp">
       <Filter>common</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\common\Packets\PacketElements\PacketCriteria.cpp">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\common\io.h">
@@ -276,6 +279,12 @@
       <Filter>source\Packets</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEQ2EquipmentItem.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketCriteria.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketOversizedByte.h">
       <Filter>common\Packets\PacketElements</Filter>
     </ClInclude>
   </ItemGroup>

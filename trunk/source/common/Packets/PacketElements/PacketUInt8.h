@@ -37,6 +37,14 @@ public:
 		return count;
 	}
 
+	bool VariableIsSet() override {
+		return element[0] != 0;
+	}
+
+	bool CheckVariableEquality(PacketVariableEquality* cmp) override {
+		return cmp->CheckVariableEquality(element[0]);
+	}
+
 private:
 	uint8_t* element;
 

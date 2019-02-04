@@ -35,6 +35,14 @@ public:
 		return sizeof(int8_t) * count;
 	}
 
+	bool VariableIsSet() override {
+		return element[0] != 0;
+	}
+
+	bool CheckVariableEquality(PacketVariableEquality* cmp) override {
+		return cmp->CheckVariableEquality(element[0]);
+	}
+
 private:
 	int8_t* element;
 

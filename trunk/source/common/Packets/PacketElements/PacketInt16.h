@@ -37,6 +37,14 @@ public:
 		return sizeof(int16_t) * count;
 	}
 
+	bool VariableIsSet() override {
+		return element[0] != 0;
+	}
+
+	bool CheckVariableEquality(PacketVariableEquality* cmp) override {
+		return cmp->CheckVariableEquality(element[0]);
+	}
+
 private:
 	int16_t* element;
 

@@ -15,6 +15,9 @@ public:
 
 	bool ReadElement(const unsigned char* srcbuf, uint32_t& offset, uint32_t bufsize) override {
 		for (auto& itr : elements) {
+			if (!itr->MeetsCriteria()) {
+				continue;
+			}
 			if (!itr->ReadElement(srcbuf, offset, bufsize)) {
 				LogError(LOG_PACKET, 0, "Reading an element went out of bounds in packet substruct %s", name ? name : "");
 				return false;
@@ -26,6 +29,10 @@ public:
 
 	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
 		for (auto& itr : elements) {
+			if (!itr->MeetsCriteria()) {
+				continue;
+			}
+
 			itr->WriteElement(outbuf, offset);
 		}
 	}

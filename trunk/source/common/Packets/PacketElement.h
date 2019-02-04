@@ -2,8 +2,10 @@
 
 #include <stdint.h>
 #include <string>
+#include <cassert>
+#include "PacketElements\PacketCriteria.h"
 
-class PacketElement {
+class PacketElement : public PacketVariableEquality {
 public:
 	virtual ~PacketElement() = default;
 
@@ -24,10 +26,33 @@ public:
 		this->name = name;
 	}
 
+	bool SetIsVariableSet(PacketElement* e) {
+		ifVariableSet = e;
+	}
+
+	bool MeetsCriteria() {
+		if (ifVariableSet && (!ifVariableSet->MeetsCriteria() || !ifVariableSet->VariableIsSet())) {
+			return false;
+		}
+
+		if (!CheckVariableEquality()) {
+			return false;
+		}
+
+		return true;
+	}
+
+	virtual bool VariableIsSet() {
+		assert(("Trying to check if a variable is set for an unhandled type!", false));
+		return true;
+	}
+
 protected:
-	PacketElement() : count(1), name(nullptr) {};
+	PacketElement() : count(1), name(nullptr), ifVariableSet(nullptr) {};
 	//This is the "size" element in XML structs
 	int32_t count;
 	//This should be a true const char.. not from a string or anything like that
 	const char* name;
+	//Check if this variable is "set" (!= 0) before writing
+	PacketElement* ifVariableSet;
 };

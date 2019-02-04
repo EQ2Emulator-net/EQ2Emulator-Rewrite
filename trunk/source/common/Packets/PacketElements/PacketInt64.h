@@ -37,6 +37,10 @@ public:
 		return sizeof(int64_t) * count;
 	}
 
+	bool VariableIsSet() override {
+		return element[0] != 0;
+	}
+
 private:
 	int64_t* element;
 

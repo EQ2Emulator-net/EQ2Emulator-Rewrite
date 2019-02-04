@@ -47,6 +47,9 @@ private:
 	//This maps struct file names to allocators
 	std::map<std::string, std::vector<PacketAllocatorBase*> > outfiles;
 
+	//This maps allocators to struct versions
+	std::map<PacketAllocatorBase*, std::vector<int32_t> > struct_versions;
+
 public:
 	OpcodeManager() = default;
 	~OpcodeManager() {
@@ -55,16 +58,22 @@ public:
 		}
 	}
 
-	void RegisterAllocator(const char* name, PacketAllocatorBase* allocator, std::type_index t, const char* outfile) {
+	void RegisterAllocator(const char* name, PacketAllocatorBase* allocator, std::type_index t, 
+		const char* outfile, const int32_t* versions, int32_t num_versions) {
 		assert(allocators.count(name) == 0 && type_map.count(t) == 0);
 
 		allocators[name] = allocator;
 		type_map[t] = allocator;
 		outfiles[outfile].push_back(allocator);
+
+		std::vector<int32_t>& vec = struct_versions[allocator];
+		vec.resize(num_versions);
+		memcpy(vec.data(), versions, num_versions * sizeof(int32_t));
 	}
 
 	static OpcodeManager* GetGlobal();
-	static void RegisterEmuOpcodeHelper(const char* name, PacketAllocatorBase* allocator, std::type_index t, const char* outfile);
+	static void RegisterEmuOpcodeHelper(const char* name, PacketAllocatorBase* allocator, std::type_index t, 
+		const char* outfile, const int32_t* versions, int32_t num_versions);
 
 	void RegisterVersionOpcode(const char* name, int16_t range_low, int16_t range_high, int16_t opcode) {
 		auto itr = allocators.find(name);
@@ -134,8 +143,8 @@ template<typename T>
 class OpcodeRegistrar {
 	static_assert(std::is_base_of<EQ2Packet, T>::value, "Tried to register an Opcode for a non packet type!");
 public:
-	OpcodeRegistrar(const char* opName, const char* outfile, int32_t* versions, int32_t version_count) {
-		OpcodeManager::RegisterEmuOpcodeHelper(opName, new PacketAllocator<T>, typeid(T), outfile);
+	OpcodeRegistrar(const char* opName, const char* outfile, const int32_t* versions, int32_t version_count) {
+		OpcodeManager::RegisterEmuOpcodeHelper(opName, new PacketAllocator<T>, typeid(T), outfile, versions, version_count);
 	}
 };
 

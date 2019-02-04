@@ -17,6 +17,9 @@ public:
 	void Read(const unsigned char* in_buf, uint32_t off, uint32_t bufsize) {
 		offset = off;
 		for (size_t i = 0; i < elements.size(); i++) {
+			if (!elements[i]->MeetsCriteria()) {
+				continue;
+			}
 			if (!elements[i]->ReadElement(in_buf, offset, bufsize)) {
 				LogError(LOG_PACKET, 0, "Reading an element went out of bounds");
 				break;
@@ -27,6 +30,10 @@ public:
 	virtual uint32_t Write(unsigned char*& writeBuffer) {
 		uint32_t size = 0;
 		for (size_t i = 0; i < elements.size(); i++) {
+			if (!elements[i]->MeetsCriteria()) {
+				continue;
+			}
+
 			size += elements[i]->GetSize();
 		}
 
@@ -36,6 +43,10 @@ public:
 		buffer = new unsigned char[size];
 		offset = 0;
 		for (size_t i = 0; i < elements.size(); i++) {
+			if (!elements[i]->MeetsCriteria()) {
+				continue;
+			}
+
 			elements[i]->WriteElement(buffer, offset);
 		}
 

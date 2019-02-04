@@ -334,10 +334,10 @@ void EQ2Stream::PreparePacket(EQ2Packet* app, uint8_t offset) {
 }
 
 uint8_t EQ2Stream::EQ2_Compress(EQ2Packet* app, uint8_t offset) {
-	unsigned char* pDataPtr = app->buffer + 3;
+	unsigned char* pDataPtr = app->buffer + offset;
 	Bytef deflate_buff[4096];
 	stream.next_in = pDataPtr;
-	stream.avail_in = app->Size - 3;
+	stream.avail_in = app->Size - offset;
 
 	int32_t total_bytes_written = 0;
 

@@ -187,6 +187,7 @@
     <ClCompile Include="..\..\source\common\log.cpp" />
     <ClCompile Include="..\..\source\common\Packets\EQ2Packet.cpp" />
     <ClCompile Include="..\..\source\common\Packets\EQ2Packets\OpcodeManager.cpp" />
+    <ClCompile Include="..\..\source\common\Packets\PacketElements\PacketCriteria.cpp" />
     <ClCompile Include="..\..\source\common\Packets\ProtocolPacket.cpp" />
     <ClCompile Include="..\..\source\common\RC4.cpp" />
     <ClCompile Include="..\..\source\common\Server.cpp" />
@@ -221,6 +222,7 @@
     <ClInclude Include="..\..\source\common\Packets\PacketElements\Packet32String .h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\Packet8String.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketArray.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketCriteria.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketElements.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEQ2Color.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEQ2EquipmentItem.h" />
@@ -228,6 +230,7 @@
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt32.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt64.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt8.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketOversizedByte.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketSubstruct.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketUInt16.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketUInt32.h" />
