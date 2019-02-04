@@ -266,5 +266,17 @@
     <ClInclude Include="..\..\source\common\ConfigReader.h">
       <Filter>common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_WorldListMsg_Packet.h">
+      <Filter>source\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_AllWSDescRequestMsg_Packet.h">
+      <Filter>source\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_AllCharactersDescReplyMsg_Packet.h">
+      <Filter>source\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEQ2EquipmentItem.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

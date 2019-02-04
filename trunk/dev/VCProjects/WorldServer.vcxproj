@@ -223,6 +223,7 @@
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketArray.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketElements.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEQ2Color.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEQ2EquipmentItem.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt16.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt32.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt64.h" />
@@ -254,7 +255,10 @@
     <ClInclude Include="..\..\source\common\util.h" />
     <ClInclude Include="..\..\source\common\version.h" />
     <ClInclude Include="..\..\source\WorldServer\Database\WorldDatabase.h" />
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_AllCharactersDescReplyMsg_Packet.h" />
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_AllWSDescRequestMsg_Packet.h" />
     <ClInclude Include="..\..\source\WorldServer\Packets\OP_LoginRequestMsg_Packet.h" />
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_WorldListMsg_Packet.h" />
     <ClInclude Include="..\..\source\WorldServer\WorldServer\Client.h" />
     <ClInclude Include="..\..\source\WorldServer\WorldServer\WorldServer.h" />
   </ItemGroup>

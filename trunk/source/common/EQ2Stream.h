@@ -115,6 +115,9 @@ private:
 	bool Compressed;
 	bool Encoded;
 	z_stream stream;
+	uint32_t oversize_offset;
+	uint32_t oversize_length;
+	unsigned char *oversize_buffer;
 
 	deque<ProtocolPacket*> NonSequencedQueue;
 	deque<ProtocolPacket*> SequencedQueue;

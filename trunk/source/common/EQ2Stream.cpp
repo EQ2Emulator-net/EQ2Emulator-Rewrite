@@ -139,6 +139,56 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 		}
 		break;
 	}
+	case OP_Fragment: {
+		uint16_t seq = ntohs(*(uint16_t*)(p->buffer));
+		int8_t check = CompareSequence(NextInSeq, seq);
+
+		LogDebug(LOG_PACKET, 0, "seq = %u, NextInSeq = %u, check = %i", seq, NextInSeq, check);
+		if (check > 0) {
+			// Future
+			LogDebug(LOG_PACKET, 0, "Future packet");
+		}
+		else if (check < 0) {
+			// Past
+			LogDebug(LOG_PACKET, 0, "Past packet");
+		}
+		else {
+			SetNextAckToSend(seq);
+			NextInSeq++;
+
+			if (oversize_buffer) {
+				memcpy(oversize_buffer + oversize_offset, p->buffer + 2, p->Size - 2);
+				oversize_offset += p->Size - 2;
+				//cout << "Oversized is " << oversize_offset << "/" << oversize_length << " (" << (p->size-2) << ") Seq=" << seq << endl;
+				if (oversize_offset == oversize_length) {
+					if (*(p->buffer + 2) == 0x00 && *(p->buffer + 3) == 0x19) {
+						ProtocolPacket* subp = new OP_AppCombined_Packet(p->buffer + 4, oversize_length - 4);
+						ProcessPacket(subp);
+						delete subp;
+					}
+					else {
+
+						if (crypto.isEncrypted() && p && p->Size > 2) {
+							EQ2Packet* p2 = ProcessEncryptedData(oversize_buffer, oversize_offset, p->GetOpcode());
+							if (p2) {
+								InboundQueuePush(p2);
+							}
+						}
+					}
+					delete[] oversize_buffer;
+					oversize_buffer = NULL;
+					oversize_offset = 0;
+				}
+			}
+			else if (!oversize_buffer) {
+				oversize_length = ntohl(*(uint32_t *)(p->buffer + 2));
+				oversize_buffer = new unsigned char[oversize_length];
+				memcpy(oversize_buffer, p->buffer + 6, p->Size - 6);
+				oversize_offset = p->Size - 6;
+			}
+		}
+		break;
+	}
 	case OP_Ack: {
 		OP_Ack_Packet* ack = (OP_Ack_Packet*)p;
 		SetMaxAckReceived(ack->Sequence);
@@ -708,7 +758,7 @@ void EQ2Stream::SendAck(uint16_t seq) {
 	uint16_t Seq = htons(seq);
 	SetLastAckSent(seq);
 	OP_Ack_Packet* ack = new OP_Ack_Packet();
-	ack->Sequence = seq;
+	ack->Sequence = htons(seq);
 	NonSequencedPush(ack);
 }
 

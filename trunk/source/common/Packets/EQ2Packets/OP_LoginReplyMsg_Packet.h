@@ -16,17 +16,17 @@ public:
 	std::string Unknown;
 	uint8_t ParentalControlFlag;
 	uint32_t ParentalControlTimer;
-	uint8_t Unknown2;					//<Data ElementName = "unknown2" Type = "int8" Size = "8" / >
+	uint8_t Unknown2[8];					//<Data ElementName = "unknown2" Type = "int8" Size = "8" / >
 	uint32_t AccountID;
 	std::string Unknown3;
 	uint8_t ResetAppearance;
 	uint8_t DoNotForceSoga;
 	uint8_t Unknown4;
 	uint16_t Unknown5;
-	uint8_t Unknown6;					//<Data ElementName = "unknown6" Type = "int8" Size = "5" / >
+	uint8_t Unknown6[5];					//<Data ElementName = "unknown6" Type = "int8" Size = "5" / >
 	uint32_t Unknown7;
 	uint8_t RaceUnknown;
-	uint8_t Unknown8;					//<Data ElementName = "unknown8" Type = "int8" Size = "3" / > < !--possibly related to rave_unknown but can't confirm-->
+	uint8_t Unknown8[3];					//<Data ElementName = "unknown8" Type = "int8" Size = "3" / > < !--possibly related to rave_unknown but can't confirm-->
 	uint8_t Unknown9;
 	uint8_t Unknown10;
 	uint8_t NumClassItems;				//<Data ElementName = "num_class_items" Type = "int8" IfVariableSet = "unknown10" Size = "1" / >
@@ -83,17 +83,20 @@ private:
 		Register16String(Unknown);
 		RegisterUInt8(ParentalControlFlag);
 		RegisterUInt32(ParentalControlTimer);
-		RegisterUInt8(Unknown2)->SetCount(8);
+		uint8_t& unknown2 = Unknown2[0];
+		RegisterUInt8(unknown2)->SetCount(8);
 		RegisterUInt32(AccountID);
 		Register16String(Unknown3);
 		RegisterUInt8(ResetAppearance);
 		RegisterUInt8(DoNotForceSoga);
 		RegisterUInt8(Unknown4);
 		RegisterUInt16(Unknown5);
-		RegisterUInt8(Unknown6)->SetCount(5);
+		uint8_t& unknown6 = Unknown6[0];
+		RegisterUInt8(unknown6)->SetCount(5);
 		RegisterUInt32(Unknown7);
 		RegisterUInt8(RaceUnknown);
-		RegisterUInt8(Unknown8)->SetCount(3);					//<Data ElementName = "unknown8" Type = "int8" Size = "3" / > < !--possibly related to rave_unknown but can't confirm-->
+		uint8_t& unknown8 = Unknown8[0];
+		RegisterUInt8(unknown8)->SetCount(3);
 		RegisterUInt8(Unknown9);
 		RegisterUInt8(Unknown10);
 		RegisterUInt8(NumClassItems)->SetMyArray(RegisterArray(ClassItems, ClassItem));

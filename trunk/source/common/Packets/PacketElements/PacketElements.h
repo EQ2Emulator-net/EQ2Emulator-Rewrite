@@ -26,6 +26,7 @@
 // Misc
 #include "PacketArray.h"
 #include "PacketSubstruct.h"
+#include "PacketEQ2EquipmentItem.h"
 
 //Register macros, these are intended to be used from RegisterElements()
 #define PushElementForRegistration(e, n, t) (elements.push_back(e), elements.back()->SetName(n), static_cast<t*>(elements.back()))
@@ -43,3 +44,4 @@
 #define RegisterSubstruct(e) PushElementForRegistration(new PacketSubstructParent<decltype(e)>(e), #e, PacketSubstructParent)
 #define RegisterArray(e, t) PushElementForRegistration(new PacketArray<t>(e), #e, PacketArrayBase)
 #define RegisterEQ2Color(e) PushElementForRegistration(new PacketEQ2Color(e), #e, PacketEQ2Color)
+#define RegisterEQ2EquipmentItem(e) PushElementForRegistration(new PacketEQ2EquipmentItem(e), #e, PacketEQ2EquipmentItem)

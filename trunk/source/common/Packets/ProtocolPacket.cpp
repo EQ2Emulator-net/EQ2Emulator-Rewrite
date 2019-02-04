@@ -80,6 +80,11 @@ ProtocolPacket* ProtocolPacket::GetProtocolPacket(const unsigned char* in_buff, 
 		ret = new OP_Packet_Packet(in_buff + offset, len - offset - 2); // -2 to trim the crc
 		break;
 	}
+	case OP_Fragment: {
+		ret = new ProtocolPacket(in_buff + offset, len - offset - 2);
+		ret->opcode = OP_Fragment;
+		break;
+	}
 	case OP_Ack: {
 		ret = new OP_Ack_Packet();
 		break;
@@ -90,7 +95,7 @@ ProtocolPacket* ProtocolPacket::GetProtocolPacket(const unsigned char* in_buff, 
 	}
 	}
 
-	if (ret && opcode != OP_Packet)
+	if (ret && opcode != OP_Packet && opcode != OP_Fragment)
 		ret->Read(in_buff, offset, len);
 
 	return ret;
