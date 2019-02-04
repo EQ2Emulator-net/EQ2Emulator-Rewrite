@@ -32,7 +32,8 @@ public:
 		uint16_t op = htons(opcode);
 		memcpy(buffer, &op, 2);
 		offset = 2;
-		memcpy(buffer + offset, &sequence, 2);
+		uint16_t seq = htons(sequence);
+		memcpy(buffer + offset, &seq, 2);
 		writeBuffer = buffer;
 
 		return Size;
