@@ -309,6 +309,9 @@ uint8_t EQ2Stream::EQ2_Compress(EQ2Packet* app, uint8_t offset) {
 		}
 	}
 
+	app->Size = total_bytes_written + offset;
+	app->buffer[offset + 1] = 1;
+
 	return offset - 1;
 }
 

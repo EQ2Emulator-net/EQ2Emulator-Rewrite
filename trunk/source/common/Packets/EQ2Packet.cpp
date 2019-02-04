@@ -14,17 +14,11 @@ EQ2Packet::EQ2Packet(uint16_t version) {
 }
 
 uint8_t EQ2Packet::PreparePacket(uint16_t MaxLen) {
+	// Set the opcode for this packet based on version
 	FindOpcode();
-
-	// stops a crash for incorrect version
-	/*if (EQOpcodeManager.count(OpcodeVersion) == 0) {
-		LogError(LOG_PACKET, 0, "Version %u is not listed in the opcodes table.", Version);
-		return -1;
-	}*/
-
 	PacketPrepared = true;
 
-	uint16_t login_opcode = 2;// EQOpcodeManager[OpcodeVersion]->EmuToEQ(login_op);
+	uint16_t login_opcode = opcode;
 	uint8_t offset = 0;
 	//one of the int16s is for the seq, other is for the EQ2 opcode and compressed flag (OP_Packet is the header, not the opcode)
 	uint32_t new_size = Size + sizeof(uint16_t) + sizeof(uint8_t);
