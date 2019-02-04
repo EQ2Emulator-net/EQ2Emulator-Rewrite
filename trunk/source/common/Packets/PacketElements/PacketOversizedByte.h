@@ -43,7 +43,7 @@ public:
 				uint16_t val;
 				int16_t  sval;
 			};
-			uint16_t val = element[i];
+			val = element[i];
 			bool oversized = (bSigned ? sval >= 0x7f : val >= 0xff);
 
 			if (oversized) {
@@ -64,7 +64,7 @@ public:
 				uint16_t val;
 				int16_t  sval;
 			};
-			uint16_t val = element[i];
+			val = element[i];
 			bool oversized = (bSigned ? sval >= 0x7f : val >= 0xff);
 			ret += (oversized ? 3 : 1);
 		}
