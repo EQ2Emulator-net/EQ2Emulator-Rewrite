@@ -23,7 +23,12 @@ public:
 				return false;
 			}
 
-			uint8_t byte = srcbuf[offset++];
+			union {
+				uint8_t byte;
+				int8_t sbyte;
+			};
+			
+			byte = srcbuf[offset++];
 			bool oversized = (bSigned ? byte == 0x7f : byte == 0xff);
 
 			if (oversized) {
@@ -38,7 +43,18 @@ public:
 				}
 			}
 			else {
-				element[i] = byte;
+				union {
+					uint16_t newVal;
+					int16_t snewVal;
+				};
+				if (bSigned) {
+					snewVal = sbyte;
+				}
+				else {
+					newVal = byte;
+				}
+
+				element[i] = newVal;
 			}
 		}
 
