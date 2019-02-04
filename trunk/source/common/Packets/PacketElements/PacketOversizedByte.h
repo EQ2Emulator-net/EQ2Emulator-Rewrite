@@ -35,6 +35,8 @@ public:
 				element[i] = byte;
 			}
 		}
+
+		return true;
 	}
 
 	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
