@@ -84,11 +84,18 @@ public:
 				offset += 2;
 			}
 			else {
-				uint8_t newVal = static_cast<uint8_t>(val);
-				if (bSigned && sval < 0) {
-					//Our new value is negative, set the sign bit
-					newVal |= 0x80;
+				union {
+					uint8_t newVal;
+					int8_t snewVal;
+				};
+
+				if (bSigned) {
+					snewVal = static_cast<int8_t>(sval);
 				}
+				else {
+					newVal = static_cast<uint8_t>(val);
+				}
+
 				outbuf[offset++] = newVal;
 			}
 		}
