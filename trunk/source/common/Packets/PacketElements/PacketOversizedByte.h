@@ -15,6 +15,8 @@ public:
 		this->element = reinterpret_cast<uint16_t*>(&element);
 	}
 
+	~PacketOversizedByte() = default;
+
 	bool ReadElement(const unsigned char* srcbuf, uint32_t& offset, uint32_t bufsize) override {
 		for (int i = 0; i < count; i++) {
 			if (offset + 1 > bufsize) {
