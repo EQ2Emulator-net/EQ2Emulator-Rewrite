@@ -4,8 +4,10 @@
 #include <time.h>
 #include <string>
 #if defined(_WIN32)
+#include <WinSock2.h>
 #else
 # include <unistd.h>
+#include <arpa/inet.h>
 #endif
 
 #if defined(_WIN32)

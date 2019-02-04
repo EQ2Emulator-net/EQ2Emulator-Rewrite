@@ -1,8 +1,9 @@
 #pragma once
 
 #include "../PacketElement.h"
+#include "../../util.h"
 
-class PacketOversizedByte : public PacketElement {
+class PacketOversizedByte : public PacketElement, public NetOrderElement {
 public:
 	PacketOversizedByte(uint16_t& element) {
 		bSigned = false;
@@ -30,6 +31,9 @@ public:
 				}
 				memcpy(element + i, srcbuf + offset, sizeof(uint16_t));
 				offset += sizeof(uint16_t);
+				if (IsNetOrder()) {
+					element[i] = ntohs(element[i]);
+				}
 			}
 			else {
 				element[i] = byte;
@@ -50,7 +54,15 @@ public:
 
 			if (oversized) {
 				outbuf[offset++] = (bSigned ? 0x7f : 0xff);
-				memcpy(outbuf + offset, &val, sizeof(uint16_t));
+
+				uint16_t* pe = reinterpret_cast<uint16_t*>(outbuf + offset);
+				if (IsNetOrder()) {
+					*pe = htons(element[i]);
+				}
+				else {
+					*pe = element[i];
+				}
+
 				offset += 2;
 			}
 			else {

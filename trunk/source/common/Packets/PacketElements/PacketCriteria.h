@@ -44,3 +44,22 @@ private:
 	PacketElement* check_element;
 	bool equality_type;
 };
+
+class NetOrderElement {
+public:
+	virtual ~NetOrderElement() = default;
+
+	void SetIsNetOrder(bool val) {
+		bNetOrder = val;
+	}
+
+	bool IsNetOrder() {
+		return bNetOrder;
+	}
+
+protected:
+	NetOrderElement() : bNetOrder(false) {}
+
+private:
+	bool bNetOrder;
+};

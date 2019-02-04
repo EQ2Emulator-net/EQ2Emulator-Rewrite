@@ -1,8 +1,10 @@
 #pragma once
 
 #include "../PacketElement.h"
+#include "PacketCriteria.h"
+#include "../../util.h"
 
-class PacketUInt16 : public PacketElement, public PacketArraySize {
+class PacketUInt16 : public PacketElement, public PacketArraySize, public NetOrderElement {
 public:
 	PacketUInt16(uint16_t& in_int) : element(&in_int) {
 
@@ -18,6 +20,12 @@ public:
 		memcpy(element, srcbuf + offset, readSize);
 		offset += readSize;
 
+		if (IsNetOrder()) {
+			for (int i = 0; i < count; i++) {
+				element[i] = ntohs(element[i]);
+			}
+		}
+
 		//Array size handling
 		if (myArray) {
 			myArray->SetArraySize(element[0]);
@@ -29,6 +37,14 @@ public:
 	void WriteElement(unsigned char* outbuf, uint32_t& offset) {
 		uint32_t writeSize = sizeof(uint16_t) * count;
 		memcpy(outbuf + offset, element, 2);
+
+		if (IsNetOrder()) {
+			uint16_t* pe = reinterpret_cast<uint16_t*>(outbuf + offset);
+			for (int i = 0; i < count; i++) {
+				pe[i] = htons(pe[i]);
+			}
+		}
+
 		offset += writeSize;
 	}
 
