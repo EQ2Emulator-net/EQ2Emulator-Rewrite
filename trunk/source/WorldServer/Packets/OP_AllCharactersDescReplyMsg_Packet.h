@@ -52,6 +52,8 @@ public:
 		uint32_t account_id;
 		uint8_t unknown6[2]; // Size = "2"
 		uint32_t unknown7;
+		uint8_t tradeskill_class; // 887
+		uint32_t tradeskill_level; //887
 		uint8_t unknown8;
 		uint16_t race_type;
 		EQ2Color skin_color;
@@ -134,6 +136,8 @@ public:
 			unknown6[0] = 0;
 			unknown6[1] = 1; //if not here will not display character
 			unknown7 = 0;
+			tradeskill_class = 0; // 887
+			tradeskill_level = 0; //887
 			unknown8 = 15;
 			race_type = 0;
 			skin_color.Red = 255;
@@ -322,6 +326,8 @@ public:
 			uint8_t& Unknown6 = unknown6[0]; // Size = "2"
 			RegisterUInt8(Unknown6)->SetCount(2);
 			RegisterUInt32(unknown7);
+			RegisterUInt8(tradeskill_class); // 887
+			RegisterUInt32(tradeskill_level); //887
 			RegisterUInt8(unknown8);
 			RegisterUInt16(race_type);
 			RegisterEQ2Color(skin_color);
@@ -405,9 +411,9 @@ public:
 	uint16_t AccountUnknown2;
 	uint32_t AccountUnknown3;
 	uint8_t AccouontUnknown4;
+	uint32_t AccountUnknown5[4];
 	uint8_t VeteranAdventureBonus; // 1096
 	uint8_t VeteranTradeskillBonus; // 1096
-	uint32_t AccountUnknown5[4];
 
 
 private:
@@ -420,12 +426,12 @@ private:
 		RegisterUInt16(AccountUnknown2);
 		RegisterUInt32(AccountUnknown3);
 		RegisterUInt8(AccouontUnknown4);
+		uint32_t& accountUnknown5 = AccountUnknown5[0];
+		RegisterUInt32(accountUnknown5)->SetCount(4);
 		if (GetVersion() >= 1096) {
 			RegisterUInt8(VeteranAdventureBonus);
 			RegisterUInt8(VeteranTradeskillBonus);
 		}
-		uint32_t& accountUnknown5 = AccountUnknown5[0];
-		RegisterUInt32(accountUnknown5)->SetCount(4);
 	}
 };
 

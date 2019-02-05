@@ -19,10 +19,10 @@ public:
 		OP_AllCharactersDescReplyMsg_Packet* char_list = new OP_AllCharactersDescReplyMsg_Packet(client->GetVersion());
 		database.LoadCharacters(client->GetAccountID(), char_list);
 		char_list->AccountID = client->GetAccountID();
-		/*unsigned char* buf = nullptr;
+		unsigned char* buf = nullptr;
 		char_list->Write(buf);
 		LogWarn(LOG_PACKET, 0, "Dumping character reply:");
-		DumpBytes(buf, char_list->Size);*/
+		DumpBytes(buf, char_list->Size);
 		LogWarn(LOG_PACKET, 0, "Sending character reply");
 		client->QueuePacket(char_list);
 	}

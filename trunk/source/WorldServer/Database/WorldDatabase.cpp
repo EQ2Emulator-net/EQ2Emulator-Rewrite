@@ -124,6 +124,7 @@ bool WorldDatabase::UpdateAccountClientVersion(uint32_t account, uint16_t versio
 bool WorldDatabase::LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMsg_Packet* packet) {
 	bool ret;
 	DatabaseResult result;
+	DatabaseResult result2;
 
 	ret = Select(&result, "SELECT id, name, race, class, gender, deity, body_size, body_age, current_zone_id, level, tradeskill_class, tradeskill_level, soga_wing_type, soga_chest_type, soga_legs_type, soga_hair_type, soga_facial_hair_type, soga_model_type, legs_type, chest_type, wing_type, hair_type, facial_hair_type, model_type, unix_timestamp(created_date), unix_timestamp(last_played)   FROM characters WHERE account_id = %u AND deleted = 0", account);
 	if (!ret)
@@ -148,29 +149,38 @@ bool WorldDatabase::LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMs
 		c.body_size = result.GetUInt8(6);
 		//c.body_age = result.GetUInt8(7);
 		uint32_t zone_id = result.GetUInt32(8);
-		//c.tradeskill_class = result.GetUInt8(9);
-		//c.tradeskill_level = result.GetUInt8(10);
+		ret = Select(&result2, "SELECT name, description FROM zones WHERE id = %u", zone_id);
+		if (!ret)
+			return ret;
+		if (result2.Next()) {
+			c.zone = result2.IsNull(0) ? " " : result2.GetString(0);
+			c.zonedesc = result2.IsNull(1) ? " " : result2.GetString(1);
+			c.zonename2 = " ";
+		}
+		c.level = result.GetUInt32(9);
+		c.tradeskill_class = result.GetUInt8(10);
+		c.tradeskill_level = result.GetUInt32(11);
 
 		/* SOGA Appearances */
-		//c.soga_wing_type = result.GetUInt16(11);
-		//c.soga_cheek_type = result.GetUInt16(12);
-		//c.soga_legs_type = result.GetUInt16(13);
-		c.soga_hair_type = result.GetUInt16(14);
-		c.soga_hair_face_type = result.GetUInt16(15);
-		c.soga_race_type = result.GetUInt16(16);
+		//c.soga_wing_type = result.GetUInt16(12);
+		//c.soga_cheek_type = result.GetUInt16(13);
+		//c.soga_legs_type = result.GetUInt16(14);
+		c.soga_hair_type = result.GetUInt16(15);
+		c.soga_hair_face_type = result.GetUInt16(16);
+		c.soga_race_type = result.GetUInt16(17);
 
 		/* NORMAL Appearances */
-		c.legs_type = result.GetUInt16(17);
-		c.chest_type = result.GetUInt16(18);
-		c.wing_type = result.GetUInt16(19);
-		c.hair_type = result.GetUInt16(20);
-		c.hair_face_type = result.GetUInt16(21);
-		c.race_type = result.GetUInt16(22);
+		c.legs_type = result.GetUInt16(18);
+		c.chest_type = result.GetUInt16(19);
+		c.wing_type = result.GetUInt16(20);
+		c.hair_type = result.GetUInt16(21);
+		c.hair_face_type = result.GetUInt16(22);
+		c.race_type = result.GetUInt16(23);
 
-		if (!result.IsNull(23))
-			c.created_date = result.GetUInt32(23);
 		if (!result.IsNull(24))
-			c.last_played = result.GetUInt32(24);
+			c.created_date = result.GetUInt32(24);
+		if (!result.IsNull(25))
+			c.last_played = result.GetUInt32(25);
 
 
 		// TODO char_colors table
