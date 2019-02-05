@@ -38,7 +38,7 @@ EQ2Stream::EQ2Stream(unsigned int ip, unsigned short port) : Stream(ip, port) {
 	stream.opaque = Z_NULL;
 	stream.zalloc = Z_NULL;
 	stream.zfree = Z_NULL;
-	deflateInit(&stream, Z_DEFAULT_COMPRESSION);
+	deflateInit2(&stream, 9, Z_DEFLATED, 13, 9, Z_DEFAULT_STRATEGY);
 }
 
 EQ2Stream::~EQ2Stream() {
@@ -367,7 +367,7 @@ uint8_t EQ2Stream::EQ2_Compress(EQ2Packet* app, uint8_t offset) {
 	}
 
 	app->Size = total_bytes_written + offset;
-	app->buffer[offset + 1] = 1;
+	app->buffer[offset - 1] = 1;
 
 	return offset - 1;
 }
