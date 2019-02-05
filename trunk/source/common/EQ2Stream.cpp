@@ -34,6 +34,11 @@ EQ2Stream::EQ2Stream(unsigned int ip, unsigned short port) : Stream(ip, port) {
 	DecayRate = DECAYBASE / 250;
 	BytesWritten = 0;
 	crypto.setRC4Key(0);
+
+	stream.opaque = Z_NULL;
+	stream.zalloc = Z_NULL;
+	stream.zfree = Z_NULL;
+	deflateInit(&stream, Z_DEFAULT_COMPRESSION);
 }
 
 EQ2Stream::~EQ2Stream() {
@@ -57,6 +62,8 @@ EQ2Stream::~EQ2Stream() {
 	}
 
 	InboundQueueClear();
+
+	deflateEnd(&stream);
 }
 
 void EQ2Stream::Process(const unsigned char* data, unsigned int length) {
