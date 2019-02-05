@@ -14,6 +14,7 @@ public:
 	}
 
 	bool ReadElement(const unsigned char* srcbuf, uint32_t& offset, uint32_t bufsize) override {
+		CheckElementsInitialized();
 		for (auto& itr : elements) {
 			if (!itr->MeetsCriteria()) {
 				continue;
@@ -28,6 +29,7 @@ public:
 	}
 
 	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
+		CheckElementsInitialized();
 		for (auto& itr : elements) {
 			if (!itr->MeetsCriteria()) {
 				continue;
@@ -38,6 +40,8 @@ public:
 	}
 
 	uint32_t GetSize() override {
+		CheckElementsInitialized();
+
 		uint32_t size = 0;
 		for (auto& e : elements) {
 			size += e->GetSize();
@@ -45,10 +49,43 @@ public:
 		return size;
 	}
 
+	virtual void RegisterElements() {
+		elementsInitialized = true;
+	}
+
+	void CheckElementsInitialized() {
+		if (elementsInitialized) {
+			return;
+		}
+
+		if (!elements.empty()) {
+			elementsInitialized = true;
+			return;
+		}
+
+		elementsInitialized = true;
+		RegisterElements();
+	}
+
 protected:
-	PacketSubstruct() = default;
+	PacketSubstruct(): elementsInitialized(false) {}
+
+	//Copy constructor
+	PacketSubstruct(const PacketSubstruct& other) {
+		elements.reserve(other.elements.size());
+		elementsInitialized = false;
+	}
+
+	//Move constructor
+	PacketSubstruct(PacketSubstruct&& other) {
+		elements.reserve(other.elements.size());
+		elementsInitialized = false;
+	}
 
 	std::vector<PacketElement*> elements;
+
+private:
+	bool elementsInitialized = false;
 };
 
 //PacketSubstructParent simply links to a PacketSubstruct object and writes it
