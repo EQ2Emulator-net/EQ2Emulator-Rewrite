@@ -287,5 +287,8 @@
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketOversizedByte.h">
       <Filter>common\Packets\PacketElements</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_AllCharactersDescRequestMsg_Packet.h">
+      <Filter>source\Packets</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -3,6 +3,8 @@
 #include "../../common/database.h"
 #include "../WorldServer/Client.h"
 
+class OP_AllCharactersDescReplyMsg_Packet;
+
 class WorldDatabase : public Database {
 public:
 	WorldDatabase();
@@ -16,6 +18,8 @@ public:
 	bool GetAccount(Client* client, std::string user, std::string pass);
 	bool UpdateAccountIPAddress(uint32_t account, uint32_t address);
 	bool UpdateAccountClientVersion(uint32_t account, uint16_t version);
+
+	bool LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMsg_Packet* packet);
 
 private:
 

@@ -97,6 +97,20 @@ public:
 
 		CharacterListEntry() {
 			RegisterElements();
+
+			unknown3 = 57;
+			unknown4 = 56;
+			unknown6[0] = 0;
+			unknown6[1] = 1;
+			unknown8 = 15;
+			unknown13 = 212;
+			unknown14.Red = 255;
+			unknown14.Green = 255;
+			unknown14.Blue = 255;
+
+			unsigned char tmp[] = { 0xFF, 0xFF, 0xFF, 0x61, 0x00, 0x2C, 0x04, 0xA5, 0x09, 0x02, 0x0F, 0x00, 0x00 };
+			for (int y = 0; y < sizeof(tmp); y++)
+				unknown11[y] = tmp[y];
 		}
 
 		void RegisterElements() {

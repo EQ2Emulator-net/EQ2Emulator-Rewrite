@@ -1,6 +1,7 @@
 #include "WorldDatabase.h"
 #include "../../common/log.h"
 #include "../../common/Packets/EQ2Packets/OpcodeManager.h"
+#include "../Packets/OP_AllCharactersDescReplyMsg_Packet.h"
 
 #ifdef _WIN32
 	#include <WS2tcpip.h>
@@ -24,18 +25,6 @@ bool WorldDatabase::Start() {
 	DatabaseCallbacks callbacks;
 	callbacks.query_error = DatabaseQueryError;
 	SetCallbacks(&callbacks);
-
-	// temp until config reader
-	/*std::string host = "127.0.0.1";
-	uint16_t port = 3306;
-	std::string user = "rewrite";
-	std::string pass = "1234";
-	std::string db = "eq2_rewrite";
-	SetHost(host.c_str());
-	SetPort(port);
-	SetUser(user.c_str());
-	SetPassword(pass.c_str());
-	SetDatabase(db.c_str());*/
 
 	if (Connect()) {
 		LogInfo(LOG_DATABASE, 0, "Connected to MySQL server at %s:%u", GetHost(), GetPort());
@@ -127,4 +116,64 @@ bool WorldDatabase::UpdateAccountIPAddress(uint32_t account, uint32_t address) {
 
 bool WorldDatabase::UpdateAccountClientVersion(uint32_t account, uint16_t version) {
 	return Query("UPDATE `account` SET `last_client_version` = %u WHERE `id` = %u", version, account);
+}
+
+bool WorldDatabase::LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMsg_Packet* packet) {
+	bool ret;
+	DatabaseResult result;
+
+	ret = Select(&result, "SELECT id, name, race, class, gender, deity, body_size, body_age, current_zone_id, level, tradeskill_class, tradeskill_level, soga_wing_type, soga_chest_type, soga_legs_type, soga_hair_type, soga_facial_hair_type, soga_model_type, legs_type, chest_type, wing_type, hair_type, facial_hair_type, model_type, unix_timestamp(created_date), unix_timestamp(last_played)   FROM characters WHERE account_id = %u AND deleted = 0", account);
+	if (!ret)
+		return ret;
+
+	while (result.Next()) {
+		OP_AllCharactersDescReplyMsg_Packet::CharacterListEntry c;
+		c.account_id = account;
+		c.server_id = 1;
+		c.charid = result.GetUInt32(0);
+		c.name = result.GetString(1);
+		c.race = result.GetUInt8(2);
+		c._class = result.GetUInt8(3);
+		c.gender = result.GetUInt8(4);
+		//c.deity = result.GetUInt8(5);
+		c.body_size = result.GetUInt8(6);
+		//c.body_age = result.GetUInt8(7);
+		uint32_t zone_id = result.GetUInt32(8);
+		//c.tradeskill_class = result.GetUInt8(9);
+		//c.tradeskill_level = result.GetUInt8(10);
+
+		/* SOGA Appearances */
+		//c.soga_wing_type = result.GetUInt16(11);
+		//c.soga_cheek_type = result.GetUInt16(12);
+		//c.soga_legs_type = result.GetUInt16(13);
+		c.soga_hair_type = result.GetUInt16(14);
+		c.soga_hair_face_type = result.GetUInt16(15);
+		c.soga_race_type = result.GetUInt16(16);
+
+		/* NORMAL Appearances */
+		c.legs_type = result.GetUInt16(17);
+		c.chest_type = result.GetUInt16(18);
+		c.wing_type = result.GetUInt16(19);
+		c.hair_type = result.GetUInt16(20);
+		c.hair_face_type = result.GetUInt16(21);
+		c.race_type = result.GetUInt16(22);
+
+		if (!result.IsNull(23))
+			c.created_date = result.GetUInt32(23);
+		if (!result.IsNull(24))
+			c.last_played = result.GetUInt32(24);
+
+
+		// TODO char_colors table
+
+		// TODO equipment
+
+		c.server_name = "Rewrite Test Server";
+		
+		packet->CharacterList.push_back(c);
+	}
+
+	packet->NumCharacters = packet->CharacterList.size();
+
+	return ret;
 }

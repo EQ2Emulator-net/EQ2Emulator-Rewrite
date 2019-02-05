@@ -259,6 +259,7 @@
     <ClInclude Include="..\..\source\common\version.h" />
     <ClInclude Include="..\..\source\WorldServer\Database\WorldDatabase.h" />
     <ClInclude Include="..\..\source\WorldServer\Packets\OP_AllCharactersDescReplyMsg_Packet.h" />
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_AllCharactersDescRequestMsg_Packet.h" />
     <ClInclude Include="..\..\source\WorldServer\Packets\OP_AllWSDescRequestMsg_Packet.h" />
     <ClInclude Include="..\..\source\WorldServer\Packets\OP_LoginRequestMsg_Packet.h" />
     <ClInclude Include="..\..\source\WorldServer\Packets\OP_WorldListMsg_Packet.h" />
