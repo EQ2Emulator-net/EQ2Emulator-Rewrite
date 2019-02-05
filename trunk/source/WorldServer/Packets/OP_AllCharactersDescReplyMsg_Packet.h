@@ -10,6 +10,19 @@ public:
 	OP_AllCharactersDescReplyMsg_Packet(uint16_t version)
 		: EQ2Packet(version) {
 		RegisterElements();
+
+		NumCharacters = 0;
+		AccountID = 0;
+		AccountUnknown1 = 0xFFFFFFFF;
+		AccountUnknown2 = 0;
+		AccountUnknown3 = 10;
+		AccouontUnknown4 = 0;
+		VeteranAdventureBonus = 0;
+		VeteranTradeskillBonus = 0;
+		AccountUnknown5[0] = 0xFFFFFFFF;
+		AccountUnknown5[1] = 0xFFFFFFFF;
+		AccountUnknown5[2] = 0xFFFFFFFF;
+		AccountUnknown5[3] = 0;
 	}
 
 	uint8_t NumCharacters;
@@ -97,20 +110,191 @@ public:
 
 		CharacterListEntry() {
 			RegisterElements();
-
+			version = 0;
+			charid = 0;
+			server_id = 0;
+			name = "";
+			unknown = 0;
+			race = 0;;
+			_class = 0;
+			gender = 0;
+			level = 0;
+			zone = "";
+			unknown1 = 0;
+			unknown2 = 0;
+			created_date = 0;
+			last_played = 0;
 			unknown3 = 57;
 			unknown4 = 56;
+			zonename2 = "";
+			zonedesc = "";
+			unknown5 = 0;
+			server_name = "";
+			account_id = 0;
 			unknown6[0] = 0;
-			unknown6[1] = 1;
+			unknown6[1] = 1; //if not here will not display character
+			unknown7 = 0;
 			unknown8 = 15;
-			unknown13 = 212;
-			unknown14.Red = 255;
-			unknown14.Green = 255;
-			unknown14.Blue = 255;
+			race_type = 0;
+			skin_color.Red = 255;
+			skin_color.Green = 255;
+			skin_color.Blue = 255;
+			eye_color.Red = 255;
+			eye_color.Green = 255;
+			eye_color.Blue = 255;
 
+			for (uint8_t i = 0; i < 24; i++) {
+				equip[i].type = 0;
+				equip[i].color.Red = 255;
+				equip[i].color.Green = 255;
+				equip[i].color.Blue = 255;
+				equip[i].highlight.Red = 255;
+				equip[i].highlight.Green = 255;
+				equip[i].highlight.Blue = 255;
+			}
+			hair_type = 0;
+			hair_type_color.Red = 255;
+			hair_type_color.Green = 255;
+			hair_type_color.Blue = 255;
+			hair_type_highlight_color.Red = 255;
+			hair_type_highlight_color.Green = 255;
+			hair_type_highlight_color.Blue = 255;
+			hair_face_type = 0;
+			hair_face_color.Red = 255;
+			hair_face_color.Green = 255;
+			hair_face_color.Blue = 255;
+			hair_face_highlight_color.Red = 255;
+			hair_face_highlight_color.Green = 255;
+			hair_face_highlight_color.Blue = 255;
+			wing_type = 0;
+			wing_color1.Red = 255;
+			wing_color1.Green = 255;
+			wing_color1.Blue = 255;
+			wing_color2.Red = 255;
+			wing_color2.Green = 255;
+			wing_color2.Blue = 255;
+			chest_type = 0;
+			shirt_color.Red = 255;
+			shirt_color.Green = 255;
+			shirt_color.Blue = 255;
+			unknown_chest_color.Red = 255;
+			unknown_chest_color.Green = 255;
+			unknown_chest_color.Blue = 255;
+			legs_type = 0;
+			pants_color.Red = 255;
+			pants_color.Green = 255;
+			pants_color.Blue = 255;
+			unknown_legs_color.Red = 255;
+			unknown_legs_color.Green = 255;
+			unknown_legs_color.Blue = 255;
+			unknown9.Red = 255;
+			unknown9.Green = 255;
+			unknown9.Blue = 255;
+			eye_type[0] = 0;
+			eye_type[1] = 0;
+			eye_type[2] = 0;
+			ear_type[0] = 0;
+			ear_type[1] = 0;
+			ear_type[2] = 0;
+			eye_brow_type[0] = 0;
+			eye_brow_type[1] = 0;
+			eye_brow_type[2] = 0;
+			cheek_type[0] = 0;
+			cheek_type[1] = 0;
+			cheek_type[2] = 0;
+			lip_type[0] = 0;
+			lip_type[1] = 0;
+			lip_type[2] = 0;
+			chin_type[0] = 0;
+			chin_type[1] = 0;
+			chin_type[2] = 0;
+			nose_type[0] = 0;
+			nose_type[1] = 0;
+			nose_type[2] = 0;
+			body_size = 0;
+			unknown10[0] = 0;
+			unknown10[1] = 0;
+			unknown10[2] = 0;
+			unknown10[3] = 0;
+			unknown10[4] = 0;
+			unknown10[5] = 0;
+			unknown10[6] = 0;
+			unknown10[7] = 0;
+			unknown10[8] = 0;
+			hair_color1.Red = 255;
+			hair_color1.Green = 255;
+			hair_color1.Blue = 255;
+			hair_color2.Red = 255;
+			hair_color2.Green = 255;
+			hair_color2.Blue = 255;
+			
 			unsigned char tmp[] = { 0xFF, 0xFF, 0xFF, 0x61, 0x00, 0x2C, 0x04, 0xA5, 0x09, 0x02, 0x0F, 0x00, 0x00 };
 			for (int y = 0; y < sizeof(tmp); y++)
 				unknown11[y] = tmp[y];
+
+			soga_race_type = 0;
+			soga_skin_color.Red = 255;
+			soga_skin_color.Green = 255;
+			soga_skin_color.Blue = 255;
+			soga_eye_color.Red = 255;
+			soga_eye_color.Green = 255;
+			soga_eye_color.Blue = 255;
+			Unknown12[0] = 0;
+			Unknown12[1] = 0;
+			Unknown12[2] = 0;
+			soga_eye_type[0] = 0;
+			soga_eye_type[1] = 0;
+			soga_eye_type[2] = 0;
+			soga_ear_type[0] = 0;
+			soga_ear_type[1] = 0;
+			soga_ear_type[2] = 0;
+			soga_eye_brow_type[0] = 0;
+			soga_eye_brow_type[1] = 0;
+			soga_eye_brow_type[2] = 0;
+			soga_cheek_type[0] = 0;
+			soga_cheek_type[1] = 0;
+			soga_cheek_type[2] = 0;
+			soga_lip_type[0] = 0;
+			soga_lip_type[1] = 0;
+			soga_lip_type[2] = 0;
+			soga_chin_type[0] = 0;
+			soga_chin_type[1] = 0;
+			soga_chin_type[2] = 0;
+			soga_nose_type[0] = 0;
+			soga_nose_type[1] = 0;
+			soga_nose_type[2] = 0;
+			unknown13 = 212;
+			soga_hair_color1.Red = 255;
+			soga_hair_color1.Green = 255;
+			soga_hair_color1.Blue = 255;
+			soga_hair_color2.Red = 255;
+			soga_hair_color2.Green = 255;
+			soga_hair_color2.Blue = 255;
+			unknown14.Red = 255;
+			unknown14.Green = 255;
+			unknown14.Blue = 255;
+			soga_hair_type = 0;
+			soga_hair_type_color.Red = 255;
+			soga_hair_type_color.Green = 255;
+			soga_hair_type_color.Blue = 255;
+			soga_hair_type_highlight_color.Red = 255;
+			soga_hair_type_highlight_color.Green = 255;
+			soga_hair_type_highlight_color.Blue = 255;
+			soga_hair_face_type = 0;
+			soga_hair_face_color.Red = 255;
+			soga_hair_face_color.Green = 255;
+			soga_hair_face_color.Blue = 255;
+			soga_hair_face_highlight_color.Red = 255;
+			soga_hair_face_highlight_color.Green = 255;
+			soga_hair_face_highlight_color.Blue = 255;
+			unknown15[0] = 0;
+			unknown15[1] = 0;
+			unknown15[2] = 0;
+			unknown15[3] = 0;
+			unknown15[4] = 0;
+			unknown15[5] = 0;
+			unknown15[6] = 0;
+			
 		}
 
 		void RegisterElements() {
@@ -228,7 +412,8 @@ public:
 
 private:
 	void RegisterElements() {
-		RegisterUInt8(NumCharacters)->SetMyArray(RegisterArray(CharacterList, CharacterListEntry));
+		PacketUInt8* asize = RegisterUInt8(NumCharacters);
+		asize->SetMyArray(RegisterArray(CharacterList, CharacterListEntry));
 		// account info
 		RegisterUInt32(AccountID);
 		RegisterUInt32(AccountUnknown1);
@@ -244,7 +429,7 @@ private:
 	}
 };
 
-RegisterWorldStruct("OP_AllCharactersDescReplyMsg", OP_AllCharactersDescReplyMsg_Packet, 1, 1, 1096);
+RegisterWorldStruct("OP_AllCharactersDescReplyMsg", OP_AllCharactersDescReplyMsg_Packet, 1, 1096);
 
 
 // These are not complete structs as the old login just shoved this in the middle of other data,

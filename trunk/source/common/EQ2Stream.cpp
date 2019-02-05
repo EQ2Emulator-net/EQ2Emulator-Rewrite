@@ -410,6 +410,9 @@ void EQ2Stream::SendPacket(EQ2Packet* p) {
 		delete[] tmpbuff;
 	}
 	else {*/
+	if (p->Size > (MaxLength - 8)) {
+		LogWarn(LOG_PACKET, 0, "OP_Fragment should be used");
+	}
 	OP_Packet_Packet* out = new OP_Packet_Packet();
 	out->Write(p);
 		//ProtocolPacket *out = new ProtocolPacket(OP_Packet, NULL, p->Size + 2);

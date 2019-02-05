@@ -39,10 +39,10 @@ private:
 	//<type_index, allocator>
 	std::map<std::type_index, PacketAllocatorBase*> type_map;
 
-	typedef std::pair<int16_t, int16_t> versionRange_t;
+	typedef std::pair<uint16_t, uint16_t> versionRange_t;
 
 	//This maps versions to opcodes and their packet constructors
-	std::map<versionRange_t, std::map<int16_t, PacketAllocatorBase*> > versions;
+	std::map<versionRange_t, std::map<uint16_t, PacketAllocatorBase*> > versions;
 
 	//This maps struct file names to allocators
 	std::map<std::string, std::vector<PacketAllocatorBase*> > outfiles;
@@ -75,7 +75,7 @@ public:
 	static void RegisterEmuOpcodeHelper(const char* name, PacketAllocatorBase* allocator, std::type_index t, 
 		const char* outfile, const int32_t* versions, int32_t num_versions);
 
-	void RegisterVersionOpcode(const char* name, int16_t range_low, int16_t range_high, int16_t opcode) {
+	void RegisterVersionOpcode(const char* name, uint16_t range_low, uint16_t range_high, uint16_t opcode) {
 		auto itr = allocators.find(name);
 		if (itr == allocators.end()) {
 			//We don't handle this opcode currently, so don't bother making an entry
@@ -86,7 +86,7 @@ public:
 		versions[range][opcode] = itr->second;
 	}
 
-	EQ2Packet* GetPacketForVersion(int16_t version, int16_t opcode) {
+	EQ2Packet* GetPacketForVersion(uint16_t version, uint16_t opcode) {
 		EQ2Packet* ret = nullptr;
 		for (auto& itr : versions) {
 			versionRange_t range = itr.first;
@@ -102,7 +102,7 @@ public:
 		return ret;
 	}
 
-	bool HasVersion(int16_t version) {
+	bool HasVersion(uint16_t version) {
 		bool ret = false;
 		for (auto& itr : versions) {
 			versionRange_t range = itr.first;

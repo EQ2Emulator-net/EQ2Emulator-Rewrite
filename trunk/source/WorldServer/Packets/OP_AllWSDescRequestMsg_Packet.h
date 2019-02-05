@@ -19,6 +19,7 @@ public:
 
 		OP_WorldListMsg_Packet* world_list = new OP_WorldListMsg_Packet(client->GetVersion());
 		// set server info
+		LogWarn(LOG_PACKET, 0, "Sending world reply");
 		client->QueuePacket(world_list);
 	}
 

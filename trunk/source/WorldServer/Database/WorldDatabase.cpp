@@ -3,6 +3,9 @@
 #include "../../common/Packets/EQ2Packets/OpcodeManager.h"
 #include "../Packets/OP_AllCharactersDescReplyMsg_Packet.h"
 
+#include "../Packets/OP_AllCharactersDescRequestMsg_Packet.h"
+#include "../Packets/OP_AllWSDescRequestMsg_Packet.h"
+
 #ifdef _WIN32
 	#include <WS2tcpip.h>
 #else
@@ -130,6 +133,12 @@ bool WorldDatabase::LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMs
 		OP_AllCharactersDescReplyMsg_Packet::CharacterListEntry c;
 		c.account_id = account;
 		c.server_id = 1;
+
+		if (packet->GetVersion() >= 887)
+			c.version = 6;
+		else
+			c.version = 5;
+
 		c.charid = result.GetUInt32(0);
 		c.name = result.GetString(1);
 		c.race = result.GetUInt8(2);
@@ -173,7 +182,7 @@ bool WorldDatabase::LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMs
 		packet->CharacterList.push_back(c);
 	}
 
-	packet->NumCharacters = packet->CharacterList.size();
+	packet->NumCharacters = (uint8_t)packet->CharacterList.size();
 
 	return ret;
 }

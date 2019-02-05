@@ -106,8 +106,8 @@ bool Server::Process() {
 		if ((length = recvfrom(Sock, buffer, 2048, 0, (sockaddr*)&from, (socklen_t*)&socklen)) < 0)
 #endif // _WIN32
 		{
-			LogError(LOG_NET, 0, "recvfrom error (%i)", WSAGetLastError());
-			return false;
+			/*LogError(LOG_NET, 0, "recvfrom error (%i)", WSAGetLastError());
+			return false;*/
 		}
 		else {
 			LogError(LOG_NET, 0, "received %i", length);
