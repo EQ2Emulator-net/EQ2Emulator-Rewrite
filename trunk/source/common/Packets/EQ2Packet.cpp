@@ -1,12 +1,8 @@
+#include "stdafx.h"
+
 #include "EQ2Packet.h"
 #include "../util.h"
 #include "../Packets/EQ2Packets/OpcodeManager.h"
-
-#ifdef _WIN32
-	#include <WinSock2.h>
-#else
-	#include <arpa/inet.h>
-#endif
 
 EQ2Packet::EQ2Packet(uint16_t version) {
 	app_opcode_size = 2;

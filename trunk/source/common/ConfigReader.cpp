@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "ConfigReader.h"
 #include "util.h"
 #include "string.h"

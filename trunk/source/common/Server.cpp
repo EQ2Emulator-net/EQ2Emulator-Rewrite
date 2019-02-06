@@ -1,13 +1,7 @@
+#include "stdafx.h"
+
 #include "Server.h"
 #include "log.h"
-
-#ifdef _WIN32
-	#include <WinSock2.h>
-	#include <Ws2tcpip.h>
-	#include <io.h>
-#else
-	#include <sys/socket.h>
-#endif
 
 unsigned int Server::InitializeCount = 0;
 

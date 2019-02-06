@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "string.h"
 
 size_t

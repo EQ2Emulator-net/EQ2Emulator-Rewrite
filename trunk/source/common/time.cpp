@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "time.h"
 
 #if defined(_WIN32)

@@ -1,5 +1,5 @@
-#include <stdlib.h>
-#include "string.h"
+#include "stdafx.h"
+
 #include "database-result.h"
 
 //return this instead of NULL for certain functions to prevent crashes from coding errors

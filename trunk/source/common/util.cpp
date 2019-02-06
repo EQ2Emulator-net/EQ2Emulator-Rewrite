@@ -1,17 +1,6 @@
-#include <stdio.h>
+#include "stdafx.h"
+
 #include "string.h"
-#include <ctype.h>
-#include <zlib.h>
-#include <iostream>
-#include <map>
-
-#if defined(_WIN32)
-	# include <Windows.h>
-	# include <process.h>
-#else
-	# include <unistd.h>
-#endif
-
 #include "util.h"
 
 /**

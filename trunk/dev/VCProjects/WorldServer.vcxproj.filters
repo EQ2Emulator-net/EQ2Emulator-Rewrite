@@ -105,6 +105,9 @@
     <ClCompile Include="..\..\source\common\Packets\PacketElements\PacketCriteria.cpp">
       <Filter>common\Packets\PacketElements</Filter>
     </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\common\io.h">
@@ -289,6 +292,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\WorldServer\Packets\OP_AllCharactersDescRequestMsg_Packet.h">
       <Filter>source\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>source</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

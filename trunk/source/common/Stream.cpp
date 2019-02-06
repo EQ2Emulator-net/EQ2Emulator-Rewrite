@@ -1,13 +1,9 @@
+#include "stdafx.h"
+
 #include "Stream.h"
 #include "Server.h"
 #include "util.h"
 #include "log.h"
-
-#ifdef _WIN32
-#include <WinSock2.h>
-#else
-#include <arpa/inet.h>
-#endif
 
 Stream::Stream(unsigned int ip, unsigned short port) {
 	RemoteIP = ip;

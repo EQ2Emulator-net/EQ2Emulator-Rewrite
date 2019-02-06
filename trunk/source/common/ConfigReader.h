@@ -1,8 +1,8 @@
 #pragma once
 
 #include <string>
-#include "../depends/rapid-xml/rapidxml.hpp"
 #include "Server.h"
+#include "../depends/rapid-xml/rapidxml.hpp"
 #include "database.h"
 
 using namespace rapidxml;

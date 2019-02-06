@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "PacketCriteria.h"
 #include "../PacketElement.h"
 

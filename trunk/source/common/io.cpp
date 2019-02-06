@@ -11,11 +11,8 @@
 * @section License
 */
 
-#if defined(_WIN32)
-#include <Windows.h>
-#else
-#include <sys/stat.h>
-#endif
+#include "stdafx.h"
+
 #include "io.h"
 
 bool IODirectoryExists(const char *dir) {

@@ -1,13 +1,9 @@
+#include "stdafx.h"
+
 #include "ProtocolPacket.h"
 #include "ProtocolPackets/ProtocolPackets.h"
 #include "../util.h"
 #include "EQ2Packet.h"
-
-#ifdef _WIN32
-	#include <WinSock2.h>
-#else
-	#include <arpa/inet.h>
-#endif
 
 ProtocolPacket::ProtocolPacket() {
 	HasCRC = false;

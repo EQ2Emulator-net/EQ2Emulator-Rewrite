@@ -110,16 +110,17 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_WINSOCK_DEPRECATED_NO_WARNINGS;_DEBUG;_CONSOLE;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_WARNINGS;EQ2_SERVER;EQ2_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <PrecompiledHeaderFile>
-      </PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MinimalRebuild>false</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -202,6 +203,9 @@
     <ClCompile Include="..\..\source\WorldServer\main.cpp" />
     <ClCompile Include="..\..\source\WorldServer\WorldServer\Client.cpp" />
     <ClCompile Include="..\..\source\WorldServer\WorldServer\WorldServer.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\common\ConfigReader.h" />
@@ -249,6 +253,7 @@
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\ProtocolPackets.h" />
     <ClInclude Include="..\..\source\common\RC4.h" />
     <ClInclude Include="..\..\source\common\Server.h" />
+    <ClInclude Include="stdafx.h" />
     <ClInclude Include="..\..\source\common\stdio.h" />
     <ClInclude Include="..\..\source\common\Stream.h" />
     <ClInclude Include="..\..\source\common\string.h" />

@@ -17,8 +17,9 @@
     You should have received a copy of the GNU General Public License
     along with EQ2Emulator.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "stdafx.h"
+
 #include "RC4.h"
-#include <string.h>
 
 static bool g_bInitStateInitialized = false;
 static unsigned char g_byInitState[256];

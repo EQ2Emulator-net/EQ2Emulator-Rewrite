@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "WorldServer.h"
 #include "Client.h"
 

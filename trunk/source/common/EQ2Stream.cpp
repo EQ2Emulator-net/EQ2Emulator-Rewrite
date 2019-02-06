@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "EQ2Stream.h"
 #include "log.h"
 #include "Packets/ProtocolPackets/ProtocolPackets.h"

@@ -32,13 +32,10 @@
 * along with VGOEmulator.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "stdafx.h"
+
 #include "thread.h"
-#include <stdlib.h>
-#include <time.h>
-#include <atomic>
-#include <string>
 #include "Log.h"
-#include <sstream>
 
 using namespace std;
 

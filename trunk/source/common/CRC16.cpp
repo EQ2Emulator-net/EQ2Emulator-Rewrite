@@ -17,7 +17,8 @@
     You should have received a copy of the GNU General Public License
     along with EQ2Emulator.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <stdio.h>
+
+#include "stdafx.h"
 
 unsigned long IntArray[]={ 
 0x00000000, 

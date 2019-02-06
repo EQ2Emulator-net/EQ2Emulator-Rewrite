@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "Client.h"
 
 #include "../../common/log.h"

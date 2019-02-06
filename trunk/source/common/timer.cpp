@@ -18,12 +18,10 @@
     along with EQ2Emulator.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "stdafx.h"
+
 // Disgrace: for windows compile
-#ifndef _WIN32
-	#include <sys/time.h>
-#else
-	#include <sys/timeb.h>
-	#include <WinSock2.h>
+#ifdef _WIN32
 	int gettimeofday(timeval *tp, ...);
 #endif
 

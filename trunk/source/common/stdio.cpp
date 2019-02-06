@@ -1,8 +1,6 @@
-#include "stdio.h"
+#include "stdafx.h"
 
-#if defined(_WIN32)
-# include <stdlib.h>
-#endif
+#include "stdio.h"
 
 #if defined(_WIN32)
 int vasprintf(char **ptr, const char *fmt, va_list ap) {

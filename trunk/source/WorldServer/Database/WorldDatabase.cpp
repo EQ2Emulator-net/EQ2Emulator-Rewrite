@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "WorldDatabase.h"
 #include "../../common/log.h"
 #include "../../common/Packets/EQ2Packets/OpcodeManager.h"

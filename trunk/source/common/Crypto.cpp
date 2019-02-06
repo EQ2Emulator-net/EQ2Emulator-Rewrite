@@ -17,8 +17,11 @@
     You should have received a copy of the GNU General Public License
     along with EQ2Emulator.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+#include "stdafx.h"
+
 #include "Crypto.h"
-#include <string>
+
 
 uint64_t Crypto::RSADecrypt(unsigned char* text, uint16_t size){
 	uint64_t ret = 0;

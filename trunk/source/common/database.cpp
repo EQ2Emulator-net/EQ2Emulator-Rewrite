@@ -1,9 +1,11 @@
-#include <stdlib.h>
-#include "stdio.h"
-#include <stdarg.h>
-#include "string.h"
-#include <errno.h>
+#include "stdafx.h"
+
 #include "database.h"
+
+//Might want to move this "string.h" stuff somewhere else/rename... little confusing
+#include "string.h"
+//Again... not great to be using stdlib names
+#include "stdio.h"
 
 // fix for incompatible mysqlclient.lib
 // http://stackoverflow.com/questions/30450042/unresolved-external-symbol-imp-iob-func-referenced-in-function-openssldie

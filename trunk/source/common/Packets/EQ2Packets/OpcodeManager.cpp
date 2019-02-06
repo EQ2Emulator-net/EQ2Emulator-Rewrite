@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "OpcodeManager.h"
 
 OpcodeManager* OpcodeManager::GetGlobal() {
