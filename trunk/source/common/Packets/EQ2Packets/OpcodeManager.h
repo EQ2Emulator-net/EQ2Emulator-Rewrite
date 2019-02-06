@@ -153,3 +153,4 @@ public:
 #define RegisterEmuOpcode(n, pt, f, ...) int32_t zUNIQUENAMEVERz ## pt ##[] = { __VA_ARGS__ };\
 OpcodeRegistrar<pt> zUNIQUENAMEz ## pt ## (n, f, zUNIQUENAMEVERz ## pt, sizeof(zUNIQUENAMEVERz ## pt) / sizeof(int32_t))
 #define RegisterWorldStruct(n, pt, ...) RegisterEmuOpcode(n, pt, "WorldStructs.xml", __VA_ARGS__)
+#define RegisterLoginStruct(n, pt, ...) RegisterEmuOpcode(n, pt, "LoginStructs.xml", __VA_ARGS__)

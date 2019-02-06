@@ -27,4 +27,4 @@ private:
 
 };
 
-RegisterWorldStruct("OP_AllWSDescRequestMsg", OP_AllWSDescRequestMsg_Packet, 1);
+RegisterLoginStruct("OP_AllWSDescRequestMsg", OP_AllWSDescRequestMsg_Packet, 1);

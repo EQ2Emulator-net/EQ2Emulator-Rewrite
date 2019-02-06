@@ -8,8 +8,38 @@ class OP_LoginReplyMsg_Packet : public EQ2Packet {
 public:
 	OP_LoginReplyMsg_Packet(uint16_t version)
 		: EQ2Packet(version) {
-		RegisterElements();
+		Response = 0;
+		Unknown = "";
+		ParentalControlFlag = 0;
+		ParentalControlTimer = 0;
+		for (uint8_t i = 0; i < 8; i++)
+			Unknown2[i] = 0;
+		AccountID = 0;
+		Unknown3 = "";
+		ResetAppearance = 0;
+		DoNotForceSoga = 1;
+		Unknown4 = 0;
+		Unknown5 = 0;
+		for (uint8_t i = 0; i < 5; i++)
+			Unknown6[i] = 0;
+		Unknown7 = 0;
+		Unknown7a = 0;
+		RaceUnknown = 0;
+		for (uint8_t i = 0; i < 3; i++)
+			Unknown8[i] = 0;					//<Data ElementName = "unknown8" Type = "int8" Size = "3" / > < !--possibly related to rave_unknown but can't confirm-->
+		Unknown9 = 0;
+		Unknown10 = 1;
+		NumClassItems = 0;
+		UnknownArraySize = 0;
+		Unknown11 = 0;
+		SubscriptionLevel = 2;
+		RaceFlag = 0;
+		ClassFlag = 0;
+		Password = "";
+		Username = "";
+		Unknown12 = "";
 
+		RegisterElements();
 	}
 
 	uint8_t Response;
@@ -25,6 +55,7 @@ public:
 	uint16_t Unknown5;
 	uint8_t Unknown6[5];					//<Data ElementName = "unknown6" Type = "int8" Size = "5" / >
 	uint32_t Unknown7;
+	uint32_t Unknown7a; // 1188
 	uint8_t RaceUnknown;
 	uint8_t Unknown8[3];					//<Data ElementName = "unknown8" Type = "int8" Size = "3" / > < !--possibly related to rave_unknown but can't confirm-->
 	uint8_t Unknown9;
@@ -32,6 +63,7 @@ public:
 	uint8_t NumClassItems;				//<Data ElementName = "num_class_items" Type = "int8" IfVariableSet = "unknown10" Size = "1" / >
 	struct ClassItem : public PacketSubstruct {
 		uint8_t ClassID;
+		uint8_t NumItems;
 		struct StartingItem : public PacketSubstruct {
 			uint16_t ModelID;
 			uint8_t SlotID;
@@ -41,6 +73,21 @@ public:
 			EQ2Color ModelHighlightColor;
 
 			StartingItem() {
+				ModelID = 0;
+				SlotID = 0;
+				UseColor = 1;
+				UseHighlightColor = 1;
+				ModelColor.Red = 255;
+				ModelColor.Green = 255;
+				ModelColor.Blue = 255;
+				ModelHighlightColor.Red = 255;
+				ModelHighlightColor.Green = 255;
+				ModelHighlightColor.Blue = 255;
+
+				RegisterElements();
+			}
+
+			void RegisterElements() {
 				RegisterUInt16(ModelID);
 				RegisterUInt8(SlotID);
 				RegisterUInt8(UseColor);
@@ -52,8 +99,16 @@ public:
 		std::vector<StartingItem> StartingItems;
 
 		ClassItem() {
+			ClassID = 0;
+			NumItems = 0;
+
+			RegisterElements();
+		}
+
+		void RegisterElements() {
 			RegisterUInt8(ClassID);
-			RegisterArray(StartingItems, StartingItem);
+			PacketUInt8* asize = RegisterUInt8(NumItems);
+			asize->SetMyArray(RegisterArray(StartingItems, StartingItem));
 		}
 	};
 	std::vector<ClassItem> ClassItems;
@@ -62,6 +117,8 @@ public:
 		uint32_t Array2Unknown;
 
 		UnknownArray() {
+			Array2Unknown = 0;
+
 			RegisterElements();
 		}
 
@@ -76,6 +133,7 @@ public:
 	uint32_t ClassFlag;
 	std::string Password;
 	std::string Username;
+	std::string Unknown12; //1188
 
 private:
 	void RegisterElements() {
@@ -94,23 +152,29 @@ private:
 		uint8_t& unknown6 = Unknown6[0];
 		RegisterUInt8(unknown6)->SetCount(5);
 		RegisterUInt32(Unknown7);
+		if (GetVersion() >= 1188)
+			RegisterUInt32(Unknown7a);
 		RegisterUInt8(RaceUnknown);
 		uint8_t& unknown8 = Unknown8[0];
 		RegisterUInt8(unknown8)->SetCount(3);
 		RegisterUInt8(Unknown9);
 		RegisterUInt8(Unknown10);
-		RegisterUInt8(NumClassItems)->SetMyArray(RegisterArray(ClassItems, ClassItem));
-		RegisterUInt8(UnknownArraySize)->SetMyArray(RegisterArray(UnknownArray2, UnknownArray));
+		PacketUInt8* asize = RegisterUInt8(NumClassItems);
+		asize->SetMyArray(RegisterArray(ClassItems, ClassItem));
+		asize = RegisterUInt8(UnknownArraySize);
+		asize->SetMyArray(RegisterArray(UnknownArray2, UnknownArray));
 		RegisterUInt32(Unknown11);
 		RegisterUInt32(SubscriptionLevel);
 		RegisterUInt32(RaceFlag);
 		RegisterUInt32(ClassFlag);
 		Register16String(Password);
 		Register16String(Username);
+		if (GetVersion() >= 1188)
+			Register16String(Unknown12);
 	}
 };
 
-RegisterWorldStruct("OP_LoginReplyMsg", OP_LoginReplyMsg_Packet, 1);
+RegisterWorldStruct("OP_LoginReplyMsg", OP_LoginReplyMsg_Packet, 1096, 1188);
 
 /*
 <Struct Name = "LS_LoginReplyMsg" ClientVersion = "1" OpcodeName = "OP_LoginReplyMsg">

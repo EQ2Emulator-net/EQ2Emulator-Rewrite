@@ -435,7 +435,7 @@ private:
 	}
 };
 
-RegisterWorldStruct("OP_AllCharactersDescReplyMsg", OP_AllCharactersDescReplyMsg_Packet, 1, 1096);
+RegisterLoginStruct("OP_AllCharactersDescReplyMsg", OP_AllCharactersDescReplyMsg_Packet, 1, 1096);
 
 
 // These are not complete structs as the old login just shoved this in the middle of other data,
