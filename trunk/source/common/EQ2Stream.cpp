@@ -386,63 +386,26 @@ void EQ2Stream::EncryptPacket(EQ2Packet* app, uint8_t compress_offset, uint8_t o
 }
 
 void EQ2Stream::SendPacket(EQ2Packet* p) {
-	//uint32_t chunksize, used;
-	//uint32_t length;
+	if (p->Size > (MaxLength - 6)) { // proto-op(2), seq(2) ... data ... crc(2)
+		unsigned char* tmpbuff = p->buffer;
+		uint32_t length = p->Size - 2;
 
-	// Convert the EQApplicationPacket to 1 or more EQProtocolPackets
-	/*if (p->Size > (MaxLength - 8)) { // proto-op(2), seq(2), app-op(2) ... data ... crc(2)
-		unsigned char *tmpbuff = new unsigned char[p->Size + 2];
+		OP_Packet_Packet *out = new OP_Packet_Packet(OP_Fragment, NULL, MaxLength);
+		*(uint32_t *)(out->buffer + 4) = htonl(length);
+		memcpy(out->buffer + 8, tmpbuff + 2, MaxLength - 10); // 10 = op(2) + seq(2) + size(4) + crc(2)?? 
 
-		length = p->serialize(tmpbuff);
-
-		ProtocolPacket *out = new ProtocolPacket(OP_Fragment, NULL, MaxLength - 4);
-		*(uint32_t *)(out->buffer + 2) = htonl(p->Size);
-		memcpy(out->buffer + 6, tmpbuff, MaxLength - 10);
-		used = MaxLength - 10;
-		SequencedPush(out);
-		while (used < length) {
-			out = new ProtocolPacket(OP_Fragment, NULL, MaxLength - 4);
-			chunksize = min(length - used, MaxLength - 6);
-			memcpy(out->buffer + 2, tmpbuff + used, chunksize);
-			out->Size = chunksize + 2;
-			SequencedPush(out);
-			used += chunksize;
-		}
-		delete p;
-		delete[] tmpbuff;
-	}
-	else {*/
-	if (p->Size > (MaxLength - 8)) { // proto-op(2), seq(2), app-op(2) ... data ... crc(2)
-		//cout << "Making oversized packet for: " << endl;
-		//cout << p->size << endl;
-		//p->DumpRawHeader();
-		//dump_message(p->pBuffer,p->size,timestamp());
-		//cout << p->size << endl;
-		unsigned char *tmpbuff = new unsigned char[p->Size + 2];
-		//cout << hex << (int)tmpbuff << dec << endl;
-		uint32_t length = p->serialize(tmpbuff);
-
-		ProtocolPacket *out = new ProtocolPacket(OP_Fragment, NULL, MaxLength - 4);
-		*(uint32_t *)(out->buffer + 2) = htonl(p->Size);
-		memcpy(out->buffer + 6, tmpbuff, MaxLength - 10);
 		uint32_t used = MaxLength - 10;
 		uint32_t chunksize = 0;
 		SequencedPush(out);
-		//cout << "Chunk #" << ++i << " size=" << used << ", length-used=" << (length-used) << endl;
+
 		while (used < length) {
-			out = new ProtocolPacket(OP_Fragment, NULL, MaxLength - 4);
 			chunksize = min(length - used, MaxLength - 6);
-			memcpy(out->buffer + 2, tmpbuff + used, chunksize);
-			out->Size = chunksize + 2;
-			LogWarn(LOG_PACKET, 0, "Frag packet:");
-			DumpBytes(out->buffer, out->Size);
+			out = new OP_Packet_Packet(OP_Fragment, NULL, chunksize + 6);
+			memcpy(out->buffer + 4, tmpbuff + used + 2, chunksize);
 			SequencedPush(out);
 			used += chunksize;
-			//cout << "Chunk #"<< ++i << " size=" << chunksize << ", length-used=" << (length-used) << endl;
 		}
-		//cerr << "1: Deleting 0x" << hex << (uint32)(p) << dec << endl;
 		delete p;
-		delete[] tmpbuff;
 	}
 	else {
 		OP_Packet_Packet* out = new OP_Packet_Packet();
