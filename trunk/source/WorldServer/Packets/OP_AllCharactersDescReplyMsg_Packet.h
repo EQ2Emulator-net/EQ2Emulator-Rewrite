@@ -15,7 +15,7 @@ public:
 		AccountID = 0;
 		AccountUnknown1 = 0xFFFFFFFF;
 		AccountUnknown2 = 0;
-		AccountUnknown3 = 10;
+		MaxAllowedCharacters = 10;
 		AccouontUnknown4 = 0;
 		VeteranAdventureBonus = 0;
 		VeteranTradeskillBonus = 0;
@@ -409,7 +409,7 @@ public:
 	uint32_t AccountID;
 	uint32_t AccountUnknown1;
 	uint16_t AccountUnknown2;
-	uint32_t AccountUnknown3;
+	uint32_t MaxAllowedCharacters;// AccountUnknown3;
 	uint8_t AccouontUnknown4;
 	uint32_t AccountUnknown5[4];
 	uint8_t VeteranAdventureBonus; // 1096
@@ -424,7 +424,7 @@ private:
 		RegisterUInt32(AccountID);
 		RegisterUInt32(AccountUnknown1);
 		RegisterUInt16(AccountUnknown2);
-		RegisterUInt32(AccountUnknown3);
+		RegisterUInt32(MaxAllowedCharacters);
 		RegisterUInt8(AccouontUnknown4);
 		uint32_t& accountUnknown5 = AccountUnknown5[0];
 		RegisterUInt32(accountUnknown5)->SetCount(4);
