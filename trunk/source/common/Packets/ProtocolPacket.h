@@ -22,6 +22,7 @@ class ProtocolPacket : public Packet {
 public:
 	ProtocolPacket();
 	ProtocolPacket(const unsigned char* buf, uint32_t len);
+	ProtocolPacket(uint8_t opcode, const unsigned char* buf, uint32_t len);
 
 	uint16_t GetOpcode() { return opcode; }
 	uint32_t Write(unsigned char*& writeBuffer) override;

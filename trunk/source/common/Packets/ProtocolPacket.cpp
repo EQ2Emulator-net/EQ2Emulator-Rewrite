@@ -22,6 +22,10 @@ ProtocolPacket::ProtocolPacket(const unsigned char* buf, uint32_t len) {
 	}
 }
 
+ProtocolPacket::ProtocolPacket(uint8_t op, const unsigned char* buf, uint32_t len) : ProtocolPacket(buf, len) {
+	opcode = op;
+}
+
 uint32_t ProtocolPacket::Write(unsigned char*& writeBuffer) {
 	uint32_t size = 0;
 	for (size_t i = 0; i < elements.size(); i++) {

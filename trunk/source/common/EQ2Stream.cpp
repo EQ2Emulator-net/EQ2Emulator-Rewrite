@@ -412,17 +412,44 @@ void EQ2Stream::SendPacket(EQ2Packet* p) {
 		delete[] tmpbuff;
 	}
 	else {*/
-	if (p->Size > (MaxLength - 8)) {
-		LogWarn(LOG_PACKET, 0, "OP_Fragment should be used");
-	}
-	OP_Packet_Packet* out = new OP_Packet_Packet();
-	out->Write(p);
-		//ProtocolPacket *out = new ProtocolPacket(OP_Packet, NULL, p->Size + 2);
-		//p->serialize(out->buffer + 2);
+	if (p->Size > (MaxLength - 8)) { // proto-op(2), seq(2), app-op(2) ... data ... crc(2)
+		//cout << "Making oversized packet for: " << endl;
+		//cout << p->size << endl;
+		//p->DumpRawHeader();
+		//dump_message(p->pBuffer,p->size,timestamp());
+		//cout << p->size << endl;
+		unsigned char *tmpbuff = new unsigned char[p->Size + 2];
+		//cout << hex << (int)tmpbuff << dec << endl;
+		uint32_t length = p->serialize(tmpbuff);
+
+		ProtocolPacket *out = new ProtocolPacket(OP_Fragment, NULL, MaxLength - 4);
+		*(uint32_t *)(out->buffer + 2) = htonl(p->Size);
+		memcpy(out->buffer + 6, tmpbuff, MaxLength - 10);
+		uint32_t used = MaxLength - 10;
+		uint32_t chunksize = 0;
 		SequencedPush(out);
-		//cerr << "2: Deleting 0x" << hex << (uint32)(p) << dec << endl;
+		//cout << "Chunk #" << ++i << " size=" << used << ", length-used=" << (length-used) << endl;
+		while (used < length) {
+			out = new ProtocolPacket(OP_Fragment, NULL, MaxLength - 4);
+			chunksize = min(length - used, MaxLength - 6);
+			memcpy(out->buffer + 2, tmpbuff + used, chunksize);
+			out->Size = chunksize + 2;
+			LogWarn(LOG_PACKET, 0, "Frag packet:");
+			DumpBytes(out->buffer, out->Size);
+			SequencedPush(out);
+			used += chunksize;
+			//cout << "Chunk #"<< ++i << " size=" << chunksize << ", length-used=" << (length-used) << endl;
+		}
+		//cerr << "1: Deleting 0x" << hex << (uint32)(p) << dec << endl;
 		delete p;
-	/*}*/
+		delete[] tmpbuff;
+	}
+	else {
+		OP_Packet_Packet* out = new OP_Packet_Packet();
+		out->Write(p);
+		SequencedPush(out);
+		delete p;
+	}
 }
 
 void EQ2Stream::SequencedPush(ProtocolPacket *p) {
