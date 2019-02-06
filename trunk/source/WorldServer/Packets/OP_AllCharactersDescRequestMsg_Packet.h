@@ -30,5 +30,3 @@ public:
 private:
 
 };
-
-RegisterLoginStruct("OP_AllCharactersDescRequestMsg", OP_AllCharactersDescRequestMsg_Packet, 1);

@@ -92,7 +92,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
@@ -101,6 +101,7 @@
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -187,6 +188,7 @@
     <ClCompile Include="..\..\source\common\io.cpp" />
     <ClCompile Include="..\..\source\common\log.cpp" />
     <ClCompile Include="..\..\source\common\Packets\EQ2Packet.cpp" />
+    <ClCompile Include="..\..\source\common\Packets\EQ2Packets\CommonPackets.cpp" />
     <ClCompile Include="..\..\source\common\Packets\EQ2Packets\OpcodeManager.cpp" />
     <ClCompile Include="..\..\source\common\Packets\PacketElements\PacketCriteria.cpp" />
     <ClCompile Include="..\..\source\common\Packets\ProtocolPacket.cpp" />
@@ -201,10 +203,12 @@
     <ClCompile Include="..\..\source\common\util.cpp" />
     <ClCompile Include="..\..\source\WorldServer\Database\WorldDatabase.cpp" />
     <ClCompile Include="..\..\source\WorldServer\main.cpp" />
+    <ClCompile Include="..\..\source\WorldServer\Packets\WorldServerPackets.cpp" />
     <ClCompile Include="..\..\source\WorldServer\WorldServer\Client.cpp" />
     <ClCompile Include="..\..\source\WorldServer\WorldServer\WorldServer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

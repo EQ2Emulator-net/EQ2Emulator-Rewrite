@@ -91,5 +91,3 @@ private:
 		}
 	}
 };
-
-RegisterLoginStruct("OP_LoginRequestMsg", OP_LoginRequestMsg_Packet, 1, 1212);

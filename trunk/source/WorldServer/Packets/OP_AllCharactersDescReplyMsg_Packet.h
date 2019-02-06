@@ -138,7 +138,7 @@ public:
 			unknown7 = 0;
 			tradeskill_class = 0; // 887
 			tradeskill_level = 0; //887
-			unknown8 = 15;
+			unknown8 = 15; //NetAppearance version
 			race_type = 0;
 			skin_color.Red = 255;
 			skin_color.Green = 255;
@@ -328,7 +328,7 @@ public:
 			RegisterUInt32(unknown7);
 			RegisterUInt8(tradeskill_class); // 887
 			RegisterUInt32(tradeskill_level); //887
-			RegisterUInt8(unknown8);
+			RegisterUInt8(unknown8); // NetAppearance version
 			RegisterUInt16(race_type);
 			RegisterEQ2Color(skin_color);
 			RegisterEQ2Color(eye_color);
@@ -434,9 +434,6 @@ private:
 		}
 	}
 };
-
-RegisterLoginStruct("OP_AllCharactersDescReplyMsg", OP_AllCharactersDescReplyMsg_Packet, 1, 1096);
-
 
 // These are not complete structs as the old login just shoved this in the middle of other data,
 // these are just the character array portion of the packet

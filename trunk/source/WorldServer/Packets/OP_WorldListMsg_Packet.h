@@ -75,9 +75,6 @@ private:
 	}
 
 };
-
-RegisterLoginStruct("OP_WorldListMsg", OP_WorldListMsg_Packet, 1, 1);
-
 /*
 <Struct Name="LS_WorldList" ClientVersion="1" OpcodeName="OP_WorldListMsg">
 <Data ElementName="num_worlds" Type="int8" />

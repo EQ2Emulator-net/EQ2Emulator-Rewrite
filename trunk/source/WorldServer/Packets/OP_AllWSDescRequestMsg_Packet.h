@@ -26,5 +26,3 @@ public:
 private:
 
 };
-
-RegisterLoginStruct("OP_AllWSDescRequestMsg", OP_AllWSDescRequestMsg_Packet, 1);

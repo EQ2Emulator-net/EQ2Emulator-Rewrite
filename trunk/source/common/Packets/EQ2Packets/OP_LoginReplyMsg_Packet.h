@@ -174,8 +174,6 @@ private:
 	}
 };
 
-RegisterWorldStruct("OP_LoginReplyMsg", OP_LoginReplyMsg_Packet, 1096, 1188);
-
 /*
 <Struct Name = "LS_LoginReplyMsg" ClientVersion = "1" OpcodeName = "OP_LoginReplyMsg">
 <Data ElementName = "login_response" Type = "int8" Size = "1" / >

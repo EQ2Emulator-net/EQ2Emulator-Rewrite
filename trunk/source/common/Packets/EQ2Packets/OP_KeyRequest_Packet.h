@@ -74,5 +74,3 @@ private:
 		RegisterUInt8(Exponent);
 	}
 };
-
-RegisterWorldStruct("OP_WSLoginRequestMsg", OP_KeyRequest_Packet, 1);
