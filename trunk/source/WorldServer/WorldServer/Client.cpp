@@ -64,3 +64,32 @@ void Client::SendLoginReply(uint8_t reply) {
 WorldServer* Client::GetServer() {
 	return (WorldServer*)server;
 }
+
+void Client::SaveErrorsToDB(std::string log, std::string type) {
+	uint32_t size = (uint32_t)log.size();
+	char* message = new char[size];
+	memset(message, 0, size);
+	
+	z_stream zstream;
+	int zerror = 0;
+	zstream.next_in = (BYTE*)log.c_str();
+	zstream.avail_in = size;
+	zstream.next_out = (BYTE*)message;
+	zstream.avail_out = size;
+	zstream.zalloc = Z_NULL;
+	zstream.zfree = Z_NULL;
+	zstream.opaque = Z_NULL;
+
+	zerror = inflateInit(&zstream);
+	if (zerror != Z_OK) {
+		if (message)
+			delete[] message;
+		return;
+	}
+	zerror = inflate(&zstream, 0);
+	if (message && strlen(message) > 0)
+		database.SaveClientLog(type, message, GetVersion());
+
+	if (message)
+		delete[] message;
+}

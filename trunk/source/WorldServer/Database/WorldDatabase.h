@@ -23,6 +23,8 @@ public:
 
 	bool DeleteCharacter(uint32_t account_id, uint32_t char_id, std::string name);
 
+	bool SaveClientLog(std::string type, char* message, uint16_t version);
+
 private:
 
 };
@@ -43,4 +45,17 @@ COLLATE='latin1_general_ci'
 ENGINE=InnoDB
 ;
 
+CREATE TABLE `log_messages` (
+	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`log_time` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+	`log_type` VARCHAR(64) NOT NULL,
+	`message` TEXT NOT NULL,
+	`account` VARCHAR(64) NOT NULL DEFAULT '',
+	`client_data_version` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+	`log_entry_archived` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
+	PRIMARY KEY (`id`)
+)
+COLLATE='latin1_general_ci'
+ENGINE=InnoDB
+;
 */

@@ -17,6 +17,8 @@ public:
 
 	WorldServer* GetServer();
 
+	void SaveErrorsToDB(std::string log, std::string type);
+
 protected:
 
 private:

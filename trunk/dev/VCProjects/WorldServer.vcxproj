@@ -257,8 +257,15 @@
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\ProtocolPackets.h" />
     <ClInclude Include="..\..\source\common\RC4.h" />
     <ClInclude Include="..\..\source\common\Server.h" />
+    <ClInclude Include="..\..\source\WorldServer\Packets\ClientLogReply_Packet.h" />
     <ClInclude Include="..\..\source\WorldServer\Packets\OP_DeleteCharacterReplyMsg_Packet.h" />
     <ClInclude Include="..\..\source\WorldServer\Packets\OP_DeleteCharacterRequestMsg_Packet.h" />
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_LsClientAlertlogReplyMsg_Packet.h" />
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_LsClientBaselogReplyMsg_Packet.h" />
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_LsClientCrashlogReplyMsg_Packet.h" />
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_LsClientVerifylogReplyMsg_Packet.h" />
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_PlayCharacterReplyMsg_Packet.h" />
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_PlayCharacterRequestMsg_Packet.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="..\..\source\common\stdio.h" />
     <ClInclude Include="..\..\source\common\Stream.h" />

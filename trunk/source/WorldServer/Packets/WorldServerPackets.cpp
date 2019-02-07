@@ -7,14 +7,25 @@
 #include "OP_WorldListMsg_Packet.h"
 #include "OP_DeleteCharacterRequestMsg_Packet.h"
 #include "OP_DeleteCharacterReplyMsg_Packet.h"
+#include "OP_PlayCharacterRequestMsg_Packet.h"
+#include "OP_LsClientBaselogReplyMsg_Packet.h"
+#include "OP_LsClientCrashlogReplyMsg_Packet.h"
+#include "OP_LsClientAlertlogReplyMsg_Packet.h"
+#include "OP_LsClientVerifylogReplyMsg_Packet.h"
 
 // Server -> Client
 RegisterLoginStruct("OP_AllCharactersDescReplyMsg", OP_AllCharactersDescReplyMsg_Packet, 1, 1096);
 RegisterLoginStruct("OP_AllWSDescRequestMsg", OP_AllWSDescRequestMsg_Packet, 1);
 RegisterLoginStruct("OP_WorldListMsg", OP_WorldListMsg_Packet, 1, 60101);
 RegisterLoginStruct("OP_DeleteCharacterReplyMsg", OP_DeleteCharacterReplyMsg_Packet, 1);
+RegisterLoginStruct("OP_PlayCharacterReplyMsg", OP_PlayCharacterReplyMsg_Packet, 1, 1096, 60099);
 
 // Client -> Server
 RegisterLoginStruct("OP_AllCharactersDescRequestMsg", OP_AllCharactersDescRequestMsg_Packet, 1);
 RegisterLoginStruct("OP_LoginRequestMsg", OP_LoginRequestMsg_Packet, 1, 1212);
 RegisterLoginStruct("OP_DeleteCharacterRequestMsg", OP_DeleteCharacterRequestMsg_Packet, 1);
+RegisterLoginStruct("OP_PlayCharacterRequestMsg", OP_PlayCharacterRequestMsg_Packet, 1);
+RegisterLoginStruct("OP_LsClientBaselogReplyMsg", OP_LsClientBaselogReplyMsg_Packet, 1);
+RegisterLoginStruct("OP_LsClientCrashlogReplyMsg", OP_LsClientCrashlogReplyMsg_Packet, 1);
+RegisterLoginStruct("OP_LsClientAlertlogReplyMsg", OP_LsClientAlertlogReplyMsg_Packet, 1);
+RegisterLoginStruct("OP_LsClientVerifylogReplyMsg", OP_LsClientVerifylogReplyMsg_Packet, 1);

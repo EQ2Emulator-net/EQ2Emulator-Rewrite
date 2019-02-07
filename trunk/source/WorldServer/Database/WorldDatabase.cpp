@@ -8,6 +8,8 @@
 #include "../Packets/OP_AllCharactersDescRequestMsg_Packet.h"
 #include "../Packets/OP_AllWSDescRequestMsg_Packet.h"
 
+#include "../../common/timer.h"
+
 #ifdef _WIN32
 	#include <WS2tcpip.h>
 #else
@@ -468,4 +470,13 @@ bool WorldDatabase::DeleteCharacter(uint32_t account_id, uint32_t char_id, std::
 		return true;
 	else
 		return false;
+}
+
+bool WorldDatabase::SaveClientLog(std::string type, char* message, uint16_t version) {
+	char* type_esc = Escape(type.c_str());
+	char* message_esc = Escape(message);
+	bool ret = Query("INSERT INTO log_messages (log_type, message, client_data_version, log_time) VALUES ('%s', '%s', %u, %u)", type_esc, message_esc, version, Timer::GetUnixTimeStamp());
+	free(type_esc);
+	free(message_esc);
+	return ret;
 }

@@ -29,9 +29,9 @@ public:
 
 			element[i].assign(reinterpret_cast<const char*>(srcbuf) + offset, size);
 			offset += size;
-
-			return true;
 		}
+
+		return true;
 	}
 
 	void WriteElement(unsigned char* outbuf, uint32_t& offset) {

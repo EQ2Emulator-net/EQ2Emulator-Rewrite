@@ -314,5 +314,26 @@
     <ClInclude Include="..\..\source\WorldServer\Packets\OP_DeleteCharacterReplyMsg_Packet.h">
       <Filter>source\Packets\Server-&gt;Client</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_PlayCharacterRequestMsg_Packet.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_PlayCharacterReplyMsg_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\Packets\ClientLogReply_Packet.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_LsClientBaselogReplyMsg_Packet.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_LsClientCrashlogReplyMsg_Packet.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_LsClientAlertlogReplyMsg_Packet.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_LsClientVerifylogReplyMsg_Packet.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
