@@ -12,8 +12,8 @@ public:
 
 		NumWorlds = 1;
 		ID = 1;
-		Name = "Rewrite Test Server";
-		Name2 = "Rewrite Test Server";
+		Name = "";
+		Name2 = "";
 		Tag = 1; // 0 = used to show down servers, server should never be down so set to 1
 		Locked = 0;
 		Hidden = 0;

@@ -28,6 +28,12 @@
     <Filter Include="source\Database">
       <UniqueIdentifier>{d9d95d31-e18f-475a-bd2d-39a81480554f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\Packets\Client-&gt;Server">
+      <UniqueIdentifier>{a5ad7929-f66d-490d-bca8-fc434692bd34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Packets\Server-&gt;Client">
+      <UniqueIdentifier>{c6741d4a-11f7-443d-a37a-324066af6eb5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\common\io.cpp">
@@ -248,9 +254,6 @@
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_AppCombined_Packet.h">
       <Filter>common\Packets\ProtocolPackets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\WorldServer\Packets\OP_LoginRequestMsg_Packet.h">
-      <Filter>source\Packets</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\common\thread.h">
       <Filter>common</Filter>
     </ClInclude>
@@ -278,15 +281,6 @@
     <ClInclude Include="..\..\source\common\ConfigReader.h">
       <Filter>common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\WorldServer\Packets\OP_WorldListMsg_Packet.h">
-      <Filter>source\Packets</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\WorldServer\Packets\OP_AllWSDescRequestMsg_Packet.h">
-      <Filter>source\Packets</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\WorldServer\Packets\OP_AllCharactersDescReplyMsg_Packet.h">
-      <Filter>source\Packets</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEQ2EquipmentItem.h">
       <Filter>common\Packets\PacketElements</Filter>
     </ClInclude>
@@ -296,11 +290,29 @@
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketOversizedByte.h">
       <Filter>common\Packets\PacketElements</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\WorldServer\Packets\OP_AllCharactersDescRequestMsg_Packet.h">
-      <Filter>source\Packets</Filter>
-    </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_AllCharactersDescReplyMsg_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_AllWSDescRequestMsg_Packet.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_AllCharactersDescRequestMsg_Packet.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_LoginRequestMsg_Packet.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_WorldListMsg_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_DeleteCharacterRequestMsg_Packet.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_DeleteCharacterReplyMsg_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

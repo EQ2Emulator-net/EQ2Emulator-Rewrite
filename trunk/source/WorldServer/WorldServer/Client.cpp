@@ -43,8 +43,8 @@ void Client::SendLoginReply(uint8_t reply) {
 		r->RaceUnknown = 63;
 		r->Unknown11 = 7;
 		r->SubscriptionLevel = 2;
-		r->RaceFlag = 0x001FFFFF;
-		r->ClassFlag = 0x07FFFFFE;
+		r->RaceFlag = GetServer()->GetAllowedRaces();	//0x001FFFFF;
+		r->ClassFlag = GetServer()->GetAllowedClasses();	//0x07FFFFFE;
 
 		// Unknown5 and Unknown7 set to DoV values
 		r->Unknown5 = 1148;

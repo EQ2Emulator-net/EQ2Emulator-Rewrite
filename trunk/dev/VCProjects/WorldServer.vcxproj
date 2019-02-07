@@ -257,6 +257,8 @@
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\ProtocolPackets.h" />
     <ClInclude Include="..\..\source\common\RC4.h" />
     <ClInclude Include="..\..\source\common\Server.h" />
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_DeleteCharacterReplyMsg_Packet.h" />
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_DeleteCharacterRequestMsg_Packet.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="..\..\source\common\stdio.h" />
     <ClInclude Include="..\..\source\common\Stream.h" />

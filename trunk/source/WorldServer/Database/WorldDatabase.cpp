@@ -460,3 +460,12 @@ bool WorldDatabase::LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMs
 
 	return ret;
 }
+
+bool WorldDatabase::DeleteCharacter(uint32_t account_id, uint32_t char_id, std::string name) {
+	bool success;
+	success = Query("UPDATE characters SET deleted = 1 WHERE id = %u AND account_id = %u AND name = '%s'", char_id, account_id, name.c_str());
+	if (success && AffectedRows() == 1)
+		return true;
+	else
+		return false;
+}

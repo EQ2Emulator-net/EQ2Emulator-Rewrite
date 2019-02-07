@@ -21,6 +21,8 @@ public:
 
 	bool LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMsg_Packet* packet);
 
+	bool DeleteCharacter(uint32_t account_id, uint32_t char_id, std::string name);
+
 private:
 
 };
