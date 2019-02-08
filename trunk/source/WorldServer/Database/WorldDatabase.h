@@ -4,6 +4,8 @@
 #include "../WorldServer/Client.h"
 
 class OP_AllCharactersDescReplyMsg_Packet;
+class OP_CreateCharacterRequestMsg_Packet;
+struct EQ2ColorFloat;
 
 class WorldDatabase : public Database {
 public:
@@ -24,6 +26,19 @@ public:
 	bool DeleteCharacter(uint32_t account_id, uint32_t char_id, std::string name);
 
 	bool SaveClientLog(std::string type, char* message, uint16_t version);
+	uint32_t CreateCharacter(uint32_t account_id, OP_CreateCharacterRequestMsg_Packet* packet);
+	uint16_t GetAppearanceID(std::string name);
+	void UpdateStartingFactions(uint32_t char_id, uint8_t choice);
+	void UpdateStartingZone(uint32_t char_id, uint8_t class_id, uint8_t race_id, uint8_t choice);
+	void UpdateStartingItems(uint32_t char_id, uint8_t class_id, uint8_t race_id, bool base_class = false);
+	void UpdateStartingSkills(uint32_t char_id, uint8_t class_id, uint8_t race_id);
+	void UpdateStartingSpells(uint32_t char_id, uint8_t class_id, uint8_t race_id);
+	void UpdateStartingSkillbar(uint32_t char_id, uint8_t class_id, uint8_t race_id);
+	void UpdateStartingTitles(uint32_t char_id, uint8_t class_id, uint8_t race_id, uint8_t gender_id);
+	bool InsertCharacterStats(uint32_t character_id, uint8_t class_id, uint8_t race_id);
+	void SaveCharacterColors(uint32_t char_id, const char* type, EQ2ColorFloat color);
+	void SaveCharacterFloats(uint32_t char_id, const char* type, float float1, float float2, float float3);
+	uint8_t WorldDatabase::CheckNameFilter(const char* name);
 
 private:
 

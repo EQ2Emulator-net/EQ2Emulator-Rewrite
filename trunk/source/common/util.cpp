@@ -234,3 +234,10 @@ bool IsUnsignedInt(const char *str) {
 
 	return true;
 }
+
+bool alpha_check(unsigned char val) {
+	if ((val >= 0x41 && val <= 0x5A) || (val >= 0x61 && val <= 0x7A))
+		return true;
+	else
+		return false;
+}

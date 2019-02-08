@@ -179,6 +179,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\source\common\Classes.cpp" />
     <ClCompile Include="..\..\source\common\ConfigReader.cpp" />
     <ClCompile Include="..\..\source\common\CRC16.cpp" />
     <ClCompile Include="..\..\source\common\Crypto.cpp" />
@@ -212,6 +213,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\source\common\Classes.h" />
     <ClInclude Include="..\..\source\common\ConfigReader.h" />
     <ClInclude Include="..\..\source\common\CRC16.h" />
     <ClInclude Include="..\..\source\common\Crypto.h" />
@@ -233,7 +235,9 @@
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketCriteria.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketElements.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEQ2Color.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEQ2ColorFloat.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEQ2EquipmentItem.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketFloat.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt16.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt32.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt64.h" />
@@ -258,6 +262,8 @@
     <ClInclude Include="..\..\source\common\RC4.h" />
     <ClInclude Include="..\..\source\common\Server.h" />
     <ClInclude Include="..\..\source\WorldServer\Packets\ClientLogReply_Packet.h" />
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_CreateCharacterReplyMsg_Packet.h" />
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_CreateCharacterRequestMsg_Packet.h" />
     <ClInclude Include="..\..\source\WorldServer\Packets\OP_DeleteCharacterReplyMsg_Packet.h" />
     <ClInclude Include="..\..\source\WorldServer\Packets\OP_DeleteCharacterRequestMsg_Packet.h" />
     <ClInclude Include="..\..\source\WorldServer\Packets\OP_LsClientAlertlogReplyMsg_Packet.h" />

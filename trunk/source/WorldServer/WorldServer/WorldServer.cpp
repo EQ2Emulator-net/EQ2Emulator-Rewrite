@@ -7,7 +7,7 @@ WorldServer::WorldServer() : Server() {
 	Name = "Rewrite Test Server";
 	AllowedRaces = 0x001FFFFF;
 	AllowedClasses = 0x07FFFFFE;
-	MaxCharactersPerAccount = 10;
+	MaxCharactersPerAccount = 20;
 }
 
 Stream* WorldServer::GetNewStream(unsigned int ip, unsigned short port) {

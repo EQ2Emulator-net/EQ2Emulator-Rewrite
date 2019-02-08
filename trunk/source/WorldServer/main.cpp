@@ -13,8 +13,10 @@
 #include "WorldServer/WorldServer.h"
 #include "Database/WorldDatabase.h"
 #include "../common/ConfigReader.h"
+#include "../common/Classes.h"
 
 WorldDatabase database;
+Classes classes;
 
 int main(int argc, char **argv)
 {

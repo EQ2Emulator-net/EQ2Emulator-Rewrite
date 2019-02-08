@@ -120,6 +120,9 @@
     <ClCompile Include="..\..\source\common\Packets\EQ2Packets\CommonPackets.cpp">
       <Filter>common\Packets\EQ2Packets</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\common\Classes.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\common\io.h">
@@ -334,6 +337,21 @@
     </ClInclude>
     <ClInclude Include="..\..\source\WorldServer\Packets\OP_LsClientVerifylogReplyMsg_Packet.h">
       <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_CreateCharacterRequestMsg_Packet.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEQ2ColorFloat.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketFloat.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Classes.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_CreateCharacterReplyMsg_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

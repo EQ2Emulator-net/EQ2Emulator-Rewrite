@@ -34,4 +34,6 @@ int Inflate(unsigned char* indata, int indatalen, unsigned char* outdata, int ou
 std::string appStrError(int err_num = 0);
 bool IsUnsignedInt(const char *str);
 
+bool alpha_check(unsigned char val);
+
 #define atoul(str) strtoul(str, NULL, 10)
