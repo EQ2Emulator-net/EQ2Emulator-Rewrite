@@ -40,6 +40,11 @@ int main(int argc, char **argv)
 		success = database.LoadOpcodes();
 	}
 
+	if (success) {
+		LogDebug(LOG_DATABASE, 0, "Loading server variables...");
+		success = database.LoadServerVariables(&s);
+	}
+
 	if (success)
 		success = s.Open();
 

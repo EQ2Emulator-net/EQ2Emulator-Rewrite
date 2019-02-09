@@ -130,7 +130,7 @@ bool WorldDatabase::UpdateAccountClientVersion(uint32_t account, uint16_t versio
 	return Query("UPDATE `account` SET `last_client_version` = %u WHERE `id` = %u", version, account);
 }
 
-bool WorldDatabase::LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMsg_Packet* packet) {
+bool WorldDatabase::LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMsg_Packet* packet, uint8_t max_level) {
 	bool ret;
 	DatabaseResult result;
 	DatabaseResult result2;
@@ -169,6 +169,11 @@ bool WorldDatabase::LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMs
 		c.level = result.GetUInt32(9);
 		c.tradeskill_class = result.GetUInt8(10);
 		c.tradeskill_level = result.GetUInt32(11);
+
+		if (c.level >= max_level)
+			packet->VeteranAdventureBonus++;
+		if (c.tradeskill_level >= max_level)
+			packet->VeteranTradeskillBonus++;
 
 		/* SOGA Appearances */
 		//c.soga_wing_type = result.GetUInt16(12);
@@ -889,4 +894,35 @@ uint8_t WorldDatabase::CheckNameFilter(const char* name) {
 	}
 
 	return UNKNOWNERROR_REPLY;
+}
+
+bool WorldDatabase::LoadServerVariables(WorldServer* s) {
+	bool success;
+	DatabaseResult result;
+
+	success = Select(&result, "SELECT variable_name, variable_value FROM variables");
+	if (!success)
+		return success;
+
+	while (result.Next()) {
+		std::string var = result.GetString(0);
+		std::string var_val = result.GetString(1);
+		if (var == "server_name") {
+			s->SetName(var_val);
+		}
+		else if (var == "max_characters_per_account") {
+			s->SetMaxCharactersPerAccount(atoul(var_val.c_str()));
+		}
+		else if (var == "allowed_races") {
+			s->SetAllowedRaces(atoul(var_val.c_str()));
+		}
+		else if (var == "allowed_classes") {
+			s->SetAllowedClasses(atoul(var_val.c_str()));
+		}
+		else if (var == "max_level") {
+			s->SetMaxLevel(atoul(var_val.c_str()));
+		}
+	}
+
+	return success;
 }

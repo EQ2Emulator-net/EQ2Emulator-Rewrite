@@ -5,6 +5,7 @@
 
 class OP_AllCharactersDescReplyMsg_Packet;
 class OP_CreateCharacterRequestMsg_Packet;
+class WorldServer;
 struct EQ2ColorFloat;
 
 class WorldDatabase : public Database {
@@ -21,7 +22,7 @@ public:
 	bool UpdateAccountIPAddress(uint32_t account, uint32_t address);
 	bool UpdateAccountClientVersion(uint32_t account, uint16_t version);
 
-	bool LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMsg_Packet* packet);
+	bool LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMsg_Packet* packet, uint8_t max_level);
 
 	bool DeleteCharacter(uint32_t account_id, uint32_t char_id, std::string name);
 
@@ -39,6 +40,8 @@ public:
 	void SaveCharacterColors(uint32_t char_id, const char* type, EQ2ColorFloat color);
 	void SaveCharacterFloats(uint32_t char_id, const char* type, float float1, float float2, float float3);
 	uint8_t WorldDatabase::CheckNameFilter(const char* name);
+
+	bool LoadServerVariables(WorldServer* s);
 
 private:
 

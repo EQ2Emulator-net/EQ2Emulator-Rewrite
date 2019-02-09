@@ -18,7 +18,7 @@ public:
 
 	void HandlePacket(Client* client) {
 		OP_AllCharactersDescReplyMsg_Packet* char_list = new OP_AllCharactersDescReplyMsg_Packet(client->GetVersion());
-		database.LoadCharacters(client->GetAccountID(), char_list);
+		database.LoadCharacters(client->GetAccountID(), char_list, client->GetServer()->GetMaxLevel());
 		char_list->AccountID = client->GetAccountID();
 		char_list->MaxAllowedCharacters = client->GetServer()->GetMaxCharactersPerAccount();
 		client->QueuePacket(char_list);

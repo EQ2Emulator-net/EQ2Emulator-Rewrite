@@ -17,6 +17,8 @@ public:
 	uint32_t GetAllowedRaces() { return AllowedRaces; }
 	void SetAllowedClasses(uint32_t classes) { AllowedClasses = classes; }
 	uint32_t GetAllowedClasses() { return AllowedClasses; }
+	void SetMaxLevel(uint8_t level) { MaxLevel = level; }
+	uint8_t GetMaxLevel() { return MaxLevel; }
 
 protected:
 	Stream* GetNewStream(unsigned int ip, unsigned short port) override;
@@ -26,5 +28,6 @@ private:
 	uint8_t MaxCharactersPerAccount;
 	uint32_t AllowedRaces;
 	uint32_t AllowedClasses;
+	uint8_t MaxLevel;
 
 };

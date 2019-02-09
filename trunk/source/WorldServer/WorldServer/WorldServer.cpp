@@ -8,6 +8,7 @@ WorldServer::WorldServer() : Server() {
 	AllowedRaces = 0x001FFFFF;
 	AllowedClasses = 0x07FFFFFE;
 	MaxCharactersPerAccount = 20;
+	MaxLevel = 50;
 }
 
 Stream* WorldServer::GetNewStream(unsigned int ip, unsigned short port) {
