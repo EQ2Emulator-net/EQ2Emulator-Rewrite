@@ -57,11 +57,6 @@ int main(int argc, char **argv)
 		Timer::SetCurrentTime();
 
 		success = s.Process();
-		if (success)
-			success = s.ProcessClientWrite();
-
-		if (success)
-			success = s.ProcessClients();
 
 		zoneTalk.Process();
 

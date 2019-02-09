@@ -147,5 +147,12 @@
             <type name="Debug" color="GreenBold" level="0" enabled="true" logs="3" />
             <type name="Trace" color="Yellow" level="0" enabled="true" logs="3" />
         </category>
+		<category name="Mutex">
+            <type name="Info" color="WhiteBold" level="0" enabled="true" logs="3" />
+            <type name="Error" color="RedBold" level="0" enabled="true" logs="3" />
+            <type name="Warn" color="YellowBold" level="0" enabled="true" logs="3" />
+            <type name="Debug" color="GreenBold" level="0" enabled="true" logs="3" />
+            <type name="Trace" color="Yellow" level="0" enabled="true" logs="3" />
+        </category>
     </logging>
 </eq2emu>

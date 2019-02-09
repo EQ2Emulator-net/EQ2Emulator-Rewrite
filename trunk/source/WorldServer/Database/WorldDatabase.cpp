@@ -911,7 +911,7 @@ bool WorldDatabase::LoadServerVariables(WorldServer* s) {
 			s->SetName(var_val);
 		}
 		else if (var == "max_characters_per_account") {
-			s->SetMaxCharactersPerAccount(atoul(var_val.c_str()));
+			s->SetMaxCharactersPerAccount(static_cast<uint8_t>(atoul(var_val.c_str())));
 		}
 		else if (var == "allowed_races") {
 			s->SetAllowedRaces(atoul(var_val.c_str()));
@@ -920,7 +920,7 @@ bool WorldDatabase::LoadServerVariables(WorldServer* s) {
 			s->SetAllowedClasses(atoul(var_val.c_str()));
 		}
 		else if (var == "max_level") {
-			s->SetMaxLevel(atoul(var_val.c_str()));
+			s->SetMaxLevel(static_cast<uint8_t>(atoul(var_val.c_str())));
 		}
 	}
 

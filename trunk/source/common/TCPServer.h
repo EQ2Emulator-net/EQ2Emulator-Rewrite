@@ -4,6 +4,7 @@
 #include <map>
 #include <future>
 #include <atomic>
+#include "Mutex.h"
 
 class TCPServer : public Server {
 public:
@@ -17,13 +18,9 @@ protected:
 private:
 	bool bHost;
 	bool bLooping;
-	bool bReadyForSelect;
-	std::atomic_bool bGotData;
 	std::map<SOCKET, Stream*> Streams;
-	fd_set fds_master;
-	fd_set fds_read;
-	SOCKET fd_max;
-	std::thread select_thread;
+	Mutex streamLock;
+	std::thread read_thread;
 
-	void SelectThread();
+	void ReaderThread();
 };

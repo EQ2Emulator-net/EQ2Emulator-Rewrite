@@ -123,6 +123,9 @@
     <ClCompile Include="..\..\source\common\Classes.cpp">
       <Filter>common\Classes</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\common\Mutex.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h">
@@ -304,6 +307,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\common\Classes.h">
       <Filter>common\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Mutex.h">
+      <Filter>common</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

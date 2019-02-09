@@ -6,20 +6,19 @@
 #include "../common/util.h"
 
 TCPServer::TCPServer(bool bHostServer) : bHost(bHostServer) {
-	FD_ZERO(&fds_master);
 	bLooping = false;
-	bReadyForSelect = true;
-	bGotData = false;
+
+	streamLock.SetName("TCPServer::streamLock");
 }
 
 TCPServer::~TCPServer() {
-	for (auto& itr : Streams) {
-		delete itr.second;
-	}
-
 	if (bLooping) {
 		bLooping = false;
-		select_thread.join();
+		read_thread.join();
+	}
+
+	for (auto& itr : Streams) {
+		delete itr.second;
 	}
 }
 
@@ -29,8 +28,7 @@ bool TCPServer::Open() {
 	}
 
 	bLooping = true;
-	bReadyForSelect = true;
-	select_thread = ThreadManager::ThreadStart("TCPSelect", std::bind(&TCPServer::SelectThread, this));
+	read_thread = ThreadManager::ThreadStart("TCPSelect", std::bind(&TCPServer::ReaderThread, this));
 
 	const char yes = 1;
 
@@ -72,39 +70,31 @@ bool TCPServer::Open() {
 	return true;
 }
 
-void TCPServer::SelectThread() {
+void TCPServer::ReaderThread() {
+	SOCKET i, fd_new, fd_max;
+	fd_set fds_read, fds_master;
+	sockaddr_storage addr_s;
+	socklen_t addr_len;
+	unsigned char buf[4096];
+	int count;
 	timeval timeout;
-	timeout.tv_usec = 0;
+
+	FD_ZERO(&fds_master);
 
 	while (bLooping) {
-		if (!bReadyForSelect) {
-			SleepMS(5);
-			continue;
-		}
-
 		//Timeout of 5 seconds
+		timeout.tv_usec = 0;
 		timeout.tv_sec = 5;
 
 		fd_max = Sock;
 		FD_SET(fd_max, &fds_master);
 		fds_read = fds_master;
 
-		int result = select(fd_max + 1, &fds_read, NULL, NULL, &timeout);
-		if (result > 0) {
-			bReadyForSelect = false;
-			bGotData.store(true);
+		int result = select(static_cast<int>(fd_max + 1), &fds_read, NULL, NULL, &timeout);
+		if (result <= 0) {
+			continue;
 		}
-	}
-}
 
-bool TCPServer::Process() {
-	SOCKET i, fd_new;
-	sockaddr_storage addr_s;
-	socklen_t addr_len;
-	unsigned char buf[4096];
-	int count;
-
-	if (bGotData.exchange(false)) {
 		for (i = 0; i <= fd_max; i++) {
 			if (FD_ISSET(i, &fds_read)) {
 				if (i == fd_max && bHost) {
@@ -113,8 +103,7 @@ bool TCPServer::Process() {
 					//We have a new client, so accept it.
 					if ((fd_new = accept(fd_max, reinterpret_cast<sockaddr*>(&addr_s), &addr_len)) == INVALID_SOCKET) {
 						//LogError(LOG_TCP, 0, "Unable to accept new TCP connection: %s", Socket::SocketError().c_str());
-						bReadyForSelect = true;
-						return false;
+						break;
 					}
 					else {
 						assert(addr_s.ss_family == AF_INET);
@@ -129,11 +118,14 @@ bool TCPServer::Process() {
 						client->SetSocket(fd_new);
 
 						//Add the client to our streams
+						WriteLocker lock(streamLock);
 						Streams[fd_new] = client;
 					}
 				}
 				else {
 					//We have data from an existing client. Determine if it's a disconnect or actual data.
+					ReadLocker lock(streamLock);
+
 					auto itr = Streams.find(i);
 					assert(itr != Streams.end());
 
@@ -155,11 +147,12 @@ bool TCPServer::Process() {
 				}
 			}
 		}
-
-		bReadyForSelect = true;
 	}
+}
 
+bool TCPServer::Process() {
 	//Run any processing on these streams now
+	ReadLocker lock(streamLock);
 	for (auto& itr : Streams) {
 		itr.second->Process();
 	}

@@ -31,6 +31,7 @@
 #include <ctype.h>
 #include <iostream>
 #include <assert.h>
+#include <chrono>
 
 //OS Specific
 #if defined(_WIN32)

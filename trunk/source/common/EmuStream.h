@@ -2,6 +2,7 @@
 
 #include "Stream.h"
 #include <queue>
+#include "Mutex.h"
 
 class EmuPacket;
 
@@ -15,8 +16,11 @@ public:
 	void QueuePacket(const unsigned char* data, uint32_t length);
 
 protected:
-	EmuStream(unsigned int ip, unsigned int port) : Stream(ip, port) {}
+	EmuStream(unsigned int ip, unsigned int port);
 
 	std::queue<EmuPacket*> incoming;
 	std::queue<EmuPacket*> outgoing;
+
+	Mutex m_incoming;
+	Mutex m_outgoing;
 };

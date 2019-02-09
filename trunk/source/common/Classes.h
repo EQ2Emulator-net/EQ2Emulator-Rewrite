@@ -73,10 +73,10 @@ public:
 	std::string GetClassName(uint8_t class_id);
 	std::string GetClassNameCase(uint8_t class_id);
 	int8_t GetClassID(std::string name);
-	uint8_t GetBaseClass(uint8_t class_id);
-	uint8_t GetSecondaryBaseClass(uint8_t class_id);
-	uint8_t GetTSBaseClass(uint8_t class_id);
-	uint8_t GetSecondaryTSBaseClass(uint8_t class_id);
+	static uint8_t GetBaseClass(uint8_t class_id);
+	static uint8_t GetSecondaryBaseClass(uint8_t class_id);
+	static uint8_t GetTSBaseClass(uint8_t class_id);
+	static uint8_t GetSecondaryTSBaseClass(uint8_t class_id);
 
 private:
 	std::map<std::string, uint8_t> class_map;

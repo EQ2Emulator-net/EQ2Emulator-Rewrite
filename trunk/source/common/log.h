@@ -88,6 +88,7 @@ typedef enum {
 	LOG_CHAT,
 	LOG_STATS,
     LOG_CLIENT,
+	LOG_MUTEX,
 	LOG_INVALID
 } LogCategory;
 

@@ -64,7 +64,7 @@ static LogTypeString log_types[] = {
 static const char *log_categories[] = {
 	"Init", "Signal", "TCP", "Packet", "CPI", "IO", "Config", "Database", "Thread",
 	"Net", "General", "Patch", "Console", "Rules", "Command", "Parser", "Chat", "Stats",
-    "Client"
+    "Client", "Mutex"
 };
 static LogFiles log_files;
 static LogConfig config;

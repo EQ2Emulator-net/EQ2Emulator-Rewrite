@@ -1,7 +1,6 @@
 #include "stdafx.h"
 
 #include "Classes.h"
-#include <algorithm>
 
 Classes::Classes() {
 	class_map["COMMONER"] = 0;

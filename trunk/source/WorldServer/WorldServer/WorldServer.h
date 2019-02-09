@@ -6,6 +6,7 @@ class WorldServer : public UDPServer {
 public:
 	WorldServer();
 
+	bool Process() override;
 	bool ProcessClientWrite();
 	bool ProcessClients();
 

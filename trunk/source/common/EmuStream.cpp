@@ -13,6 +13,12 @@ struct EmuPacket {
 	}
 };
 
+EmuStream::EmuStream(unsigned int ip, unsigned int port)
+:Stream(ip, port) {
+	m_incoming.SetName("m_incoming");
+	m_outgoing.SetName("m_outgoing");
+}
+
 EmuStream::~EmuStream() {
 	while (!incoming.empty()) {
 		EmuPacket* p = incoming.front();

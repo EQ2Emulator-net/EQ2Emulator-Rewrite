@@ -74,11 +74,13 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>..\..\source\depends\mariadb-10.1.19\include;..\..\source\depends\zlib\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\source\depends\mariadb-10.1.19\lib\32-debug;..\..\source\depends\zlib\lib;$(LibraryPath)</LibraryPath>
+    <IntDir>$(Configuration)\WorldServer</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>..\..\source\depends\mariadb-10.1.19\include;..\..\source\depends\zlib\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\source\depends\mariadb-10.1.19\lib\64-debug;..\..\source\depends\zlib\lib\win64-debug;$(LibraryPath)</LibraryPath>
+    <IntDir>$(Platform)\$(Configuration)\WorldServer\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -189,6 +191,7 @@
     <ClCompile Include="..\..\source\common\EQ2Stream.cpp" />
     <ClCompile Include="..\..\source\common\io.cpp" />
     <ClCompile Include="..\..\source\common\log.cpp" />
+    <ClCompile Include="..\..\source\common\Mutex.cpp" />
     <ClCompile Include="..\..\source\common\Packets\EQ2Packet.cpp" />
     <ClCompile Include="..\..\source\common\Packets\EQ2Packets\CommonPackets.cpp" />
     <ClCompile Include="..\..\source\common\Packets\EQ2Packets\OpcodeManager.cpp" />
@@ -227,6 +230,7 @@
     <ClInclude Include="..\..\source\common\EQ2Stream.h" />
     <ClInclude Include="..\..\source\common\io.h" />
     <ClInclude Include="..\..\source\common\log.h" />
+    <ClInclude Include="..\..\source\common\Mutex.h" />
     <ClInclude Include="..\..\source\common\Packets\EQ2Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EQ2Packets\OpcodeManager.h" />
     <ClInclude Include="..\..\source\common\Packets\EQ2Packets\OP_KeyRequest_Packet.h" />
