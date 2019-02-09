@@ -44,11 +44,11 @@ private:
 	//This maps versions to opcodes and their packet constructors
 	std::map<versionRange_t, std::map<uint16_t, PacketAllocatorBase*> > versions;
 
-	//This maps struct file names to allocators
-	std::map<std::string, std::vector<PacketAllocatorBase*> > outfiles;
+	//This maps struct file names to packet names used in that file
+	std::map<std::string, std::vector<std::string> > outfiles;
 
-	//This maps allocators to struct versions
-	std::map<PacketAllocatorBase*, std::vector<int32_t> > struct_versions;
+	//This maps packet names to struct versions for the packet
+	std::map<std::string, std::vector<int32_t> > struct_versions;
 
 public:
 	OpcodeManager() = default;
@@ -60,13 +60,22 @@ public:
 
 	void RegisterAllocator(const char* name, PacketAllocatorBase* allocator, std::type_index t, 
 		const char* outfile, const int32_t* versions, int32_t num_versions) {
-		assert(allocators.count(name) == 0 && type_map.count(t) == 0);
+		//Took the assert out for if the same type is registered twice...
+		//but you must use a new type if writing the packet for FindOpcode
+		assert(allocators.count(name) == 0/* && type_map.count(t) == 0*/);
 
 		allocators[name] = allocator;
 		type_map[t] = allocator;
-		outfiles[outfile].push_back(allocator);
+		outfiles[outfile].push_back(name);
 
-		std::vector<int32_t>& vec = struct_versions[allocator];
+		const char* struct_prefix = "WS_";
+		if (strcmp(outfile, "LoginStructs.xml") == 0) {
+			struct_prefix = "LS_";
+		}
+
+		std::string struct_name = name;
+		struct_name.replace(0, 3, struct_prefix);
+		std::vector<int32_t>& vec = struct_versions[name];
 		vec.resize(num_versions);
 		memcpy(vec.data(), versions, num_versions * sizeof(int32_t));
 	}

@@ -14,6 +14,7 @@
 #include "Database/WorldDatabase.h"
 #include "../common/ConfigReader.h"
 #include "../common/Classes.h"
+#include "ZoneTalk/ZoneTalk.h"
 
 WorldDatabase database;
 Classes classes;
@@ -23,13 +24,14 @@ int main(int argc, char **argv)
 	bool success = true;
 	bool looping = true; // Need to move this out at some point
 	WorldServer s;
-	
+	ZoneTalk zoneTalk;
+
 	LogStart();
 	LogSetPrefix("EQ2Emu-WorldServer");
 	LogInfo(LOG_INIT, 0, "Starting %s v%d.%d %s", EQ2_NAME, EQ2_VERSION_MAJOR, EQ2_VERSION_MINOR, EVE_VERSION_PHASE);
 
 	// TODO: config reader
-	ConfigReader cr(&s, &database);
+	ConfigReader cr(&s, &database, &zoneTalk);
 	success = cr.ReadConfig("world-config.xml");
 
 	if (success)
@@ -48,6 +50,9 @@ int main(int argc, char **argv)
 	if (success)
 		success = s.Open();
 
+	if (success)
+		success = zoneTalk.Open();
+
 	while (success && looping) {
 		Timer::SetCurrentTime();
 
@@ -57,6 +62,8 @@ int main(int argc, char **argv)
 
 		if (success)
 			success = s.ProcessClients();
+
+		zoneTalk.Process();
 
 		SleepMS(5);
 	}

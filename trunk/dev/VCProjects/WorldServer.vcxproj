@@ -185,6 +185,7 @@
     <ClCompile Include="..\..\source\common\Crypto.cpp" />
     <ClCompile Include="..\..\source\common\database-result.cpp" />
     <ClCompile Include="..\..\source\common\database.cpp" />
+    <ClCompile Include="..\..\source\common\EmuStream.cpp" />
     <ClCompile Include="..\..\source\common\EQ2Stream.cpp" />
     <ClCompile Include="..\..\source\common\io.cpp" />
     <ClCompile Include="..\..\source\common\log.cpp" />
@@ -198,15 +199,18 @@
     <ClCompile Include="..\..\source\common\stdio.cpp" />
     <ClCompile Include="..\..\source\common\Stream.cpp" />
     <ClCompile Include="..\..\source\common\string.cpp" />
+    <ClCompile Include="..\..\source\common\TCPServer.cpp" />
     <ClCompile Include="..\..\source\common\thread.cpp" />
     <ClCompile Include="..\..\source\common\time.cpp" />
     <ClCompile Include="..\..\source\common\timer.cpp" />
+    <ClCompile Include="..\..\source\common\UDPServer.cpp" />
     <ClCompile Include="..\..\source\common\util.cpp" />
     <ClCompile Include="..\..\source\WorldServer\Database\WorldDatabase.cpp" />
     <ClCompile Include="..\..\source\WorldServer\main.cpp" />
     <ClCompile Include="..\..\source\WorldServer\Packets\WorldServerPackets.cpp" />
     <ClCompile Include="..\..\source\WorldServer\WorldServer\Client.cpp" />
     <ClCompile Include="..\..\source\WorldServer\WorldServer\WorldServer.cpp" />
+    <ClCompile Include="..\..\source\WorldServer\ZoneTalk\ZoneTalk.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -219,6 +223,7 @@
     <ClInclude Include="..\..\source\common\Crypto.h" />
     <ClInclude Include="..\..\source\common\database-result.h" />
     <ClInclude Include="..\..\source\common\database.h" />
+    <ClInclude Include="..\..\source\common\EmuStream.h" />
     <ClInclude Include="..\..\source\common\EQ2Stream.h" />
     <ClInclude Include="..\..\source\common\io.h" />
     <ClInclude Include="..\..\source\common\log.h" />
@@ -235,9 +240,7 @@
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketCriteria.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketElements.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEQ2Color.h" />
-    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEQ2ColorFloat.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEQ2EquipmentItem.h" />
-    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketFloat.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt16.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt32.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt64.h" />
@@ -261,9 +264,9 @@
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\ProtocolPackets.h" />
     <ClInclude Include="..\..\source\common\RC4.h" />
     <ClInclude Include="..\..\source\common\Server.h" />
+    <ClInclude Include="..\..\source\common\TCPServer.h" />
+    <ClInclude Include="..\..\source\common\UDPServer.h" />
     <ClInclude Include="..\..\source\WorldServer\Packets\ClientLogReply_Packet.h" />
-    <ClInclude Include="..\..\source\WorldServer\Packets\OP_CreateCharacterReplyMsg_Packet.h" />
-    <ClInclude Include="..\..\source\WorldServer\Packets\OP_CreateCharacterRequestMsg_Packet.h" />
     <ClInclude Include="..\..\source\WorldServer\Packets\OP_DeleteCharacterReplyMsg_Packet.h" />
     <ClInclude Include="..\..\source\WorldServer\Packets\OP_DeleteCharacterRequestMsg_Packet.h" />
     <ClInclude Include="..\..\source\WorldServer\Packets\OP_LsClientAlertlogReplyMsg_Packet.h" />
@@ -272,6 +275,8 @@
     <ClInclude Include="..\..\source\WorldServer\Packets\OP_LsClientVerifylogReplyMsg_Packet.h" />
     <ClInclude Include="..\..\source\WorldServer\Packets\OP_PlayCharacterReplyMsg_Packet.h" />
     <ClInclude Include="..\..\source\WorldServer\Packets\OP_PlayCharacterRequestMsg_Packet.h" />
+    <ClInclude Include="..\..\source\WorldServer\ZoneTalk\ZoneStream.h" />
+    <ClInclude Include="..\..\source\WorldServer\ZoneTalk\ZoneTalk.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="..\..\source\common\stdio.h" />
     <ClInclude Include="..\..\source\common\Stream.h" />

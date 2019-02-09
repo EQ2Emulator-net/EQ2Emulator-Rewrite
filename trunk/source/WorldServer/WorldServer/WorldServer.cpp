@@ -3,7 +3,7 @@
 #include "WorldServer.h"
 #include "Client.h"
 
-WorldServer::WorldServer() : Server() {
+WorldServer::WorldServer() {
 	Name = "Rewrite Test Server";
 	AllowedRaces = 0x001FFFFF;
 	AllowedClasses = 0x07FFFFFE;

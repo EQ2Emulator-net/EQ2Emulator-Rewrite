@@ -9,7 +9,7 @@ using namespace rapidxml;
 
 class ConfigReader {
 public:
-	ConfigReader(Server* serv, Database* db);
+	ConfigReader(Server* serv, Database* db, Server* zonetalk);
 	~ConfigReader();
 
 	bool ReadConfig(std::string file);
@@ -19,7 +19,9 @@ private:
 	void ReadServerConfig(xml_node<>* node);
 	void ReadDatabaseConfig(xml_node<>* node);
 	void ReadLogConfig(xml_node<>* node);
+	void ReadZoneTalkConfig(xml_node<>* node);
 
 	Server* server;
 	Database* DB;
+	Server* zonetalk;
 };

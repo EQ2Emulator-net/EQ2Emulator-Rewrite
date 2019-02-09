@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -18,6 +18,107 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\source\common\Classes.cpp" />
+    <ClCompile Include="..\..\source\common\ConfigReader.cpp" />
+    <ClCompile Include="..\..\source\common\CRC16.cpp" />
+    <ClCompile Include="..\..\source\common\Crypto.cpp" />
+    <ClCompile Include="..\..\source\common\database-result.cpp" />
+    <ClCompile Include="..\..\source\common\database.cpp" />
+    <ClCompile Include="..\..\source\common\EmuStream.cpp" />
+    <ClCompile Include="..\..\source\common\EQ2Stream.cpp" />
+    <ClCompile Include="..\..\source\common\io.cpp" />
+    <ClCompile Include="..\..\source\common\log.cpp" />
+    <ClCompile Include="..\..\source\common\Packets\EQ2Packet.cpp" />
+    <ClCompile Include="..\..\source\common\Packets\EQ2Packets\CommonPackets.cpp" />
+    <ClCompile Include="..\..\source\common\Packets\EQ2Packets\OpcodeManager.cpp" />
+    <ClCompile Include="..\..\source\common\Packets\PacketElements\PacketCriteria.cpp" />
+    <ClCompile Include="..\..\source\common\Packets\ProtocolPacket.cpp" />
+    <ClCompile Include="..\..\source\common\RC4.cpp" />
+    <ClCompile Include="..\..\source\common\Server.cpp" />
+    <ClCompile Include="..\..\source\common\stdio.cpp" />
+    <ClCompile Include="..\..\source\common\Stream.cpp" />
+    <ClCompile Include="..\..\source\common\string.cpp" />
+    <ClCompile Include="..\..\source\common\TCPServer.cpp" />
+    <ClCompile Include="..\..\source\common\thread.cpp" />
+    <ClCompile Include="..\..\source\common\time.cpp" />
+    <ClCompile Include="..\..\source\common\timer.cpp" />
+    <ClCompile Include="..\..\source\common\UDPServer.cpp" />
+    <ClCompile Include="..\..\source\common\util.cpp" />
+    <ClCompile Include="..\..\source\WorldServer\Database\WorldDatabase.cpp" />
+    <ClCompile Include="..\..\source\WorldServer\WorldServer\Client.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\main.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\WorldTalk\WorldStream.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\source\common\Classes.h" />
+    <ClInclude Include="..\..\source\common\ConfigReader.h" />
+    <ClInclude Include="..\..\source\common\CRC16.h" />
+    <ClInclude Include="..\..\source\common\Crypto.h" />
+    <ClInclude Include="..\..\source\common\database-result.h" />
+    <ClInclude Include="..\..\source\common\database.h" />
+    <ClInclude Include="..\..\source\common\EmuStream.h" />
+    <ClInclude Include="..\..\source\common\EQ2Stream.h" />
+    <ClInclude Include="..\..\source\common\io.h" />
+    <ClInclude Include="..\..\source\common\log.h" />
+    <ClInclude Include="..\..\source\common\Packets\EQ2Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\EQ2Packets\OpcodeManager.h" />
+    <ClInclude Include="..\..\source\common\Packets\EQ2Packets\OP_KeyRequest_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\EQ2Packets\OP_LoginReplyMsg_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElement.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\Packet16String.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\Packet32String .h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\Packet8String.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketArray.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketCriteria.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketElements.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEQ2Color.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEQ2EquipmentItem.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt16.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt32.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt64.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt8.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketOversizedByte.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketSubstruct.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketUInt16.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketUInt32.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketUInt64.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketUInt8.h" />
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPacket.h" />
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_Ack_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_AppCombined_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_ClientSessionUpdate_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_KeepAlive_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_Packet_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_ServerSessionUpdate_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_SessionDisconnect_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_SessionRequest_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_SessionResponse_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\ProtocolPackets.h" />
+    <ClInclude Include="..\..\source\common\RC4.h" />
+    <ClInclude Include="..\..\source\common\Server.h" />
+    <ClInclude Include="..\..\source\common\stdio.h" />
+    <ClInclude Include="..\..\source\common\Stream.h" />
+    <ClInclude Include="..\..\source\common\string.h" />
+    <ClInclude Include="..\..\source\common\TCPServer.h" />
+    <ClInclude Include="..\..\source\common\thread.h" />
+    <ClInclude Include="..\..\source\common\time.h" />
+    <ClInclude Include="..\..\source\common\timer.h" />
+    <ClInclude Include="..\..\source\common\UDPServer.h" />
+    <ClInclude Include="..\..\source\common\util.h" />
+    <ClInclude Include="..\..\source\common\version.h" />
+    <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldStream.h" />
+    <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h" />
+    <ClInclude Include="stdafx.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{0239F4E3-73E8-4AE1-94BE-629ECBBD28F8}</ProjectGuid>
@@ -30,7 +131,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -42,8 +143,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -72,9 +173,15 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>..\..\source\depends\mariadb-10.1.19\include;..\..\source\depends\zlib\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\source\depends\mariadb-10.1.19\lib\64-debug;..\..\source\depends\zlib\lib\win64-debug;$(LibraryPath)</LibraryPath>
+    <IntDir>$(Platform)\$(Configuration)\ZoneServer\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>..\..\source\depends\mariadb-10.1.19\include;..\..\source\depends\zlib\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\source\depends\mariadb-10.1.19\lib\32-debug;..\..\source\depends\zlib\lib;$(LibraryPath)</LibraryPath>
+    <IntDir>$(Configuration)\ZoneServer\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -88,13 +195,16 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINSOCK_DEPRECATED_NO_WARNINGS;_DEBUG;_CONSOLE;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_WARNINGS;EQ2_SERVER;EQ2_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ws2_32.lib;zlibstat.lib;mysqlclient.lib;legacy_stdio_definitions.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -103,13 +213,16 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINSOCK_DEPRECATED_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_WARNINGS;EQ2_SERVER;EQ2_DEBUG</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ws2_32.lib;zlibstat.lib;mysqlclient.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

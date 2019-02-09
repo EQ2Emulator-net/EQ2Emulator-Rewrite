@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../common/Server.h"
+#include "../../common/UDPServer.h"
 
-class WorldServer : public Server {
+class WorldServer : public UDPServer {
 public:
 	WorldServer();
 

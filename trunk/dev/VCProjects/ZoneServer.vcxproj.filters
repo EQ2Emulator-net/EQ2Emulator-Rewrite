@@ -1,11 +1,309 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="common">
-      <UniqueIdentifier>{a46c1adf-ee42-48e1-86c7-9b929ba19879}</UniqueIdentifier>
-    </Filter>
     <Filter Include="source">
       <UniqueIdentifier>{3a9da80b-ab05-4e47-81c1-fdf191272107}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\WorldTalk">
+      <UniqueIdentifier>{68100850-f8b6-4b9d-89b7-eda60e8bbf61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common">
+      <UniqueIdentifier>{2b160db7-a253-41f5-af9e-90ddb3f33ef2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common\Packets">
+      <UniqueIdentifier>{b13e7e87-e4f6-4e4d-afb3-c5e4b9ae3f12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common\Packets\PacketElements">
+      <UniqueIdentifier>{01619d86-ed62-453d-a81f-15b6fcc7717b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common\Packets\ProtocolPackets">
+      <UniqueIdentifier>{7de91438-189d-4a42-811f-1fbad6495bcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common\Packets\EQ2Packets">
+      <UniqueIdentifier>{1f0dd455-cd47-4dce-a129-f8326926a2a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common\Classes">
+      <UniqueIdentifier>{75a563b2-8f39-404c-9687-fd2dddbf43c9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\source\ZoneServer\main.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.cpp">
+      <Filter>source\WorldTalk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\WorldTalk\WorldStream.cpp">
+      <Filter>source\WorldTalk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\WorldServer\WorldServer\Client.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\WorldServer\Database\WorldDatabase.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\ConfigReader.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\CRC16.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Crypto.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\database-result.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\database.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\EQ2Stream.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\io.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\log.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\RC4.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Server.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\stdio.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Stream.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\string.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\thread.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\time.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\timer.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\util.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\TCPServer.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\UDPServer.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\EmuStream.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Packets\EQ2Packet.cpp">
+      <Filter>common\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Packets\ProtocolPacket.cpp">
+      <Filter>common\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Packets\PacketElements\PacketCriteria.cpp">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Packets\EQ2Packets\CommonPackets.cpp">
+      <Filter>common\Packets\EQ2Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Packets\EQ2Packets\OpcodeManager.cpp">
+      <Filter>common\Packets\EQ2Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Classes.cpp">
+      <Filter>common\Classes</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h">
+      <Filter>source\WorldTalk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldStream.h">
+      <Filter>source\WorldTalk</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\ConfigReader.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\CRC16.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Crypto.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\database-result.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\database.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\EQ2Stream.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\io.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\log.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\RC4.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Server.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\stdio.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Stream.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\string.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\thread.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\time.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\timer.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\util.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\version.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\TCPServer.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\UDPServer.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\EmuStream.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EQ2Packet.h">
+      <Filter>common\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\Packet.h">
+      <Filter>common\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElement.h">
+      <Filter>common\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPacket.h">
+      <Filter>common\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\Packet16String.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\Packet32String .h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\Packet8String.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketArray.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketCriteria.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketElements.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEQ2Color.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEQ2EquipmentItem.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt16.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt32.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt64.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt8.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketOversizedByte.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketSubstruct.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketUInt16.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketUInt32.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketUInt64.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketUInt8.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_Ack_Packet.h">
+      <Filter>common\Packets\ProtocolPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_AppCombined_Packet.h">
+      <Filter>common\Packets\ProtocolPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_ClientSessionUpdate_Packet.h">
+      <Filter>common\Packets\ProtocolPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_KeepAlive_Packet.h">
+      <Filter>common\Packets\ProtocolPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_Packet_Packet.h">
+      <Filter>common\Packets\ProtocolPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_ServerSessionUpdate_Packet.h">
+      <Filter>common\Packets\ProtocolPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_SessionDisconnect_Packet.h">
+      <Filter>common\Packets\ProtocolPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_SessionRequest_Packet.h">
+      <Filter>common\Packets\ProtocolPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_SessionResponse_Packet.h">
+      <Filter>common\Packets\ProtocolPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\ProtocolPackets.h">
+      <Filter>common\Packets\ProtocolPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EQ2Packets\OpcodeManager.h">
+      <Filter>common\Packets\EQ2Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EQ2Packets\OP_KeyRequest_Packet.h">
+      <Filter>common\Packets\EQ2Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EQ2Packets\OP_LoginReplyMsg_Packet.h">
+      <Filter>common\Packets\EQ2Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Classes.h">
+      <Filter>common\Classes</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

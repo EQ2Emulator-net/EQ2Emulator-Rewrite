@@ -34,6 +34,12 @@
     <Filter Include="source\Packets\Server-&gt;Client">
       <UniqueIdentifier>{c6741d4a-11f7-443d-a37a-324066af6eb5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\ZoneTalk">
+      <UniqueIdentifier>{90a8373e-1bd3-4daf-b4ca-4aec2ee13c10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common\Classes">
+      <UniqueIdentifier>{ea9d6d75-bc86-4422-b26c-c57b73b008d7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\common\io.cpp">
@@ -120,8 +126,20 @@
     <ClCompile Include="..\..\source\common\Packets\EQ2Packets\CommonPackets.cpp">
       <Filter>common\Packets\EQ2Packets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\common\Classes.cpp">
+    <ClCompile Include="..\..\source\common\TCPServer.cpp">
       <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\UDPServer.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\EmuStream.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\WorldServer\ZoneTalk\ZoneTalk.cpp">
+      <Filter>source\ZoneTalk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Classes.cpp">
+      <Filter>common\Classes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -338,20 +356,23 @@
     <ClInclude Include="..\..\source\WorldServer\Packets\OP_LsClientVerifylogReplyMsg_Packet.h">
       <Filter>source\Packets\Client-&gt;Server</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\WorldServer\Packets\OP_CreateCharacterRequestMsg_Packet.h">
-      <Filter>source\Packets\Client-&gt;Server</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEQ2ColorFloat.h">
-      <Filter>common\Packets\PacketElements</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketFloat.h">
-      <Filter>common\Packets\PacketElements</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\common\Classes.h">
+    <ClInclude Include="..\..\source\common\TCPServer.h">
       <Filter>common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\WorldServer\Packets\OP_CreateCharacterReplyMsg_Packet.h">
-      <Filter>source\Packets\Server-&gt;Client</Filter>
+    <ClInclude Include="..\..\source\common\UDPServer.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\EmuStream.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\ZoneTalk\ZoneStream.h">
+      <Filter>source\ZoneTalk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\ZoneTalk\ZoneTalk.h">
+      <Filter>source\ZoneTalk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Classes.h">
+      <Filter>common\Classes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

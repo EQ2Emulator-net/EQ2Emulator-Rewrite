@@ -8,12 +8,13 @@
 #define XML_SAFE_ATTR_VALUE(node, name) (node)->first_attribute(name) == NULL ? NULL : (node)->first_attribute(name)->value()
 
 
-ConfigReader::ConfigReader(Server* serv, Database* db) {
-	assert(serv);
-	assert(db);
+ConfigReader::ConfigReader(Server* serv, Database* db, Server* zone) {
+	//assert(serv); tmp
+	//assert(db);
 
 	server = serv;
 	DB = db;
+	zonetalk = zone;
 }
 
 ConfigReader::~ConfigReader() {
@@ -72,7 +73,11 @@ bool ConfigReader::ReadConfig(std::string file) {
 			ReadDatabaseConfig(node);
 		if ((node = root->first_node("logging")) != NULL)
 			ReadLogConfig(node);
+		if ((node = root->first_node("zonetalk")) != NULL)
+			ReadZoneTalkConfig(node);
 	}
+
+	delete doc;
 
 	free(buf);
 	return true;
@@ -160,4 +165,13 @@ void ConfigReader::ReadLogConfig(xml_node<> *node) {
 			}
 		}
 	}
+}
+
+void ConfigReader::ReadZoneTalkConfig(xml_node<> *node) {
+	const char *val;
+
+	if ((val = XML_SAFE_ATTR_VALUE(node, "host")) != NULL)
+		zonetalk->SetHost(val);
+	if ((val = XML_SAFE_ATTR_VALUE(node, "port")) != NULL && IsUnsignedInt(val))
+		zonetalk->SetPort(atoul(val));
 }

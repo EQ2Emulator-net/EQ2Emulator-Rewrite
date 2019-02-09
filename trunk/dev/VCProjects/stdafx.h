@@ -30,12 +30,13 @@
 #include <atomic>
 #include <ctype.h>
 #include <iostream>
+#include <assert.h>
 
 //OS Specific
 #if defined(_WIN32)
-#include <Windows.h>
 #include <WinSock2.h>
 #include <Ws2tcpip.h>
+#include <Windows.h>
 #include <io.h>
 #include <sys/timeb.h>
 # include <process.h>

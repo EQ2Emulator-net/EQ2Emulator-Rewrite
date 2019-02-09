@@ -9,9 +9,14 @@ Stream::Stream(unsigned int ip, unsigned short port) {
 	RemoteIP = ip;
 	RemotePort = port;
 
+	address.sin_family = AF_INET;
+	address.sin_addr.s_addr = RemoteIP;
+	address.sin_port = RemotePort;
+
 	LastPacketTime = 0;
 	ReceivedPackets = 0;
 	SentPackets = 0;
+	Sock = INVALID_SOCKET;
 }
 
 void Stream::Process(const unsigned char* buffer, unsigned int length) {
@@ -20,13 +25,8 @@ void Stream::Process(const unsigned char* buffer, unsigned int length) {
 	DumpBytes(buffer, length);
 }
 
-void Stream::WritePacket(int socket, const unsigned char* buffer, int length) {
-	sockaddr_in address;
-	address.sin_family = AF_INET;
-	address.sin_addr.s_addr = RemoteIP;
-	address.sin_port = RemotePort;
-
-
+void Stream::WritePacket(SOCKET socket, const unsigned char* buffer, int length) {
 	SentPackets++;
-	sendto(socket, (char*)buffer, length, 0, (sockaddr*)&address, sizeof(address));
+
+	sendto(socket, reinterpret_cast<const char*>(buffer), length, 0, reinterpret_cast<const sockaddr*>(&address), sizeof(address));
 }
