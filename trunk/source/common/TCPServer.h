@@ -11,6 +11,7 @@ public:
 	~TCPServer();
 
 	bool Open() override;
+	bool Close();
 	bool Process() override;
 
 protected:

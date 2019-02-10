@@ -3,6 +3,7 @@
 #include "../common/ConfigReader.h"
 #include "../common/util.h"
 #include "WorldTalk/WorldTalk.h"
+#include "../common/timer.h"
 
 
 //REMOVE
@@ -22,8 +23,22 @@ int main() {
 
 	talk.Open();
 
+	Timer reconnectTimer;
+
 	while (looping) {
-		talk.Process();
+		Timer::SetCurrentTime();
+
+		if (!talk.Process()) {
+			if (!reconnectTimer.Enabled()) {
+				reconnectTimer.Start(10000);
+				LogError(LOG_NET, 0, "Lost connection to the WorldServer. Attempting reconnection.");
+			}
+			else if (reconnectTimer.Check()) {
+				if (talk.Open()) {
+					reconnectTimer.Disable();
+				}
+			}
+		}
 
 		SleepMS(5);
 	}
