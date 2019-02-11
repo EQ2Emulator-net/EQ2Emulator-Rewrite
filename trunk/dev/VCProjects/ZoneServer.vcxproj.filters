@@ -8,22 +8,22 @@
       <UniqueIdentifier>{68100850-f8b6-4b9d-89b7-eda60e8bbf61}</UniqueIdentifier>
     </Filter>
     <Filter Include="common">
-      <UniqueIdentifier>{2b160db7-a253-41f5-af9e-90ddb3f33ef2}</UniqueIdentifier>
+      <UniqueIdentifier>{9e0c3040-f7ad-4b9f-9423-c58c5cfa3b75}</UniqueIdentifier>
     </Filter>
     <Filter Include="common\Packets">
-      <UniqueIdentifier>{b13e7e87-e4f6-4e4d-afb3-c5e4b9ae3f12}</UniqueIdentifier>
+      <UniqueIdentifier>{0a4bb690-feaa-44cb-809d-455469a37bd9}</UniqueIdentifier>
     </Filter>
     <Filter Include="common\Packets\PacketElements">
-      <UniqueIdentifier>{01619d86-ed62-453d-a81f-15b6fcc7717b}</UniqueIdentifier>
+      <UniqueIdentifier>{d60e0fdd-bb1f-45be-adc0-db6cd253937a}</UniqueIdentifier>
     </Filter>
     <Filter Include="common\Packets\ProtocolPackets">
-      <UniqueIdentifier>{7de91438-189d-4a42-811f-1fbad6495bcf}</UniqueIdentifier>
+      <UniqueIdentifier>{deb47341-2a1d-4036-a1a0-d0c5664c519b}</UniqueIdentifier>
     </Filter>
     <Filter Include="common\Packets\EQ2Packets">
-      <UniqueIdentifier>{1f0dd455-cd47-4dce-a129-f8326926a2a2}</UniqueIdentifier>
+      <UniqueIdentifier>{fd5193cb-9149-41a7-816e-e19f20e1120e}</UniqueIdentifier>
     </Filter>
     <Filter Include="common\Classes">
-      <UniqueIdentifier>{75a563b2-8f39-404c-9687-fd2dddbf43c9}</UniqueIdentifier>
+      <UniqueIdentifier>{350f215d-2d88-4a12-993c-b9645b37861e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -60,6 +60,9 @@
     <ClCompile Include="..\..\source\common\database.cpp">
       <Filter>common</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\common\EmuStream.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\source\common\EQ2Stream.cpp">
       <Filter>common</Filter>
     </ClCompile>
@@ -67,6 +70,9 @@
       <Filter>common</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\common\log.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Mutex.cpp">
       <Filter>common</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\common\RC4.cpp">
@@ -84,6 +90,9 @@
     <ClCompile Include="..\..\source\common\string.cpp">
       <Filter>common</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\common\TCPServer.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\source\common\thread.cpp">
       <Filter>common</Filter>
     </ClCompile>
@@ -93,22 +102,22 @@
     <ClCompile Include="..\..\source\common\timer.cpp">
       <Filter>common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\common\util.cpp">
-      <Filter>common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\common\TCPServer.cpp">
-      <Filter>common</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\common\UDPServer.cpp">
       <Filter>common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\common\EmuStream.cpp">
+    <ClCompile Include="..\..\source\common\util.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\EmuPacket.cpp">
       <Filter>common</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\common\Packets\EQ2Packet.cpp">
       <Filter>common\Packets</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\common\Packets\ProtocolPacket.cpp">
+      <Filter>common\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\EmuOpcodes.cpp">
       <Filter>common\Packets</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\common\Packets\PacketElements\PacketCriteria.cpp">
@@ -122,9 +131,6 @@
     </ClCompile>
     <ClCompile Include="..\..\source\common\Classes.cpp">
       <Filter>common\Classes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\common\Mutex.cpp">
-      <Filter>common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -152,6 +158,9 @@
     <ClInclude Include="..\..\source\common\database.h">
       <Filter>common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\common\EmuStream.h">
+      <Filter>common</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\source\common\EQ2Stream.h">
       <Filter>common</Filter>
     </ClInclude>
@@ -161,10 +170,19 @@
     <ClInclude Include="..\..\source\common\log.h">
       <Filter>common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\common\Mutex.h">
+      <Filter>common</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\source\common\RC4.h">
       <Filter>common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\common\Server.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\TCPServer.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\UDPServer.h">
       <Filter>common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\common\stdio.h">
@@ -191,13 +209,10 @@
     <ClInclude Include="..\..\source\common\version.h">
       <Filter>common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\common\TCPServer.h">
+    <ClInclude Include="..\..\source\common\EmuPacket.h">
       <Filter>common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\common\UDPServer.h">
-      <Filter>common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\common\EmuStream.h">
+    <ClInclude Include="..\..\source\common\EmuOpcodes.h">
       <Filter>common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\common\Packets\EQ2Packet.h">
@@ -266,6 +281,15 @@
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketUInt8.h">
       <Filter>common\Packets\PacketElements</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketBool.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketDouble.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketFloat.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_Ack_Packet.h">
       <Filter>common\Packets\ProtocolPackets</Filter>
     </ClInclude>
@@ -307,9 +331,6 @@
     </ClInclude>
     <ClInclude Include="..\..\source\common\Classes.h">
       <Filter>common\Classes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\common\Mutex.h">
-      <Filter>common</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

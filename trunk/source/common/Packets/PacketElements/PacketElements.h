@@ -20,6 +20,7 @@
 
 // Floats
 #include "PacketFloat.h"
+#include "PacketDouble.h"
 
 // Color
 #include "PacketEQ2Color.h"
@@ -30,6 +31,7 @@
 #include "PacketSubstruct.h"
 #include "PacketEQ2EquipmentItem.h"
 #include "PacketOversizedByte.h"
+#include "PacketBool.h"
 
 //Register macros, these are intended to be used from RegisterElements()
 #define PushElementForRegistration(e, n, t) (elements.push_back(e), elements.back()->SetName(n), static_cast<t*>(elements.back()))
@@ -51,3 +53,5 @@
 #define RegisterEQ2EquipmentItem(e) PushElementForRegistration(new PacketEQ2EquipmentItem(e), #e, PacketEQ2EquipmentItem)
 #define RegisterOversizedByte(e) PushElementForRegistration(new PacketOversizedByte(e), #e, PacketOversizedByte)
 #define RegisterFloat(e) PushElementForRegistration(new PacketFloat(e), #e, PacketFloat)
+#define RegisterBool(e) PushElementForRegistration(new PacketBool(e), #e, PacketBool);
+#define RegisterDouble(e) PushElementForRegistration(new PacketDouble(e), #e, PacketDouble);

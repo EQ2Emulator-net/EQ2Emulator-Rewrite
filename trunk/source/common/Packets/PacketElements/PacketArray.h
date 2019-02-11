@@ -12,6 +12,7 @@ protected:
 	
 public:
 	virtual void SetArraySize(uint32_t size) = 0;
+	virtual uint32_t GetArraySize() = 0;
 };
 
 //Just a note to self for xml structs
@@ -73,6 +74,10 @@ public:
 		for (int i = 0; i < count; i++) {
 			element[i].resize(size);
 		}
+	}
+
+	uint32_t GetArraySize() override {
+		return static_cast<uint32_t>(element[0].size());
 	}
 
 private:

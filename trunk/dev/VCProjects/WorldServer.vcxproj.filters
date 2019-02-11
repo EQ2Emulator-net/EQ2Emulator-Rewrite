@@ -141,6 +141,15 @@
     <ClCompile Include="..\..\source\common\Classes.cpp">
       <Filter>common\Classes</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\common\Mutex.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\EmuPacket.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\EmuOpcodes.cpp">
+      <Filter>common\Packets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\common\io.h">
@@ -373,6 +382,24 @@
     </ClInclude>
     <ClInclude Include="..\..\source\common\Classes.h">
       <Filter>common\Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Mutex.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\EmuPacket.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\EmuOpcodes.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketBool.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketDouble.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketFloat.h">
+      <Filter>common\Packets\PacketElements</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

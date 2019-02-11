@@ -29,7 +29,15 @@ public:
 
 	void WriteElement(unsigned char* outbuf, uint32_t& offset) {
 		uint32_t writeSize = sizeof(int16_t) * count;
-		memcpy(outbuf + offset, element, writeSize);
+
+		if (myArray) {
+			uint16_t asize = static_cast<uint16_t>(myArray->GetArraySize());
+			memcpy(outbuf + offset, &asize, 2);
+		}
+		else {
+			memcpy(outbuf + offset, element, writeSize);
+		}
+
 		offset += writeSize;
 	}
 

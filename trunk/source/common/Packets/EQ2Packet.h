@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include "Packet.h"
 
-class PacketAllocatorBase;
+class EQ2PacketAllocatorBase;
 class OpcodeManager;
 class Client;
 

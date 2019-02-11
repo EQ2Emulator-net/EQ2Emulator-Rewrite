@@ -36,12 +36,23 @@ public:
 
 	void WriteElement(unsigned char* outbuf, uint32_t& offset) {
 		uint32_t writeSize = sizeof(uint16_t) * count;
-		memcpy(outbuf + offset, element, 2);
 
-		if (IsNetOrder()) {
-			uint16_t* pe = reinterpret_cast<uint16_t*>(outbuf + offset);
-			for (int i = 0; i < count; i++) {
-				pe[i] = htons(pe[i]);
+		if (myArray) {
+			uint16_t asize = static_cast<uint16_t>(myArray->GetArraySize());
+			if (IsNetOrder()) {
+				asize = htons(asize);
+			}
+			memcpy(outbuf + offset, &asize, 2);
+		}
+		else {
+			if (IsNetOrder()) {
+				uint16_t* pe = reinterpret_cast<uint16_t*>(outbuf + offset);
+				for (int i = 0; i < count; i++) {
+					pe[i] = htons(pe[i]);
+				}
+			}
+			else {
+				memcpy(outbuf + offset, element, writeSize);
 			}
 		}
 

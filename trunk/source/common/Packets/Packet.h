@@ -14,7 +14,7 @@ public:
 			delete elements[i];
 	}
 
-	bool Read(const unsigned char* in_buf, uint32_t off, uint32_t bufsize) {
+	virtual bool Read(const unsigned char* in_buf, uint32_t off, uint32_t bufsize) {
 		offset = off;
 		for (size_t i = 0; i < elements.size(); i++) {
 			if (!elements[i]->MeetsCriteria()) {

@@ -95,6 +95,8 @@ bool TCPServer::Close() {
 	SOCKET s = Sock;
 	Sock = INVALID_SOCKET;
 	closesocket(s);
+
+	return true;
 }
 
 void TCPServer::ReaderThread() {

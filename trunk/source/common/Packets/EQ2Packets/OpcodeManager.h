@@ -9,21 +9,21 @@
 #include <typeindex>
 #include <vector>
 
-class PacketAllocatorBase {
+class EQ2PacketAllocatorBase {
 protected:
-	PacketAllocatorBase() = default;
+	EQ2PacketAllocatorBase() = default;
 
 public:
-	virtual ~PacketAllocatorBase() = default;
+	virtual ~EQ2PacketAllocatorBase() = default;
 	virtual EQ2Packet* Create(int16_t version) = 0;
 };
 
 template <typename T>
-class PacketAllocator : public PacketAllocatorBase {
+class EQ2PacketAllocator : public EQ2PacketAllocatorBase {
 	static_assert(std::is_base_of<EQ2Packet, T>::value, "Tried to create a packet constructor for a non packet type!");
 public:
-	PacketAllocator() = default;
-	~PacketAllocator() = default;
+	EQ2PacketAllocator() = default;
+	~EQ2PacketAllocator() = default;
 
 	EQ2Packet* Create(int16_t version) {
 
@@ -34,15 +34,15 @@ public:
 class OpcodeManager {
 private:
 	//<name, allocator>
-	std::map<std::string, PacketAllocatorBase*> allocators;
+	std::map<std::string, EQ2PacketAllocatorBase*> allocators;
 	
 	//<type_index, allocator>
-	std::map<std::type_index, PacketAllocatorBase*> type_map;
+	std::map<std::type_index, EQ2PacketAllocatorBase*> type_map;
 
 	typedef std::pair<uint16_t, uint16_t> versionRange_t;
 
 	//This maps versions to opcodes and their packet constructors
-	std::map<versionRange_t, std::map<uint16_t, PacketAllocatorBase*> > versions;
+	std::map<versionRange_t, std::map<uint16_t, EQ2PacketAllocatorBase*> > versions;
 
 	//This maps struct file names to packet names used in that file
 	std::map<std::string, std::vector<std::string> > outfiles;
@@ -58,7 +58,7 @@ public:
 		}
 	}
 
-	void RegisterAllocator(const char* name, PacketAllocatorBase* allocator, std::type_index t, 
+	void RegisterAllocator(const char* name, EQ2PacketAllocatorBase* allocator, std::type_index t,
 		const char* outfile, const int32_t* versions, int32_t num_versions) {
 		//Took the assert out for if the same type is registered twice...
 		//but you must use a new type if writing the packet for FindOpcode
@@ -81,7 +81,7 @@ public:
 	}
 
 	static OpcodeManager* GetGlobal();
-	static void RegisterEmuOpcodeHelper(const char* name, PacketAllocatorBase* allocator, std::type_index t, 
+	static void RegisterEQ2OpcodeHelper(const char* name, EQ2PacketAllocatorBase* allocator, std::type_index t,
 		const char* outfile, const int32_t* versions, int32_t num_versions);
 
 	void RegisterVersionOpcode(const char* name, uint16_t range_low, uint16_t range_high, uint16_t opcode) {
@@ -127,7 +127,7 @@ public:
 		auto itr = type_map.find(typeid(*packet));
 		assert(("Please register this packet class with an opcode.", itr != type_map.end()));
 
-		PacketAllocatorBase* allocator = itr->second;
+		EQ2PacketAllocatorBase* allocator = itr->second;
 		for (auto& itr : versions) {
 			uint16_t version = packet->GetVersion();
 			versionRange_t range = itr.first;
@@ -153,13 +153,13 @@ class OpcodeRegistrar {
 	static_assert(std::is_base_of<EQ2Packet, T>::value, "Tried to register an Opcode for a non packet type!");
 public:
 	OpcodeRegistrar(const char* opName, const char* outfile, const int32_t* versions, int32_t version_count) {
-		OpcodeManager::RegisterEmuOpcodeHelper(opName, new PacketAllocator<T>, typeid(T), outfile, versions, version_count);
+		OpcodeManager::RegisterEQ2OpcodeHelper(opName, new EQ2PacketAllocator<T>, typeid(T), outfile, versions, version_count);
 	}
 };
 
 //Use this macro on a global scope to auto construct this object on program start
 //n is the opcode name, pt is the packet class
-#define RegisterEmuOpcode(n, pt, f, ...) int32_t zUNIQUENAMEVERz ## pt ##[] = { __VA_ARGS__ };\
+#define RegisterEQ2Opcode(n, pt, f, ...) int32_t zUNIQUENAMEVERz ## pt ##[] = { __VA_ARGS__ };\
 OpcodeRegistrar<pt> zUNIQUENAMEz ## pt ## (n, f, zUNIQUENAMEVERz ## pt, sizeof(zUNIQUENAMEVERz ## pt) / sizeof(int32_t))
-#define RegisterWorldStruct(n, pt, ...) RegisterEmuOpcode(n, pt, "WorldStructs.xml", __VA_ARGS__)
-#define RegisterLoginStruct(n, pt, ...) RegisterEmuOpcode(n, pt, "LoginStructs.xml", __VA_ARGS__)
+#define RegisterWorldStruct(n, pt, ...) RegisterEQ2Opcode(n, pt, "WorldStructs.xml", __VA_ARGS__)
+#define RegisterLoginStruct(n, pt, ...) RegisterEQ2Opcode(n, pt, "LoginStructs.xml", __VA_ARGS__)

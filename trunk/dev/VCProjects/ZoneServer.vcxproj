@@ -25,6 +25,8 @@
     <ClCompile Include="..\..\source\common\Crypto.cpp" />
     <ClCompile Include="..\..\source\common\database-result.cpp" />
     <ClCompile Include="..\..\source\common\database.cpp" />
+    <ClCompile Include="..\..\source\common\EmuOpcodes.cpp" />
+    <ClCompile Include="..\..\source\common\EmuPacket.cpp" />
     <ClCompile Include="..\..\source\common\EmuStream.cpp" />
     <ClCompile Include="..\..\source\common\EQ2Stream.cpp" />
     <ClCompile Include="..\..\source\common\io.cpp" />
@@ -65,6 +67,8 @@
     <ClInclude Include="..\..\source\common\Crypto.h" />
     <ClInclude Include="..\..\source\common\database-result.h" />
     <ClInclude Include="..\..\source\common\database.h" />
+    <ClInclude Include="..\..\source\common\EmuOpcodes.h" />
+    <ClInclude Include="..\..\source\common\EmuPacket.h" />
     <ClInclude Include="..\..\source\common\EmuStream.h" />
     <ClInclude Include="..\..\source\common\EQ2Stream.h" />
     <ClInclude Include="..\..\source\common\io.h" />
@@ -80,10 +84,13 @@
     <ClInclude Include="..\..\source\common\Packets\PacketElements\Packet32String .h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\Packet8String.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketArray.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketBool.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketCriteria.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketDouble.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketElements.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEQ2Color.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEQ2EquipmentItem.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketFloat.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt16.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt32.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt64.h" />
