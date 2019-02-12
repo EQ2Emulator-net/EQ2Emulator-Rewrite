@@ -20,6 +20,9 @@ protected:
 	Mutex streamLock;
 
 private:
+	std::vector<std::string> clientRemovals;
+	SpinLock m_clientRemovals;
+
 	std::thread read_thread;
 	bool bLooping;
 

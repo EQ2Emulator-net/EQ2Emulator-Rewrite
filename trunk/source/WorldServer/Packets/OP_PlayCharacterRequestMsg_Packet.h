@@ -21,7 +21,7 @@ public:
 
 	void HandlePacket(Client* client) {
 		OP_PlayCharacterReplyMsg_Packet* reply = new OP_PlayCharacterReplyMsg_Packet(client->GetVersion());
-		reply->response = PLAY_ERROR_ZONE_DOWN;
+		reply->response = PLAY_CHARACTER_SUCCESS;
 		reply->account_id = client->GetAccountID();
 		client->QueuePacket(reply);
 	}

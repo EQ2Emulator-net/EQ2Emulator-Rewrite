@@ -150,6 +150,9 @@
     <ClCompile Include="..\..\source\common\EmuOpcodes.cpp">
       <Filter>common</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\WorldServer\ZoneTalk\ZoneStream.cpp">
+      <Filter>source\ZoneTalk</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\common\io.h">

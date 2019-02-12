@@ -23,6 +23,9 @@ int main(int argc, char **argv)
 {
 	bool success = true;
 	bool looping = true; // Need to move this out at some point
+
+	srand(static_cast<unsigned int>(time(nullptr)));
+
 	WorldServer s;
 	ZoneTalk zoneTalk;
 

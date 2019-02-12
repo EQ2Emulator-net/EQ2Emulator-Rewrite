@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <string>
 
 #ifdef _WIN32
 #include <WinSock2.h>
@@ -22,6 +23,8 @@ public:
 	uint16_t GetPort() { return RemotePort; }
 	void SetSocket(SOCKET s) { Sock = s; }
 	void WritePacket(SOCKET socket, const unsigned char* buffer, int length);
+
+	std::string ToString();
 
 protected:
 

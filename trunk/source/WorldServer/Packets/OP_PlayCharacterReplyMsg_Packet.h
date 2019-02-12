@@ -6,6 +6,7 @@
 #include "../WorldServer/Client.h"
 
 #define PLAY_ERROR_PROBLEM					0
+#define PLAY_CHARACTER_SUCCESS              1
 #define PLAY_ERROR_ZONE_DOWN				4
 #define PLAY_ERROR_CHAR_NOT_LOADED			5
 #define PLAY_ERROR_CHAR_NOT_FOUND			6

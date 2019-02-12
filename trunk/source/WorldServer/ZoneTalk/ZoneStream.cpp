@@ -1,10 +1,10 @@
 #include "stdafx.h"
 
-#include "WorldStream.h"
-#include "../../common/EmuPacket.h"
+#include "ZoneStream.h"
 #include "../../common/util.h"
+#include "../../common/EmuPacket.h"
 
-void WorldStream::Process() {
+void ZoneStream::Process() {
 	auto incoming = PopIncoming();
 
 	for (auto& itr : incoming) {

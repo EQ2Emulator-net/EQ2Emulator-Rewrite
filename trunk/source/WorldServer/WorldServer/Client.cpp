@@ -95,7 +95,7 @@ void Client::SaveErrorsToDB(std::string log, std::string type) {
 		delete[] message;
 }
 
-void Client::ReadVersionPacket(unsigned char* data, uint32_t size, uint32_t offset, uint16_t opcode) {
+void Client::ReadVersionPacket(const unsigned char* data, uint32_t size, uint32_t offset, uint16_t opcode) {
 	//Since this packet is what sets the version and that moves around, we need to try and determine the struct
 	//Find the approximate size of the packet not including strings to take a guess
 	string tmp;

@@ -16,6 +16,8 @@ Classes classes;
 int main() {
 	bool looping = true;
 
+	srand(static_cast<unsigned int>(time(nullptr)));
+
 	WorldTalk talk;
 
 	ConfigReader cr(nullptr, &database, &talk);

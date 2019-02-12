@@ -6,4 +6,6 @@ class WorldStream : public EmuStream {
 public:
 	WorldStream(unsigned int ip, unsigned int port) : EmuStream(ip, port) {}
 	~WorldStream() = default;
+
+	void Process() override;
 };

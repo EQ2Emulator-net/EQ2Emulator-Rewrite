@@ -215,6 +215,7 @@
     <ClCompile Include="..\..\source\WorldServer\Packets\WorldServerPackets.cpp" />
     <ClCompile Include="..\..\source\WorldServer\WorldServer\Client.cpp" />
     <ClCompile Include="..\..\source\WorldServer\WorldServer\WorldServer.cpp" />
+    <ClCompile Include="..\..\source\WorldServer\ZoneTalk\ZoneStream.cpp" />
     <ClCompile Include="..\..\source\WorldServer\ZoneTalk\ZoneTalk.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

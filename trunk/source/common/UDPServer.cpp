@@ -67,6 +67,25 @@ void UDPServer::ReaderThread() {
 	timeval sleep_time;
 
 	while (bLooping) {
+
+		//Check if we need to remove any streams
+		m_clientRemovals.Lock();
+		if (!clientRemovals.empty()) {
+			WriteLocker lock(streamLock);
+			for (auto& itr : clientRemovals) {
+				if ((stream_itr = Streams.find(itr)) != Streams.end()) {
+					LogDebug(LOG_NET, 0, "Removing client.");
+					delete stream_itr->second;
+					Streams.erase(stream_itr);
+				}
+				else {
+					LogDebug(LOG_NET, 0, "Stream not found in disconnect.");
+				}
+			}
+			clientRemovals.clear();
+		}
+		m_clientRemovals.Unlock();
+
 		FD_ZERO(&readset);
 		FD_SET(Sock, &readset);
 
@@ -123,18 +142,6 @@ void UDPServer::ReaderThread() {
 
 void UDPServer::StreamDisconnected(Stream* stream) {
 	std::map<std::string, Stream*>::iterator stream_itr;
-	char temp[25];
-	sprintf(temp, "%u.%d", ntohl(stream->GetIP()), ntohs(stream->GetPort()));
-	WriteLocker lock(streamLock);
-
-	if ((stream_itr = Streams.find(temp)) != Streams.end()) {
-		LogDebug(LOG_NET, 0, "Removing client.");
-		Streams.erase(stream_itr);
-		delete stream;
-	}
-	else {
-		LogDebug(LOG_NET, 0, "Stream not found in disconnect.");
-		if (stream)
-			delete stream;
-	}
+	SpinLocker lock(m_clientRemovals);
+	clientRemovals.push_back(stream->ToString());
 }
