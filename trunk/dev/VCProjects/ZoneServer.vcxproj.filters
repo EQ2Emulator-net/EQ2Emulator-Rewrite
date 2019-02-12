@@ -31,6 +31,12 @@
     <Filter Include="source\Database">
       <UniqueIdentifier>{514400ff-7631-42c4-ac70-6ee19f14fc93}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\Packets">
+      <UniqueIdentifier>{99547215-8e34-4224-868f-6438ecb05dd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Packets\Client-&gt;Server">
+      <UniqueIdentifier>{436e69bc-5c2b-498b-b864-9b302be48470}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\ZoneServer\main.cpp">
@@ -140,6 +146,9 @@
     </ClCompile>
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\Client.cpp">
       <Filter>source\ZoneServer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Packets\ZoneServerPackets.cpp">
+      <Filter>source\Packets</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -352,6 +361,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\ZoneServer\Client.h">
       <Filter>source\ZoneServer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_LoginByNumRequestMsg_Packet.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

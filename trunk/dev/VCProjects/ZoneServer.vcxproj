@@ -52,6 +52,7 @@
     <ClCompile Include="..\..\source\ZoneServer\main.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Packets\ZoneServerPackets.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\WorldTalk\WorldStream.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\Client.cpp" />
@@ -126,6 +127,7 @@
     <ClInclude Include="..\..\source\common\util.h" />
     <ClInclude Include="..\..\source\common\version.h" />
     <ClInclude Include="..\..\source\ZoneServer\Database\ZoneDatabase.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_LoginByNumRequestMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldStream.h" />
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h" />
     <ClInclude Include="..\..\source\ZoneServer\ZoneServer\Client.h" />
