@@ -61,6 +61,7 @@ public:
 
 protected:
 	EQ2Packet* PopPacket(); // InboundQueuePop
+	virtual void ReadVersionPacket(unsigned char* data, uint32_t size, uint32_t offset, uint16_t opcode) = 0;
 
 	uint32_t Key;
 	uint32_t Session;

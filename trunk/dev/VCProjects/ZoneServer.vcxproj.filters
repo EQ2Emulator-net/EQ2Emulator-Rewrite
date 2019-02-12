@@ -138,6 +138,9 @@
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\ZoneServerCluster.cpp">
       <Filter>source\ZoneServer</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\ZoneServer\Client.cpp">
+      <Filter>source\ZoneServer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h">

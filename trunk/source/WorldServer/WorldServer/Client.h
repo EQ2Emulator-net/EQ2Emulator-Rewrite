@@ -20,6 +20,7 @@ public:
 	void SaveErrorsToDB(std::string log, std::string type);
 
 protected:
+	void ReadVersionPacket(unsigned char* data, uint32_t size, uint32_t offset, uint16_t opcode) override;
 
 private:
 	void SendLoginReply(uint8_t reply);

@@ -10,17 +10,6 @@
 #include "Packets/EQ2Packets/OpcodeManager.h"
 #include "../common/Packets/PacketElements/PacketElements.h"
 
-#ifdef EQ2_WORLD
-#include "../WorldServer/Packets/OP_LoginRequestMsg_Packet.h"
-#else
-#endif
-
-#ifdef _WIN32
-	#include <WinSock2.h>
-#else
-	#include <arpa/inet.h>
-#endif
-
 EQ2Stream::EQ2Stream(unsigned int ip, unsigned short port) : Stream(ip, port) {
 	Key = 0;
 	Session = 0;
@@ -675,41 +664,9 @@ EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size, u
 		opcode = data[0];
 	}
 	
-	if (ClientVersion == 0) {
-#ifdef EQ2_WORLD
-		if (opcode == 0) {
-			//Since this packet is what sets the version and that moves around, we need to try and determine the struct
-			//Find the approximate size of the packet not including strings to take a guess
-			string tmp;
-			Packet16String e(tmp);
-
-			uint32_t tmp_offset = offset;
-
-			for (int i = 0; i < 4; i++) {
-				e.ReadElement(data, tmp_offset, size);
-			}
-
-			uint32_t remaining_size = size - tmp_offset;
-
-			//Factor out the STATION string16 that gets sent for most client versions except really early ones
-			if (remaining_size >= 9) {
-				//7 char bytes + the 2 byte size
-				remaining_size -= 9;
-			}
-
-			//21 Bytes is the remaining size for the 1208 client, I'm assuming the largest struct before the change
-			uint16_t struct_version = remaining_size > 21 ? 1212 : 1;
-
-			//We want to handle this packet now because other packets rely on the version set from it
-			OP_LoginRequestMsg_Packet p(struct_version);
-
-
-			p.Read(data, offset, size);
-			p.HandlePacket(static_cast<Client*>(this));
-			return nullptr;
-		}
-#else
-#endif
+	if (ClientVersion == 0 && (opcode == 0 || opcode == 1)) {
+		ReadVersionPacket(data, size, offset, opcode);
+		return nullptr;
 	}
 
 	EQ2Packet* ret = OpcodeManager::GetGlobal()->GetPacketForVersion(ClientVersion, opcode);

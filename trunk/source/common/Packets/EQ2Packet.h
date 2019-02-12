@@ -26,7 +26,7 @@ public:
 	bool EQ2Compressed;
 
 protected:
-	EQ2Packet(uint16_t version);;
+	EQ2Packet(uint16_t version);
 
 	uint8_t app_opcode_size;
 	uint16_t opcode;

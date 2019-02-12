@@ -8,6 +8,9 @@ public:
 
 	void Process();
 
+protected:
+	void ReadVersionPacket(unsigned char* data, uint32_t size, uint32_t offset, uint16_t opcode) override;
+
 private:
 
 };
