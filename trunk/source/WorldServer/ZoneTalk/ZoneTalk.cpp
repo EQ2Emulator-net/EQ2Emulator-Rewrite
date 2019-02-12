@@ -30,4 +30,6 @@ bool ZoneTalk::Process() {
 			s->WritePacket(sock, itr->buffer, itr->Size);
 		}
 	}
+
+	return true;
 }
