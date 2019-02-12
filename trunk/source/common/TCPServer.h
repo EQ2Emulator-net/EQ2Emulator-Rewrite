@@ -12,15 +12,15 @@ public:
 
 	bool Open() override;
 	bool Close();
-	bool Process() override;
 
 protected:
 	TCPServer(bool bHost);
+
+	std::map<SOCKET, Stream*> Streams;
+	Mutex streamLock;
 private:
 	bool bHost;
 	bool bLooping;
-	std::map<SOCKET, Stream*> Streams;
-	Mutex streamLock;
 	std::thread read_thread;
 
 	void ReaderThread();

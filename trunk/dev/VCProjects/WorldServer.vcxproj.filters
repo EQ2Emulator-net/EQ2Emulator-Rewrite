@@ -148,7 +148,7 @@
       <Filter>common</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\common\EmuOpcodes.cpp">
-      <Filter>common\Packets</Filter>
+      <Filter>common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

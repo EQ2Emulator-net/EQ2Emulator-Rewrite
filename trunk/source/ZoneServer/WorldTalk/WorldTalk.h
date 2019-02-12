@@ -10,4 +10,6 @@ public:
 	~WorldTalk() = default;
 
 	Stream* GetNewStream(unsigned int ip, unsigned short port) override;
+
+	bool Process() override { return true; }
 };

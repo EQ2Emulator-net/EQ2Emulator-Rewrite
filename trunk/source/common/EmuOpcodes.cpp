@@ -14,10 +14,10 @@ protected:
 	EmuPacketAllocatorBase() = default;
 };
 
-namespace EmuOpcodes {
+namespace EmuOpcode {
 	std::unordered_map<uint8_t, std::unique_ptr<EmuPacketAllocatorBase> > emu_opcodes;
 
-	::EmuPacket* GetPacketForOpcode(uint8_t op) {
+	EmuPacket* GetPacketForOpcode(uint8_t op) {
 		auto a = emu_opcodes[op].get();
 
 		if (!a) {
@@ -28,6 +28,8 @@ namespace EmuOpcodes {
 		return a->Create();
 	}
 };
+
+
 
 template <typename T>
 class EmuPacketAllocator : public EmuPacketAllocatorBase {
@@ -42,7 +44,7 @@ public:
 };
 
 void RegisterEmuOpcode(EmuOpcode_t op, EmuPacketAllocatorBase* a) {
-	auto& ptr = EmuOpcodes::emu_opcodes[op];
+	auto& ptr = EmuOpcode::emu_opcodes[op];
 
 	assert(("Emu opcode registered twice! Fix!", !ptr));
 
@@ -62,4 +64,3 @@ public:
 #define RegisterEmuOpcode(op, t) EmuOpcodeRegistrar<t> zUNIQUENAMEz ## t ## (op)
 
 	//Register emu opcodes here
-	

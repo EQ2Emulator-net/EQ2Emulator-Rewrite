@@ -83,7 +83,6 @@ bool TCPServer::Close() {
 
 	WriteLocker lock(streamLock);
 	for (auto& itr : Streams) {
-		itr.second->Process();
 		delete itr.second;
 		
 		if (itr.first != Sock) {
@@ -166,8 +165,6 @@ void TCPServer::ReaderThread() {
 						FD_CLR(i, &fds_master);
 						Streams.erase(itr);
 
-						//Do one last process on this client before deletion
-						client->Process();
 						delete client;
 
 						if (!bHost) {
@@ -187,18 +184,4 @@ void TCPServer::ReaderThread() {
 			}
 		}
 	}
-}
-
-bool TCPServer::Process() {
-	if (Sock == INVALID_SOCKET) {
-		return false;
-	}
-
-	//Run any processing on these streams now
-	ReadLocker lock(streamLock);
-	for (auto& itr : Streams) {
-		itr.second->Process();
-	}
-
-	return true;
 }

@@ -28,7 +28,7 @@
     <Filter Include="source\ZoneServer">
       <UniqueIdentifier>{fad06a55-f7cc-41cf-88fd-c61f283ac1eb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Database">
+    <Filter Include="source\Database">
       <UniqueIdentifier>{514400ff-7631-42c4-ac70-6ee19f14fc93}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -133,7 +133,7 @@
       <Filter>common\Classes</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\ZoneServer\Database\ZoneDatabase.cpp">
-      <Filter>Database</Filter>
+      <Filter>source\Database</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\ZoneServerCluster.cpp">
       <Filter>source\ZoneServer</Filter>
@@ -345,7 +345,7 @@
       <Filter>source\ZoneServer</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\Database\ZoneDatabase.h">
-      <Filter>Database</Filter>
+      <Filter>source\Database</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\ZoneServer\Client.h">
       <Filter>source\ZoneServer</Filter>

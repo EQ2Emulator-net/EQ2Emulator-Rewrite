@@ -1,8 +1,9 @@
 #pragma once
 
 #include "Stream.h"
-#include <queue>
+#include <deque>
 #include "Mutex.h"
+#include <memory>
 
 class EmuPacket;
 
@@ -11,16 +12,18 @@ public:
 	~EmuStream();
 
 	void Process(const unsigned char* data, unsigned int length) override;
-	void Process() override;
 	
-	void QueuePacket(const unsigned char* data, uint32_t length);
+	void QueuePacket(EmuPacket* p);
+
+	std::deque<std::unique_ptr<EmuPacket> > PopIncoming();
+	std::deque<std::unique_ptr<EmuPacket> > PopOutgoing();
 
 protected:
 	EmuStream(unsigned int ip, unsigned int port);
 
-	std::queue<EmuPacket*> incoming;
-	std::queue<EmuPacket*> outgoing;
+	std::deque<std::unique_ptr<EmuPacket> > incoming;
+	std::deque<std::unique_ptr<EmuPacket> > outgoing;
 
-	Mutex m_incoming;
-	Mutex m_outgoing;
+	SpinLock m_incoming;
+	SpinLock m_outgoing;
 };
