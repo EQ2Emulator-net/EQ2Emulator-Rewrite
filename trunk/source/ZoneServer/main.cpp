@@ -2,15 +2,15 @@
 
 #include "../common/ConfigReader.h"
 #include "../common/util.h"
+#include "../common/log.h"
 #include "WorldTalk/WorldTalk.h"
+#include "Database/ZoneDatabase.h"
 #include "../common/timer.h"
 
-
 //REMOVE
-#include "../WorldServer/Database/WorldDatabase.h"
 #include "../common/Classes.h"
 
-WorldDatabase database;
+ZoneDatabase database;
 Classes classes;
 
 int main() {
@@ -18,7 +18,7 @@ int main() {
 
 	WorldTalk talk;
 
-	ConfigReader cr(nullptr, nullptr, &talk);
+	ConfigReader cr(nullptr, &database, &talk);
 	cr.ReadConfig("zone-config.xml");
 
 	talk.Open();

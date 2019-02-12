@@ -8,8 +8,12 @@
 #include "Server.h"
 #include "timer.h"
 #include "Packets/EQ2Packets/OpcodeManager.h"
-#include "../WorldServer/Packets/OP_LoginRequestMsg_Packet.h"
 #include "../common/Packets/PacketElements/PacketElements.h"
+
+#ifdef EQ2_WORLD
+#include "../WorldServer/Packets/OP_LoginRequestMsg_Packet.h"
+#else
+#endif
 
 #ifdef _WIN32
 	#include <WinSock2.h>
@@ -417,19 +421,17 @@ void EQ2Stream::SendPacket(EQ2Packet* p) {
 
 void EQ2Stream::SequencedPush(ProtocolPacket *p) {
 	p->SetVersion(ClientVersion);
-	//MOutboundQueue.lock();
+	WriteLocker lock(seqQueueLock);
 	*(uint16_t *)(p->buffer) = htons(NextOutSeq);
 	p->SetSequence(NextOutSeq);
 	SequencedQueue.push_back(p);
 	NextOutSeq++;
-	//MOutboundQueue.unlock();
 }
 
 void EQ2Stream::NonSequencedPush(ProtocolPacket *p) {
 	p->SetVersion(ClientVersion);
-	//MOutboundQueue.lock();
+	WriteLocker lock(nonSeqQueueLock);
 	NonSequencedQueue.push_back(p);
-	//MOutboundQueue.unlock();
 }
 
 void EQ2Stream::Write() {
@@ -477,6 +479,7 @@ void EQ2Stream::Write() {
 	// Loop until both are empty or MaxSends is reached
 
 	// See if there are more non-sequenced packets left
+	WriteLocker lock1(nonSeqQueueLock);
 	while (NonSequencedQueue.size()) {
 		if (!p) {
 			// If we don't have a packet to try to combine into, use this one as the base
@@ -510,6 +513,7 @@ void EQ2Stream::Write() {
 			break;
 		}
 	}
+	lock1.Unlock();
 
 	//The non-seq loop must have broke before we sent this packet, send it now
 	if (p) {
@@ -517,6 +521,7 @@ void EQ2Stream::Write() {
 		BytesWritten += p->Size;
 	}
 
+	WriteLocker lock2(seqQueueLock);
 	if (SequencedQueue.size() && BytesWritten < threshold) {
 		while (SequencedQueue.size()) {
 			p = SequencedQueue.front();
@@ -531,6 +536,7 @@ void EQ2Stream::Write() {
 			}
 		}
 	}
+	lock2.Unlock();
 
 	// Unlock the queue
 	//MOutboundQueue.unlock();
@@ -670,6 +676,7 @@ EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size, u
 	}
 	
 	if (ClientVersion == 0) {
+#ifdef EQ2_WORLD
 		if (opcode == 0) {
 			//Since this packet is what sets the version and that moves around, we need to try and determine the struct
 			//Find the approximate size of the packet not including strings to take a guess
@@ -701,6 +708,8 @@ EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size, u
 			p.HandlePacket(static_cast<Client*>(this));
 			return nullptr;
 		}
+#else
+#endif
 	}
 
 	EQ2Packet* ret = OpcodeManager::GetGlobal()->GetPacketForVersion(ClientVersion, opcode);
@@ -728,32 +737,31 @@ EQ2Packet* EQ2Stream::ProcessEncryptedPacket(ProtocolPacket *p) {
 }
 
 void EQ2Stream::InboundQueuePush(EQ2Packet* p) {
-	//MInboundQueue.lock();
+	WriteLocker lock(inboundQueueLock);
 	InboundQueue.push_back(p);
-	//MInboundQueue.unlock();
 }
 
 EQ2Packet* EQ2Stream::PopPacket() {
 	EQ2Packet *p = NULL;
 
-	//MInboundQueue.lock();
+	WriteLocker lock(inboundQueueLock);
 	if (InboundQueue.size()) {
 		p = InboundQueue.front();
 		InboundQueue.pop_front();
 	}
-	//MInboundQueue.unlock();
+	lock.Unlock();
+	
 	if (p)
 		p->SetVersion(ClientVersion);
 	return p;
 }
 
 void EQ2Stream::InboundQueueClear() {
-	//MInboundQueue.lock();
+	WriteLocker lock(inboundQueueLock);
 	while (InboundQueue.size()) {
 		delete InboundQueue.front();
 		InboundQueue.pop_front();
 	}
-	//MInboundQueue.unlock();
 }
 
 void EQ2Stream::QueuePacket(EQ2Packet* p) {

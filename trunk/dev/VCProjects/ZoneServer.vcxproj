@@ -48,13 +48,13 @@
     <ClCompile Include="..\..\source\common\timer.cpp" />
     <ClCompile Include="..\..\source\common\UDPServer.cpp" />
     <ClCompile Include="..\..\source\common\util.cpp" />
-    <ClCompile Include="..\..\source\WorldServer\Database\WorldDatabase.cpp" />
-    <ClCompile Include="..\..\source\WorldServer\WorldServer\Client.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Database\ZoneDatabase.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\main.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\..\source\ZoneServer\WorldTalk\WorldStream.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\ZoneServer\ZoneServerCluster.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -124,8 +124,12 @@
     <ClInclude Include="..\..\source\common\UDPServer.h" />
     <ClInclude Include="..\..\source\common\util.h" />
     <ClInclude Include="..\..\source\common\version.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Database\ZoneDatabase.h" />
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldStream.h" />
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h" />
+    <ClInclude Include="..\..\source\ZoneServer\ZoneServer\Client.h" />
+    <ClInclude Include="..\..\source\ZoneServer\ZoneServer\ZoneServer.h" />
+    <ClInclude Include="..\..\source\ZoneServer\ZoneServer\ZoneServerCluster.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

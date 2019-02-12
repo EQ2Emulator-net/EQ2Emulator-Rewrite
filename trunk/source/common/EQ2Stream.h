@@ -6,6 +6,7 @@
 #include <zlib.h>
 #include "Crypto.h"
 #include "Packets/EQ2Packet.h"
+#include "Mutex.h"
 
 class ProtocolPacket;
 
@@ -124,5 +125,7 @@ private:
 	deque<ProtocolPacket*> ResendQueue;
 	// Packes waiting to be processed
 	deque<EQ2Packet *> InboundQueue;
-
+	Mutex inboundQueueLock;
+	Mutex seqQueueLock;
+	Mutex nonSeqQueueLock;
 };
