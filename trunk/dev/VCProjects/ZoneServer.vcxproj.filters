@@ -37,6 +37,9 @@
     <Filter Include="source\Packets\Client-&gt;Server">
       <UniqueIdentifier>{436e69bc-5c2b-498b-b864-9b302be48470}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\Spawns">
+      <UniqueIdentifier>{8b9d8440-f2c3-4b10-87e1-40c8ce9add58}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\ZoneServer\main.cpp">
@@ -149,6 +152,21 @@
     </ClCompile>
     <ClCompile Include="..\..\source\ZoneServer\Packets\ZoneServerPackets.cpp">
       <Filter>source\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Spawns\Entity.cpp">
+      <Filter>source\Spawns</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Spawns\Object.cpp">
+      <Filter>source\Spawns</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Spawns\Sign.cpp">
+      <Filter>source\Spawns</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Spawns\Spawn.cpp">
+      <Filter>source\Spawns</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Spawns\Widget.cpp">
+      <Filter>source\Spawns</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -364,6 +382,24 @@
     </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_LoginByNumRequestMsg_Packet.h">
       <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Spawns\Entity.h">
+      <Filter>source\Spawns</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Spawns\Object.h">
+      <Filter>source\Spawns</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Spawns\Sign.h">
+      <Filter>source\Spawns</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Spawns\Spawn.h">
+      <Filter>source\Spawns</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Spawns\SpawnStructs.h">
+      <Filter>source\Spawns</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Spawns\Widget.h">
+      <Filter>source\Spawns</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

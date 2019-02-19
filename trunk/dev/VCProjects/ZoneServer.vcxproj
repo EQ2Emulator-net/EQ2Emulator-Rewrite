@@ -53,6 +53,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\..\source\ZoneServer\Packets\ZoneServerPackets.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Spawns\Entity.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Spawns\Object.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Spawns\Sign.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Spawns\Spawn.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Spawns\Widget.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\WorldTalk\WorldStream.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\Client.cpp" />
@@ -128,6 +133,12 @@
     <ClInclude Include="..\..\source\common\version.h" />
     <ClInclude Include="..\..\source\ZoneServer\Database\ZoneDatabase.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_LoginByNumRequestMsg_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Spawns\Entity.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Spawns\Object.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Spawns\Sign.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Spawns\Spawn.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Spawns\SpawnStructs.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Spawns\Widget.h" />
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldStream.h" />
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h" />
     <ClInclude Include="..\..\source\ZoneServer\ZoneServer\Client.h" />
