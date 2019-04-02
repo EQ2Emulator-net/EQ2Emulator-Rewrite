@@ -40,6 +40,9 @@
     <Filter Include="common\Classes">
       <UniqueIdentifier>{ea9d6d75-bc86-4422-b26c-c57b73b008d7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="common\Packets\EmuPackets">
+      <UniqueIdentifier>{398cb6b5-a502-4737-8808-35df4e2c33b1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\common\io.cpp">
@@ -152,6 +155,9 @@
     </ClCompile>
     <ClCompile Include="..\..\source\WorldServer\ZoneTalk\ZoneStream.cpp">
       <Filter>source\ZoneTalk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\WorldServer\Packets\EmuPacketHandlers.cpp">
+      <Filter>source\Packets</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -403,6 +409,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketFloat.h">
       <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RegisterZoneServer_Packet.h">
+      <Filter>common\Packets\EmuPackets</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

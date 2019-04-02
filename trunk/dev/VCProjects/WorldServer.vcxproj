@@ -212,6 +212,7 @@
     <ClCompile Include="..\..\source\common\util.cpp" />
     <ClCompile Include="..\..\source\WorldServer\Database\WorldDatabase.cpp" />
     <ClCompile Include="..\..\source\WorldServer\main.cpp" />
+    <ClCompile Include="..\..\source\WorldServer\Packets\EmuPacketHandlers.cpp" />
     <ClCompile Include="..\..\source\WorldServer\Packets\WorldServerPackets.cpp" />
     <ClCompile Include="..\..\source\WorldServer\WorldServer\Client.cpp" />
     <ClCompile Include="..\..\source\WorldServer\WorldServer\WorldServer.cpp" />
@@ -236,6 +237,7 @@
     <ClInclude Include="..\..\source\common\io.h" />
     <ClInclude Include="..\..\source\common\log.h" />
     <ClInclude Include="..\..\source\common\Mutex.h" />
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RegisterZoneServer_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EQ2Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EQ2Packets\OpcodeManager.h" />
     <ClInclude Include="..\..\source\common\Packets\EQ2Packets\OP_KeyRequest_Packet.h" />
