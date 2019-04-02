@@ -126,7 +126,7 @@ bool WorldDatabase::UpdateAccountIPAddress(uint32_t account, uint32_t address) {
 	return Query("UPDATE `account` SET `ip_address` = '%s' WHERE `id` = %u", inet_ntoa(ip_addr), account);
 }
 
-bool WorldDatabase::UpdateAccountClientVersion(uint32_t account, uint16_t version) {
+bool WorldDatabase::UpdateAccountClientVersion(uint32_t account, uint32_t version) {
 	return Query("UPDATE `account` SET `last_client_version` = %u WHERE `id` = %u", version, account);
 }
 
@@ -482,7 +482,7 @@ bool WorldDatabase::DeleteCharacter(uint32_t account_id, uint32_t char_id, std::
 		return false;
 }
 
-bool WorldDatabase::SaveClientLog(std::string type, char* message, uint16_t version) {
+bool WorldDatabase::SaveClientLog(std::string type, char* message, uint32_t version) {
 	char* type_esc = Escape(type.c_str());
 	char* message_esc = Escape(message);
 	bool ret = Query("INSERT INTO log_messages (log_type, message, client_data_version, log_time) VALUES ('%s', '%s', %u, %u)", type_esc, message_esc, version, Timer::GetUnixTimeStamp());

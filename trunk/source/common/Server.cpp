@@ -38,3 +38,17 @@ void Server::SetHost(const char* host) {
 void Server::SetPort(unsigned int port) {
 	Port = port;
 }
+
+uint32_t Server::GetPort() {
+	return Port;
+}
+
+std::string Server::GetHostString() {
+	char tmp[INET6_ADDRSTRLEN];
+
+	sockaddr_in sa;
+	sa.sin_family = AF_INET;
+	sa.sin_addr.s_addr = Host;
+	sa.sin_port = 0;
+	return inet_ntop(AF_INET, &sa.sin_addr, tmp, sizeof(tmp));
+}

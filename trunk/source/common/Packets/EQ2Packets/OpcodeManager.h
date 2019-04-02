@@ -15,7 +15,7 @@ protected:
 
 public:
 	virtual ~EQ2PacketAllocatorBase() = default;
-	virtual EQ2Packet* Create(int16_t version) = 0;
+	virtual EQ2Packet* Create(uint32_t version) = 0;
 };
 
 template <typename T>
@@ -25,7 +25,7 @@ public:
 	EQ2PacketAllocator() = default;
 	~EQ2PacketAllocator() = default;
 
-	EQ2Packet* Create(int16_t version) {
+	EQ2Packet* Create(uint32_t version) {
 
 		return new T(version);
 	}
@@ -39,7 +39,7 @@ private:
 	//<type_index, allocator>
 	std::map<std::type_index, EQ2PacketAllocatorBase*> type_map;
 
-	typedef std::pair<uint16_t, uint16_t> versionRange_t;
+	typedef std::pair<uint32_t, uint32_t> versionRange_t;
 
 	//This maps versions to opcodes and their packet constructors
 	std::map<versionRange_t, std::map<uint16_t, EQ2PacketAllocatorBase*> > versions;
@@ -59,7 +59,7 @@ public:
 	}
 
 	void RegisterAllocator(const char* name, EQ2PacketAllocatorBase* allocator, std::type_index t,
-		const char* outfile, const int32_t* versions, int32_t num_versions) {
+		const char* outfile, const uint32_t* versions, int32_t num_versions) {
 		//Took the assert out for if the same type is registered twice...
 		//but you must use a new type if writing the packet for FindOpcode
 		assert(allocators.count(name) == 0/* && type_map.count(t) == 0*/);
@@ -82,9 +82,9 @@ public:
 
 	static OpcodeManager* GetGlobal();
 	static void RegisterEQ2OpcodeHelper(const char* name, EQ2PacketAllocatorBase* allocator, std::type_index t,
-		const char* outfile, const int32_t* versions, int32_t num_versions);
+		const char* outfile, const uint32_t* versions, int32_t num_versions);
 
-	void RegisterVersionOpcode(const char* name, uint16_t range_low, uint16_t range_high, uint16_t opcode) {
+	void RegisterVersionOpcode(const char* name, uint32_t range_low, uint32_t range_high, uint16_t opcode) {
 		auto itr = allocators.find(name);
 		if (itr == allocators.end()) {
 			//We don't handle this opcode currently, so don't bother making an entry
@@ -95,7 +95,7 @@ public:
 		versions[range][opcode] = itr->second;
 	}
 
-	EQ2Packet* GetPacketForVersion(uint16_t version, uint16_t opcode) {
+	EQ2Packet* GetPacketForVersion(uint32_t version, uint16_t opcode) {
 		EQ2Packet* ret = nullptr;
 		for (auto& itr : versions) {
 			versionRange_t range = itr.first;
@@ -111,7 +111,7 @@ public:
 		return ret;
 	}
 
-	bool HasVersion(uint16_t version) {
+	bool HasVersion(uint32_t version) {
 		bool ret = false;
 		for (auto& itr : versions) {
 			versionRange_t range = itr.first;
@@ -129,7 +129,7 @@ public:
 
 		EQ2PacketAllocatorBase* allocator = itr->second;
 		for (auto& itr : versions) {
-			uint16_t version = packet->GetVersion();
+			uint32_t version = packet->GetVersion();
 			versionRange_t range = itr.first;
 			if (range.first <= version && range.second >= version) {
 				for (auto& op : itr.second) {
@@ -152,14 +152,14 @@ template<typename T>
 class OpcodeRegistrar {
 	static_assert(std::is_base_of<EQ2Packet, T>::value, "Tried to register an Opcode for a non packet type!");
 public:
-	OpcodeRegistrar(const char* opName, const char* outfile, const int32_t* versions, int32_t version_count) {
+	OpcodeRegistrar(const char* opName, const char* outfile, const uint32_t* versions, int32_t version_count) {
 		OpcodeManager::RegisterEQ2OpcodeHelper(opName, new EQ2PacketAllocator<T>, typeid(T), outfile, versions, version_count);
 	}
 };
 
 //Use this macro on a global scope to auto construct this object on program start
 //n is the opcode name, pt is the packet class
-#define RegisterEQ2Opcode(n, pt, f, ...) int32_t zUNIQUENAMEVERz ## pt ##[] = { __VA_ARGS__ };\
-OpcodeRegistrar<pt> zUNIQUENAMEz ## pt ## (n, f, zUNIQUENAMEVERz ## pt, sizeof(zUNIQUENAMEVERz ## pt) / sizeof(int32_t))
+#define RegisterEQ2Opcode(n, pt, f, ...) uint32_t zUNIQUENAMEVERz ## pt ##[] = { __VA_ARGS__ };\
+OpcodeRegistrar<pt> zUNIQUENAMEz ## pt ## (n, f, zUNIQUENAMEVERz ## pt, sizeof(zUNIQUENAMEVERz ## pt) / sizeof(uint32_t))
 #define RegisterWorldStruct(n, pt, ...) RegisterEQ2Opcode(n, pt, "WorldStructs.xml", __VA_ARGS__)
 #define RegisterLoginStruct(n, pt, ...) RegisterEQ2Opcode(n, pt, "LoginStructs.xml", __VA_ARGS__)

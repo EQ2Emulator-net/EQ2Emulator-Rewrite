@@ -22,17 +22,6 @@ typedef enum {
 	CLOSED
 } EQStreamState;
 
-typedef enum {
-	UnknownStream = 0,
-	LoginStream,
-	WorldStream,
-	ZoneStream,
-	ChatOrMailStream,
-	ChatStream,
-	MailStream,
-	EQ2Stream,
-} EQStreamType;
-
 class EQ2Stream : public Stream {
 public:
 	EQ2Stream(unsigned int ip, unsigned short port);
@@ -52,8 +41,8 @@ public:
 
 	void Write();
 
-	void SetVersion(uint16_t version) { ClientVersion = version; }
-	uint16_t GetVersion() { return ClientVersion; }
+	void SetVersion(uint32_t version) { ClientVersion = version; }
+	uint32_t GetVersion() { return ClientVersion; }
 
 	void QueuePacket(EQ2Packet* packet);
 
@@ -79,7 +68,7 @@ protected:
 	EQ2Packet* CombinedAppPacket;
 	EQStreamState State;
 
-	uint16_t ClientVersion; // public in old code
+	uint32_t ClientVersion; // public in old code
 	uint8_t	CompressedOffset; //public in old code
 
 private:

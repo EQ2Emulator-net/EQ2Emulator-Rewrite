@@ -6,7 +6,7 @@
 
 class OP_LoginReplyMsg_Packet : public EQ2Packet {
 public:
-	OP_LoginReplyMsg_Packet(uint16_t version)
+	OP_LoginReplyMsg_Packet(uint32_t version)
 		: EQ2Packet(version) {
 		Response = 0;
 		Unknown = "";

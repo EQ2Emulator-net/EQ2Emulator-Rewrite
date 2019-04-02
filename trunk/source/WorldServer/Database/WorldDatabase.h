@@ -20,13 +20,13 @@ public:
 
 	bool GetAccount(Client* client, std::string user, std::string pass);
 	bool UpdateAccountIPAddress(uint32_t account, uint32_t address);
-	bool UpdateAccountClientVersion(uint32_t account, uint16_t version);
+	bool UpdateAccountClientVersion(uint32_t account, uint32_t version);
 
 	bool LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMsg_Packet* packet, uint8_t max_level);
 
 	bool DeleteCharacter(uint32_t account_id, uint32_t char_id, std::string name);
 
-	bool SaveClientLog(std::string type, char* message, uint16_t version);
+	bool SaveClientLog(std::string type, char* message, uint32_t version);
 	uint32_t CreateCharacter(uint32_t account_id, OP_CreateCharacterRequestMsg_Packet* packet);
 	uint16_t GetAppearanceID(std::string name);
 	void UpdateStartingFactions(uint32_t char_id, uint8_t choice);

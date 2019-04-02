@@ -7,7 +7,7 @@
 
 class OP_DeleteCharacterReplyMsg_Packet : public EQ2Packet {
 public:
-	OP_DeleteCharacterReplyMsg_Packet(uint16_t version)
+	OP_DeleteCharacterReplyMsg_Packet(uint32_t version)
 		: EQ2Packet(version) {
 		RegisterElements();
 

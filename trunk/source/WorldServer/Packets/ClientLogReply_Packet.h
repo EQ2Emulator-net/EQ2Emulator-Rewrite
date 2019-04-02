@@ -7,7 +7,7 @@
 
 class ClientLogReply_Packet : public EQ2Packet {
 public:
-	ClientLogReply_Packet(uint16_t version)
+	ClientLogReply_Packet(uint32_t version)
 		: EQ2Packet(version) {
 		RegisterElements();
 

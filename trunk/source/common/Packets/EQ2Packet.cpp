@@ -4,7 +4,7 @@
 #include "../util.h"
 #include "../Packets/EQ2Packets/OpcodeManager.h"
 
-EQ2Packet::EQ2Packet(uint16_t version) {
+EQ2Packet::EQ2Packet(uint32_t version) {
 	app_opcode_size = 2;
 	Version = version;
 }

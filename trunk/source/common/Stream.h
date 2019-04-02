@@ -25,6 +25,7 @@ public:
 	void WritePacket(SOCKET socket, const unsigned char* buffer, int length);
 
 	std::string ToString();
+	SOCKET GetSocket() { return Sock; }
 
 protected:
 

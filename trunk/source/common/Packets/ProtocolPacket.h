@@ -28,8 +28,8 @@ public:
 	uint32_t Write(unsigned char*& writeBuffer) override;
 	uint16_t GetSequence() { return sequence; }
 	void SetSequence(uint16_t seq) { sequence = seq; }
-	uint16_t GetVersion() { return version; }
-	void SetVersion(uint16_t new_version) { version = new_version; }
+	uint32_t GetVersion() { return version; }
+	void SetVersion(uint32_t new_version) { version = new_version; }
 	uint32_t GetSentTime() { return SentTime; }
 	void SetSentTime(uint32_t time) { SentTime = time; }
 	//bool Combine(const ProtocolPacket *rhs);
@@ -43,7 +43,7 @@ public:
 protected:
 	uint16_t opcode;
 	uint16_t sequence;
-	uint16_t version;
+	uint32_t version;
 	bool HasCRC;
 	uint32_t SentTime;
 

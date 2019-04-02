@@ -26,13 +26,12 @@
 
 class OP_PlayCharacterReplyMsg_Packet : public EQ2Packet {
 public:
-	OP_PlayCharacterReplyMsg_Packet(uint16_t version)
+	OP_PlayCharacterReplyMsg_Packet(uint32_t version)
 		: EQ2Packet(version) {
 		RegisterElements();
 
 		response = 0;
 		memset(unknown1, 0, sizeof(unknown1));
-		server = "";
 		port = 0;
 		account_id = 0;
 		access_code = 0;

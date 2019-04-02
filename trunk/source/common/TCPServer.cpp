@@ -165,6 +165,8 @@ void TCPServer::ReaderThread() {
 						FD_CLR(i, &fds_master);
 						Streams.erase(itr);
 
+						StreamDisconnected(client);
+
 						delete client;
 
 						if (!bHost) {

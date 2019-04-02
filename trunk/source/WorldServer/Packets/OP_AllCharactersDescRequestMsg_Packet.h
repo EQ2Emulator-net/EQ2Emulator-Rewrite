@@ -11,7 +11,7 @@ extern WorldDatabase database;
 
 class OP_AllCharactersDescRequestMsg_Packet : public EQ2Packet {
 public:
-	OP_AllCharactersDescRequestMsg_Packet(uint16_t version)
+	OP_AllCharactersDescRequestMsg_Packet(uint32_t version)
 		: EQ2Packet(version) {
 
 	}

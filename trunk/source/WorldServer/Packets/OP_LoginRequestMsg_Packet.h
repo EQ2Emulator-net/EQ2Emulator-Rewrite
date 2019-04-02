@@ -7,16 +7,15 @@
 
 class OP_LoginRequestMsg_Packet : public EQ2Packet {
 public:
-	OP_LoginRequestMsg_Packet(uint16_t version)
+	OP_LoginRequestMsg_Packet(uint32_t version)
 		: EQ2Packet(version) {
 		RegisterElements();
 
 		opcode = 0;
 
-		Unknown2a[0] = 0;
-		Unknown2a[1] = 0;
-
-		memset(Unknown5, 0, sizeof(Unknown5));
+		Version = 0;
+		Unknown9 = 0;
+		memset(Unknown10, 0, sizeof(Unknown10));
 	}
 
 	/*	
@@ -49,21 +48,46 @@ public:
 	std::string Unknown1;
 	std::string Username;
 	std::string Password;
-	std::string Unknown6;
-	uint8_t Unknown2[8];
-	uint8_t Unknown2a[2];
-	uint16_t Version;
-	uint16_t Unknown3;
-	uint32_t Unknown4;
-	uint8_t Unknown5[7];
+	int32_t Unknown2;
+	int32_t Unknown3;
+	uint64_t Version;
+	std::string Unknown4[2];
+	int32_t Unknown5;
+	bool bFullscreen;
+	uint16_t SOEBuild;
+	std::string Unknown7;
+	std::string Unknown8[2];
+	uint64_t Unknown9;
+	std::string ComputerName;
+	int32_t Unknown10[5];
+	std::string GPUName;
+	std::string CPUName;
 
 	void HandlePacket(Client* client) {
-		client->SetVersion(Version);
+		client->SetVersion((uint32_t)Version);
 
 		if (Password == "")
 			Password = AccessCode;
 
 		client->LogIn(Username, Password);
+	}
+
+	bool Read(const unsigned char* in_buf, uint32_t off, uint32_t bufsize) override {
+		bool ret = Packet::Read(in_buf, off, bufsize);
+		if (GetVersion() >= 1212) {
+			//We were just using 2 bytes of this dateTime before we knew what it was as a version
+			//It rolled over to 0x2F00000000, factor the value over that rollover into our new version
+			uint32_t rolloverByte = (Version >> 32) & 0xFF;
+			uint32_t additiveValue = (rolloverByte - 0x2E) << 16;
+
+			//Move the 2 bytes we want all the way over
+			Version >>= 16;
+			//Strip off any higher bits
+			Version &= 0xFFFF;
+			//Add any extra rollover value
+			Version |= additiveValue;
+		}
+		return ret;
 	}
 
 private:
@@ -72,22 +96,33 @@ private:
 		Register16String(Unknown1);
 		Register16String(Username);
 		Register16String(Password);
-		uint8_t& Unknown2 = this->Unknown2[0];
-		RegisterUInt8(Unknown2)->SetCount(8);
+		RegisterInt32(Unknown2);
+		RegisterInt32(Unknown3);
 
 		if (GetVersion() >= 1212) {
-			uint8_t& Unknown2a = this->Unknown2a[0];
-			RegisterUInt8(Unknown2a)->SetCount(2);
+			RegisterUInt64(Version);
+		}
+		else {
+			uint16_t& Version = reinterpret_cast<uint16_t&>(this->Version);
+			RegisterUInt16(Version);
 		}
 
-		RegisterUInt16(Version);
-		RegisterUInt16(Unknown3);
-		RegisterUInt32(Unknown4);
+		std::string& Unknown4 = this->Unknown4[0];
+		Register16String(Unknown4)->SetCount(2);
+		RegisterInt32(Unknown5);
+		RegisterBool(bFullscreen);
+		RegisterUInt16(SOEBuild);
+		Register16String(Unknown7);
 
 		if (GetVersion() >= 1212) {
-			uint8_t& Unknown5 = this->Unknown5[0];
-			RegisterUInt8(Unknown5)->SetCount(7);
-			Register16String(Unknown6);
+			std::string& Unknown8 = this->Unknown8[0];
+			Register16String(Unknown8)->SetCount(2);
+			RegisterUInt64(Unknown9);
+			Register16String(ComputerName);
+			int32_t& Unknown10 = this->Unknown10[0];
+			RegisterInt32(Unknown10)->SetCount(5);
+			Register16String(GPUName);
+			Register16String(CPUName);
 		}
 	}
 };

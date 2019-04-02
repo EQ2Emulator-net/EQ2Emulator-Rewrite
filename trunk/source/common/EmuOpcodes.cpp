@@ -3,6 +3,7 @@
 #include "EmuOpcodes.h"
 #include "EmuPacket.h"
 #include "log.h"
+#include "Packets/EmuPackets/Emu_RegisterZoneServer_Packet.h"
 
 class EmuPacketAllocatorBase {
 public:
@@ -27,40 +28,38 @@ namespace EmuOpcode {
 
 		return a->Create();
 	}
-};
 
+	template <typename T>
+	class EmuPacketAllocator : public EmuPacketAllocatorBase {
+		static_assert(std::is_base_of<EmuPacket, T>::value, "Tried to create a packet constructor for a non packet type!");
+	public:
+		EmuPacketAllocator() = default;
+		~EmuPacketAllocator() = default;
 
+		EmuPacket* Create() override {
+			return new T;
+		}
+	};
 
-template <typename T>
-class EmuPacketAllocator : public EmuPacketAllocatorBase {
-	static_assert(std::is_base_of<EmuPacket, T>::value, "Tried to create a packet constructor for a non packet type!");
-public:
-	EmuPacketAllocator() = default;
-	~EmuPacketAllocator() = default;
+	void RegisterOpcode(EmuOpcode_t op, EmuPacketAllocatorBase* a) {
+		auto& ptr = emu_opcodes[op];
 
-	EmuPacket* Create() override {
-		return new T;
+		assert(("Emu opcode registered twice! Fix!", !ptr));
+
+		ptr.reset(a);
 	}
-};
 
-void RegisterEmuOpcode(EmuOpcode_t op, EmuPacketAllocatorBase* a) {
-	auto& ptr = EmuOpcode::emu_opcodes[op];
-
-	assert(("Emu opcode registered twice! Fix!", !ptr));
-
-	ptr.reset(a);
-}
-
-template<typename T>
-class EmuOpcodeRegistrar {
-	static_assert(std::is_base_of<EmuPacket, T>::value, "Tried to register an Opcode for a non packet type!");
-public:
-	EmuOpcodeRegistrar(EmuOpcode_t op) {
-		RegisterEmuOpcode(op, new EmuPacketAllocator<T>);
-	}
-};
-
+	template<typename T>
+	class EmuOpcodeRegistrar {
+		static_assert(std::is_base_of<EmuPacket, T>::value, "Tried to register an Opcode for a non packet type!");
+	public:
+		EmuOpcodeRegistrar(EmuOpcode_t op) {
+			RegisterOpcode(op, new EmuPacketAllocator<T>);
+		}
+	};
 
 #define RegisterEmuOpcode(op, t) EmuOpcodeRegistrar<t> zUNIQUENAMEz ## t ## (op)
 
 	//Register emu opcodes here
+	RegisterEmuOpcode(EMUOP_REGISTER_ZONESERVER, Emu_RegisterZoneServer_Packet);
+}

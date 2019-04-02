@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cstdint>
 
 class EmuPacket;
@@ -7,5 +9,6 @@ namespace EmuOpcode {
 }
 
 enum EmuOpcode_t : uint8_t {
-	EMUOP_FORWARD_PACKET = 1
+	EMUOP_FORWARD_PACKET = 1,
+	EMUOP_REGISTER_ZONESERVER = 2
 };

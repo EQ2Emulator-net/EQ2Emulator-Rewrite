@@ -23,6 +23,9 @@ public:
 	void SetHost(const char* host);
 	void SetPort(unsigned int port);
 
+	uint32_t GetPort();
+	std::string GetHostString();
+
 	virtual void StreamDisconnected(Stream* stream) {};
 	
 protected:

@@ -6,7 +6,7 @@
 
 class OP_KeyRequest_Packet : public EQ2Packet {
 public:
-	OP_KeyRequest_Packet(uint16_t version)
+	OP_KeyRequest_Packet(uint32_t version)
 		: EQ2Packet(version) {
 		RegisterElements();
 

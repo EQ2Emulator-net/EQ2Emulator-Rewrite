@@ -18,6 +18,7 @@
 
 WorldDatabase database;
 Classes classes;
+ZoneTalk zoneTalk;
 
 int main(int argc, char **argv)
 {
@@ -27,7 +28,6 @@ int main(int argc, char **argv)
 	srand(static_cast<unsigned int>(time(nullptr)));
 
 	WorldServer s;
-	ZoneTalk zoneTalk;
 
 	LogStart();
 	LogSetPrefix("EQ2Emu-WorldServer");

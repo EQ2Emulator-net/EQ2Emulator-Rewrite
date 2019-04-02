@@ -4,7 +4,7 @@
 
 class OP_LsClientAlertlogReplyMsg_Packet : public ClientLogReply_Packet {
 public:
-	OP_LsClientAlertlogReplyMsg_Packet(uint16_t version)
+	OP_LsClientAlertlogReplyMsg_Packet(uint32_t version)
 		: ClientLogReply_Packet(version) {
 		name = "Alert Log";
 	}

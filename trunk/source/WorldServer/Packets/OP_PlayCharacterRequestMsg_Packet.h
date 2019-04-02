@@ -5,12 +5,15 @@
 #include "../../common/Packets/PacketElements/PacketElements.h"
 #include "../../common/Packets/EQ2Packets/OpcodeManager.h"
 #include "../WorldServer/Client.h"
+#include "../ZoneTalk/ZoneTalk.h"
 
 #include "OP_PlayCharacterReplyMsg_Packet.h"
 
+extern ZoneTalk zoneTalk;
+
 class OP_PlayCharacterRequestMsg_Packet : public EQ2Packet {
 public:
-	OP_PlayCharacterRequestMsg_Packet(uint16_t version)
+	OP_PlayCharacterRequestMsg_Packet(uint32_t version)
 		: EQ2Packet(version) {
 		RegisterElements();
 
@@ -23,6 +26,8 @@ public:
 		OP_PlayCharacterReplyMsg_Packet* reply = new OP_PlayCharacterReplyMsg_Packet(client->GetVersion());
 		reply->response = PLAY_CHARACTER_SUCCESS;
 		reply->account_id = client->GetAccountID();
+		reply->server = "127.0.0.1";
+		reply->port = 9106;
 		client->QueuePacket(reply);
 	}
 

@@ -6,9 +6,8 @@
 #include "WorldTalk/WorldTalk.h"
 #include "Database/ZoneDatabase.h"
 #include "../common/timer.h"
-
-//REMOVE
 #include "../common/Classes.h"
+#include "ZoneServer/ZoneOperator.h"
 
 ZoneDatabase database;
 Classes classes;
@@ -19,15 +18,18 @@ int main() {
 	srand(static_cast<unsigned int>(time(nullptr)));
 
 	WorldTalk talk;
+	ZoneOperator z;
 
-	ConfigReader cr(nullptr, &database, &talk);
+	ConfigReader cr(&z, &database, &talk);
 	cr.ReadConfig("zone-config.xml");
 
 	talk.Open();
 
+	bool success = z.Open();
+
 	Timer reconnectTimer;
 
-	while (looping) {
+	while (looping && success) {
 		Timer::SetCurrentTime();
 
 		if (!talk.Process()) {
@@ -41,6 +43,8 @@ int main() {
 				}
 			}
 		}
+
+		success = z.Process();
 
 		SleepMS(5);
 	}
