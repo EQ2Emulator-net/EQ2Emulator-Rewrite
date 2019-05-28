@@ -144,9 +144,6 @@
     <ClCompile Include="..\..\source\ZoneServer\Database\ZoneDatabase.cpp">
       <Filter>source\Database</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\ZoneServer\ZoneServer\ZoneServerCluster.cpp">
-      <Filter>source\ZoneServer</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\Client.cpp">
       <Filter>source\ZoneServer</Filter>
     </ClCompile>
@@ -367,9 +364,6 @@
     </ClInclude>
     <ClInclude Include="..\..\source\common\Classes.h">
       <Filter>common\Classes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\ZoneServer\ZoneServer\ZoneServerCluster.h">
-      <Filter>source\ZoneServer</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\ZoneServer\ZoneServer.h">
       <Filter>source\ZoneServer</Filter>
