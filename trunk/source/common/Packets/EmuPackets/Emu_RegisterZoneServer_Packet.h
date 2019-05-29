@@ -9,7 +9,7 @@ public:
 	}
 	~Emu_RegisterZoneServer_Packet() = default;
 
-	void Emu_RegisterZoneServer_Packet::HandlePacket(ZoneStream* z);
+	void HandlePacket(ZoneStream* z);
 
 	std::string ip;
 	uint16_t port;

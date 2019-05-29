@@ -19,8 +19,11 @@ public:
 
 	bool bCompressed;
 
+#ifdef EQ2_WORLD
 	virtual void HandlePacket(ZoneStream* s) { LogError(LOG_PACKET, 0, "Called HandlePacket(ZoneStream*) on packet %u which has no handler.", opcode); }
+#else
 	virtual void HandlePacket(WorldStream* s) { LogError(LOG_PACKET, 0, "Called HandlePacket(WorldStream*) on packet %u which has no handler.", opcode); }
+#endif
 
 private:
 	EmuOpcode_t opcode;

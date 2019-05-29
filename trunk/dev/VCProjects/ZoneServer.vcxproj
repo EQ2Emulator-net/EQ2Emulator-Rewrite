@@ -222,7 +222,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_WINSOCK_DEPRECATED_NO_WARNINGS;_DEBUG;_CONSOLE;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_WARNINGS;EQ2_SERVER;EQ2_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINSOCK_DEPRECATED_NO_WARNINGS;_DEBUG;_CONSOLE;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_WARNINGS;EQ2_SERVER;EQ2_ZONE;EQ2_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
