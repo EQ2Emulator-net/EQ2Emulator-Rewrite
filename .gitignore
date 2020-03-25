@@ -5,3 +5,5 @@
 /trunk/dev/VCProjects/.vs
 /trunk/dev/VCProjects/world-config.xml
 /trunk/dev/VCProjects/zone-config.xml
+/trunk/dev/VCProjects/WorldServer.vcxproj.user
+/trunk/dev/VCProjects/ZoneServer.vcxproj.user
