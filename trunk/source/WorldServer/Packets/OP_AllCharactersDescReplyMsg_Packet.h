@@ -110,28 +110,28 @@ public:
 		EQ2Color soga_hair_face_highlight_color;
 		uint8_t unknown15[7]; // " Type = "int8" Size = "7" / >
 
-		CharacterListEntry() {
+		CharacterListEntry() : PacketSubstruct(0) {
 			RegisterElements();
 			version = 0;
 			charid = 0;
 			server_id = 0;
-			name = "";
+			//name = "";
 			unknown = 0;
-			race = 0;;
+			race = 0;
 			_class = 0;
 			gender = 0;
 			level = 0;
-			zone = "";
+			//zone = "";
 			unknown1 = 0;
 			unknown2 = 0;
 			created_date = 0;
 			last_played = 0;
 			unknown3 = 57;
 			unknown4 = 56;
-			zonename2 = "";
-			zonedesc = "";
+			//zonename2 = "";
+			//zonedesc = "";
 			unknown5 = 0;
-			server_name = "";
+			//server_name = "";
 			account_id = 0;
 			unknown6[0] = 0;
 			unknown6[1] = 1; //if not here will not display character
@@ -233,7 +233,7 @@ public:
 			hair_color2.Blue = 255;
 			
 			unsigned char tmp[] = { 0xFF, 0xFF, 0xFF, 0x61, 0x00, 0x2C, 0x04, 0xA5, 0x09, 0x02, 0x0F, 0x00, 0x00 };
-			for (int y = 0; y < sizeof(tmp); y++)
+			for (uint32_t y = 0; y < sizeof(tmp); y++)
 				unknown11[y] = tmp[y];
 
 			soga_race_type = 0;

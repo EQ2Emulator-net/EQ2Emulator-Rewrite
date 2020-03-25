@@ -17,7 +17,7 @@ public:
 		RegisterElements();
 	}
 
-	void HandlePacket(Client* client) {
+	void HandlePacket(std::shared_ptr<Client> client) override {
 		uint8_t resp = database.CheckNameFilter(name.c_str());
 		OP_CreateCharacterReplyMsg_Packet* reply = new OP_CreateCharacterReplyMsg_Packet(client->GetVersion());
 		reply->account_id = client->GetAccountID();

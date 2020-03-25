@@ -3,8 +3,8 @@
 #include "WorldTalk.h"
 #include "WorldStream.h"
 
-Stream* WorldTalk::GetNewStream(unsigned int ip, unsigned short port) {
-	return new WorldStream(ip, port);
+std::shared_ptr<Stream> WorldTalk::GetNewStream(unsigned int ip, unsigned short port) {
+	return std::make_shared<WorldStream>(ip, port);
 }
 
 bool WorldTalk::Process() {

@@ -54,7 +54,7 @@ uint32_t ProtocolPacket::Write(unsigned char*& writeBuffer) {
 	return size;
 }
 
-ProtocolPacket* ProtocolPacket::GetProtocolPacket(const unsigned char* in_buff, uint32_t len) {
+ProtocolPacket* ProtocolPacket::GetProtocolPacket(const unsigned char* in_buff, uint32_t len, bool bTrimCRC) {
 	ProtocolPacket* ret = nullptr;
 	uint16_t opcode = ntohs(*(uint16_t*)in_buff);
 	uint32_t offset = 2;
@@ -77,12 +77,13 @@ ProtocolPacket* ProtocolPacket::GetProtocolPacket(const unsigned char* in_buff, 
 		break;
 	}
 	case OP_Packet: {
-		ret = new OP_Packet_Packet(in_buff + offset, len - offset - 2); // -2 to trim the crc
+		ret = new OP_Packet_Packet(in_buff + offset, len - offset - (bTrimCRC ? 2 : 0));
 		break;
 	}
+	case OP_Combined:
 	case OP_Fragment: {
-		ret = new ProtocolPacket(in_buff + offset, len - offset - 2);
-		ret->opcode = OP_Fragment;
+		ret = new ProtocolPacket(in_buff + offset, len - offset - (bTrimCRC ? 2 : 0));
+		ret->opcode = opcode;
 		break;
 	}
 	case OP_Ack: {
@@ -95,7 +96,7 @@ ProtocolPacket* ProtocolPacket::GetProtocolPacket(const unsigned char* in_buff, 
 	}
 	}
 
-	if (ret && opcode != OP_Packet && opcode != OP_Fragment)
+	if (ret && opcode != OP_Packet && opcode != OP_Fragment && opcode != OP_Combined)
 		ret->Read(in_buff, offset, len);
 
 	return ret;

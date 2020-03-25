@@ -16,6 +16,7 @@
 #include "../common/Classes.h"
 #include "ZoneTalk/ZoneTalk.h"
 
+WorldServer s;
 WorldDatabase database;
 Classes classes;
 ZoneTalk zoneTalk;
@@ -27,13 +28,12 @@ int main(int argc, char **argv)
 
 	srand(static_cast<unsigned int>(time(nullptr)));
 
-	WorldServer s;
-
-	LogStart();
-	LogSetPrefix("EQ2Emu-WorldServer");
+	LoggingSystem::LogStart();
+	LoggingSystem::LogSetPrefix("EQ2Emu-WorldServer");
+	bool logging = true;
+	std::thread logging_thread(&LoggingSystem::LogWritingThread, &logging);
 	LogInfo(LOG_INIT, 0, "Starting %s v%d.%d %s", EQ2_NAME, EQ2_VERSION_MAJOR, EQ2_VERSION_MINOR, EVE_VERSION_PHASE);
 
-	// TODO: config reader
 	ConfigReader cr(&s, &database, &zoneTalk);
 	success = cr.ReadConfig("world-config.xml");
 
@@ -46,8 +46,8 @@ int main(int argc, char **argv)
 	}
 
 	if (success) {
-		LogDebug(LOG_DATABASE, 0, "Loading server variables...");
-		success = database.LoadServerVariables(&s);
+		LogDebug(LOG_DATABASE, 0, "Loading server config...");
+		success = database.LoadServerConfig(&s);
 	}
 
 	if (success)
@@ -61,7 +61,8 @@ int main(int argc, char **argv)
 
 		success = s.Process();
 
-		zoneTalk.Process();
+		if (success)
+			success = zoneTalk.Process();
 
 		SleepMS(5);
 	}
@@ -70,7 +71,9 @@ int main(int argc, char **argv)
 
 	database.Stop();
 
-	LogStop();
+	logging = false;
+	logging_thread.join();
+	LoggingSystem::LogStop();
 #if defined(_WIN32)
 	printf("Press any key to continue...");
 	fgetc(stdin);

@@ -4,6 +4,10 @@
 #include "EmuPacket.h"
 #include "log.h"
 #include "Packets/EmuPackets/Emu_RegisterZoneServer_Packet.h"
+#include "Packets/EmuPackets/Emu_RegisterZoneServerReply_Packet.h"
+#include "Packets/EmuPackets/Emu_RequestZone_Packet.h"
+#include "Packets/EmuPackets/Emu_RequestZoneReply_Packet.h"
+#include "Packets/EmuPackets/Emu_TransferClient_Packet.h"
 
 class EmuPacketAllocatorBase {
 public:
@@ -58,8 +62,12 @@ namespace EmuOpcode {
 		}
 	};
 
-#define RegisterEmuOpcode(op, t) EmuOpcodeRegistrar<t> zUNIQUENAMEz ## t ## (op)
+#define RegisterEmuOpcode(op, t) EmuOpcodeRegistrar<t> zUNIQUENAMEz ## t (op)
 
 	//Register emu opcodes here
 	RegisterEmuOpcode(EMUOP_REGISTER_ZONESERVER, Emu_RegisterZoneServer_Packet);
+	RegisterEmuOpcode(EMUOP_REGISTER_ZONESERVERREPLY, Emu_RegisterZoneServerReply_Packet);
+	RegisterEmuOpcode(EMUOP_REQUEST_ZONE, Emu_RequestZone_Packet);
+	RegisterEmuOpcode(EMUOP_REQUEST_ZONE_REPLY, Emu_RequestZoneReply_Packet);
+	RegisterEmuOpcode(EMUOP_TRANSFER_CLIENT, Emu_TransferClient_Packet);
 }

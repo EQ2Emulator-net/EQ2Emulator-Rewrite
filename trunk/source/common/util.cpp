@@ -2,6 +2,10 @@
 
 #include "string.h"
 #include "util.h"
+#include "../common/log.h"
+#include <iomanip>
+#include <random>
+#include <utility>
 
 /**
 * @brief Sleeps for the given number of milliseconds.
@@ -79,29 +83,40 @@ const char * GetElapsedTime(time_t seconds, char *dst, unsigned int size) {
         
 }
 
-void DumpBytes(const unsigned char *bytes, unsigned int len) {
-    unsigned int i, j;
+#define IS_PRINTABLE(c) ((c) >= 32 && (c) <= 126)
 
-    for (i = 0; i < len; i += 16) {
-        printf("%04X: ", i);
+void DumpBytes(const unsigned char* bytes, unsigned int size) {
+	std::ostringstream ss;
+	unsigned int i, j;
+	for (i = 0; i < size; i += 16) {
+		ss << std::setfill('0') << std::setw(4) << std::hex << i << std::setw(1) << ": ";
 
-        for (j = 0; j < 16 && i + j < len; j++) {
-            if (j == 7)
-                printf("- ");
-            printf("%02X ", bytes[i + j]);
-        }
+		//print hex chars
+		for (j = 0; j < 16 && i + j < size; j++) {
+			if (j == 8)
+				ss << "- ";
+			ss << std::setw(2) << static_cast<unsigned int>(bytes[i + j]) << std::setw(1) << ' ';
+		}
 
-        for (; j < 16; j++) {
-            if (j == 7)
-                printf("  ");
-            printf("   ");
-        }
+		//fill any space up to the ascii if the line wasn't full and an extra space
+		for (j = j; j < 16; j++) {
+			if (j == 8)
+				ss << "  ";
+			ss << "   ";
+		}
+		ss << " ";
 
-        for (j = 0; j < 16 && i + j < len; j++)
-            printf("%c", isprint(bytes[i + j]) ? bytes[i + j] : '.');
+		//print the ascii now
+		for (j = 0; j < 16 && i + j < size; j++) {
+			if (IS_PRINTABLE(bytes[i + j]))
+				ss << bytes[i + j];
+			else
+				ss << '.';
+		}
+		ss << std::endl;
+	}
 
-        printf("\n");
-    }
+	LogDebug(LOG_PACKET, 0, "DumpBytes: \n%s", ss.str().c_str());
 }
 
 void DumpBytes(const char *bytes, unsigned int len)  {
@@ -240,4 +255,45 @@ bool alpha_check(unsigned char val) {
 		return true;
 	else
 		return false;
+}
+
+/**
+* @brief constructs and returns the mt19937 object for this thread
+*
+* @author theFoof
+* @date 6 Mar 2019
+*/
+std::mt19937& GetRandMT() {
+	thread_local std::mt19937 mt(std::random_device().operator()());
+	return mt;
+}
+
+/**
+* @brief function to generate a random float
+*
+* @author Xinux
+* @date 9 Jan 2015
+*/
+float MakeRandom(float low, float high) {
+	if (low > high) {
+		std::swap(low, high);
+	}
+	std::uniform_real_distribution<float> dist(low, high);
+
+	return dist(GetRandMT());
+}
+
+/**
+* @brief function to generate a random int
+*
+* @author theFoof
+* @date 1 July 2016
+*/
+int32_t MakeRandomInt(int32_t low, int32_t high) {
+	if (low > high) {
+		std::swap(low, high);
+	}
+	std::uniform_int_distribution<int32_t> dist(low, high);
+
+	return dist(GetRandMT());
 }

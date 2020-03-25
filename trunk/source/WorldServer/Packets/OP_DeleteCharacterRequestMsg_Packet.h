@@ -23,7 +23,7 @@ public:
 		name = "";
 	}
 
-	void HandlePacket(Client* client) {
+	void HandlePacket(std::shared_ptr<Client> client) {
 		OP_DeleteCharacterReplyMsg_Packet* reply = new OP_DeleteCharacterReplyMsg_Packet(client->GetVersion());
 
 		if (database.DeleteCharacter(client->GetAccountID(), char_id, name))
@@ -35,7 +35,7 @@ public:
 		reply->char_id = char_id;
 		reply->account_id = client->GetAccountID();
 		reply->name = name;
-		reply->max_characters = client->GetServer()->GetMaxCharactersPerAccount();
+		reply->max_characters = client->GetCharacterSlots();
 		client->QueuePacket(reply);
 	}
 

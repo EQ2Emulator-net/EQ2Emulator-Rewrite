@@ -13,6 +13,15 @@ public:
 		}
 	}
 
+	void ResetVersion(uint32_t p_version) {
+		version = p_version;
+		for (auto& itr : elements) {
+			delete itr;
+		}
+		elements.clear();
+		RegisterElements();
+	}
+
 	bool ReadElement(const unsigned char* srcbuf, uint32_t& offset, uint32_t bufsize) override {
 		CheckElementsInitialized();
 		for (auto& itr : elements) {
@@ -67,8 +76,10 @@ public:
 		RegisterElements();
 	}
 
+	uint32_t GetVersion() { return version; }
+
 protected:
-	PacketSubstruct(): elementsInitialized(false) {}
+	PacketSubstruct(uint32_t p_version): elementsInitialized(false), version(p_version) {}
 
 	//Copy constructor
 	PacketSubstruct(const PacketSubstruct& other) {
@@ -83,6 +94,8 @@ protected:
 	}
 
 	std::vector<PacketElement*> elements;
+
+	uint32_t version;
 
 private:
 	bool elementsInitialized = false;

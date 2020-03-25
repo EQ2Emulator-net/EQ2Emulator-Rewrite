@@ -19,7 +19,21 @@ public:
 
 	void FindOpcode();
 
-	virtual void HandlePacket(Client* client);
+	virtual void HandlePacket(std::shared_ptr<Client> client);
+
+	virtual EQ2Packet* GetSubPacket() {
+		return nullptr;
+	}
+
+	uint32_t Write(unsigned char*& buffer, uint32_t size) {
+		FindOpcode();
+		return Packet::Write(buffer, size);
+	}
+
+	uint32_t Write(unsigned char*& buffer) {
+		FindOpcode();
+		return Packet::Write(buffer);
+	}
 
 	bool PacketPrepared;
 	bool PacketEncrypted;

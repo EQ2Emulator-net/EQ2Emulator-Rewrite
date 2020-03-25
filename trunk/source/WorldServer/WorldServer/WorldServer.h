@@ -2,6 +2,8 @@
 
 #include "../../common/UDPServer.h"
 
+#include "../../common/Packets/EQ2Packets/OP_LoginReplyMsg_Packet.h"
+
 class WorldServer : public UDPServer {
 public:
 	WorldServer();
@@ -10,25 +12,39 @@ public:
 	bool ProcessClientWrite();
 	bool ProcessClients();
 
+	void SetID(uint32_t id) override { ID = id; }
+	uint32_t GetID() { return ID; }
 	void SetName(std::string name) { Name = name; }
 	std::string GetName() { return Name; }
-	void SetMaxCharactersPerAccount(uint8_t num) { MaxCharactersPerAccount = num; }
-	uint8_t GetMaxCharactersPerAccount() { return MaxCharactersPerAccount; }
+	void SetLocked(bool val) { Locked = val; }
+	bool GetLocked() { return Locked; }
+	void SetCharactersSlotsPerAccount(uint8_t num) { CharacterSlotsPerAccount = num; }
+	uint8_t GetCharacterSlotsPerAccount() { return CharacterSlotsPerAccount; }
+	void SetMaxAdvLevel(uint8_t level) { MaxAdvLevel = level; }
+	uint8_t GetMaxAdvLevel() { return MaxAdvLevel; }
+	void SetMaxTSLevel(uint8_t level) { MaxTSLevel = level; }
+	uint8_t GetMaxTSLevel() { return MaxTSLevel; }
 	void SetAllowedRaces(uint32_t races) { AllowedRaces = races; }
 	uint32_t GetAllowedRaces() { return AllowedRaces; }
 	void SetAllowedClasses(uint32_t classes) { AllowedClasses = classes; }
 	uint32_t GetAllowedClasses() { return AllowedClasses; }
-	void SetMaxLevel(uint8_t level) { MaxLevel = level; }
-	uint8_t GetMaxLevel() { return MaxLevel; }
+	void SetAutoAccountCreation(bool val) { AutoAccountCreation = val; }
+	bool GetAutoAccountCreation() { return AutoAccountCreation; }
 
+	std::map<uint8_t, std::vector<OP_LoginReplyMsg_Packet::ClassItem::StartingItem> > NormalEquipment;
+	std::map<uint8_t, std::vector<OP_LoginReplyMsg_Packet::ClassItem::StartingItem> > LVL90Equipment;
+	std::map<uint8_t, std::vector<OP_LoginReplyMsg_Packet::ClassItem::StartingItem> > TLEquipment;
 protected:
-	Stream* GetNewStream(unsigned int ip, unsigned short port) override;
+	std::shared_ptr<Stream> GetNewStream(unsigned int ip, unsigned short port) override;
 
 private:
+	uint32_t ID;
 	std::string Name;
-	uint8_t MaxCharactersPerAccount;
+	bool Locked;
+	uint8_t CharacterSlotsPerAccount;
+	uint8_t MaxAdvLevel;
+	uint8_t MaxTSLevel;
 	uint32_t AllowedRaces;
 	uint32_t AllowedClasses;
-	uint8_t MaxLevel;
-
+	bool AutoAccountCreation;
 };

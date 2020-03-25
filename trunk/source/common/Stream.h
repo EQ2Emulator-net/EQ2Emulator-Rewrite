@@ -20,6 +20,7 @@ public:
 	void SetLastPacketTime(unsigned int time) { LastPacketTime = time; }
 	void SetServer(Server* serv) { server = serv; }
 	uint32_t GetIP() { return RemoteIP; }
+	std::string GetIPString() { return inet_ntoa(address.sin_addr); }
 	uint16_t GetPort() { return RemotePort; }
 	void SetSocket(SOCKET s) { Sock = s; }
 	void WritePacket(SOCKET socket, const unsigned char* buffer, int length);

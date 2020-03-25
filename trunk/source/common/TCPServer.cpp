@@ -21,7 +21,7 @@ bool TCPServer::Open() {
 		return true;
 	}
 
-	const char yes = 1;
+	int yes = 1;
 
 	if ((Sock = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET) {
 		return false;
@@ -35,7 +35,7 @@ bool TCPServer::Open() {
 	address.sin_addr.s_addr = Host;
 
 	if (bHost) {
-		setsockopt(Sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
+		setsockopt(Sock, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char*>(&yes), sizeof(int));
 
 		if (::bind(Sock, reinterpret_cast<const sockaddr*>(&address), sizeof(address)) == SOCKET_ERROR) {
 			Close();
@@ -45,16 +45,18 @@ bool TCPServer::Open() {
 	else {
 		if (connect(Sock, reinterpret_cast<const sockaddr*>(&address), sizeof(address)) == SOCKET_ERROR) {
 			Close();
-			LogError(LOG_NET, 0, "TCPServer : Unable to connect to %u:%u", Host, Port);
+			LogError(LOG_NET, 0, "TCPServer : Unable to connect to %s:%u", inet_ntoa(address.sin_addr), Port);
 			return false;
 		}
 
 		WriteLocker lock(streamLock);
-		Streams[Sock] = GetNewStream(address.sin_addr.s_addr, address.sin_port);
+		std::shared_ptr<Stream> stream = GetNewStream(address.sin_addr.s_addr, address.sin_port);
+		stream->SetSocket(Sock);
+		Streams[Sock] = stream;
 	}
 
-	setsockopt(Sock, IPPROTO_TCP, TCP_NODELAY, &yes, sizeof(int));
-	setsockopt(Sock, SOL_SOCKET, SO_KEEPALIVE, &yes, sizeof(int));
+	setsockopt(Sock, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<const char*>(&yes), sizeof(int));
+	setsockopt(Sock, SOL_SOCKET, SO_KEEPALIVE, reinterpret_cast<const char*>(&yes), sizeof(int));
 
 	if (bHost) {
 		if (listen(Sock, 10) == SOCKET_ERROR) {
@@ -66,7 +68,7 @@ bool TCPServer::Open() {
 	bLooping = true;
 	read_thread = ThreadManager::ThreadStart("TCPSelect", std::bind(&TCPServer::ReaderThread, this));
 
-	LogDebug(LOG_NET, 0, "TCPServer : connected to %u:%u", Host, Port);
+	LogDebug(LOG_NET, 0, "TCPServer : connected to %s:%u", inet_ntoa(address.sin_addr), Port);
 
 	return true;
 }
@@ -81,19 +83,10 @@ bool TCPServer::Close() {
 		read_thread.join();
 	}
 
-	WriteLocker lock(streamLock);
-	for (auto& itr : Streams) {
-		delete itr.second;
-		
-		if (itr.first != Sock) {
-			closesocket(itr.first);
-		}
-	}
-	Streams.clear();
+	SOCKET_CLOSE(Sock);
 
-	SOCKET s = Sock;
-	Sock = INVALID_SOCKET;
-	closesocket(s);
+	WriteLocker lock(streamLock);
+	Streams.clear();
 
 	return true;
 }
@@ -142,7 +135,7 @@ void TCPServer::ReaderThread() {
 						if (fd_new > fd_max)
 							fd_max = fd_new;
 
-						Stream* client = GetNewStream(addr.sin_addr.s_addr, addr.sin_port);
+						std::shared_ptr<Stream> client = GetNewStream(addr.sin_addr.s_addr, addr.sin_port);
 						client->SetSocket(fd_new);
 						client->SetServer(this);
 
@@ -158,7 +151,7 @@ void TCPServer::ReaderThread() {
 					auto itr = Streams.find(i);
 					assert(itr != Streams.end());
 
-					Stream* client = itr->second;
+					std::shared_ptr<Stream> client = itr->second;
 
 					if ((count = recv(i, reinterpret_cast<char*>(buf), sizeof(buf), 0)) <= 0) {
 						//Disconnect
@@ -167,7 +160,7 @@ void TCPServer::ReaderThread() {
 
 						StreamDisconnected(client);
 
-						delete client;
+						//delete client;
 
 						if (!bHost) {
 							//Go ahead and close this connection
@@ -175,7 +168,7 @@ void TCPServer::ReaderThread() {
 							return;
 						}
 						else {
-							closesocket(i);
+							SOCKET_CLOSE(i);
 						}
 					}
 					else {

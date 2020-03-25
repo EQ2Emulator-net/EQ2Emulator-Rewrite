@@ -4,15 +4,19 @@
 #include "Client.h"
 
 WorldServer::WorldServer() {
+	ID = 0;
 	Name = "Rewrite Test Server";
+	Locked = false;
+	CharacterSlotsPerAccount = 10;
+	MaxAdvLevel = 50;
+	MaxTSLevel = 50;
 	AllowedRaces = 0x001FFFFF;
 	AllowedClasses = 0x07FFFFFE;
-	MaxCharactersPerAccount = 20;
-	MaxLevel = 50;
+	AutoAccountCreation = true;
 }
 
-Stream* WorldServer::GetNewStream(unsigned int ip, unsigned short port) {
-	return new Client(ip, port);
+std::shared_ptr<Stream> WorldServer::GetNewStream(unsigned int ip, unsigned short port) {
+	return std::make_shared<Client>(ip, port);
 }
 
 bool WorldServer::Process() {
@@ -22,9 +26,12 @@ bool WorldServer::Process() {
 bool WorldServer::ProcessClientWrite() {
 	ReadLocker lock(streamLock);
 
-	std::map<std::string, Stream*>::iterator stream_itr;
+	std::map<std::string, std::shared_ptr<Stream> >::iterator stream_itr;
 	for (stream_itr = Streams.begin(); stream_itr != Streams.end(); stream_itr++) {
-		((Client*)stream_itr->second)->Write();
+		//std::shared_ptr<Client> client = std::static_pointer_cast<Client>(stream_itr->second);
+		Client* client = (Client*)stream_itr->second.get();
+		if (client)
+			client->Write();
 	}
 
 	return true;
@@ -33,9 +40,9 @@ bool WorldServer::ProcessClientWrite() {
 bool WorldServer::ProcessClients() {
 	ReadLocker lock(streamLock);
 
-	std::map<std::string, Stream*>::iterator stream_itr;
+	std::map<std::string, std::shared_ptr<Stream> >::iterator stream_itr;
 	for (stream_itr = Streams.begin(); stream_itr != Streams.end(); stream_itr++) {
-		((Client*)stream_itr->second)->Process();
+		std::static_pointer_cast<Client>(stream_itr->second)->Process();
 	}
 
 	return true;

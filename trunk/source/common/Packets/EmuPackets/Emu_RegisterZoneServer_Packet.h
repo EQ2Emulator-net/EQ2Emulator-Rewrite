@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../../EmuPacket.h"
 #include "../../EmuOpcodes.h"
 #include "../PacketElements/PacketElements.h"
@@ -9,7 +11,7 @@ public:
 	}
 	~Emu_RegisterZoneServer_Packet() = default;
 
-	void HandlePacket(ZoneStream* z);
+	void HandlePacket(std::shared_ptr<ZoneStream> z);
 
 	std::string ip;
 	uint16_t port;

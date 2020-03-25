@@ -4,6 +4,7 @@
 #include "log.h"
 #include "Stream.h"
 #include "thread.h"
+#include "NetUtil.h"
 
 UDPServer::~UDPServer() {
 	if (bLooping) {
@@ -11,9 +12,9 @@ UDPServer::~UDPServer() {
 		read_thread.join();
 	}
 
-	for (auto& itr : Streams) {
+	/*for (auto& itr : Streams) {
 		delete itr.second;
-	}
+	}*/
 }
 
 bool UDPServer::Open() {
@@ -33,12 +34,12 @@ bool UDPServer::Open() {
 
 	Sock = socket(AF_INET, SOCK_DGRAM, 0);
 	if (Sock < 0) {
-		LogError(LOG_NET, 0, "Failed to open socket. (%i)", WSAGetLastError());
+		LogError(LOG_NET, 0, "Failed to open socket. (%s)", NetUtil::SocketError().c_str());
 		return false;
 	}
 
 	if (::bind(Sock, reinterpret_cast<const sockaddr*>(&address), sizeof(address)) < 0) {
-		_close(static_cast<int>(Sock));
+		//_close(static_cast<int>(Sock));
 		Sock = -1;
 		LogError(LOG_NET, 0, "Failed to bind socket.");
 		return false;
@@ -51,15 +52,13 @@ bool UDPServer::Open() {
 	fcntl(Sock, F_SETFL, O_NONBLOCK);
 #endif
 
-	in_addr in;
-	in.s_addr = Host;
-	LogInfo(LOG_NET, 0, "Listening on %s:%u", inet_ntoa(in), ntohs(address.sin_port));
+	LogInfo(LOG_NET, 0, "Listening on %s:%u", inet_ntoa(address.sin_addr), Port);
 	return true;
 }
 
 void UDPServer::ReaderThread() {
 	fd_set readset;
-	std::map<std::string, Stream*>::iterator stream_itr;
+	std::map<std::string, std::shared_ptr<Stream>>::iterator stream_itr;
 	int num;
 	int length;
 	unsigned char buffer[2048];
@@ -75,7 +74,7 @@ void UDPServer::ReaderThread() {
 			for (auto& itr : clientRemovals) {
 				if ((stream_itr = Streams.find(itr)) != Streams.end()) {
 					LogDebug(LOG_NET, 0, "Removing client.");
-					delete stream_itr->second;
+					//delete stream_itr->second;
 					Streams.erase(stream_itr);
 				}
 				else {
@@ -119,15 +118,17 @@ void UDPServer::ReaderThread() {
 				WriteLocker lock(streamLock);
 				if ((stream_itr = Streams.find(temp)) == Streams.end()) {
 					LogError(LOG_NET, 0, "new stream");
-					Stream* s = GetNewStream(from.sin_addr.s_addr, from.sin_port);
+					std::shared_ptr<Stream> s = GetNewStream(from.sin_addr.s_addr, from.sin_port);
+					//Stream* s = GetNewStream(from.sin_addr.s_addr, from.sin_port);
 					s->SetServer(this);
-					Streams[temp] = s;
+					//Streams[temp] = s;
+					AddStream(s, temp);
 					s->Process(buffer, length);
 					//s->SetLastPacketTime();
 				}
 				else {
 					LogError(LOG_NET, 0, "found stream");
-					Stream* currentStream = stream_itr->second;
+					std::shared_ptr<Stream> currentStream = stream_itr->second;
 
 					currentStream->Process(buffer, length);
 					//currentStream->SetLastPacketTime();
@@ -140,8 +141,12 @@ void UDPServer::ReaderThread() {
 	}
 }
 
-void UDPServer::StreamDisconnected(Stream* stream) {
+void UDPServer::StreamDisconnected(std::shared_ptr<Stream> stream) {
 	std::map<std::string, Stream*>::iterator stream_itr;
 	SpinLocker lock(m_clientRemovals);
 	clientRemovals.push_back(stream->ToString());
+}
+
+void UDPServer::AddStream(std::shared_ptr<Stream> stream, std::string key) {
+	Streams[key] = stream;
 }

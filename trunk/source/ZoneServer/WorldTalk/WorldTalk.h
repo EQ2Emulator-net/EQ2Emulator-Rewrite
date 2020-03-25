@@ -9,7 +9,7 @@ public:
 	WorldTalk() : TCPServer(false) {}
 	~WorldTalk() = default;
 
-	Stream* GetNewStream(unsigned int ip, unsigned short port) override;
+	std::shared_ptr<Stream> GetNewStream(unsigned int ip, unsigned short port) override;
 
 	bool Process() override;
 };

@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "database-result.h"
+#include <string>
 
 class Database;
 
@@ -43,8 +44,9 @@ public:
 	unsigned long LastInsertID();
 	unsigned long AffectedRows();
 
-	char * Escape(const char *str, size_t len);
-	char * Escape(const char *str);
+	std::string Escape(const char *str, size_t len);
+	std::string Escape(const char *str);
+	std::string Escape(const std::string& str);
 
     void BeginTransaction();
     void CommitTransaction();

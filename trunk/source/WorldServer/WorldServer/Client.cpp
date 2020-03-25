@@ -12,12 +12,18 @@
 extern WorldDatabase database;
 
 Client::Client(unsigned int ip, unsigned short port) : EQ2Stream(ip, port) {
-
+	AccountID = 0;
+	AllowedRaces = 0;
+	AllowedClasses = 0;
+	CharacterSlots = 0;
+	pending_zone = 0;
+	pending_instance = 0;
+	pending_character = 0;
 }
 
 void Client::Process() {
 	while (EQ2Packet* p = PopPacket()) {
-		p->HandlePacket(this);
+		p->HandlePacket(std::static_pointer_cast<Client>(shared_from_this()));
 		delete p;
 	}
 }
@@ -44,16 +50,55 @@ void Client::SendLoginReply(uint8_t reply) {
 		r->RaceUnknown = 63;
 		r->Unknown11 = 7;
 		r->SubscriptionLevel = 2;
-		r->RaceFlag = GetServer()->GetAllowedRaces();	//0x001FFFFF;
-		r->ClassFlag = GetServer()->GetAllowedClasses();	//0x07FFFFFE;
+		r->RaceFlag = GetAllowedRaces();
+		r->ClassFlag = GetAllowedClasses();
 
-		// Unknown5 and Unknown7 set to DoV values
-		r->Unknown5 = 1148;
-		r->Unknown7 = 2145009599;
+		if (GetVersion() >= 60100) {
+			r->Unknown5 = 1532;
+			r->Unknown7 = 4219469759;
+			r->Unknown7a = 8388607;
+			r->RaceUnknown = 255;
+		}
+		else if (GetVersion() >= 1096) {
+			r->Unknown5 = 1148;
+			r->Unknown7 = 2145009599;
+		}
 
+		// Equipment shown during normal character creation
 		r->Unknown10 = 1;
-		r->NumClassItems = 0;
-		r->UnknownArraySize = 0;
+		WorldServer* s = GetServer();
+		std::map<uint8_t, std::vector<OP_LoginReplyMsg_Packet::ClassItem::StartingItem> >::iterator itr;
+		std::vector<OP_LoginReplyMsg_Packet::ClassItem::StartingItem>::iterator itr2;
+		for (itr = s->NormalEquipment.begin(); itr != s->NormalEquipment.end(); itr++) {
+			OP_LoginReplyMsg_Packet::ClassItem ci;
+			ci.ClassID = itr->first;
+			for (itr2 = itr->second.begin(); itr2 != itr->second.end(); itr2++)
+				ci.StartingItems.push_back(*itr2);
+
+			r->ClassItems.push_back(ci);
+		}
+
+		// Equipment shown during heroic (lvl 90) character creation
+		r->Unknown12 = 1;
+		for (itr = s->LVL90Equipment.begin(); itr != s->LVL90Equipment.end(); itr++) {
+			OP_LoginReplyMsg_Packet::ClassItem ci;
+			ci.ClassID = itr->first;
+			for (itr2 = itr->second.begin(); itr2 != itr->second.end(); itr2++)
+				ci.StartingItems.push_back(*itr2);
+
+			r->LVL90ClassItems.push_back(ci);
+		}
+
+		// Equipment shown during time locked character creation
+		r->Unknown13 = 1;
+		for (itr = s->TLEquipment.begin(); itr != s->TLEquipment.end(); itr++) {
+			OP_LoginReplyMsg_Packet::ClassItem ci;
+			ci.ClassID = itr->first;
+			for (itr2 = itr->second.begin(); itr2 != itr->second.end(); itr2++)
+				ci.StartingItems.push_back(*itr2);
+
+			r->TimeLockedClassItems.push_back(ci);
+		}
 	}
 	else {		
 		r->AccountID = 0xFFFFFFFF;
@@ -73,9 +118,9 @@ void Client::SaveErrorsToDB(std::string log, std::string type) {
 	
 	z_stream zstream;
 	int zerror = 0;
-	zstream.next_in = (BYTE*)log.c_str();
+	zstream.next_in = (Bytef*)log.c_str();
 	zstream.avail_in = size;
-	zstream.next_out = (BYTE*)message;
+	zstream.next_out = (Bytef*)message;
 	zstream.avail_out = size;
 	zstream.zalloc = Z_NULL;
 	zstream.zfree = Z_NULL;
@@ -93,6 +138,26 @@ void Client::SaveErrorsToDB(std::string log, std::string type) {
 
 	if (message)
 		delete[] message;
+
+	inflateEnd(&zstream);
+}
+
+uint32_t Client::GetAllowedRaces() {
+	return (AllowedRaces == 0) ? GetServer()->GetAllowedRaces() : AllowedRaces;
+}
+
+uint32_t Client::GetAllowedClasses() {
+	return (AllowedClasses == 0) ? GetServer()->GetAllowedClasses() : AllowedClasses;
+}
+
+uint8_t Client::GetCharacterSlots() {
+	return (CharacterSlots == 0) ? GetServer()->GetCharacterSlotsPerAccount() : CharacterSlots;
+}
+
+void Client::SetPendingZone(uint32_t char_id, uint32_t zone_id, uint32_t instance_id) {
+	pending_character = char_id;
+	pending_zone = zone_id;
+	pending_instance = instance_id;
 }
 
 void Client::ReadVersionPacket(const unsigned char* data, uint32_t size, uint32_t offset, uint16_t opcode) {
@@ -123,5 +188,5 @@ void Client::ReadVersionPacket(const unsigned char* data, uint32_t size, uint32_
 
 
 	p.Read(data, offset, size);
-	p.HandlePacket(this);
+	p.HandlePacket(std::static_pointer_cast<Client>(shared_from_this()));
 }

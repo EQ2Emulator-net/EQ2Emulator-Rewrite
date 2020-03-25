@@ -22,7 +22,7 @@ public:
 	bool UpdateAccountIPAddress(uint32_t account, uint32_t address);
 	bool UpdateAccountClientVersion(uint32_t account, uint32_t version);
 
-	bool LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMsg_Packet* packet, uint8_t max_level);
+	bool LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMsg_Packet* packet, uint8_t max_adv_level, uint8_t max_ts_level);
 
 	bool DeleteCharacter(uint32_t account_id, uint32_t char_id, std::string name);
 
@@ -42,6 +42,9 @@ public:
 	uint8_t CheckNameFilter(const char* name);
 
 	bool LoadServerVariables(WorldServer* s);
+	bool LoadServerConfig(WorldServer* s);
+
+	uint32_t GetZoneIDForCharacter(uint32_t char_id);
 
 private:
 

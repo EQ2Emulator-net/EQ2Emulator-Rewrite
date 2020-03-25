@@ -26,11 +26,13 @@ public:
 	uint32_t GetPort();
 	std::string GetHostString();
 
-	virtual void StreamDisconnected(Stream* stream) {};
+	virtual void StreamDisconnected(std::shared_ptr<Stream> stream) {};
+
+	virtual void SetID(uint32_t id) {};
 	
 protected:
 	Server();
-	virtual Stream* GetNewStream(unsigned int ip, unsigned short port) = 0;
+	virtual std::shared_ptr<Stream> GetNewStream(unsigned int ip, unsigned short port) = 0;
 
 	SOCKET Sock;
 	unsigned int Port;

@@ -34,6 +34,12 @@ EQ2Stream::EQ2Stream(unsigned int ip, unsigned short port) : Stream(ip, port) {
 	stream.zalloc = Z_NULL;
 	stream.zfree = Z_NULL;
 	deflateInit2(&stream, 9, Z_DEFLATED, 13, 9, Z_DEFAULT_STRATEGY);
+
+	oversize_buffer = nullptr;
+	oversize_length = 0;
+	oversize_offset = 0;
+	CompressedOffset = 0;
+	State = EQStreamState::CLOSED;
 }
 
 EQ2Stream::~EQ2Stream() {
@@ -65,7 +71,7 @@ void EQ2Stream::Process(const unsigned char* data, unsigned int length) {
 	Stream::Process(data, length);
 	// TODO: Validate crc and decompress or decode
 
-	ProtocolPacket* p = ProtocolPacket::GetProtocolPacket(data, length);
+	ProtocolPacket* p = ProtocolPacket::GetProtocolPacket(data, length, true);
 	if (p) {
 		ProcessPacket(p);
 		delete p;
@@ -163,13 +169,12 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 				oversize_offset += p->Size - 2;
 				//cout << "Oversized is " << oversize_offset << "/" << oversize_length << " (" << (p->size-2) << ") Seq=" << seq << endl;
 				if (oversize_offset == oversize_length) {
-					if (*(p->buffer + 2) == 0x00 && *(p->buffer + 3) == 0x19) {
-						ProtocolPacket* subp = new OP_AppCombined_Packet(p->buffer + 4, oversize_length - 4);
+					if (oversize_buffer[0] == 0x00 && oversize_buffer[1] == 0x19) {
+						ProtocolPacket* subp = new OP_AppCombined_Packet(oversize_buffer + 2, oversize_length - 2);
 						ProcessPacket(subp);
 						delete subp;
 					}
 					else {
-
 						if (crypto.isEncrypted() && p && p->Size > 2) {
 							EQ2Packet* p2 = ProcessEncryptedData(oversize_buffer, oversize_offset, p->GetOpcode());
 							if (p2) {
@@ -200,7 +205,7 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 		uint32_t processed = 0;
 		uint32_t subpacket_length = 0;
 		EQ2Packet* newpacket = 0;
-		uint8_t offset = 0;
+		uint32_t offset = 0;
 		int count = 0;
 
 		while (processed < p->Size) {
@@ -216,6 +221,11 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 				processRSAKey(p);
 			}
 			else if (crypto.isEncrypted()) {
+				if (processed + offset + subpacket_length > p->Size) {
+					LogError(LOG_PACKET, 0, "An OP_AppCombined packet tried to read past the end of its buffer!");
+					//DumpBytes(p->buffer, p->Size);
+					return;
+				}
 				if (!HandleEmbeddedPacket(p, processed + offset, subpacket_length)) {
 					newpacket = ProcessEncryptedData(p->buffer + processed + offset, subpacket_length, 0x19);// (uint16_t)OP_AppCombined);
 					if (newpacket) {
@@ -226,6 +236,37 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 			processed += subpacket_length + offset;
 		}
 		break;
+	}
+	case OP_Combined: {
+		uint32_t processed = 0;
+		uint32_t subpacket_length;
+		uint32_t offset;
+
+		while (processed < p->Size) {
+			if ((subpacket_length = *(p->buffer + processed) ) == 0xFF) {
+				subpacket_length = *reinterpret_cast<uint16_t*>(p->buffer + processed + 1);
+				offset = 3;
+			}
+			else {
+				offset = 1;
+			}
+
+			if (subpacket_length == 0) {
+				LogError(LOG_PACKET, 0, "Received a bad combine packet from a client! (size == 0)");
+				break;
+			}
+
+			if (subpacket_length + processed + offset > p->Size) {
+				LogError(LOG_PACKET, 0, "Received a bad combine packet from a client! (size > remaining_bytes)");
+				break;
+			}
+
+			ProtocolPacket* subPacket = ProtocolPacket::GetProtocolPacket(p->buffer + processed + offset, subpacket_length, false);
+			ProcessPacket(subPacket);
+			delete subPacket;
+
+			processed += offset + subpacket_length;
+		}
 	}
 	default:
 		break;
@@ -440,7 +481,7 @@ void EQ2Stream::Write() {
 
 	//MCombinedAppPacket.lock();
 	EQ2Packet *CombPack = CombinedAppPacket;
-	CombinedAppPacket = NULL;
+	CombinedAppPacket = nullptr;
 	//MCombinedAppPacket.unlock();
 
 	if (CombPack) {
@@ -675,6 +716,17 @@ EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size, u
 			DumpBytes(data + offset, size - offset);
 			LogWarn(LOG_PACKET, 0, "BLAH!!!");
 		}
+
+		//Check if there is a sub packet - used for packets that change structs based on the value of an element
+		//One example is ClientCmdMsg
+		while (EQ2Packet* p = ret->GetSubPacket()) {
+			delete ret;
+			ret = p;
+			if (!ret->Read(data, offset, size)) {
+				DumpBytes(data + offset, size - offset);
+				LogWarn(LOG_PACKET, 0, "BLAH!!!");
+			}
+		}
 	}
 	else {
 		LogDebug(LOG_PACKET, 0, "Unhandled opcode %u", opcode);
@@ -728,7 +780,6 @@ void EQ2Stream::QueuePacket(EQ2Packet* p) {
 }
 
 void EQ2Stream::SendAck(uint16_t seq) {
-	uint16_t Seq = htons(seq);
 	SetLastAckSent(seq);
 	OP_Ack_Packet* ack = new OP_Ack_Packet();
 	ack->Sequence = htons(seq);
@@ -760,7 +811,7 @@ void EQ2Stream::SendDisconnect(uint16_t reason) {
 
 	// Send this now and kill the client.
 	WritePacket(&disconnect);
-	server->StreamDisconnected(this); // this deletes the stream (client)
+	server->StreamDisconnected(shared_from_this()); // this deletes the stream (client)
 }
 
 void EQ2Stream::SendKeepAlive() {

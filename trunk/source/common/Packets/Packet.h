@@ -29,15 +29,21 @@ public:
 	}
 
 	virtual uint32_t Write(unsigned char*& writeBuffer) {
-		uint32_t size = 0;
-		for (size_t i = 0; i < elements.size(); i++) {
-			if (!elements[i]->MeetsCriteria()) {
-				continue;
-			}
+		return Write(writeBuffer, GetElementSize());
+	}
 
-			size += elements[i]->GetSize();
-		}
+	unsigned char* buffer;
+	uint32_t Size;
 
+protected:
+	Packet() : buffer(nullptr) {
+		offset = 0;
+	}
+
+	uint32_t offset;
+	std::vector<PacketElement*> elements;
+
+	uint32_t Write(unsigned char*& writeBuffer, uint32_t size) {
 		if (buffer)
 			delete[] buffer;
 
@@ -57,14 +63,15 @@ public:
 		return size;
 	}
 
-	unsigned char* buffer;
-	uint32_t Size;
+	uint32_t GetElementSize() {
+		uint32_t size = 0;
+		for (size_t i = 0; i < elements.size(); i++) {
+			if (!elements[i]->MeetsCriteria()) {
+				continue;
+			}
 
-protected:
-	Packet() : buffer(nullptr) {
-		offset = 0;
+			size += elements[i]->GetSize();
+		}
+		return size;
 	}
-
-	uint32_t offset;
-	std::vector<PacketElement*> elements;
 };

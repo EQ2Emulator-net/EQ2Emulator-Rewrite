@@ -5,6 +5,7 @@
 #include "util.h"
 #include "log.h"
 #include <sstream>
+#include "NetUtil.h"
 
 Stream::Stream(unsigned int ip, unsigned short port) {
 	RemoteIP = ip;
@@ -29,7 +30,9 @@ void Stream::Process(const unsigned char* buffer, unsigned int length) {
 void Stream::WritePacket(SOCKET socket, const unsigned char* buffer, int length) {
 	SentPackets++;
 
-	sendto(socket, reinterpret_cast<const char*>(buffer), length, 0, reinterpret_cast<const sockaddr*>(&address), sizeof(address));
+	if (sendto(socket, reinterpret_cast<const char*>(buffer), length, 0, reinterpret_cast<const sockaddr*>(&address), sizeof(address)) == SOCKET_ERROR) {
+		LogError(LOG_NET, 0, "sendto error: %s", NetUtil::SocketError().c_str());
+	}
 }
 
 std::string Stream::ToString() {

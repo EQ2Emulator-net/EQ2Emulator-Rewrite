@@ -11,7 +11,6 @@ EQ2Packet::EQ2Packet(uint32_t version) {
 
 uint8_t EQ2Packet::PreparePacket(uint16_t MaxLen) {
 	// Set the opcode for this packet based on version
-	FindOpcode();
 	PacketPrepared = true;
 
 	uint16_t login_opcode = opcode;
@@ -69,6 +68,7 @@ void EQ2Packet::FindOpcode() {
 	OpcodeManager::GetGlobal()->SetOpcodeForPacket(this);
 }
 
-void EQ2Packet::HandlePacket(Client* client) {
-
+void EQ2Packet::HandlePacket(std::shared_ptr<Client> client) {
+	LogWarn(LOG_PACKET, 0, "Unhandled packet, opcode = %u", GetOpcode());
+	DumpBytes(buffer, Size);
 }

@@ -37,3 +37,6 @@ bool IsUnsignedInt(const char *str);
 bool alpha_check(unsigned char val);
 
 #define atoul(str) strtoul(str, NULL, 10)
+
+float MakeRandom(float low, float high);
+int32_t MakeRandomInt(int32_t low, int32_t high);

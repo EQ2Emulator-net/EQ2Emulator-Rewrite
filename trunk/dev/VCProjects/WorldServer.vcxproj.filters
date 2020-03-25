@@ -159,6 +159,9 @@
     <ClCompile Include="..\..\source\WorldServer\Packets\EmuPacketHandlers.cpp">
       <Filter>source\Packets</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\common\NetUtil.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\common\io.h">
@@ -412,6 +415,30 @@
     </ClInclude>
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RegisterZoneServer_Packet.h">
       <Filter>common\Packets\EmuPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketPackedData.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RegisterZoneServerReply_Packet.h">
+      <Filter>common\Packets\EmuPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RequestZone_Packet.h">
+      <Filter>common\Packets\EmuPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RequestZoneReply_Packet.h">
+      <Filter>common\Packets\EmuPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_TransferClient_Packet.h">
+      <Filter>common\Packets\EmuPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_CreateCharacterRequestMsg_Packet.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\Packets\OP_CreateCharacterReplyMsg_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\NetUtil.h">
+      <Filter>common</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

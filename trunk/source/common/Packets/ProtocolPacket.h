@@ -34,7 +34,7 @@ public:
 	void SetSentTime(uint32_t time) { SentTime = time; }
 	//bool Combine(const ProtocolPacket *rhs);
 
-	static ProtocolPacket* GetProtocolPacket(const unsigned char* in_buff, uint32_t len);
+	static ProtocolPacket* GetProtocolPacket(const unsigned char* in_buff, uint32_t len, bool bTrimCRC);
 	static uint32_t Compress(const unsigned char *buffer, const uint32_t length, unsigned char *newbuf, uint32_t newbufsize);
 	static void ChatDecode(unsigned char *buffer, int size, int DecodeKey);
 	static void ChatEncode(unsigned char *buffer, int size, int EncodeKey);

@@ -5,21 +5,13 @@
                2) 'x.x.x.x' = The actual IP address of the interface you want to bind to.
          port: The port your server will listen on.
     -->
-    <!--<server host="127.0.0.1" port="9100" />-->
+    <server host="127.0.0.1" port="9106" id="1"/>
 	
+	<!-- IP and port of the world server -->
 	<zonetalk host="127.0.0.1" port="9105" />
     
     <!-- Credentials to use to connect to the MySQL server -->
-    <!--<database host="127.0.0.1" port="3306" user="rewrite" password="1234" database="eq2_rewrite" />-->
-
-    <!--
-        Credentials for the address of the patch server to connect to.
-        host: The IP address of patch server.
-        port: The port of the patch server.
-        enabled: If false, the server won't try to connect to the patch server.
-    -->
-    <!-- <patch host="updates.eq2emulator.net" port="9104" enabled="true" /> -->
-	<patch host="updates.eq2emulator.net" port="9104" enabled="false" />
+    <database host="127.0.0.1" port="3306" user="rewrite" password="1234" database="eq2_rewrite" />
     
     <!-- Logging -->
     <logging format="text" split="false" pid="false">

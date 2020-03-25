@@ -22,7 +22,7 @@ typedef enum {
 	CLOSED
 } EQStreamState;
 
-class EQ2Stream : public Stream {
+class EQ2Stream : public Stream, public std::enable_shared_from_this<EQ2Stream> {
 public:
 	EQ2Stream(unsigned int ip, unsigned short port);
 	~EQ2Stream();

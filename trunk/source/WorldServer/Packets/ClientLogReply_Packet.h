@@ -15,7 +15,7 @@ public:
 		log = "";
 	}
 
-	void HandlePacket(Client* client) {
+	void HandlePacket(std::shared_ptr<Client> client) {
 		client->SaveErrorsToDB(log, name);
 	}
 

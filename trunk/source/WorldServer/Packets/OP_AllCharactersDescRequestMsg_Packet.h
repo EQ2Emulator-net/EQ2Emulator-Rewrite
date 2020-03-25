@@ -16,11 +16,11 @@ public:
 
 	}
 
-	void HandlePacket(Client* client) {
+	void HandlePacket(std::shared_ptr<Client> client) {
 		OP_AllCharactersDescReplyMsg_Packet* char_list = new OP_AllCharactersDescReplyMsg_Packet(client->GetVersion());
-		database.LoadCharacters(client->GetAccountID(), char_list, client->GetServer()->GetMaxLevel());
+		database.LoadCharacters(client->GetAccountID(), char_list, client->GetServer()->GetMaxAdvLevel(), client->GetServer()->GetMaxTSLevel());
 		char_list->AccountID = client->GetAccountID();
-		char_list->MaxAllowedCharacters = client->GetServer()->GetMaxCharactersPerAccount();
+		char_list->MaxAllowedCharacters = client->GetCharacterSlots();
 		client->QueuePacket(char_list);
 	}
 

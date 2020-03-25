@@ -224,3 +224,21 @@ void SpinLocker::Lock() {
 void SpinLocker::Unlock() {
 	if (locked) lock_object->Unlock();
 }
+
+QueuedLock::QueuedLock() : next_lock(0), current_lock(0) {
+
+}
+
+QueuedLock::~QueuedLock() {
+}
+
+void QueuedLock::Lock() {
+	uint32_t myLock = next_lock.fetch_add(1);
+	while (myLock != current_lock.load()) {
+		this_thread::yield();
+	}
+}
+
+void QueuedLock::Unlock() {
+	current_lock.fetch_add(1);
+}

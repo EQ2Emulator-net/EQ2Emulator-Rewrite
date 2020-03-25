@@ -1,5 +1,11 @@
+#pragma once
+
 #include "../../common/Packets/PacketElements/PacketElements.h"
 #include "../../common/Packets/EQ2Packet.h"
+
+#include "../ZoneServer/ZoneOperator.h"
+
+extern ZoneOperator z;
 
 class OP_LoginByNumRequestMsg_Packet : public EQ2Packet {
 public:
@@ -25,6 +31,11 @@ public:
 			version |= additiveValue;
 		}
 		return ret;
+	}
+
+	void HandlePacket(std::shared_ptr<Client> client) {
+		LogError(LOG_PACKET, 0, "Client with account id of %u connected", account_id);
+		z.ClientLogIn(client, this);
 	}
 
 	uint32_t account_id;

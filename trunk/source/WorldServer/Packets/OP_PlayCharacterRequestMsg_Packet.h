@@ -22,13 +22,8 @@ public:
 		memset(unknown, 0, sizeof(unknown));
 	}
 
-	void HandlePacket(Client* client) {
-		OP_PlayCharacterReplyMsg_Packet* reply = new OP_PlayCharacterReplyMsg_Packet(client->GetVersion());
-		reply->response = PLAY_CHARACTER_SUCCESS;
-		reply->account_id = client->GetAccountID();
-		reply->server = "127.0.0.1";
-		reply->port = 9106;
-		client->QueuePacket(reply);
+	void HandlePacket(std::shared_ptr<Client> client) {
+		zoneTalk.GetAvailableZone(client, char_id);
 	}
 
 	uint32_t char_id;

@@ -4,6 +4,7 @@
 #include "util.h"
 #include "string.h"
 #include "log.h"
+#include <fstream>
 
 #define XML_SAFE_ATTR_VALUE(node, name) (node)->first_attribute(name) == NULL ? NULL : (node)->first_attribute(name)->value()
 
@@ -25,25 +26,23 @@ char* ConfigReader::GetFileContent(const char *file) {
 	uint32_t count;
 	uint32_t size;
 	char *buf;
-	FILE *f;
+	std::ifstream f(file);
 
-	if ((f = fopen(file, "rb")) == NULL) {
+	if (!f) {
 		fprintf(stderr, "Could not open '%s': %s\n", file, appStrError().c_str());
 		return NULL;
 	}
 
-	_fseeki64(f, 0, SEEK_END);
-	size = (uint32_t)_ftelli64(f);
-	rewind(f);
+	f.seekg(0, std::ios::end);
+	size = (uint32_t)f.tellg();
+	f.seekg(0, std::ios::beg);
 
-	if ((buf = (char *)malloc(size + 1)) == NULL) {
-		fclose(f);
-		fprintf(stderr, "Out of memory trying to allocate %ld bytes for config reader buffer", size + 1);
+	if ((buf = (char *)malloc(size)) == NULL) {
+		fprintf(stderr, "Out of memory trying to allocate %u bytes for config reader buffer", size);
 		return NULL;
 	}
 
-	count = (uint32_t)fread(buf, 1, size, f);
-	fclose(f);
+	count = (uint32_t)f.readsome(buf, size);
 
 	if (size != count) {
 		free(buf);
@@ -51,7 +50,6 @@ char* ConfigReader::GetFileContent(const char *file) {
 		return NULL;
 	}
 
-	buf[count] = '\0';
 	return buf;
 }
 
@@ -90,6 +88,8 @@ void ConfigReader::ReadServerConfig(xml_node<> *node) {
 		server->SetHost(val);
 	if ((val = XML_SAFE_ATTR_VALUE(node, "port")) != NULL && IsUnsignedInt(val))
 		server->SetPort(atoul(val));
+	if ((val = XML_SAFE_ATTR_VALUE(node, "id")) != NULL && IsUnsignedInt(val))
+		server->SetID(atoul(val));
 }
 
 void ConfigReader::ReadDatabaseConfig(xml_node<> *node) {
@@ -114,6 +114,8 @@ void ConfigReader::ReadLogConfig(xml_node<> *node) {
 	LogType type;
 	int level, output, color;
 	bool on;
+
+	using namespace LoggingSystem;
 
 	if ((val1 = XML_SAFE_ATTR_VALUE(node, "format")) != NULL && strcasecmp(val1, "xml") == 0)
 		LogSetFormat(LOG_FORMAT_XML);

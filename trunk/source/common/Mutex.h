@@ -69,6 +69,16 @@ private:
 class ReadLocker {
 public:
 	explicit ReadLocker(Mutex& lock);
+
+	//Move constructor
+	ReadLocker(ReadLocker&& rhs) {
+		lock_object = rhs.lock_object;
+		locked = rhs.locked;
+		rhs.locked = false;
+	}
+
+	ReadLocker(const ReadLocker& rhs) = delete;
+
 	~ReadLocker();
 	void Lock();
 	void Unlock();
@@ -80,6 +90,16 @@ private:
 class WriteLocker {
 public:
 	explicit WriteLocker(Mutex& lock);
+
+	//Move constructor
+	WriteLocker(WriteLocker&& rhs) {
+		lock_object = rhs.lock_object;
+		locked = rhs.locked;
+		rhs.locked = false;
+	}
+
+	WriteLocker(const WriteLocker& rhs) = delete;
+
 	~WriteLocker();
 	void Lock();
 	void Unlock();
@@ -108,4 +128,17 @@ public:
 private:
 	bool locked;
 	SpinLock* lock_object;
+};
+
+class QueuedLock {
+public:
+	QueuedLock();
+	~QueuedLock();
+
+	void Lock();
+	void Unlock();
+
+private:
+	std::atomic<uint32_t> next_lock;
+	std::atomic<uint32_t> current_lock;
 };

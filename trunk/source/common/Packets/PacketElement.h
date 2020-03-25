@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <string>
 #include <cassert>
-#include "PacketElements\PacketCriteria.h"
+#include "PacketElements/PacketCriteria.h"
 
 class PacketElement : public PacketVariableEquality {
 public:
@@ -26,7 +26,7 @@ public:
 		this->name = name;
 	}
 
-	bool SetIsVariableSet(PacketElement* e) {
+	void SetIsVariableSet(PacketElement* e) {
 		ifVariableSet = e;
 	}
 

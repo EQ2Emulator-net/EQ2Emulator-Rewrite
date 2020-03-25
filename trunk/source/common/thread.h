@@ -5,6 +5,7 @@
 #include <atomic>
 #include <stdint.h>
 #include <future>
+#include <functional>
 
 class ThreadManager {
 private:

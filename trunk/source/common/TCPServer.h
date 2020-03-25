@@ -16,7 +16,7 @@ public:
 protected:
 	TCPServer(bool bHost);
 
-	std::map<SOCKET, Stream*> Streams;
+	std::map<SOCKET, std::shared_ptr<Stream> > Streams;
 	Mutex streamLock;
 private:
 	bool bHost;

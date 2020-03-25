@@ -32,6 +32,7 @@
     <ClCompile Include="..\..\source\common\io.cpp" />
     <ClCompile Include="..\..\source\common\log.cpp" />
     <ClCompile Include="..\..\source\common\Mutex.cpp" />
+    <ClCompile Include="..\..\source\common\NetUtil.cpp" />
     <ClCompile Include="..\..\source\common\Packets\EQ2Packet.cpp" />
     <ClCompile Include="..\..\source\common\Packets\EQ2Packets\CommonPackets.cpp" />
     <ClCompile Include="..\..\source\common\Packets\EQ2Packets\OpcodeManager.cpp" />
@@ -52,6 +53,8 @@
     <ClCompile Include="..\..\source\ZoneServer\main.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Packets\EmuPacketHandlers.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Packets\EncodedPackets.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Packets\ZoneServerPackets.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Spawns\Entity.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Spawns\Object.cpp" />
@@ -62,6 +65,7 @@
     <ClCompile Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\Client.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\ZoneOperator.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\ZoneServer\ZoneServer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -77,10 +81,17 @@
     <ClInclude Include="..\..\source\common\EmuOpcodes.h" />
     <ClInclude Include="..\..\source\common\EmuPacket.h" />
     <ClInclude Include="..\..\source\common\EmuStream.h" />
+    <ClInclude Include="..\..\source\common\EncodedBuffer.h" />
     <ClInclude Include="..\..\source\common\EQ2Stream.h" />
     <ClInclude Include="..\..\source\common\io.h" />
     <ClInclude Include="..\..\source\common\log.h" />
     <ClInclude Include="..\..\source\common\Mutex.h" />
+    <ClInclude Include="..\..\source\common\NetUtil.h" />
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RegisterZoneServerReply_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RegisterZoneServer_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RequestZoneReply_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RequestZone_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_TransferClient_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EQ2Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EQ2Packets\OpcodeManager.h" />
     <ClInclude Include="..\..\source\common\Packets\EQ2Packets\OP_KeyRequest_Packet.h" />
@@ -92,9 +103,11 @@
     <ClInclude Include="..\..\source\common\Packets\PacketElements\Packet8String.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketArray.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketBool.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketChar.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketCriteria.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketDouble.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketElements.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEncodedData.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEQ2Color.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEQ2EquipmentItem.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketFloat.h" />
@@ -103,6 +116,7 @@
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt64.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketInt8.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketOversizedByte.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketPackedData.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketSubstruct.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketUInt16.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketUInt32.h" />
@@ -131,8 +145,32 @@
     <ClInclude Include="..\..\source\common\UDPServer.h" />
     <ClInclude Include="..\..\source\common\util.h" />
     <ClInclude Include="..\..\source\common\version.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Commands\CommandToken.h" />
     <ClInclude Include="..\..\source\ZoneServer\Database\ZoneDatabase.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\EncodedPackets.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_ClientCmdMsg_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DefaultGroupOptionsMsg_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DefaultGroupOptionsRequestMsg_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DoneLoadingEntityResourcesMsg_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DoneLoadingZoneResourcesMsg_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DoneSendingInitialEntitiesMsg_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_EqSetControlGhostCmd_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_EqSetPOVGhostCmd_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_CreateGhostCmd_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_GameWorldTimeMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_LoginByNumRequestMsg_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_MoveableObjectPlacementCriteri_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_PredictionUpdateMsg.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_RemoteCmdMsg_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_SetRemoteCmdsMsg_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_UpdateCharacterSheetMsg_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_UpdatePositionMsg.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_ZoneInfoMsg_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_GroupMember.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_MaintainedEffects.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_PassiveEffects.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_SpawnHeader.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_SpellEffects.h" />
     <ClInclude Include="..\..\source\ZoneServer\Spawns\Entity.h" />
     <ClInclude Include="..\..\source\ZoneServer\Spawns\Object.h" />
     <ClInclude Include="..\..\source\ZoneServer\Spawns\Sign.h" />
@@ -151,32 +189,32 @@
     <ProjectGuid>{0239F4E3-73E8-4AE1-94BE-629ECBBD28F8}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>ZoneServer</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -203,6 +241,7 @@
     <IncludePath>..\..\source\depends\mariadb-10.1.19\include;..\..\source\depends\zlib\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\source\depends\mariadb-10.1.19\lib\64-debug;..\..\source\depends\zlib\lib\win64-debug;$(LibraryPath)</LibraryPath>
     <IntDir>$(Platform)\$(Configuration)\ZoneServer\</IntDir>
+    <OutDir>..\..\bin\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>

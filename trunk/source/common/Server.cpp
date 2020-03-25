@@ -27,7 +27,7 @@ Server::~Server() {
 #endif
 
 	if (Sock != INVALID_SOCKET) {
-		closesocket(Sock);
+		SOCKET_CLOSE(Sock);
 	}
 }
 

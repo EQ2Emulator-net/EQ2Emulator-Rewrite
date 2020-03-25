@@ -95,21 +95,7 @@ public:
 		versions[range][opcode] = itr->second;
 	}
 
-	EQ2Packet* GetPacketForVersion(uint32_t version, uint16_t opcode) {
-		EQ2Packet* ret = nullptr;
-		for (auto& itr : versions) {
-			versionRange_t range = itr.first;
-			if (range.first <= version && range.second >= version) {
-				auto op = itr.second.find(opcode);
-				if (op != itr.second.end()) {
-					ret = op->second->Create(version);
-					ret->opcode = opcode;
-				}
-				break;
-			}
-		}
-		return ret;
-	}
+	EQ2Packet* GetPacketForVersion(uint32_t version, uint16_t opcode);
 
 	bool HasVersion(uint32_t version) {
 		bool ret = false;
@@ -123,29 +109,7 @@ public:
 		return ret;
 	}
 
-	bool SetOpcodeForPacket(EQ2Packet* packet) {
-		auto itr = type_map.find(typeid(*packet));
-		assert(("Please register this packet class with an opcode.", itr != type_map.end()));
-
-		EQ2PacketAllocatorBase* allocator = itr->second;
-		for (auto& itr : versions) {
-			uint32_t version = packet->GetVersion();
-			versionRange_t range = itr.first;
-			if (range.first <= version && range.second >= version) {
-				for (auto& op : itr.second) {
-					if (op.second == allocator) {
-						packet->opcode = op.first;
-						return true;
-					}
-				}
-				assert(("Could not find an opcode for this packet! Check it out.", false));
-				return false;
-			}
-		}
-
-		LogDebug(LOG_PACKET, 0, "Could not find a version range for version %u", packet->GetVersion());
-		return false;
-	}
+	bool SetOpcodeForPacket(EQ2Packet* packet);
 };
 
 template<typename T>
@@ -159,7 +123,8 @@ public:
 
 //Use this macro on a global scope to auto construct this object on program start
 //n is the opcode name, pt is the packet class
-#define RegisterEQ2Opcode(n, pt, f, ...) uint32_t zUNIQUENAMEVERz ## pt ##[] = { __VA_ARGS__ };\
-OpcodeRegistrar<pt> zUNIQUENAMEz ## pt ## (n, f, zUNIQUENAMEVERz ## pt, sizeof(zUNIQUENAMEVERz ## pt) / sizeof(uint32_t))
+#define RegisterEQ2Opcode(n, pt, f, ...) uint32_t zUNIQUENAMEVERz ## pt [] = { __VA_ARGS__ };\
+OpcodeRegistrar<pt> zUNIQUENAMEz ## pt (n, f, zUNIQUENAMEVERz ## pt, sizeof(zUNIQUENAMEVERz ## pt) / sizeof(uint32_t))
 #define RegisterWorldStruct(n, pt, ...) RegisterEQ2Opcode(n, pt, "WorldStructs.xml", __VA_ARGS__)
 #define RegisterLoginStruct(n, pt, ...) RegisterEQ2Opcode(n, pt, "LoginStructs.xml", __VA_ARGS__)
+#define RegisterZoneStruct(n, pt, ...) RegisterEQ2Opcode(n, pt, "ZoneStruct.xml", __VA_ARGS__)

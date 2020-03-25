@@ -4,6 +4,16 @@
 #include "../PacketElements/PacketElements.h"
 #include "OpcodeManager.h"
 
+enum class LoginReply : uint8_t {
+	EAccepted = 0,
+	EBadPassword = 1,
+	ECurrentlyPlaying = 2,
+	EBadVersion = 6,
+	EUnknown = 7
+};
+
+
+
 class OP_LoginReplyMsg_Packet : public EQ2Packet {
 public:
 	OP_LoginReplyMsg_Packet(uint32_t version)
@@ -12,22 +22,19 @@ public:
 		Unknown = "";
 		ParentalControlFlag = 0;
 		ParentalControlTimer = 0;
-		for (uint8_t i = 0; i < 8; i++)
-			Unknown2[i] = 0;
+		memset(Unknown2, 0, sizeof(Unknown2));
 		AccountID = 0;
 		Unknown3 = "";
 		ResetAppearance = 0;
 		DoNotForceSoga = 1;
 		Unknown4 = 0;
 		Unknown5 = 0;
-		for (uint8_t i = 0; i < 5; i++)
-			Unknown6[i] = 0;
+		memset(Unknown6, 0, sizeof(Unknown6));
 		Unknown7 = 0;
 		Unknown7a = 0;
 		RaceUnknown = 0;
-		for (uint8_t i = 0; i < 3; i++)
-			Unknown8[i] = 0;					//<Data ElementName = "unknown8" Type = "int8" Size = "3" / > < !--possibly related to rave_unknown but can't confirm-->
-		Unknown9 = 0;
+		memset(Unknown8, 0, sizeof(Unknown8));
+		memset(Unknown9, 0, sizeof(Unknown9));
 		Unknown10 = 1;
 		NumClassItems = 0;
 		UnknownArraySize = 0;
@@ -37,7 +44,14 @@ public:
 		ClassFlag = 0;
 		Password = "";
 		Username = "";
-		Unknown12 = "";
+		Service = "";
+
+		// 60100 elements
+		Unknown12 = 0;
+		LVL90NumClassItems = 0;
+		Unknown13 = 0;
+		TimeLockedNumClassItems = 0;
+		memset(Unknown14, 0, sizeof(Unknown14));
 
 		RegisterElements();
 	}
@@ -55,24 +69,24 @@ public:
 	uint16_t Unknown5;
 	uint8_t Unknown6[5];					//<Data ElementName = "unknown6" Type = "int8" Size = "5" / >
 	uint32_t Unknown7;
-	uint32_t Unknown7a; // 1188
+	uint32_t Unknown7a; // 1188 7a = uint32
 	uint8_t RaceUnknown;
-	uint8_t Unknown8[3];					//<Data ElementName = "unknown8" Type = "int8" Size = "3" / > < !--possibly related to rave_unknown but can't confirm-->
-	uint8_t Unknown9;
+	uint8_t Unknown8[3];					// size = 1 in 60100+ <Data ElementName = "unknown8" Type = "int8" Size = "3" / > < !--possibly related to rave_unknown but can't confirm-->
+	uint8_t Unknown9[3];
 	uint8_t Unknown10;
 	uint8_t NumClassItems;				//<Data ElementName = "num_class_items" Type = "int8" IfVariableSet = "unknown10" Size = "1" / >
 	struct ClassItem : public PacketSubstruct {
 		uint8_t ClassID;
 		uint8_t NumItems;
 		struct StartingItem : public PacketSubstruct {
-			uint16_t ModelID;
+			uint32_t ModelID;
 			uint8_t SlotID;
 			uint8_t UseColor;
 			uint8_t UseHighlightColor;
 			EQ2Color ModelColor;
 			EQ2Color ModelHighlightColor;
 
-			StartingItem() {
+			StartingItem() : PacketSubstruct(0) {
 				ModelID = 0;
 				SlotID = 0;
 				UseColor = 1;
@@ -88,7 +102,12 @@ public:
 			}
 
 			void RegisterElements() {
-				RegisterUInt16(ModelID);
+				if (GetVersion() >= 57080)
+					RegisterUInt32(ModelID);
+				else {
+					RescopeToReference(ModelID, uint16_t);
+					RegisterUInt16(ModelID);
+				}
 				RegisterUInt8(SlotID);
 				RegisterUInt8(UseColor);
 				RegisterUInt8(UseHighlightColor);
@@ -98,7 +117,7 @@ public:
 		};
 		std::vector<StartingItem> StartingItems;
 
-		ClassItem() {
+		ClassItem() : PacketSubstruct(0) {
 			ClassID = 0;
 			NumItems = 0;
 
@@ -116,7 +135,7 @@ public:
 	struct UnknownArray : public PacketSubstruct {
 		uint32_t Array2Unknown;
 
-		UnknownArray() {
+		UnknownArray() : PacketSubstruct(0) {
 			Array2Unknown = 0;
 
 			RegisterElements();
@@ -133,7 +152,17 @@ public:
 	uint32_t ClassFlag;
 	std::string Password;
 	std::string Username;
-	std::string Unknown12; //1188
+	std::string Service; //1188
+
+	uint8_t Unknown12;
+	uint8_t LVL90NumClassItems;
+	std::vector<ClassItem> LVL90ClassItems;
+
+	uint8_t Unknown13;
+	uint8_t TimeLockedNumClassItems;
+	std::vector<ClassItem> TimeLockedClassItems;
+
+	uint8_t Unknown14[13]; // size = 13
 
 private:
 	void RegisterElements() {
@@ -141,26 +170,40 @@ private:
 		Register16String(Unknown);
 		RegisterUInt8(ParentalControlFlag);
 		RegisterUInt32(ParentalControlTimer);
-		uint8_t& unknown2 = Unknown2[0];
-		RegisterUInt8(unknown2)->SetCount(8);
+		RescopeArrayElement(Unknown2);
+		RegisterUInt8(Unknown2)->SetCount(8);
 		RegisterUInt32(AccountID);
 		Register16String(Unknown3);
 		RegisterUInt8(ResetAppearance);
 		RegisterUInt8(DoNotForceSoga);
 		RegisterUInt8(Unknown4);
 		RegisterUInt16(Unknown5);
-		uint8_t& unknown6 = Unknown6[0];
-		RegisterUInt8(unknown6)->SetCount(5);
+		RescopeArrayElement(Unknown6);
+		RegisterUInt8(Unknown6)->SetCount(5);
 		RegisterUInt32(Unknown7);
-		if (GetVersion() >= 1188)
-			RegisterUInt32(Unknown7a);
+		
+		RegisterUInt32(Unknown7a);
+
 		RegisterUInt8(RaceUnknown);
-		uint8_t& unknown8 = Unknown8[0];
-		RegisterUInt8(unknown8)->SetCount(3);
-		RegisterUInt8(Unknown9);
+
+		RescopeArrayElement(Unknown8);
+		if (GetVersion() >= 60100)
+			RegisterUInt8(Unknown8);
+		else
+			RegisterUInt8(Unknown8)->SetCount(3);
+
+		RescopeArrayElement(Unknown9);
+		if (GetVersion() >= 60100)
+			RegisterUInt8(Unknown9)->SetCount(3);
+		else
+			RegisterUInt8(Unknown9);
+
 		RegisterUInt8(Unknown10);
+		// If Unknown10 is set include the following
 		PacketUInt8* asize = RegisterUInt8(NumClassItems);
 		asize->SetMyArray(RegisterArray(ClassItems, ClassItem));
+		// end of if var set
+
 		asize = RegisterUInt8(UnknownArraySize);
 		asize->SetMyArray(RegisterArray(UnknownArray2, UnknownArray));
 		RegisterUInt32(Unknown11);
@@ -170,7 +213,22 @@ private:
 		Register16String(Password);
 		Register16String(Username);
 		if (GetVersion() >= 1188)
-			Register16String(Unknown12);
+			Register16String(Service); // service
+
+		if (GetVersion() >= 60100) {
+			RegisterUInt8(Unknown12);
+			// if Unknown12 is set
+			asize = RegisterUInt8(LVL90NumClassItems);
+			asize->SetMyArray(RegisterArray(LVL90ClassItems, ClassItem));
+
+			RegisterUInt8(Unknown13);
+			// if Unknown13 is set
+			asize = RegisterUInt8(TimeLockedNumClassItems);
+			asize->SetMyArray(RegisterArray(TimeLockedClassItems, ClassItem));
+
+			RescopeArrayElement(Unknown14);
+			RegisterUInt8(Unknown14)->SetCount(13);
+		}
 	}
 };
 
@@ -447,80 +505,80 @@ private:
 	< / Data>
 	<Data ElementName = "unknown13" Type = "int8" Size = "5" / >
 	< / Struct>
-	<Struct Name = "LS_LoginReplyMsg" ClientVersion = "60100" OpcodeName = "OP_LoginReplyMsg">
-	<Data ElementName = "login_response" Type = "int8" Size = "1" / >
-	<Data ElementName = "unknown" Type = "EQ2_16Bit_String" Size = "1" / >
-	<Data ElementName = "parental_control_flag" Type = "int8" Size = "1" / >
-	<Data ElementName = "parental_control_timer" Type = "int32" Size = "1" / >
-	<Data ElementName = "unknown2" Type = "int8" Size = "8" / >
-	<Data ElementName = "account_id" Type = "int32" Size = "1" / >
-	<Data ElementName = "unknown3" Type = "EQ2_16Bit_String" Size = "1" / >
-	<Data ElementName = "reset_appearance" Type = "int8" Size = "1" / >
-	<Data ElementName = "do_not_force_soga" Type = "int8" Size = "1" / >
-	<Data ElementName = "unknown4" Type = "int8" Size = "1" / >
-	<Data ElementName = "unknown5" Type = "int16" Size = "1" / >
-	<Data ElementName = "unknown6" Type = "int8" Size = "5" / >
-	<Data ElementName = "unknown7" Type = "int32" Size = "1" / >
-	<Data ElementName = "unknown7a" Type = "int16" Size = "1" / >
-	<Data ElementName = "race_unknown" Type = "int8" Size = "1" / >
-	<Data ElementName = "unknown8" Type = "int8" Size = "3" / >
-	<Data ElementName = "unknown9" Type = "int8" Size = "3" / >
-	<Data ElementName = "unknown10" Type = "int8" Size = "1" / >
-	<Data ElementName = "num_class_items" Type = "int8" IfVariableSet = "unknown10" Size = "1" / >
-	<Data ElementName = "class_items" Type = "Array" ArraySizeVariable = "num_class_items" IfVariableSet = "unknown10" >
-	<Data ElementName = "class_id" Type = "int8" Size = "1" / >
-	<Data ElementName = "num_items" Type = "int8" Size = "1" / >
-	<Data ElementName = "starting_items" Type = "Array" ArraySizeVariable = "num_items" >
-	<Data ElementName = "model_id" Type = "int32" / >
-	<Data ElementName = "slot_id" Type = "int8" / >
-	<Data ElementName = "use_color" Type = "int8" / >
-	<Data ElementName = "use_highlight_color" Type = "int8" / >
-	<Data ElementName = "model_color" Type = "EQ2_Color" / >
-	<Data ElementName = "model_highlight_color" Type = "EQ2_Color" / >
-	< / Data>
-	< / Data>
-	<Data ElementName = "unknown_array2_size" Type = "int8" Size = "1" / >
-	<Data ElementName = "unknown_array2" Type = "Array" ArraySizeVariable = "unknown_array2_size" >
-	<Data ElementName = "array2_unknown" Type = "int32" Size = "1" / >
-	< / Data>
-	<Data ElementName = "unknown11" Type = "int32" Size = "1" / >
-	<Data ElementName = "sub_level" Type = "int32" Size = "1" / >
-	<Data ElementName = "race_flag" Type = "int32" Size = "1" / >
-	<Data ElementName = "class_flag" Type = "int32" Size = "1" / >
-	<Data ElementName = "password" Type = "EQ2_16Bit_String" Size = "1" / >
-	<Data ElementName = "username" Type = "EQ2_16bit_String" Size = "1" / >
-	<Data ElementName = "service" Type = "EQ2_16bit_String" Size = "1" / >
+<Struct Name = "LS_LoginReplyMsg" ClientVersion = "60100" OpcodeName = "OP_LoginReplyMsg">
+	<Data ElementName = "login_response" Type = "int8" Size = "1" />
+	<Data ElementName = "unknown" Type = "EQ2_16Bit_String" Size = "1" />
+	<Data ElementName = "parental_control_flag" Type = "int8" Size = "1" />
+	<Data ElementName = "parental_control_timer" Type = "int32" Size = "1" />
+	<Data ElementName = "unknown2" Type = "int8" Size = "8" />
+	<Data ElementName = "account_id" Type = "int32" Size = "1" />
+	<Data ElementName = "unknown3" Type = "EQ2_16Bit_String" Size = "1" />
+	<Data ElementName = "reset_appearance" Type = "int8" Size = "1" />
+	<Data ElementName = "do_not_force_soga" Type = "int8" Size = "1" />
+	<Data ElementName = "unknown4" Type = "int8" Size = "1" />
+	<Data ElementName = "unknown5" Type = "int16" Size = "1" />
+	<Data ElementName = "unknown6" Type = "int8" Size = "5" />
+	<Data ElementName = "unknown7" Type = "int32" Size = "1" />
+	<Data ElementName = "unknown7a" Type = "int32" Size = "1" />
+	<Data ElementName = "race_unknown" Type = "int8" Size = "1" />
+	<Data ElementName = "unknown8" Type = "int8" Size = "1" />
+	<Data ElementName = "unknown9" Type = "int8" Size = "3" />
+	<Data ElementName = "unknown10" Type = "int8" Size = "1" />
+	<Data ElementName = "num_class_items" Type = "int8" IfVariableSet = "unknown10" Size = "1" />
+	<Data ElementName = "class_items" Type = "Array" ArraySizeVariable = "num_class_items" IfVariableSet = "unknown10">
+		<Data ElementName = "class_id" Type = "int8" Size = "1" />
+		<Data ElementName = "num_items" Type = "int8" Size = "1" />
+		<Data ElementName = "starting_items" Type = "Array" ArraySizeVariable = "num_items">
+			<Data ElementName = "model_id" Type = "int32" />
+			<Data ElementName = "slot_id" Type = "int8" />
+			<Data ElementName = "use_color" Type = "int8" />
+			<Data ElementName = "use_highlight_color" Type = "int8" />
+			<Data ElementName = "model_color" Type = "EQ2_Color" />
+			<Data ElementName = "model_highlight_color" Type = "EQ2_Color" />
+		</Data>
+	</Data>
+	<Data ElementName = "unknown_array2_size" Type = "int8" Size = "1" />
+	<Data ElementName = "unknown_array2" Type = "Array" ArraySizeVariable = "unknown_array2_size">
+		<Data ElementName = "array2_unknown" Type = "int32" Size = "1" />
+	</Data>
+	<Data ElementName = "unknown11" Type = "int32" Size = "1" />
+	<Data ElementName = "sub_level" Type = "int32" Size = "1" />
+	<Data ElementName = "race_flag" Type = "int32" Size = "1" />
+	<Data ElementName = "class_flag" Type = "int32" Size = "1" />
+	<Data ElementName = "password" Type = "EQ2_16Bit_String" Size = "1" />
+	<Data ElementName = "username" Type = "EQ2_16bit_String" Size = "1" />
+	<Data ElementName = "service" Type = "EQ2_16bit_String" Size = "1" />
 	<!--Seems to be a repeat of the first array-->
-	<Data ElementName = "unknown12" Type = "int8" Size = "1" / >
-	<Data ElementName = "lvl90_num_class_items" Type = "int8" IfVariableSet = "unknown12" Size = "1" / >
-	<Data ElementName = "lvl90_class_items" Type = "Array" ArraySizeVariable = "lvl90_num_class_items" IfVariableSet = "unknown12" >
-	<Data ElementName = "class_id" Type = "int8" Size = "1" / >
-	<Data ElementName = "num_items" Type = "int8" Size = "1" / >
-	<Data ElementName = "starting_items" Type = "Array" ArraySizeVariable = "num_items" >
-	<Data ElementName = "model_id" Type = "int32" / >
-	<Data ElementName = "slot_id" Type = "int8" / >
-	<Data ElementName = "use_color" Type = "int8" / >
-	<Data ElementName = "use_highlight_color" Type = "int8" / >
-	<Data ElementName = "model_color" Type = "EQ2_Color" / >
-	<Data ElementName = "model_highlight_color" Type = "EQ2_Color" / >
-	< / Data>
-	< / Data>
-	<Data ElementName = "unknown13" Type = "int8" Size = "1" / >
-	<Data ElementName = "time_locked_num_class_items" Type = "int8" IfVariableSet = "unknown13" Size = "1" / >
-	<Data ElementName = "time_locked_class_items" Type = "Array" ArraySizeVariable = "time_locked_num_class_items" IfVariableSet = "unknown13" >
-	<Data ElementName = "class_id" Type = "int8" Size = "1" / >
-	<Data ElementName = "num_items" Type = "int8" Size = "1" / >
-	<Data ElementName = "starting_items" Type = "Array" ArraySizeVariable = "num_items" >
-	<Data ElementName = "model_id" Type = "int32" / >
-	<Data ElementName = "slot_id" Type = "int8" / >
-	<Data ElementName = "use_color" Type = "int8" / >
-	<Data ElementName = "use_highlight_color" Type = "int8" / >
-	<Data ElementName = "model_color" Type = "EQ2_Color" / >
-	<Data ElementName = "model_highlight_color" Type = "EQ2_Color" / >
-	< / Data>
-	< / Data>
-	<Data ElementName = "unknown14" Type = "int8" Size = "13" / >
-	< / Struct>
+	<Data ElementName = "unknown12" Type = "int8" Size = "1" />
+	<Data ElementName = "lvl90_num_class_items" Type = "int8" IfVariableSet = "unknown12" Size = "1" />
+	<Data ElementName = "lvl90_class_items" Type = "Array" ArraySizeVariable = "lvl90_num_class_items" IfVariableSet = "unknown12">
+		<Data ElementName = "class_id" Type = "int8" Size = "1" />
+		<Data ElementName = "num_items" Type = "int8" Size = "1" />
+		<Data ElementName = "starting_items" Type = "Array" ArraySizeVariable = "num_items">
+			<Data ElementName = "model_id" Type = "int32" />
+			<Data ElementName = "slot_id" Type = "int8" />
+			<Data ElementName = "use_color" Type = "int8" />
+			<Data ElementName = "use_highlight_color" Type = "int8" />
+			<Data ElementName = "model_color" Type = "EQ2_Color" />
+			<Data ElementName = "model_highlight_color" Type = "EQ2_Color" />
+		</Data>
+	</Data>
+	<Data ElementName = "unknown13" Type = "int8" Size = "1" />
+	<Data ElementName = "time_locked_num_class_items" Type = "int8" IfVariableSet = "unknown13" Size = "1" />
+	<Data ElementName = "time_locked_class_items" Type = "Array" ArraySizeVariable = "time_locked_num_class_items" IfVariableSet = "unknown13">
+		<Data ElementName = "class_id" Type = "int8" Size = "1" />
+		<Data ElementName = "num_items" Type = "int8" Size = "1" />
+		<Data ElementName = "starting_items" Type = "Array" ArraySizeVariable = "num_items">
+			<Data ElementName = "model_id" Type = "int32" />
+			<Data ElementName = "slot_id" Type = "int8" />
+			<Data ElementName = "use_color" Type = "int8" />
+			<Data ElementName = "use_highlight_color" Type = "int8" />
+			<Data ElementName = "model_color" Type = "EQ2_Color" />
+			<Data ElementName = "model_highlight_color" Type = "EQ2_Color" />
+		</Data>
+	</Data>
+	<Data ElementName = "unknown14" Type = "int8" Size = "13" />
+</Struct>
 	<Struct Name = "LS_LoginReplyMsg" ClientVersion = "63181" OpcodeName = "OP_LoginReplyMsg">
 	<Data ElementName = "login_response" Type = "int8" Size = "1" / >
 	<Data ElementName = "unknown" Type = "EQ2_16Bit_String" Size = "1" / >

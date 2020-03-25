@@ -12,6 +12,7 @@
 #include "../Packets/OP_CreateCharacterReplyMsg_Packet.h" // needed for the defines
 
 #include "../../common/Classes.h"
+#include "../WorldServer/WorldServer.h"
 
 #ifdef _WIN32
 	#include <WS2tcpip.h>
@@ -19,6 +20,7 @@
 	#include <arpa/inet.h>
 #endif
 
+extern WorldServer s;
 extern Classes classes;
 
 static void DatabaseQueryError(Database *db) {
@@ -61,7 +63,7 @@ bool WorldDatabase::LoadOpcodes() {
 		return false;
 
 	while (result.Next()) {
-		OpcodeManager::GetGlobal()->RegisterVersionOpcode(result.GetString(0), result.GetUInt16(1), result.GetUInt16(2), result.GetUInt16(3));
+		OpcodeManager::GetGlobal()->RegisterVersionOpcode(result.GetString(0), result.GetUInt32(1), result.GetUInt32(2), result.GetUInt16(3));
 		count++;
 	}
 
@@ -73,10 +75,10 @@ bool WorldDatabase::GetAccount(Client* client, std::string user, std::string pas
 	DatabaseResult result;
 	bool success;
 
-	char* esc_user = Escape(user.c_str());
-	char* esc_pass = Escape(pass.c_str());
+	string esc_user = Escape(user.c_str());
+	string esc_pass = Escape(pass.c_str());
 
-	success = Select(&result, "SELECT * FROM `account` WHERE `name` = '%s' AND passwd = md5('%s')", esc_user, esc_pass);
+	success = Select(&result, "SELECT * FROM `account` WHERE `name` = '%s' AND passwd = md5('%s')", esc_user.c_str(), esc_pass.c_str());
 	if (success) {
 		success = result.Next();
 		if (success) {
@@ -84,13 +86,16 @@ bool WorldDatabase::GetAccount(Client* client, std::string user, std::string pas
 			client->SetAccount(id);
 			UpdateAccountIPAddress(id, client->GetIP());
 			UpdateAccountClientVersion(id, client->GetVersion());
+			client->SetAllowedClasses(result.GetUInt32(6));
+			client->SetAllowedRaces(result.GetUInt32(7));
+			client->SetCharacterSlots(result.GetUInt8(8));
 		}
 		// if user and pass check failed
 		else {
 			// if auto account creation is enabled
-			if (true) {
+			if (s.GetAutoAccountCreation()) {
 				// see if there is already an account with this username
-				success = Select(&result, "SELECT * FROM `account` WHERE `name` = '%s'", esc_user);
+				success = Select(&result, "SELECT * FROM `account` WHERE `name` = '%s'", esc_user.c_str());
 				if (success)
 					success = result.Next();
 
@@ -102,7 +107,7 @@ bool WorldDatabase::GetAccount(Client* client, std::string user, std::string pas
 				else {
 					in_addr ip_addr;
 					ip_addr.s_addr = client->GetIP();
-					success = Query("INSERT INTO account(`name`, `passwd`, `ip_address`, `last_client_version`) VALUES ('%s', md5('%s'), '%s', %u)", esc_user, esc_pass, inet_ntoa(ip_addr), client->GetVersion());
+					success = Query("INSERT INTO account(`name`, `passwd`, `ip_address`, `last_client_version`) VALUES ('%s', md5('%s'), '%s', %u)", esc_user.c_str(), esc_pass.c_str(), inet_ntoa(ip_addr), client->GetVersion());
 					if (success) 
 						client->SetAccount(LastInsertID());
 				}
@@ -115,8 +120,6 @@ bool WorldDatabase::GetAccount(Client* client, std::string user, std::string pas
 		}
 	}
 
-	free(esc_user);
-	free(esc_pass);
 	return success;
 }
 
@@ -130,19 +133,18 @@ bool WorldDatabase::UpdateAccountClientVersion(uint32_t account, uint32_t versio
 	return Query("UPDATE `account` SET `last_client_version` = %u WHERE `id` = %u", version, account);
 }
 
-bool WorldDatabase::LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMsg_Packet* packet, uint8_t max_level) {
+bool WorldDatabase::LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMsg_Packet* packet, uint8_t max_adv_level, uint8_t max_ts_level) {
 	bool ret;
 	DatabaseResult result;
 	DatabaseResult result2;
 
-	ret = Select(&result, "SELECT id, name, race, class, gender, deity, body_size, body_age, current_zone_id, level, tradeskill_class, tradeskill_level, soga_wing_type, soga_chest_type, soga_legs_type, soga_hair_type, soga_facial_hair_type, soga_model_type, legs_type, chest_type, wing_type, hair_type, facial_hair_type, model_type, unix_timestamp(created_date), unix_timestamp(last_played) FROM characters WHERE account_id = %u AND deleted = 0", account);
+	ret = Select(&result, "SELECT id, server_id, name, race, class, gender, deity, body_size, body_age, current_zone_id, level, tradeskill_class, tradeskill_level, soga_wing_type, soga_chest_type, soga_legs_type, soga_hair_type, soga_facial_hair_type, soga_model_type, legs_type, chest_type, wing_type, hair_type, facial_hair_type, model_type, unix_timestamp(created_date), unix_timestamp(last_played) FROM characters WHERE account_id = %u AND deleted = 0", account);
 	if (!ret)
 		return ret;
 
 	while (result.Next()) {
 		OP_AllCharactersDescReplyMsg_Packet::CharacterListEntry c;
 		c.account_id = account;
-		c.server_id = 1;
 
 		if (packet->GetVersion() >= 887)
 			c.version = 6;
@@ -150,14 +152,15 @@ bool WorldDatabase::LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMs
 			c.version = 5;
 
 		c.charid = result.GetUInt32(0);
-		c.name = result.GetString(1);
-		c.race = result.GetUInt8(2);
-		c._class = result.GetUInt8(3);
-		c.gender = result.GetUInt8(4);
-		//c.deity = result.GetUInt8(5);
-		c.body_size = result.GetUInt8(6);
-		//c.body_age = result.GetUInt8(7);
-		uint32_t zone_id = result.GetUInt32(8);
+		c.server_id = result.GetUInt32(1);
+		c.name = result.GetString(2);
+		c.race = result.GetUInt8(3);
+		c._class = result.GetUInt8(4);
+		c.gender = result.GetUInt8(5);
+		//c.deity = result.GetUInt8(6);
+		c.body_size = result.GetUInt8(7);
+		//c.body_age = result.GetUInt8(8);
+		uint32_t zone_id = result.GetUInt32(9);
 		ret = Select(&result2, "SELECT name, description FROM zones WHERE id = %u", zone_id);
 		if (!ret)
 			return ret;
@@ -166,35 +169,35 @@ bool WorldDatabase::LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMs
 			c.zonedesc = result2.IsNull(1) ? " " : result2.GetString(1);
 			c.zonename2 = " ";
 		}
-		c.level = result.GetUInt32(9);
-		c.tradeskill_class = result.GetUInt8(10);
-		c.tradeskill_level = result.GetUInt32(11);
+		c.level = result.GetUInt32(10);
+		c.tradeskill_class = result.GetUInt8(11);
+		c.tradeskill_level = result.GetUInt32(12);
 
-		if (c.level >= max_level)
+		if (c.level >= max_adv_level)
 			packet->VeteranAdventureBonus++;
-		if (c.tradeskill_level >= max_level)
+		if (c.tradeskill_level >= max_ts_level)
 			packet->VeteranTradeskillBonus++;
 
 		/* SOGA Appearances */
-		//c.soga_wing_type = result.GetUInt16(12);
-		//c.soga_cheek_type = result.GetUInt16(13);
-		//c.soga_legs_type = result.GetUInt16(14);
-		c.soga_hair_type = result.GetUInt16(15);
-		c.soga_hair_face_type = result.GetUInt16(16);
-		c.soga_race_type = result.GetUInt16(17);
+		//c.soga_wing_type = result.GetUInt16(13);
+		//c.soga_cheek_type = result.GetUInt16(14);
+		//c.soga_legs_type = result.GetUInt16(15);
+		c.soga_hair_type = result.GetUInt16(16);
+		c.soga_hair_face_type = result.GetUInt16(17);
+		c.soga_race_type = result.GetUInt16(18);
 
 		/* NORMAL Appearances */
-		c.legs_type = result.GetUInt16(18);
-		c.chest_type = result.GetUInt16(19);
-		c.wing_type = result.GetUInt16(20);
-		c.hair_type = result.GetUInt16(21);
-		c.hair_face_type = result.GetUInt16(22);
-		c.race_type = result.GetUInt16(23);
+		c.legs_type = result.GetUInt16(19);
+		c.chest_type = result.GetUInt16(20);
+		c.wing_type = result.GetUInt16(21);
+		c.hair_type = result.GetUInt16(22);
+		c.hair_face_type = result.GetUInt16(23);
+		c.race_type = result.GetUInt16(24);
 
-		if (!result.IsNull(24))
-			c.created_date = result.GetUInt32(24);
 		if (!result.IsNull(25))
-			c.last_played = result.GetUInt32(25);
+			c.created_date = result.GetUInt32(25);
+		if (!result.IsNull(26))
+			c.last_played = result.GetUInt32(26);
 
 
 		// TODO char_colors table
@@ -447,7 +450,6 @@ bool WorldDatabase::LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMs
 			}
 		}
 
-		// TODO equipment
 		ret = Select(&result2, "SELECT ci.slot, ia.equip_type, ia.red, ia.green, ia.blue, ia.highlight_red, ia.highlight_green, ia.highlight_blue FROM character_items ci INNER JOIN item_appearances ia ON ci.item_id = ia.item_id WHERE ci.type = 'EQUIPPED' AND ci.char_id = %u ORDER BY ci.slot ASC", c.charid);
 		if (!ret)
 			return ret;
@@ -462,8 +464,13 @@ bool WorldDatabase::LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMs
 			c.equip[slot].highlight.Green = result2.GetUInt8(6);
 			c.equip[slot].highlight.Blue = result2.GetUInt8(7);
 		}
-			
-		c.server_name = "Rewrite Test Server";
+		
+		ret = Select(&result2, "SELECT s.name FROM config_world s INNER JOIN characters c WHERE s.id = c.server_id AND c.id = %u", c.charid);
+		if (!ret)
+			return ret;
+
+		if (result2.Next())
+			c.server_name = result2.GetString(0);
 		
 		packet->CharacterList.push_back(c);
 	}
@@ -483,11 +490,9 @@ bool WorldDatabase::DeleteCharacter(uint32_t account_id, uint32_t char_id, std::
 }
 
 bool WorldDatabase::SaveClientLog(std::string type, char* message, uint32_t version) {
-	char* type_esc = Escape(type.c_str());
-	char* message_esc = Escape(message);
-	bool ret = Query("INSERT INTO log_messages (log_type, message, client_data_version, log_time) VALUES ('%s', '%s', %u, %u)", type_esc, message_esc, version, Timer::GetUnixTimeStamp());
-	free(type_esc);
-	free(message_esc);
+	string type_esc = Escape(type);
+	string message_esc = Escape(message);
+	bool ret = Query("INSERT INTO log_messages (log_type, message, client_data_version, log_time) VALUES ('%s', '%s', %u, %u)", type_esc.c_str(), message_esc.c_str(), version, Timer::GetUnixTimeStamp());
 	return ret;
 }
 
@@ -595,13 +600,12 @@ uint16_t WorldDatabase::GetAppearanceID(std::string name) {
 	uint16_t id = 0;
 	DatabaseResult result;
 	bool success;
-	char* name_esc = Escape(name.c_str());
+	string name_esc = Escape(name);
 
-	success = Select(&result, "SELECT appearance_id FROM appearances WHERE name = '%s'", name_esc);
+	success = Select(&result, "SELECT appearance_id FROM appearances WHERE name = '%s'", name_esc.c_str());
 	if (success && result.Next())
 		id = result.GetUInt16(0);
 
-	free(name_esc);
 	return id;
 }
 
@@ -689,7 +693,6 @@ void WorldDatabase::SaveCharacterFloats(uint32_t char_id, const char* type, floa
 }
 
 void WorldDatabase::UpdateStartingItems(uint32_t char_id, uint8_t class_id, uint8_t race_id, bool base_class) {
-	bool success;
 	DatabaseResult result;
 
 	struct StartingItem {
@@ -897,9 +900,9 @@ uint8_t WorldDatabase::CheckNameFilter(const char* name) {
 }
 
 bool WorldDatabase::LoadServerVariables(WorldServer* s) {
-	bool success;
+	bool success = true;
 	DatabaseResult result;
-
+	/*
 	success = Select(&result, "SELECT variable_name, variable_value FROM variables");
 	if (!success)
 		return success;
@@ -923,6 +926,106 @@ bool WorldDatabase::LoadServerVariables(WorldServer* s) {
 			s->SetMaxLevel(static_cast<uint8_t>(atoul(var_val.c_str())));
 		}
 	}
+	*/
+	return success;
+}
+
+bool WorldDatabase::LoadServerConfig(WorldServer* s) {
+	bool success = true;
+	DatabaseResult result;
+
+	success = Select(&result, "SELECT * FROM config_world WHERE id = %u", s->GetID());
+	if (!success)
+		return success;
+
+	if (result.Next()) {
+		s->SetName(result.GetString(1));
+		s->SetLocked(result.GetBool(2));
+		s->SetCharactersSlotsPerAccount(result.GetUInt8(3));
+		s->SetMaxAdvLevel(result.GetUInt8(4));
+		s->SetMaxTSLevel(result.GetUInt8(5));
+		s->SetAllowedRaces(result.GetUInt32(6));
+		s->SetAllowedClasses(result.GetUInt32(7));
+		s->SetAutoAccountCreation(result.GetBool(8));
+	}
+
+	success = Select(&result, "SELECT * FROM character_create_equipment WHERE type = 'Normal'");
+	if (!success)
+		return success;
+
+	while (result.Next()) {
+		uint8_t class_id = result.GetUInt8(2);
+
+		OP_LoginReplyMsg_Packet::ClassItem::StartingItem si;
+		si.SlotID = result.GetUInt8(3);
+		si.ModelID = result.GetUInt32(4);
+		si.UseColor = result.GetUInt8(5);
+		si.UseHighlightColor = result.GetUInt8(6);
+		si.ModelColor.Red = result.GetUInt8(7);
+		si.ModelColor.Green = result.GetUInt8(8);
+		si.ModelColor.Blue = result.GetUInt8(9);
+		si.ModelHighlightColor.Red = result.GetUInt8(10);
+		si.ModelHighlightColor.Green = result.GetUInt8(11);
+		si.ModelHighlightColor.Blue = result.GetUInt8(12);
+
+		s->NormalEquipment[class_id].push_back(si);
+	}
+
+	success = Select(&result, "SELECT * FROM character_create_equipment WHERE type = 'Level 90'");
+	if (!success)
+		return success;
+
+	while (result.Next()) {
+		uint8_t class_id = result.GetUInt8(2);
+
+		OP_LoginReplyMsg_Packet::ClassItem::StartingItem si;
+		si.SlotID = result.GetUInt8(3);
+		si.ModelID = result.GetUInt32(4);
+		si.UseColor = result.GetUInt8(5);
+		si.UseHighlightColor = result.GetUInt8(6);
+		si.ModelColor.Red = result.GetUInt8(7);
+		si.ModelColor.Green = result.GetUInt8(8);
+		si.ModelColor.Blue = result.GetUInt8(9);
+		si.ModelHighlightColor.Red = result.GetUInt8(10);
+		si.ModelHighlightColor.Green = result.GetUInt8(11);
+		si.ModelHighlightColor.Blue = result.GetUInt8(12);
+
+		s->LVL90Equipment[class_id].push_back(si);
+	}
+
+	success = Select(&result, "SELECT * FROM character_create_equipment WHERE type = 'Time Locked'");
+	if (!success)
+		return success;
+
+	while (result.Next()) {
+		uint8_t class_id = result.GetUInt8(2);
+
+		OP_LoginReplyMsg_Packet::ClassItem::StartingItem si;
+		si.SlotID = result.GetUInt8(3);
+		si.ModelID = result.GetUInt32(4);
+		si.UseColor = result.GetUInt8(5);
+		si.UseHighlightColor = result.GetUInt8(6);
+		si.ModelColor.Red = result.GetUInt8(7);
+		si.ModelColor.Green = result.GetUInt8(8);
+		si.ModelColor.Blue = result.GetUInt8(9);
+		si.ModelHighlightColor.Red = result.GetUInt8(10);
+		si.ModelHighlightColor.Green = result.GetUInt8(11);
+		si.ModelHighlightColor.Blue = result.GetUInt8(12);
+
+		s->TLEquipment[class_id].push_back(si);
+	}
 
 	return success;
+}
+
+uint32_t WorldDatabase::GetZoneIDForCharacter(uint32_t char_id) {
+	DatabaseResult result;
+	uint32_t ret = 0;
+
+	if (Select(&result, "SELECT current_zone_id FROM characters WHERE id = %u", char_id)) {
+		if (result.Next())
+			ret = result.GetUInt32(0);
+	}
+
+	return ret;
 }

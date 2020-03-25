@@ -7,6 +7,7 @@
 #include "Packet8String.h"
 #include "Packet16String.h"
 #include "Packet32String .h"
+#include "PacketChar.h"
 
 // Integers
 #include "PacketInt8.h"
@@ -38,6 +39,7 @@
 #define Register8String(e) PushElementForRegistration(new Packet8String(e), #e, Packet8String)
 #define Register16String(e) PushElementForRegistration(new Packet16String(e), #e, Packet16String)
 #define Register32String(e) PushElementForRegistration(new Packet32String(e), #e, Packet32String)
+#define RegisterChar(e) PushElementForRegistration(new PacketChar(e), #e, PacketChar)
 #define RegisterUInt8(e) PushElementForRegistration(new PacketUInt8(e), #e, PacketUInt8)
 #define RegisterUInt16(e) PushElementForRegistration(new PacketUInt16(e), #e, PacketUInt16)
 #define RegisterUInt32(e) PushElementForRegistration(new PacketUInt32(e), #e, PacketUInt32)
@@ -46,7 +48,7 @@
 #define RegisterInt16(e) PushElementForRegistration(new PacketInt16(e), #e, PacketInt16)
 #define RegisterInt32(e) PushElementForRegistration(new PacketInt32(e), #e, PacketInt32)
 #define RegisterInt64(e) PushElementForRegistration(new PacketInt64(e), #e, PacketInt64)
-#define RegisterSubstruct(e) PushElementForRegistration(new PacketSubstructParent<decltype(e)>(e), #e, PacketSubstructParent)
+#define RegisterSubstruct(e) PushElementForRegistration(new PacketSubstructParent<std::remove_reference_t<decltype(e)>>(e), #e, PacketSubstructParent<std::remove_reference_t<decltype(e)>>)
 #define RegisterArray(e, t) PushElementForRegistration(new PacketArray<t>(e), #e, PacketArrayBase)
 #define RegisterEQ2Color(e) PushElementForRegistration(new PacketEQ2Color(e), #e, PacketEQ2Color)
 #define RegisterEQ2ColorFloat(e) PushElementForRegistration(new PacketEQ2ColorFloat(e), #e, PacketEQ2ColorFloat)
@@ -55,3 +57,5 @@
 #define RegisterFloat(e) PushElementForRegistration(new PacketFloat(e), #e, PacketFloat)
 #define RegisterBool(e) PushElementForRegistration(new PacketBool(e), #e, PacketBool);
 #define RegisterDouble(e) PushElementForRegistration(new PacketDouble(e), #e, PacketDouble);
+#define RescopeArrayElement(e) auto& e = reinterpret_cast<decltype(this->e[0])&>(this->e[0]);
+#define RescopeToReference(e, t) auto& e = reinterpret_cast<t&>(this->e)

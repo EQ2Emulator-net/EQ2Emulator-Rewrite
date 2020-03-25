@@ -40,6 +40,15 @@
     <Filter Include="source\Spawns">
       <UniqueIdentifier>{8b9d8440-f2c3-4b10-87e1-40c8ce9add58}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\Packets\Server-&gt;Client">
+      <UniqueIdentifier>{1ff94625-3a0b-4d4a-9d46-fb68190060d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common\Packets\EmuPackets">
+      <UniqueIdentifier>{6126a519-f13f-411d-8f73-dc2676eeac3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Commands">
+      <UniqueIdentifier>{296eac1b-8f2b-49e6-b21c-aed066f677d3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\ZoneServer\main.cpp">
@@ -164,6 +173,21 @@
     </ClCompile>
     <ClCompile Include="..\..\source\ZoneServer\Spawns\Widget.cpp">
       <Filter>source\Spawns</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Packets\EmuPacketHandlers.cpp">
+      <Filter>source\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\ZoneServer\ZoneOperator.cpp">
+      <Filter>source\ZoneServer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\ZoneServer\ZoneServer.cpp">
+      <Filter>source\ZoneServer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Packets\EncodedPackets.cpp">
+      <Filter>source\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\NetUtil.cpp">
+      <Filter>common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -394,6 +418,114 @@
     </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\Spawns\Widget.h">
       <Filter>source\Spawns</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_SpawnHeader.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RegisterZoneServer_Packet.h">
+      <Filter>common\Packets\EmuPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\ZoneServer\ZoneOperator.h">
+      <Filter>source\ZoneServer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_ZoneInfoMsg_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_ClientCmdMsg_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_CreateGhostCmd_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DoneLoadingZoneResourcesMsg_Packet.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DoneSendingInitialEntitiesMsg_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_ClientCmdMsg_Packet.h">
+      <Filter>source\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_EqSetPOVGhostCmd_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DoneLoadingEntityResourcesMsg_Packet.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_EqSetControlGhostCmd_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_UpdateCharacterSheetMsg_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_GroupMember.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_MaintainedEffects.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_PassiveEffects.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_SpellEffects.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketChar.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DefaultGroupOptionsMsg_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DefaultGroupOptionsRequestMsg_Packet.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_MoveableObjectPlacementCriteri_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_GameWorldTimeMsg_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_UpdatePositionMsg.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketEncodedData.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketPackedData.h">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\EncodedBuffer.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_PredictionUpdateMsg.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\EncodedPackets.h">
+      <Filter>source\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RequestZoneReply_Packet.h">
+      <Filter>common\Packets\EmuPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RequestZone_Packet.h">
+      <Filter>common\Packets\EmuPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RegisterZoneServerReply_Packet.h">
+      <Filter>common\Packets\EmuPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_TransferClient_Packet.h">
+      <Filter>common\Packets\EmuPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Commands\CommandToken.h">
+      <Filter>source\Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_RemoteCmdMsg_Packet.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_SetRemoteCmdsMsg_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\NetUtil.h">
+      <Filter>common</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

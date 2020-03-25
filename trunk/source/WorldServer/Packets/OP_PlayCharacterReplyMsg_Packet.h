@@ -24,20 +24,41 @@
 #define PLAY_ERROR_ACCOUNT_BANNED			18
 #define PLAY_ERROR_PROHIBITED				19
 
+enum class PlayCharacterResponse : uint8_t {
+	EProblem = 0,
+	ESuccess = 1,
+	EZoneDown = 4,
+	ECharacterNotLoaded = 5,
+	ECharacterNotFound = 6,
+	EAccountInUse = 7,
+	EServerTimeout = 8,
+	EServerShutdown = 9,
+	ELoadingError = 10,
+	EExchangeServer = 11,
+	ERegionServer = 12,
+	EClassInvalid = 13,
+	ETooManyCharacters = 14,
+	EEOFExpansionNotFound = 15,
+	EUnknownResponse = 16,
+	EUnknown = 17,
+	EAccountBanned = 18,
+	EProhibited = 19
+};
+
 class OP_PlayCharacterReplyMsg_Packet : public EQ2Packet {
 public:
 	OP_PlayCharacterReplyMsg_Packet(uint32_t version)
 		: EQ2Packet(version) {
 		RegisterElements();
 
-		response = 0;
+		response = PlayCharacterResponse::EProblem;
 		memset(unknown1, 0, sizeof(unknown1));
 		port = 0;
 		account_id = 0;
 		access_code = 0;
 	}
 
-	uint8_t response;
+	PlayCharacterResponse response;
 	uint16_t unknown1[3]; // 1096 size = 1 // 60099 size = 3
 	std::string server;
 	uint16_t port;
@@ -46,6 +67,7 @@ public:
 
 private:
 	void RegisterElements() {
+		uint8_t& response = reinterpret_cast<uint8_t&>(this->response);
 		RegisterUInt8(response);
 		uint16_t& Unknown1 = unknown1[0];
 		if (GetVersion() >= 1096 && GetVersion() < 60099)

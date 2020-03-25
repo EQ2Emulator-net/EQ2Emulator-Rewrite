@@ -21,15 +21,8 @@ public:
 		NumPlayers = 0;
 		Load = 0;	// valid values seem to be 0, 1, and 2
 		NumOnlineFlag = 1;
-		FeatureSet = 0;
-
-		if (version < 1096)
-			AllowedRaces = 0x0007FFFF; // without Freeblood and Aerakyn race
-		else if (version < 60006)
-			AllowedRaces = 0x000FFFFF; // with Freeblood
-		else
-			AllowedRaces = 0x001FFFFF;	// with Aerakyn
-
+		memset(FeatureSet, 0, sizeof(FeatureSet));
+		AllowedRaces = 0x001FFFFF;
 		Unknown2 = 0;
 	}
 
@@ -46,7 +39,7 @@ public:
 	uint16_t NumPlayers;
 	uint8_t Load;
 	uint8_t NumOnlineFlag;
-	uint8_t FeatureSet;
+	uint8_t FeatureSet[2];
 	uint32_t AllowedRaces;
 	// End of Array elements
 
@@ -68,7 +61,11 @@ private:
 		RegisterUInt16(NumPlayers);
 		RegisterUInt8(Load);
 		RegisterUInt8(NumOnlineFlag);
-		RegisterUInt8(FeatureSet);
+		RescopeArrayElement(FeatureSet);
+		if (GetVersion() >= 60100)
+			RegisterUInt8(FeatureSet)->SetCount(2);
+		else
+			RegisterUInt8(FeatureSet);
 		RegisterUInt32(AllowedRaces);
 		if (GetVersion() > 60100)
 			RegisterUInt8(Unknown2);

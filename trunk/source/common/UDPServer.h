@@ -12,11 +12,12 @@ class UDPServer : public Server {
 public:
 	~UDPServer();
 	bool Open() override;
-	void StreamDisconnected(Stream* stream) override;
+	void StreamDisconnected(std::shared_ptr<Stream> stream) override;
+	virtual void AddStream(std::shared_ptr<Stream> stream, std::string key);
 
 protected:
 	UDPServer() : bLooping(false) { streamLock.SetName("UDPServer::streamLock"); }
-	std::map<std::string, Stream*> Streams;
+	std::map<std::string, std::shared_ptr<Stream> > Streams;
 	Mutex streamLock;
 
 private:

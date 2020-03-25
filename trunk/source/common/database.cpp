@@ -7,6 +7,8 @@
 //Again... not great to be using stdlib names
 #include "stdio.h"
 
+#include <string>
+
 // fix for incompatible mysqlclient.lib
 // http://stackoverflow.com/questions/30450042/unresolved-external-symbol-imp-iob-func-referenced-in-function-openssldie
 #if defined(_WIN32)
@@ -274,20 +276,20 @@ unsigned long Database::AffectedRows() {
 	return (unsigned long)mysql_affected_rows(&mysql);
 }
 
-char * Database::Escape(const char *str, size_t len) {
-	char *buf = (char *)malloc(len * 2 + 1);
+std::string Database::Escape(const char *str, size_t len) {
+	std::vector<char> buf(len * 2 + 1);
 
-	if (buf == NULL) {
-	    strlcpy(error, "Out of memory", sizeof(error));
-		return NULL;
-	}
+	mysql_real_escape_string(&mysql, buf.data(), str, (unsigned long)len);
 
-	mysql_real_escape_string(&mysql, buf, str, (unsigned long)len);
-	return buf;
+	return std::move(std::string(buf.data()));
 }
 
-char * Database::Escape(const char *str) {
-	return Escape(str, strlen(str));
+std::string Database::Escape(const char *str) {
+	return std::move(Escape(str, strlen(str)));
+}
+
+std::string Database::Escape(const std::string& str) {
+	return std::move(Escape(str.c_str(), str.length()));
 }
 
 void Database::BeginTransaction() {

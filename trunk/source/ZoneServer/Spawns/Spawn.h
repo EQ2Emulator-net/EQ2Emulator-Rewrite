@@ -143,9 +143,9 @@ public:
 	void SetHandFlag(uint8_t new_val, bool updateFlags = true){
 		SetVis(&m_visStruct.hand_flag, new_val, updateFlags);
 	}
-	void SetVisUnknown2(uint8_t value, uint8_t index, bool updateFlags = true) {
-		SetVis(&m_visStruct.unkown2[index], value, updateFlags);
-	}
+	/*void SetVisUnknown2(uint8_t value, uint8_t index, bool updateFlags = true) {
+		SetVis(&m_visStruct.unknown2[index], value, updateFlags);
+	}*/
 	void SetVisUnknown2A(uint8_t value, uint8_t index, bool updateFlags = true) {
 		SetVis(&m_visStruct.unknown2a[index], value, updateFlags);
 	}
@@ -376,9 +376,6 @@ public:
 	}
 	void SetZ(float z, bool updateFlags = true){
 		SetPos(&m_posStruct.Z, z, updateFlags);
-	}
-	void SetUnknown(int16_t value, uint8_t index, bool updateFlags = true) {
-		SetPos(&m_posStruct.unknown[index], value, updateFlags);
 	}
 	void SetHeading(int16_t dir1, int16_t dir2, bool updateFlags = true){
 		SetPos(&m_posStruct.heading1, dir1, updateFlags);

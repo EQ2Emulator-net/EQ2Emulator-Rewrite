@@ -5,6 +5,15 @@
 #include "../../common/Packets/EQ2Packets/OpcodeManager.h"
 #include "../WorldServer/Client.h"
 
+
+//enum class LoginReply : uint8_t {
+//	EAccepted = 0,
+//	EBadPassword = 1,
+//	ECurrentlyPlaying = 2,
+//	EBadVersion = 6,
+//	EUnknown = 7
+//};
+
 class OP_LoginRequestMsg_Packet : public EQ2Packet {
 public:
 	OP_LoginRequestMsg_Packet(uint32_t version)
@@ -63,7 +72,7 @@ public:
 	std::string GPUName;
 	std::string CPUName;
 
-	void HandlePacket(Client* client) {
+	void HandlePacket(std::shared_ptr<Client> client) {
 		client->SetVersion((uint32_t)Version);
 
 		if (Password == "")

@@ -41,10 +41,18 @@
 #include <io.h>
 #include <sys/timeb.h>
 # include <process.h>
+#define SOCKET_CLOSE(s) do { closesocket((s)); (s) = INVALID_SOCKET; } while (0)
 #else
 #include <sys/stat.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <sys/time.h>
-# include <unistd.h>
+#include <unistd.h>
 #include <arpa/inet.h>
+#include <fcntl.h>
+#define SOCKET int
+#define INVALID_SOCKET -1
+#define SOCKET_CLOSE(s) do { shutdown((s), SHUT_RDWR); close(s); } while (0)
+#define SOCKET_ERROR SO_ERROR
 #endif
