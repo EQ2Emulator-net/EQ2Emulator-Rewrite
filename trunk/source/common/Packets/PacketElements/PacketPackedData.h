@@ -200,6 +200,86 @@ bool DoUnpack(uint32_t srcLen, uint8_t* data, uint32_t& outsize, uint8_t* dst, u
 	return src_pos == srcLen;
 }
 
+int32_t DoUnpackClassic(const uint8_t* input, int32_t inputSize, uint8_t* outBuf, int32_t outBufSize) {
+	assert(outBufSize > 4);
+
+	if (inputSize < 4) {
+		return -1;
+	}
+
+	int32_t packedSize = *reinterpret_cast<const int32_t*>(input);
+
+	if (packedSize == 0) {
+		return 0;
+	}
+
+	if (4 + packedSize > inputSize) {
+		return 0;
+	}
+
+	input += 4;
+	inputSize -= 4;
+
+	uint8_t* outStart = outBuf;
+	outBuf += 4;
+	outBufSize -= 4;
+
+	uint32_t nOutRemaining = outBufSize;
+
+	while (outBufSize != 0) {
+		if (inputSize-- == 0) {
+			break;
+		}
+
+		uint8_t code = *input;
+		++input;
+		if (code & 0x80) {
+			uint8_t zeroLen = 0;
+			bool bBreak = false;
+			do {
+				if ((static_cast<uint32_t>(zeroLen) & 1 << (zeroLen & 0x1f)) == 0) {
+					*outBuf = 0;
+				}
+				else {
+					*outBuf = *input;
+					++input;
+					--inputSize;
+				}
+				++outBuf;
+				if (--nOutRemaining == 0 || --inputSize == 0) {
+					bBreak = true;
+					break;
+				}
+				++zeroLen;
+			} while (zeroLen < 7);
+
+			if (bBreak) {
+				break;
+			}
+		}
+		else {
+			if (nOutRemaining < code) {
+				return -1;
+			}
+
+			uint8_t zeroLen = code / 4;
+			uint8_t* ptr = outBuf;
+			memset(ptr, 0, zeroLen);
+			ptr += zeroLen;
+			zeroLen = code % 4;
+			memset(ptr, 0, zeroLen);
+			outBuf += code;
+			nOutRemaining -= code;
+		}
+		outBufSize = nOutRemaining;
+	}
+
+	uint32_t unpackedSize = outBuf - outStart - 4;
+	memcpy(outStart, &unpackedSize, sizeof(unpackedSize));
+
+	return unpackedSize + 4;
+}
+
 //You may choose to either inherit from this class or simply use PacketPackedData::LinkSubstruct in the desired order of your packed data
 class PacketPackedData : public PacketSubstruct {
 public:
@@ -244,9 +324,17 @@ public:
 
 		uint32_t outsize;
 
-		if (!DoUnpack(lastPackedSize, tmpSrc, outsize, tmpDst, sizeof(tmpDst), true)) {
-			LogDebug(LOG_PACKET, 0, "PacketPackedData::ReadElement unable to unpack data!");
-			return false;
+		if (bClassic) {
+			if (DoUnpackClassic(tmpSrc, lastPackedSize, tmpDst, sizeof(tmpDst)) < 0) {
+				LogDebug(LOG_PACKET, 0, "PacketPackedData::ReadElement unable to unpack data!");
+				return false;
+			}
+		}
+		else {
+			if (!DoUnpack(lastPackedSize, tmpSrc, outsize, tmpDst, sizeof(tmpDst), true)) {
+				LogDebug(LOG_PACKET, 0, "PacketPackedData::ReadElement unable to unpack data!");
+				return false;
+			}
 		}
 
 		uint32_t readOffset = 0;
