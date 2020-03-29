@@ -7,7 +7,14 @@
 class OP_ClientCmdMsg_Packet : public EQ2Packet {
 public:
 	OP_ClientCmdMsg_Packet(uint32_t version) : EQ2Packet(version), subOpcode(0xFFFF) {
-		RegisterUInt32(clientCmdSize);
+		clientCmdSize = 0;
+		if (version > 283) {
+			RegisterUInt32(clientCmdSize);
+		}
+		else {
+			uint16_t& clientCmdSize = reinterpret_cast<uint16_t&>(this->clientCmdSize);
+			RegisterOversizedByte(clientCmdSize);
+		}
 		RegisterOversizedByte(subOpcode);
 	}
 	~OP_ClientCmdMsg_Packet() = default;

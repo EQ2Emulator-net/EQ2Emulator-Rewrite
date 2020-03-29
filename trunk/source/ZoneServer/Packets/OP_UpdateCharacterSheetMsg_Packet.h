@@ -2297,7 +2297,7 @@ private:
 
 class OP_UpdateCharacterSheetMsg_Packet : public UpdateCharacterSheetMsgData, public EQ2Packet {
 public:
-	OP_UpdateCharacterSheetMsg_Packet(uint32_t version) : UpdateCharacterSheetMsgData(version), EQ2Packet(version) {
+	OP_UpdateCharacterSheetMsg_Packet(uint32_t version) : UpdateCharacterSheetMsgData(version), EQ2Packet(version), packedData(version <= 283) {
 		packedData.LinkSubstruct(*static_cast<UpdateCharacterSheetMsgData*>(this), "packed_data");
 		//RegisterSubstruct(packedData);
 		//Can't use the macro while inheriting from both PacketSubstruct and EQ2Packet

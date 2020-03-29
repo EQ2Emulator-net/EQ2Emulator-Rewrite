@@ -71,7 +71,7 @@ public:
 	explicit ReadLocker(Mutex& lock);
 
 	//Move constructor
-	ReadLocker(ReadLocker&& rhs) {
+	ReadLocker(ReadLocker&& rhs) noexcept {
 		lock_object = rhs.lock_object;
 		locked = rhs.locked;
 		rhs.locked = false;
@@ -92,7 +92,7 @@ public:
 	explicit WriteLocker(Mutex& lock);
 
 	//Move constructor
-	WriteLocker(WriteLocker&& rhs) {
+	WriteLocker(WriteLocker&& rhs) noexcept {
 		lock_object = rhs.lock_object;
 		locked = rhs.locked;
 		rhs.locked = false;

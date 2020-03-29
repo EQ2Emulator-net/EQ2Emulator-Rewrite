@@ -92,6 +92,75 @@ uint32_t DoPack(uint8_t* data, uint8_t* src, uint16_t srcLen, uint16_t dstLen) {
 	return dataLen + 4;
 }
 
+uint32_t DoPackClassic(uint8_t* input, int32_t inputSize, uint8_t* outBuf, int32_t outBufSize) {
+	assert(outBufSize > 4);
+	int32_t inputCount = inputSize;
+	uint8_t * outBufStart = outBuf;
+	outBufSize -= 4;
+	outBuf += 4;
+	memset(outBuf, 0, outBufSize);
+
+	while (inputCount) {
+		int32_t code = min<>(7, inputCount);
+		int32_t zeroLen = 0;
+		zeroLen = 0;
+		uint8_t bVar5 = 0;
+
+		auto ZeroFillBlock = [&code, &zeroLen, &input, &inputCount, &outBuf] {
+			inputCount -= code;
+			while ((input[zeroLen] == '\0' && zeroLen < 0x7f) && inputCount) {
+				++zeroLen;
+				--inputCount;
+			}
+			*outBuf = zeroLen;
+			++outBuf;
+		};
+
+		if (code == 0) {
+			ZeroFillBlock();
+		}
+		else {
+			bool bRedo;
+			do {
+				bRedo = false;
+				do {
+					if (input[zeroLen] != '\0') {
+						bVar5 = bVar5 | 1 << (zeroLen & 0x1f);
+					}
+					++zeroLen;
+				} while (zeroLen < code);
+
+				if (bVar5 == 0) {
+					ZeroFillBlock();
+					bRedo = true;
+					continue;
+				}
+
+				*outBuf = bVar5 | 0x80;
+				++outBuf;
+
+				zeroLen = 0;
+				do {
+					if ((static_cast<int32_t>(bVar5 | 0x80) & 1 << (zeroLen & 0x1f)) != 0) {
+						*outBuf = input[zeroLen];
+						++outBuf;
+					}
+					++zeroLen;
+				} while (zeroLen < code);
+				inputCount -= code;
+				zeroLen = code;
+			} while (bRedo);
+		}
+
+		input += zeroLen;
+	}
+
+	uint32_t packSize = outBuf - outBufStart;
+	memcpy(&outBufStart, &packSize, sizeof(uint32_t));
+
+	return packSize + 4;
+}
+
 bool DoUnpack(uint32_t srcLen, uint8_t* data, uint32_t& outsize, uint8_t* dst, uint16_t dstLen, bool reverse) {
 	if (reverse)
 		DoPackReverse(data, srcLen);
@@ -134,7 +203,7 @@ bool DoUnpack(uint32_t srcLen, uint8_t* data, uint32_t& outsize, uint8_t* dst, u
 //You may choose to either inherit from this class or simply use PacketPackedData::LinkSubstruct in the desired order of your packed data
 class PacketPackedData : public PacketSubstruct {
 public:
-	PacketPackedData(uint32_t p_nSizeBytes = 4) : PacketSubstruct(0), lastPackedSize(0), nSizeBytes(p_nSizeBytes), bBufInitialized(false) {}
+	PacketPackedData(bool bClassicClient, uint32_t p_nSizeBytes = 4) : PacketSubstruct(0), lastPackedSize(0), nSizeBytes(p_nSizeBytes), bBufInitialized(false), bClassic(bClassicClient) {}
 
 	~PacketPackedData() = default;
 
@@ -226,7 +295,14 @@ public:
 			e->WriteElement(tmp.data(), offset);
 		}
 
-		uint32_t packedSize = DoPack(buf.data(), tmp.data(), unpackedSize, unpackedSize + nSizeBytes) - 4;
+		uint32_t packedSize;
+		if (bClassic) {
+			packedSize = DoPackClassic(buf.data(), buf.size(), tmp.data(), unpackedSize) - 4;
+			
+		}
+		else {
+			packedSize = DoPack(buf.data(), tmp.data(), unpackedSize, buf.size()) - 4;
+		}
 		memcpy(tmp.data(), &packedSize, nSizeBytes);
 		memcpy(tmp.data() + nSizeBytes, buf.data() + 4, packedSize);
 		tmp.resize(packedSize + nSizeBytes);
@@ -247,5 +323,6 @@ public:
 private:
 	std::vector<unsigned char> buf;
 	bool bBufInitialized;
+	bool bClassic;
 	uint32_t nSizeBytes;
 };

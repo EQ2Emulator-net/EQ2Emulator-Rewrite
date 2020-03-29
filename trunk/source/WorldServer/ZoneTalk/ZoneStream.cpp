@@ -5,6 +5,10 @@
 #include "../../common/EmuPacket.h"
 #include "ZoneTalk.h"
 
+ZoneStream::ZoneStream(uint32_t p_ip, uint32_t p_port) : port(p_port), EmuStream(p_ip, p_port) {
+
+}
+
 void ZoneStream::Process() {
 	auto incoming = PopIncoming();
 
@@ -29,7 +33,7 @@ uint32_t ZoneStream::GetNumberOfZones() {
 	uint32_t ret = 0;
 
 	for (std::pair<uint32_t, std::set<uint32_t> > kvp : current_zones) {
-		ret += kvp.second.size();
+		ret += static_cast<uint32_t>(kvp.second.size());
 	}
 
 	return ret;

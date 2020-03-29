@@ -13,4 +13,5 @@ class NetUtil {
 public:
 	static int32_t SocketErrno();
 	static std::string SocketError();
+	static std::string ConvertIpToString(uint32_t ip);
 };

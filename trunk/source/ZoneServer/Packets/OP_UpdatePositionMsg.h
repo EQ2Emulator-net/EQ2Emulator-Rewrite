@@ -82,7 +82,7 @@ struct Substruct_MovementData : public PacketEncodedData {
 
 class OP_UpdatePositionMsg : public EQ2Packet {
 public:
-	OP_UpdatePositionMsg(uint32_t version) : EQ2Packet(version), movement(version) {
+	OP_UpdatePositionMsg(uint32_t version) : EQ2Packet(version), packedData(version <= 283), movement(version) {
 		packedData.LinkSubstruct(movement, "movement");
 		RegisterElements();
 	}

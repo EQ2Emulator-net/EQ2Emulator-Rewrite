@@ -27,3 +27,13 @@ std::string NetUtil::SocketError() {
 
 	return errbuf;
 }
+
+std::string NetUtil::ConvertIpToString(uint32_t ip) {
+	std::ostringstream ss;
+	for (int i = 0; i < 4; i++) {
+		ss << (ip & 0xff);
+		if (i != 3) ss << '.';
+		else ip >>= 8;
+	}
+	return ss.str();
+}

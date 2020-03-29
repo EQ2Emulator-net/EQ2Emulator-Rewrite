@@ -18,7 +18,7 @@ struct PlayerInfo {
 
 class ZoneStream : public EmuStream, public std::enable_shared_from_this<ZoneStream> {
 public:
-	ZoneStream(uint32_t ip, uint32_t port) : EmuStream(ip, port) {}
+	ZoneStream(uint32_t ip, uint32_t port);
 	~ZoneStream() = default;
 
 	void Process() override;

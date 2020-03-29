@@ -9,7 +9,7 @@
 class OP_CreateGhostCmd_Packet : public OP_ClientCmdMsg_Packet {
 public:
 	OP_CreateGhostCmd_Packet(uint32_t version) : OP_ClientCmdMsg_Packet(version),
-		header(version), pos(version), vis(version), info(version), footer(version) {
+		header(version), pos(version), vis(version), info(version), footer(version), packedData(version <= 283) {
 		RegisterElements();
 	}
 	~OP_CreateGhostCmd_Packet() = default;
