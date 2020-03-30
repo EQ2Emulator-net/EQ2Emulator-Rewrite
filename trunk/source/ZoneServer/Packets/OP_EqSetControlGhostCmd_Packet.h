@@ -27,9 +27,11 @@ private:
 	void RegisterElements() {
 		RegisterUInt32(spawn_id);
 		RegisterFloat(speed);
-		if (GetVersion() >= 1096)
-			RegisterFloat(air_speed);
-		RegisterFloat(size);
+		if (GetVersion() > 283) {
+			if (GetVersion() >= 1096)
+				RegisterFloat(air_speed);
+			RegisterFloat(size);
+		}
 		RegisterUInt8(unknown2);
 		if (GetVersion() >= 1119) {
 			uint8_t& Unknown = unknown[0];

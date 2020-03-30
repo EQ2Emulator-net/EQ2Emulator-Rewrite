@@ -79,17 +79,20 @@ public:
 	uint32_t GetVersion() { return version; }
 
 protected:
-	PacketSubstruct(uint32_t p_version): elementsInitialized(false), version(p_version) {}
+	PacketSubstruct(uint32_t p_version): elementsInitialized(false), version(p_version) {
+	}
 
 	//Copy constructor
 	PacketSubstruct(const PacketSubstruct& other) {
 		elements.reserve(other.elements.size());
+		version = other.version;
 		elementsInitialized = false;
 	}
 
 	//Move constructor
 	PacketSubstruct(PacketSubstruct&& other) {
 		elements.reserve(other.elements.size());
+		version = other.version;
 		elementsInitialized = false;
 	}
 

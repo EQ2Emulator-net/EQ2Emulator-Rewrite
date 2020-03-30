@@ -30,14 +30,16 @@ public:
 	struct Substruct_CommandList : public PacketSubstruct {
 		std::string command_list_name;
 		float command_list_max_distance;
-		std::string command_list_error;
+		uint8_t command_list_error_code;
+		uint8_t command_list_unknown;
 		std::string command_list_command;
 
 		Substruct_CommandList() : PacketSubstruct(0) {
 			Register16String(command_list_name);
 			RegisterFloat(command_list_max_distance);
-			Register16String(command_list_error);
-			Register16String(command_list_command);
+			RegisterUInt8(command_list_error_code);
+			auto e = RegisterUInt8(command_list_unknown);
+			Register16String(command_list_command)->SetIsVariableSet(e);
 		}
 	};
 

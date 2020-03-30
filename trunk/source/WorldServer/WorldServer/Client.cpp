@@ -113,33 +113,52 @@ WorldServer* Client::GetServer() {
 
 void Client::SaveErrorsToDB(std::string log, std::string type) {
 	uint32_t size = (uint32_t)log.size();
-	char* message = new char[size];
-	memset(message, 0, size);
+	Bytef buf[4096] = { 0 };
 	
 	z_stream zstream;
 	int zerror = 0;
 	zstream.next_in = (Bytef*)log.c_str();
 	zstream.avail_in = size;
-	zstream.next_out = (Bytef*)message;
-	zstream.avail_out = size;
+	zstream.next_out = buf;
+	zstream.avail_out = sizeof(buf);
 	zstream.zalloc = Z_NULL;
 	zstream.zfree = Z_NULL;
 	zstream.opaque = Z_NULL;
 
 	zerror = inflateInit(&zstream);
 	if (zerror != Z_OK) {
-		if (message)
-			delete[] message;
 		return;
 	}
-	zerror = inflate(&zstream, 0);
-	if (message && strlen(message) > 0)
-		database.SaveClientLog(type, message, GetVersion());
 
-	if (message)
-		delete[] message;
+	string unpackedMessage;
+
+	for (;;) {
+		zerror = inflate(&zstream, 0);
+		bool bEnd = (zerror == Z_STREAM_END);
+		if (zerror != Z_OK && !bEnd) {
+			inflateEnd(&zstream);
+			return;
+		}
+
+		size_t bytesGenerated = sizeof(buf) - zstream.avail_out;
+
+		if (bytesGenerated == 0) {
+			break;
+		}
+
+		unpackedMessage.append(reinterpret_cast<const char*>(buf), bytesGenerated);
+
+		if (bEnd) {
+			break;
+		}
+
+		zstream.avail_out = sizeof(buf);
+		zstream.next_out = buf;
+	}
 
 	inflateEnd(&zstream);
+
+	database.SaveClientLog(type, unpackedMessage, GetVersion());
 }
 
 uint32_t Client::GetAllowedRaces() {
@@ -181,7 +200,16 @@ void Client::ReadVersionPacket(const unsigned char* data, uint32_t size, uint32_
 	}
 
 	//21 Bytes is the remaining size for the 1208 client, I'm assuming the largest struct before the change
-	uint16_t struct_version = remaining_size > 21 ? 1212 : 1;
+	uint16_t struct_version;
+	if (remaining_size == 1) {
+		struct_version = 283;
+	}
+	else if (remaining_size > 21) {
+		struct_version = 1212;
+	}
+	else {
+		struct_version = 284;
+	}
 
 	//We want to handle this packet now because other packets rely on the version set from it
 	OP_LoginRequestMsg_Packet p(struct_version);

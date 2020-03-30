@@ -15,7 +15,6 @@ public:
 	bool ReadConfig(std::string file);
 
 private:
-	char* GetFileContent(const char* file);
 	void ReadServerConfig(xml_node<>* node);
 	void ReadDatabaseConfig(xml_node<>* node);
 	void ReadLogConfig(xml_node<>* node);

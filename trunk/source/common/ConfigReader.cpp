@@ -5,6 +5,7 @@
 #include "string.h"
 #include "log.h"
 #include <fstream>
+#include "../depends/rapid-xml/rapidxml_utils.hpp"
 
 #define XML_SAFE_ATTR_VALUE(node, name) (node)->first_attribute(name) == NULL ? NULL : (node)->first_attribute(name)->value()
 
@@ -22,46 +23,13 @@ ConfigReader::~ConfigReader() {
 
 }
 
-char* ConfigReader::GetFileContent(const char *file) {
-	uint32_t count;
-	uint32_t size;
-	char *buf;
-	std::ifstream f(file);
-
-	if (!f) {
-		fprintf(stderr, "Could not open '%s': %s\n", file, appStrError().c_str());
-		return NULL;
-	}
-
-	f.seekg(0, std::ios::end);
-	size = (uint32_t)f.tellg();
-	f.seekg(0, std::ios::beg);
-
-	if ((buf = (char *)malloc(size)) == NULL) {
-		fprintf(stderr, "Out of memory trying to allocate %u bytes for config reader buffer", size);
-		return NULL;
-	}
-
-	count = (uint32_t)f.readsome(buf, size);
-
-	if (size != count) {
-		free(buf);
-		fprintf(stderr, "Tried to read %u bytes from %s but only read %u", size, file, count);
-		return NULL;
-	}
-
-	return buf;
-}
-
 bool ConfigReader::ReadConfig(std::string file) {
 	xml_node<> *root, *node;
-	xml_document<>* doc = new xml_document<>;
-	char *buf;
+	auto doc = std::make_unique<xml_document<>>();
 
-	if ((buf = GetFileContent(file.c_str())) == NULL)
-		return false;
+	rapidxml::file<> xmlFile(file.c_str());
 
-	doc->parse<0>(buf);
+	doc->parse<0>(xmlFile.data());
 	root = doc->first_node("eq2emu");
 
 	if (root != NULL) {
@@ -75,9 +43,6 @@ bool ConfigReader::ReadConfig(std::string file) {
 			ReadZoneTalkConfig(node);
 	}
 
-	delete doc;
-
-	free(buf);
 	return true;
 }
 

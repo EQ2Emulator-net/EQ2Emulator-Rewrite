@@ -487,8 +487,10 @@ public:
 		if (version < 57080) {
 			uint16_t& model_type = reinterpret_cast<uint16_t&>(this->model_type);
 			RegisterUInt16(model_type);
-			uint16_t& soga_model_type = reinterpret_cast<uint16_t&>(this->soga_model_type);
-			RegisterUInt16(soga_model_type);
+			if (version > 283) {
+				uint16_t& soga_model_type = reinterpret_cast<uint16_t&>(this->soga_model_type);
+				RegisterUInt16(soga_model_type);
+			}
 		}
 		else {
 			RegisterUInt32(model_type);
@@ -497,11 +499,13 @@ public:
 		if (version < 60055) {
 			RegisterEQ2Color(skin_color);
 			RegisterEQ2Color(eye_color);
-			RegisterEQ2Color(soga_eye_color);
-			RegisterEQ2Color(soga_skin_color);
-			if (version > 860) {
-				RegisterEQ2Color(kunark_unknown_color1);
-				RegisterEQ2Color(kunark_unknown_color2);
+			if (version > 283) {
+				RegisterEQ2Color(soga_eye_color);
+				RegisterEQ2Color(soga_skin_color);
+				if (version > 860) {
+					RegisterEQ2Color(kunark_unknown_color1);
+					RegisterEQ2Color(kunark_unknown_color2);
+				}
 			}
 		}
 		if (version < 57080) {
@@ -526,12 +530,15 @@ public:
 			RegisterUInt16(hair_type_id);
 			RescopeToReference(facial_hair_type_id, uint16_t);
 			RegisterUInt16(facial_hair_type_id);
-			RescopeToReference(wing_type_id, uint16_t);
-			RegisterUInt16(wing_type_id);
+			if (version > 283) {
+				RescopeToReference(wing_type_id, uint16_t);
+				RegisterUInt16(wing_type_id);
+			}
 			RescopeToReference(chest_type_id, uint16_t);
 			RegisterUInt16(chest_type_id);
 			RescopeToReference(legs_type_id, uint16_t);
 			RegisterUInt16(legs_type_id);
+
 		}
 		else {
 			RegisterUInt32(hair_type_id);
@@ -552,15 +559,15 @@ public:
 			}
 		}
 
-		if (version < 57080) {
+		if (version >= 57080) {
+			RegisterUInt32(soga_hair_type_id);
+			RegisterUInt32(soga_facial_hair_type_id);
+		}
+		else if (version > 283) {
 			RescopeToReference(soga_hair_type_id, uint16_t);
 			RegisterUInt16(soga_hair_type_id);
 			RescopeToReference(soga_facial_hair_type_id, uint16_t);
 			RegisterUInt16(soga_facial_hair_type_id);
-		}
-		else {
-			RegisterUInt32(soga_hair_type_id);
-			RegisterUInt32(soga_facial_hair_type_id);
 		}
 
 		if (version >= 60055) {
@@ -575,15 +582,18 @@ public:
 			RegisterUInt8(unknown60055)->SetCount(18);
 		}
 
+		int32_t colorCount = (GetVersion() > 283 ? 25 : 21);
 		RescopeArrayElement(equipment_colors);
-		RegisterEQ2Color(equipment_colors)->SetCount(25);
+		RegisterEQ2Color(equipment_colors)->SetCount(colorCount);
 		if (version >= 1188) {
 			RescopeArrayElement(unknown7b);
 			RegisterEQ2Color(unknown7b)->SetCount(2);
 		}
 		RegisterEQ2Color(hair_type_color);
 		RegisterEQ2Color(hair_face_color);
-		RegisterEQ2Color(wing_color1);
+		if (version > 283) {
+			RegisterEQ2Color(wing_color1);
+		}
 		RescopeArrayElement(unknown10);
 		if (version < 996) {
 			RegisterEQ2Color(unknown10)->SetCount(2);
@@ -607,18 +617,21 @@ public:
 		else {
 			RegisterEQ2Color(unknown11)->SetCount(3);
 		}
-		RegisterEQ2Color(soga_hair_type_color);
-		RegisterEQ2Color(soga_hair_type_highlight_color);
-		RegisterEQ2Color(soga_hair_face_color);
-		RegisterEQ2Color(soga_hair_face_highlight_color);
 
-		if (version >= 60055) {
-			RegisterEQ2Color(skin_color);
-			RegisterEQ2Color(eye_color);
-			RegisterEQ2Color(soga_eye_color);
-			RegisterEQ2Color(soga_skin_color);
-			RegisterEQ2Color(kunark_unknown_color1);
-			RegisterEQ2Color(kunark_unknown_color2);
+		if (version > 283) {
+			RegisterEQ2Color(soga_hair_type_color);
+			RegisterEQ2Color(soga_hair_type_highlight_color);
+			RegisterEQ2Color(soga_hair_face_color);
+			RegisterEQ2Color(soga_hair_face_highlight_color);
+
+			if (version >= 60055) {
+				RegisterEQ2Color(skin_color);
+				RegisterEQ2Color(eye_color);
+				RegisterEQ2Color(soga_eye_color);
+				RegisterEQ2Color(soga_skin_color);
+				RegisterEQ2Color(kunark_unknown_color1);
+				RegisterEQ2Color(kunark_unknown_color2);
+			}
 		}
 
 		RegisterEQ2Color(unknown12);
@@ -650,20 +663,24 @@ public:
 		else if (version >= 1198 && version < 57080) {
 			RegisterUInt8(body_age);
 		}
-		RescopeArrayElement(soga_eye_type);
-		RegisterInt8(soga_eye_type)->SetCount(3);
-		RescopeArrayElement(soga_ear_type);
-		RegisterInt8(soga_ear_type)->SetCount(3);
-		RescopeArrayElement(soga_eye_brow_type);
-		RegisterInt8(soga_eye_brow_type)->SetCount(3);
-		RescopeArrayElement(soga_cheek_type);
-		RegisterInt8(soga_cheek_type)->SetCount(3);
-		RescopeArrayElement(soga_lip_type);
-		RegisterInt8(soga_lip_type)->SetCount(3);
-		RescopeArrayElement(soga_chin_type);
-		RegisterInt8(soga_chin_type)->SetCount(3);
-		RescopeArrayElement(soga_nose_type);
-		RegisterInt8(soga_nose_type)->SetCount(3);
+		
+		if (version > 283) {
+			RescopeArrayElement(soga_eye_type);
+			RegisterInt8(soga_eye_type)->SetCount(3);
+			RescopeArrayElement(soga_ear_type);
+			RegisterInt8(soga_ear_type)->SetCount(3);
+			RescopeArrayElement(soga_eye_brow_type);
+			RegisterInt8(soga_eye_brow_type)->SetCount(3);
+			RescopeArrayElement(soga_cheek_type);
+			RegisterInt8(soga_cheek_type)->SetCount(3);
+			RescopeArrayElement(soga_lip_type);
+			RegisterInt8(soga_lip_type)->SetCount(3);
+			RescopeArrayElement(soga_chin_type);
+			RegisterInt8(soga_chin_type)->SetCount(3);
+			RescopeArrayElement(soga_nose_type);
+			RegisterInt8(soga_nose_type)->SetCount(3);
+		}
+
 		if (version < 1188) {
 			RegisterUInt16(unknown14);
 			RescopeArrayElement(unknown15);
@@ -690,9 +707,11 @@ public:
 		RegisterEQ2Color(hair_color1);
 		RegisterEQ2Color(hair_color2);
 		RegisterEQ2Color(hair_highlight);
-		RegisterEQ2Color(soga_hair_color1);
-		RegisterEQ2Color(soga_hair_color2);
-		RegisterEQ2Color(soga_hair_highlight);
+		if (version > 283) {
+			RegisterEQ2Color(soga_hair_color1);
+			RegisterEQ2Color(soga_hair_color2);
+			RegisterEQ2Color(soga_hair_highlight);
+		}
 		if (version < 60055) {
 			if (version >= 1188) {
 				if (version < 57080) {
@@ -805,6 +824,7 @@ public:
 
 		RegisterUInt8(race);
 		RegisterUInt8(gender);
+
 		if (version >= 936) {
 			RegisterUInt8(adv_class);
 			RegisterUInt8(difficulty);

@@ -26,7 +26,7 @@ public:
 
 	bool DeleteCharacter(uint32_t account_id, uint32_t char_id, std::string name);
 
-	bool SaveClientLog(std::string type, char* message, uint32_t version);
+	bool SaveClientLog(const std::string& type, const std::string& message, uint32_t version);
 	uint32_t CreateCharacter(uint32_t account_id, OP_CreateCharacterRequestMsg_Packet* packet);
 	uint16_t GetAppearanceID(std::string name);
 	void UpdateStartingFactions(uint32_t char_id, uint8_t choice);

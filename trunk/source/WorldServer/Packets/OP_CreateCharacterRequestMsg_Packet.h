@@ -14,6 +14,7 @@ class OP_CreateCharacterRequestMsg_Packet : public EQ2Packet {
 public:
 	OP_CreateCharacterRequestMsg_Packet(uint16_t version)
 		: EQ2Packet(version) {
+		starting_zone = 0;
 		RegisterElements();
 	}
 
@@ -46,7 +47,7 @@ public:
 	uint8_t deity;
 	uint8_t _class;
 	uint8_t level;
-	uint8_t starting_zone;
+	uint16_t starting_zone;
 	uint8_t version;
 	uint16_t unknown10; // version = 57080
 	std::string race_file; // Type = "EQ2_16Bit_String" / >
@@ -119,10 +120,14 @@ public:
 
 private:
 	void RegisterElements() {
-		RegisterUInt8(unknown0);
-		RegisterUInt32(unknown1);
+		if (GetVersion() > 283) {
+			RegisterUInt8(unknown0);
+			RegisterUInt32(unknown1);
+		}
 		RegisterUInt32(account_id);
-		RegisterUInt8(unknown3);
+		if (GetVersion() > 283) {
+			RegisterUInt8(unknown3);
+		}
 		RegisterUInt32(server_id);
 		Register16String(name);
 		RegisterUInt8(race);
@@ -130,7 +135,13 @@ private:
 		RegisterUInt8(deity);
 		RegisterUInt8(_class);
 		RegisterUInt8(level);
-		RegisterUInt8(starting_zone);
+		if (GetVersion() > 283) {
+			uint8_t& starting_zone = reinterpret_cast<uint8_t&>(this->starting_zone);
+			RegisterUInt8(starting_zone);
+		}
+		else {
+			RegisterUInt16(starting_zone);
+		}
 		RegisterUInt8(version);
 		if (GetVersion() >= 57080)
 			RegisterUInt16(unknown10);
@@ -151,9 +162,11 @@ private:
 		Register16String(face_file);
 		RegisterEQ2ColorFloat(hair_face_color);
 		RegisterEQ2ColorFloat(hair_face_highlight_color);
-		Register16String(wing_file);
-		RegisterEQ2ColorFloat(wing_color1);
-		RegisterEQ2ColorFloat(wing_color2);
+		if (GetVersion() > 283) {
+			Register16String(wing_file);
+			RegisterEQ2ColorFloat(wing_color1);
+			RegisterEQ2ColorFloat(wing_color2);
+		}
 		Register16String(chest_file);
 		RegisterEQ2ColorFloat(shirt_color);
 		RegisterEQ2ColorFloat(unknown_chest_color);
@@ -177,6 +190,11 @@ private:
 		RegisterFloat(Nose)->SetCount(3);
 		RegisterFloat(body_size);
 		RegisterFloat(body_age);
+
+		if (GetVersion() <= 283) {
+			return;
+		}
+
 		RegisterUInt8(soga_version);
 		Register16String(soga_race_file);
 		RegisterEQ2ColorFloat(soga_skin_color);

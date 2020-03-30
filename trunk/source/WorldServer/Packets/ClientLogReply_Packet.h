@@ -26,7 +26,12 @@ protected:
 
 private:
 	void RegisterElements() {
-		Register32String(log);
+		if (GetVersion() > 283) {
+			Register32String(log);
+		}
+		else {
+			Register16String(log);
+		}
 	}
 
 };

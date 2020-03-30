@@ -127,7 +127,11 @@ void TCPServer::ReaderThread() {
 						//break;
 					}
 					else {
-						assert(addr_s.ss_family == AF_INET);
+						if (addr_s.ss_family != AF_INET) {
+							LogError(LOG_PACKET, 0, "Received an ipv6 packet? Handle it?");
+							continue;
+						}
+
 						const sockaddr_in& addr = *reinterpret_cast<sockaddr_in*>(&addr_s);
 
 						//Add the client's socket to the fdset and update the max fd
@@ -149,7 +153,9 @@ void TCPServer::ReaderThread() {
 					WriteLocker lock(streamLock);
 
 					auto itr = Streams.find(i);
-					assert(itr != Streams.end());
+					if (itr == Streams.end()) {
+						continue;
+					}
 
 					std::shared_ptr<Stream> client = itr->second;
 

@@ -31,9 +31,13 @@ private:
 		RegisterUInt8(response);
 		RegisterUInt32(server_id);
 		RegisterUInt32(char_id);
-		RegisterUInt32(account_id);
+		if (GetVersion() > 283) {
+			RegisterUInt32(account_id);
+		}
 		Register16String(name);
-		RegisterUInt32(max_characters);
+		if (GetVersion() > 283) {
+			RegisterUInt32(max_characters);
+		}
 	}
 };
 

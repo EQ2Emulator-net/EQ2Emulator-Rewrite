@@ -120,28 +120,23 @@ uint32_t DoPackClassic(uint8_t* input, int32_t inputSize, uint8_t* outBuf, int32
 			ZeroFillBlock();
 		}
 		else {
-			bool bRedo;
 			do {
-				bRedo = false;
-				do {
-					if (input[zeroLen] != '\0') {
-						bVar5 = bVar5 | 1 << (zeroLen & 0x1f);
-					}
-					++zeroLen;
-				} while (zeroLen < code);
-
-				if (bVar5 == 0) {
-					ZeroFillBlock();
-					bRedo = true;
-					continue;
+				if (input[zeroLen] != '\0') {
+					bVar5 = bVar5 | 1 << (zeroLen & 0x1f);
 				}
+				++zeroLen;
+			} while (zeroLen < code);
 
+			if (bVar5 == 0) {
+				ZeroFillBlock();
+			}
+			else {
 				*outBuf = bVar5 | 0x80;
 				++outBuf;
 
 				zeroLen = 0;
 				do {
-					if ((static_cast<int32_t>(bVar5 | 0x80) & 1 << (zeroLen & 0x1f)) != 0) {
+					if ((static_cast<uint32_t>(bVar5 | 0x80) & 1 << (zeroLen & 0x1f)) != 0) {
 						*outBuf = input[zeroLen];
 						++outBuf;
 					}
@@ -149,7 +144,7 @@ uint32_t DoPackClassic(uint8_t* input, int32_t inputSize, uint8_t* outBuf, int32
 				} while (zeroLen < code);
 				inputCount -= code;
 				zeroLen = code;
-			} while (bRedo);
+			}
 		}
 
 		input += zeroLen;

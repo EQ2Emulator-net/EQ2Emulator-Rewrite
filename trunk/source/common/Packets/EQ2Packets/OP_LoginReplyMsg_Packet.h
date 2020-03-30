@@ -12,19 +12,16 @@ enum class LoginReply : uint8_t {
 	EUnknown = 7
 };
 
-
-
 class OP_LoginReplyMsg_Packet : public EQ2Packet {
 public:
 	OP_LoginReplyMsg_Packet(uint32_t version)
 		: EQ2Packet(version) {
 		Response = 0;
-		Unknown = "";
 		ParentalControlFlag = 0;
 		ParentalControlTimer = 0;
-		memset(Unknown2, 0, sizeof(Unknown2));
+		Unknown2 = 0;
 		AccountID = 0;
-		Unknown3 = "";
+		//Unknown3 = "";
 		ResetAppearance = 0;
 		DoNotForceSoga = 1;
 		Unknown4 = 0;
@@ -42,9 +39,9 @@ public:
 		SubscriptionLevel = 2;
 		RaceFlag = 0;
 		ClassFlag = 0;
-		Password = "";
-		Username = "";
-		Service = "";
+		//Password = "";
+		//Username = "";
+		//Service = "";
 
 		// 60100 elements
 		Unknown12 = 0;
@@ -57,10 +54,10 @@ public:
 	}
 
 	uint8_t Response;
-	std::string Unknown;
+	std::string worldName;
 	uint8_t ParentalControlFlag;
-	uint32_t ParentalControlTimer;
-	uint8_t Unknown2[8];					//<Data ElementName = "unknown2" Type = "int8" Size = "8" / >
+	uint64_t ParentalControlTimer;
+	uint32_t Unknown2;					//<Data ElementName = "unknown2" Type = "int8" Size = "8" / >
 	uint32_t AccountID;
 	std::string Unknown3;
 	uint8_t ResetAppearance;
@@ -167,12 +164,16 @@ public:
 private:
 	void RegisterElements() {
 		RegisterUInt8(Response);
-		Register16String(Unknown);
+		Register16String(worldName);
 		RegisterUInt8(ParentalControlFlag);
-		RegisterUInt32(ParentalControlTimer);
-		RescopeArrayElement(Unknown2);
-		RegisterUInt8(Unknown2)->SetCount(8);
+		RegisterUInt64(ParentalControlTimer);
+		if (GetVersion() > 283) {
+			RegisterUInt32(Unknown2);
+		}
 		RegisterUInt32(AccountID);
+		if (GetVersion() <= 283) {
+			return;
+		}
 		Register16String(Unknown3);
 		RegisterUInt8(ResetAppearance);
 		RegisterUInt8(DoNotForceSoga);

@@ -116,6 +116,10 @@ private:
 			RegisterUInt16(Version);
 		}
 
+		if (GetVersion() <= 283) {
+			return;
+		}
+
 		std::string& Unknown4 = this->Unknown4[0];
 		Register16String(Unknown4)->SetCount(2);
 		RegisterInt32(Unknown5);

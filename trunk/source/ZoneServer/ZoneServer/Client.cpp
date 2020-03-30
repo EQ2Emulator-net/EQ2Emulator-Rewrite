@@ -22,7 +22,18 @@ void Client::Process() {
 
 void Client::ReadVersionPacket(const unsigned char* data, uint32_t size, uint32_t offset, uint16_t opcode) {
 	//Choose the struct version depending on the size of the data
-	OP_LoginByNumRequestMsg_Packet p(size - offset > 34 ? 1212 : 1);
+	uint32_t remaining_size = size - offset;
+	uint32_t pver;
+	if (remaining_size == 30) {
+		pver = 283;
+	}
+	else if (remaining_size > 34) {
+		pver = 1212;
+	}
+	else {
+		pver = 284;
+	}
+	OP_LoginByNumRequestMsg_Packet p(pver);
 	p.Read(data, offset, size);
 	SetVersion(static_cast<uint32_t>(p.version));
 	p.HandlePacket(std::static_pointer_cast<Client>(shared_from_this()));

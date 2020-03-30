@@ -12,8 +12,8 @@ public:
 
 		NumWorlds = 1;
 		ID = 1;
-		Name = "";
-		Name2 = "";
+		//Name = "";
+		//Name2 = "";
 		Tag = 1; // 0 = used to show down servers, server should never be down so set to 1
 		Locked = 0;
 		Hidden = 0;
@@ -53,14 +53,25 @@ private:
 		RegisterUInt8(NumWorlds);
 		RegisterUInt32(ID);
 		Register16String(Name);
-		Register16String(Name2);
+		if (GetVersion() > 283) {
+			Register16String(Name2);
+		}
 		RegisterUInt8(Tag);
 		RegisterUInt8(Locked);
-		RegisterUInt8(Hidden);
-		RegisterUInt8(Unknown);
+		if (GetVersion() > 283) {
+			RegisterUInt8(Hidden);
+			RegisterUInt8(Unknown);
+		}
 		RegisterUInt16(NumPlayers);
-		RegisterUInt8(Load);
+		if (GetVersion() > 283) {
+			RegisterUInt8(Load);
+		}
 		RegisterUInt8(NumOnlineFlag);
+
+		if (GetVersion() <= 283) {
+			return;
+		}
+
 		RescopeArrayElement(FeatureSet);
 		if (GetVersion() >= 60100)
 			RegisterUInt8(FeatureSet)->SetCount(2);

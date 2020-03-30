@@ -143,7 +143,8 @@ bool WorldDatabase::LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMs
 		return ret;
 
 	while (result.Next()) {
-		OP_AllCharactersDescReplyMsg_Packet::CharacterListEntry c;
+		packet->CharacterList.emplace_back(packet->GetVersion());
+		auto& c = packet->CharacterList.back();
 		c.account_id = account;
 
 		if (packet->GetVersion() >= 887)
@@ -471,8 +472,6 @@ bool WorldDatabase::LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMs
 
 		if (result2.Next())
 			c.server_name = result2.GetString(0);
-		
-		packet->CharacterList.push_back(c);
 	}
 
 	packet->NumCharacters = (uint8_t)packet->CharacterList.size();
@@ -489,7 +488,7 @@ bool WorldDatabase::DeleteCharacter(uint32_t account_id, uint32_t char_id, std::
 		return false;
 }
 
-bool WorldDatabase::SaveClientLog(std::string type, char* message, uint32_t version) {
+bool WorldDatabase::SaveClientLog(const std::string& type, const std::string& message, uint32_t version) {
 	string type_esc = Escape(type);
 	string message_esc = Escape(message);
 	bool ret = Query("INSERT INTO log_messages (log_type, message, client_data_version, log_time) VALUES ('%s', '%s', %u, %u)", type_esc.c_str(), message_esc.c_str(), version, Timer::GetUnixTimeStamp());

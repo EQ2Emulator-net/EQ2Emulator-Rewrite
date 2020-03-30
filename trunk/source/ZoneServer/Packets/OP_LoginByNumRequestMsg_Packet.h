@@ -47,7 +47,9 @@ private:
 	void RegisterElements() {
 		RegisterUInt32(account_id);
 		RegisterUInt32(access_code);
-		RegisterUInt32(unknown);
+		if (GetVersion() > 283) {
+			RegisterUInt32(unknown);
+		}
 
 		if (GetVersion() < 1212) {
 			uint16_t& version = reinterpret_cast<uint16_t&>(this->version);

@@ -34,8 +34,10 @@ private:
 	void RegisterElements() {
 		RegisterUInt32(char_id);
 		RegisterUInt32(server_id);
-		uint8_t& Unknown = unknown[0];
-		RegisterUInt8(Unknown)->SetCount(3);
+		if (GetVersion() > 283) {
+			uint8_t& Unknown = unknown[0];
+			RegisterUInt8(Unknown)->SetCount(3);
+		}
 	}
 };
 

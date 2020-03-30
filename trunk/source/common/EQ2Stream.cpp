@@ -776,6 +776,7 @@ void EQ2Stream::InboundQueueClear() {
 void EQ2Stream::QueuePacket(EQ2Packet* p) {
 	unsigned char* buf = nullptr;
 	p->Write(buf);
+	DumpBytes(buf, p->Size);
 	EQ2QueuePacket(p, true);
 }
 

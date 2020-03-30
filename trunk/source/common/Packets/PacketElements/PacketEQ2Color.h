@@ -15,7 +15,7 @@ public:
 	}
 
 	PacketEQ2Color(uint8_t r, uint8_t g, uint8_t b) {
-		element = new EQ2Color;
+		element = &optionalValBuf;
 		element->Red = r;
 		element->Green = g;
 		element->Blue = b;
@@ -40,10 +40,10 @@ public:
 	}
 
 	uint32_t GetSize() {
-		return sizeof(EQ2Color) * count;
+		return 3 * count;
 	}
 
 private:
 	EQ2Color* element;
-
+	EQ2Color optionalValBuf;
 };

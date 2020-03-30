@@ -4,4 +4,4 @@
 #include "OP_LoginReplyMsg_Packet.h"
 
 RegisterWorldStruct("OP_WSLoginRequestMsg", OP_KeyRequest_Packet, 1);
-RegisterWorldStruct("OP_LoginReplyMsg", OP_LoginReplyMsg_Packet, 1, 1096, 1188);
+RegisterWorldStruct("OP_LoginReplyMsg", OP_LoginReplyMsg_Packet, 283, 284, 1096, 1188);
