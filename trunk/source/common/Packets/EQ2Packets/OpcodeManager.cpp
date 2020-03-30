@@ -59,7 +59,7 @@ bool OpcodeManager::SetOpcodeForPacket(EQ2Packet* packet) {
 					return true;
 				}
 			}
-			assert(("Could not find an opcode for this packet! Check it out.", false));
+			LogError(LOG_PACKET, 0, "Could not find an opcode for packet %s, version %u", allocator->opName, version);
 			return false;
 		}
 	}

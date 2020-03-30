@@ -61,8 +61,10 @@ public:
 			RegisterUInt32(spawn_anim);
 		}
 
-		RegisterUInt32(unknown2);
-		RegisterUInt32(crc);
+		if (version > 238) {
+			RegisterUInt32(unknown2);
+			RegisterUInt32(crc);
+		}
 		PacketUInt8* clsize = RegisterUInt8(command_list_size);
 		clsize->SetMyArray(RegisterArray(command_list_array, Substruct_CommandList));
 		Register16String(default_command);

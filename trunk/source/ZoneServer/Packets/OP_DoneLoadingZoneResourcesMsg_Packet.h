@@ -52,7 +52,9 @@ public:
 private:
 
 	void RegisterElements() {
-		RegisterUInt32(unknown);
+		if (GetVersion() > 283) {
+			RegisterUInt32(unknown);
+		}
 	}
 
 };

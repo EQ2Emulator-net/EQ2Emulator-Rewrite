@@ -776,8 +776,14 @@ void EQ2Stream::InboundQueueClear() {
 void EQ2Stream::QueuePacket(EQ2Packet* p) {
 	unsigned char* buf = nullptr;
 	p->Write(buf);
-	DumpBytes(buf, p->Size);
-	EQ2QueuePacket(p, true);
+	if (p->bOpcodeError) {
+		//The opcode manager will spit out an error about this
+		delete p;
+	}
+	else {
+		DumpBytes(buf, p->Size);
+		EQ2QueuePacket(p, true);
+	}
 }
 
 void EQ2Stream::SendAck(uint16_t seq) {

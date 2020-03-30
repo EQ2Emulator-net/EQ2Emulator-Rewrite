@@ -11,18 +11,20 @@
 
 class EQ2PacketAllocatorBase {
 protected:
-	EQ2PacketAllocatorBase() = default;
+	EQ2PacketAllocatorBase(const char* pOpName) : opName(pOpName) {}
 
 public:
 	virtual ~EQ2PacketAllocatorBase() = default;
 	virtual EQ2Packet* Create(uint32_t version) = 0;
+
+	const char* opName;
 };
 
 template <typename T>
 class EQ2PacketAllocator : public EQ2PacketAllocatorBase {
 	static_assert(std::is_base_of<EQ2Packet, T>::value, "Tried to create a packet constructor for a non packet type!");
 public:
-	EQ2PacketAllocator() = default;
+	EQ2PacketAllocator(const char* pOpName) : EQ2PacketAllocatorBase(pOpName) {}
 	~EQ2PacketAllocator() = default;
 
 	EQ2Packet* Create(uint32_t version) {
@@ -117,7 +119,7 @@ class OpcodeRegistrar {
 	static_assert(std::is_base_of<EQ2Packet, T>::value, "Tried to register an Opcode for a non packet type!");
 public:
 	OpcodeRegistrar(const char* opName, const char* outfile, const uint32_t* versions, int32_t version_count) {
-		OpcodeManager::RegisterEQ2OpcodeHelper(opName, new EQ2PacketAllocator<T>, typeid(T), outfile, versions, version_count);
+		OpcodeManager::RegisterEQ2OpcodeHelper(opName, new EQ2PacketAllocator<T>(opName), typeid(T), outfile, versions, version_count);
 	}
 };
 

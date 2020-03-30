@@ -38,7 +38,7 @@ public:
 	bool PacketPrepared;
 	bool PacketEncrypted;
 	bool EQ2Compressed;
-
+	bool bOpcodeError;
 protected:
 	EQ2Packet(uint32_t version);
 

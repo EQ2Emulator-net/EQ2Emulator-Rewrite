@@ -7,12 +7,13 @@
 EQ2Packet::EQ2Packet(uint32_t version) {
 	app_opcode_size = 2;
 	Version = version;
+	bOpcodeError = false;
 }
 
 uint8_t EQ2Packet::PreparePacket(uint16_t MaxLen) {
 	// Set the opcode for this packet based on version
 	PacketPrepared = true;
-
+	
 	uint16_t login_opcode = opcode;
 	uint8_t offset = 0;
 	//one of the int16s is for the seq, other is for the EQ2 opcode and compressed flag (OP_Packet is the header, not the opcode)
@@ -65,7 +66,7 @@ uint32_t EQ2Packet::serialize(unsigned char *dest) const {
 }
 
 void EQ2Packet::FindOpcode() {
-	OpcodeManager::GetGlobal()->SetOpcodeForPacket(this);
+	bool bOpcodeError = !OpcodeManager::GetGlobal()->SetOpcodeForPacket(this);
 }
 
 void EQ2Packet::HandlePacket(std::shared_ptr<Client> client) {
