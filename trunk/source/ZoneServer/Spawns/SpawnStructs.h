@@ -881,60 +881,54 @@ struct SpawnTitleStruct {
 	std::string guild;
 };
 
+class Substruct_Lerp : public PacketSubstruct {
+public:
+
+	struct Substruct_LerpWayPoint : public PacketSubstruct {
+		float x;
+		float y;
+		float z;
+		float deltaTime;
+
+		Substruct_LerpWayPoint(uint32_t p_version = 0) : PacketSubstruct(p_version) {
+		}
+
+		void RegisterElements() {
+			RegisterFloat(x);
+			RegisterFloat(y);
+			RegisterFloat(z);
+			RegisterFloat(deltaTime);
+		}
+	};
+
+	Substruct_Lerp(uint32_t p_version = 0) : PacketSubstruct(p_version) {
+		RegisterElements();
+	}
+
+	void RegisterElements() {
+		RegisterUInt32(version);
+		RegisterUInt32(lerpType);
+		PacketUInt32* s = RegisterUInt32(num_waypoint);
+		s->SetMyArray(RegisterArray(waypoint_array, Substruct_LerpWayPoint));
+	}
+
+	uint32_t version;
+	uint32_t lerpType;
+	uint32_t num_waypoint;
+	std::vector<Substruct_LerpWayPoint> waypoint_array;
+};
+
 class Substruct_SpawnFooter : public PacketSubstruct {
 public:
-	Substruct_SpawnFooter(uint32_t p_version) : PacketSubstruct(p_version) {
+	Substruct_SpawnFooter(uint32_t p_version) : PacketSubstruct(p_version), lerp1(p_version), lerp2(p_version) {
 		unknown = 0;
-		is_transport = 0;
+		has_lerp = false;
 		spawn_type = 0;
 		is_player = false;
 		RegisterElements();
 	}
 
-	class Substruct_TransportPath : public PacketSubstruct {
-	public:
-
-		struct Substruct_TransportLocation : public PacketSubstruct {
-			float x;
-			float y;
-			float z;
-			float heading;
-
-			Substruct_TransportLocation() : PacketSubstruct(0) {
-				RegisterElements();
-			}
-
-			void RegisterElements() {
-				RegisterFloat(x);
-				RegisterFloat(y);
-				RegisterFloat(z);
-				RegisterFloat(heading);
-			}
-		};
-
-		Substruct_TransportPath() : PacketSubstruct(0) {
-			RegisterElements();
-		}
-
-		void RegisterElements() {
-			RegisterUInt32(unknown_0);
-			RegisterUInt32(unknown_1);
-			PacketUInt32* s1 = RegisterUInt32(num_coords1);
-			s1->SetMyArray(RegisterArray(movement_array, Substruct_TransportPath));
-			RescopeArrayElement(unknown_m2);
-			RegisterUInt32(unknown_m2)->SetCount(2);
-			PacketUInt32* s2 = RegisterUInt32(num_coords2);
-			s2->SetMyArray(RegisterArray(coord_array, Substruct_TransportPath));
-		}
-
-		uint32_t unknown_0;
-		uint32_t unknown_1;
-		uint32_t num_coords1;
-		std::vector<Substruct_TransportPath> movement_array;
-		uint32_t unknown_m2[2];
-		uint32_t num_coords2;
-		std::vector<Substruct_TransportPath> coord_array;
-	};
+	
 
 	void RegisterElements() override {
 		Register16String(name);
@@ -945,22 +939,24 @@ public:
 		Register16String(prefix);
 		Register16String(pvp_title);
 		Register16String(guild);
-		PacketUInt8* tsize = RegisterUInt8(is_transport);
-		tsize->SetMyArray(RegisterArray(transport_array, Substruct_TransportPath));
+		auto e = RegisterBool(has_lerp);
+		RegisterSubstruct(lerp1)->SetIsVariableSet(e);
+		RegisterSubstruct(lerp2)->SetIsVariableSet(e);
 		RegisterUInt8(spawn_type);
 	}
 
 	std::string name;
 	uint8_t unknown;
 	bool is_player;
-	uint8_t is_transport;
+	bool has_lerp;
 	uint8_t spawn_type;
 	std::string last_name;
 	std::string suffix;
 	std::string prefix;
 	std::string pvp_title;
 	std::string guild;
-	std::vector<Substruct_TransportPath> transport_array;
+	Substruct_Lerp lerp1;
+	Substruct_Lerp lerp2;
 };
 
 class Substruct_WidgetFooter : public PacketSubstruct {

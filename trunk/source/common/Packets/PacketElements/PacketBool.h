@@ -35,7 +35,7 @@ public:
 	}
 
 	bool VariableIsSet() override {
-		return element[0] != 0;
+		return element[0] != false;
 	}
 
 	bool CheckVariableEquality(PacketVariableEquality* cmp) override {
