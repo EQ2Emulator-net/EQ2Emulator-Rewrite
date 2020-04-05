@@ -17,3 +17,19 @@ Spawn::UpdateFlags Spawn::PopUpdateFlags() {
 	m_updateFlagsByte = 0;
 	return ret;
 }
+
+const SpawnPositionStruct* Spawn::GetPosStruct() const {
+	return &m_posStruct;
+}
+
+const SpawnVisualizationStruct* Spawn::GetVisStruct() const {
+	return &m_visStruct;
+}
+
+const SpawnInfoStruct* Spawn::GetInfoStruct() const {
+	return &m_infoStruct;
+}
+
+const SpawnTitleStruct* Spawn::GetTitleStruct() const {
+	return &m_titleStruct;
+}

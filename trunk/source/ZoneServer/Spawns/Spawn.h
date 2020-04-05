@@ -10,13 +10,13 @@ public:
 	Spawn();
 	~Spawn();
 
-	float GetX() { return m_posStruct.X; }
-	float GetY() { return m_posStruct.Y; }
-	float GetZ() { return m_posStruct.Z; }
-	uint32_t GetID() { return 0; }
-	std::string GetName() { return m_titleStruct.name; }
+	float GetX() const { return m_posStruct.X; }
+	float GetY() const { return m_posStruct.Y; }
+	float GetZ() const { return m_posStruct.Z; }
+	uint32_t GetID() const { return 0; }
+	std::string GetName() const { return m_titleStruct.name; }
 
-	ZoneServer* GetZone() { return m_zone; }
+	ZoneServer* GetZone() const { return m_zone; }
 	void SetZone(ZoneServer* zone) { m_zone = zone; }
 
 	const SpawnPositionStruct* GetPosStruct() const;
