@@ -23,8 +23,6 @@ private:
 	float m_zoneY;
 	float m_zoneZ;
 	float m_zoneHeading;
-	bool m_includeHeading;
-	bool m_includeLocation;
 	ESignType m_signType;
 
 };

@@ -50,6 +50,9 @@ private:
 		uint8_t m_updateFlagsByte;
 	};
 
+	std::unique_ptr<class Sign> signData;
+	std::unique_ptr<class Widget> widgetData;
+
 public:
 	/* I put the template functions down here so they aren't cluttering up the rest of the class */
 	template <class Field, class Value>
