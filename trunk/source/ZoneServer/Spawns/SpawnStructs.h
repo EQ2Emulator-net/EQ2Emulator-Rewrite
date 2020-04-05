@@ -872,10 +872,13 @@ public:
 
 struct SpawnTitleStruct {
 	std::string name;
+	uint8_t unknown1;
+	uint8_t isPlayer;
 	std::string last_name;
 	std::string suffix_title;
 	std::string prefix_title;
-	std::string sub_title;
+	std::string pvp_title;
+	std::string guild;
 };
 
 class Substruct_SpawnFooter : public PacketSubstruct {

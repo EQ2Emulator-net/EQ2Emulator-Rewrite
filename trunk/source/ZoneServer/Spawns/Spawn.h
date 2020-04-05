@@ -476,11 +476,17 @@ public:
 	void SetUnknown12(uint16_t value, uint8_t index, bool updateFlags = true) {
 		SetPos(&m_posStruct.unknown12[index], value, updateFlags);
 	}
-	
+
 
 
 	void SetName(std::string value, bool updateFlags = true) {
 		SetTitle(&m_titleStruct.name, value, updateFlags);
+	}
+	void SetUnknown1(uint8_t value, bool updateFlags = true) {
+		SetTitle(&m_titleStruct.unknown1, value, updateFlags);
+	}
+	void SetIsPlayer(uint8_t value, bool updateFlags = true) {
+		SetTitle(&m_titleStruct.isPlayer, value, updateFlags);
 	}
 	void SetLastName(std::string value, bool updateFlags = true) {
 		SetTitle(&m_titleStruct.last_name, value, updateFlags);
@@ -491,8 +497,11 @@ public:
 	void SetPrefixTitle(std::string value, bool updateFlags = true) {
 		SetTitle(&m_titleStruct.prefix_title, value, updateFlags);
 	}
-	void SetSubTitle(std::string value, bool updateFlags = true) {
-		SetTitle(&m_titleStruct.sub_title, value, updateFlags);
+	void SetPvPTitle(std::string value, bool updateFlags = true) {
+		SetTitle(&m_titleStruct.pvp_title, value, updateFlags);
+	}
+	void SetGuild(std::string value, bool updateFlags = true) {
+		SetTitle(&m_titleStruct.guild, value, updateFlags);
 	}
 
 };
