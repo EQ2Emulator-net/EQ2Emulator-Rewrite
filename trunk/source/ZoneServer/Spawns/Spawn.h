@@ -2,10 +2,12 @@
 
 #include "SpawnStructs.h"
 #include <string.h>
+#include <atomic>
+#include <memory>
 
 class ZoneServer;
 
-class Spawn {
+class Spawn : std::enable_shared_from_this<Spawn> {
 public:
 	Spawn();
 	~Spawn();
@@ -34,7 +36,7 @@ public:
 	UpdateFlags PopUpdateFlags();
 
 private:
-	static uint32_t m_spawnID;
+	static std::atomic<uint32_t> m_spawnID;
 
 	ZoneServer* m_zone;
 

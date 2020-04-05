@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Spawn.h"
-
-class Widget : public Spawn {
+class Widget {
 public:
+	Widget();
+	~Widget();
 
 private:
 

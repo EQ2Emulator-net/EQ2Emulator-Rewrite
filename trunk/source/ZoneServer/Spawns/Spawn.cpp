@@ -2,6 +2,8 @@
 
 #include "Spawn.h"
 
+std::atomic<uint32_t> Spawn::m_spawnID(1);
+
 Spawn::Spawn() : m_updateFlagsByte(0) {
 	memset(&m_posStruct, 0, sizeof(m_posStruct));
 	memset(&m_infoStruct, 0, sizeof(m_infoStruct));
