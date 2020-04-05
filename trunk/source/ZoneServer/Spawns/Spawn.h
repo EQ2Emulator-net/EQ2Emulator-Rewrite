@@ -19,103 +19,109 @@ public:
 	ZoneServer* GetZone() { return m_zone; }
 	void SetZone(ZoneServer* zone) { m_zone = zone; }
 
-	bool m_changed;
-	bool m_posChanged;
-	bool m_visChanged;
-	bool m_infoChanged;
-	bool m_titleChanged;
-	SpawnPositionStruct m_posStruct;
-	SpawnVisualizationStruct m_visStruct;
-	SpawnInfoStruct m_infoStruct;
-	SpawnTitleStruct m_titleStruct;
+	const SpawnPositionStruct* GetPosStruct() const;
+	const SpawnVisualizationStruct* GetVisStruct() const;
+	const SpawnInfoStruct* GetInfoStruct() const;
+	const SpawnTitleStruct* GetTitleStruct() const;
+
+	struct UpdateFlags {
+		bool m_posChanged : 1;
+		bool m_visChanged : 1;
+		bool m_infoChanged : 1;
+		bool m_titleChanged : 1;
+	};
+
+	UpdateFlags PopUpdateFlags();
 
 private:
 	static uint32_t m_spawnID;
 
 	ZoneServer* m_zone;
 
+	SpawnPositionStruct m_posStruct;
+	SpawnVisualizationStruct m_visStruct;
+	SpawnInfoStruct m_infoStruct;
+	SpawnTitleStruct m_titleStruct;
+
+	union {
+		UpdateFlags m_updateFlags;
+		uint8_t m_updateFlagsByte;
+	};
+
 public:
 	/* I put the template functions down here so they aren't cluttering up the rest of the class */
 	template <class Field, class Value>
-	void Set(Field* field, Value value, bool setUpdateFlags = true) {
-		if (setUpdateFlags) {
-			m_changed = true;
-			//AddChangedZoneSpawn();
-		}
+	void Set(Field* field, Value value) {
 		*field = value;
 	}
 
 	template <class Field>
-	void Set(Field* field, const char* value, bool setUpdateFlags = true) {
-		if (setUpdateFlags) {
-			m_changed = true;
-			//AddChangedZoneSpawn();
-		}
+	void Set(Field* field, const char* value) {
 		strcpy(field, value);
 	}
 
 	template <class Field, class Value>
 	void SetPos(Field* field, Value value, bool setUpdateFlags = true) {
-		if (setUpdateFlags)
-			m_posChanged = true;
+		Set(field, value);
 
-		Set(field, value, setUpdateFlags);
+		if (setUpdateFlags)
+			m_updateFlags.m_posChanged = true;
 	}
 
 	template <class Field, class Value>
 	void SetVis(Field* field, Value value, bool setUpdateFlags = true) {
-		if (setUpdateFlags)
-			m_visChanged = true;
+		Set(field, value);
 
-		Set(field, value, setUpdateFlags);
+		if (setUpdateFlags)
+			m_updateFlags.m_visChanged = true;
 	}
 
 	template <class Field, class Value>
 	void SetInfo(Field* field, Value value, bool setUpdateFlags = true) {
-		if (setUpdateFlags)
-			m_infoChanged = true;
+		Set(field, value);
 
-		Set(field, value, setUpdateFlags);
+		if (setUpdateFlags)
+			m_updateFlags.m_infoChanged = true;
 	}
 
 	template <class Field, class Value>
 	void SetTitle(Field* field, Value value, bool setUpdateFlags = true) {
-		if (setUpdateFlags)
-			m_titleChanged = true;
+		Set(field, value);
 
-		Set(field, value, setUpdateFlags);
+		if (setUpdateFlags)
+			m_updateFlags.m_titleChanged = true;
 	}
 
 	template <class Field>
 	void SetPos(Field* field, char* value, bool setUpdateFlags = true) {
-		if (setUpdateFlags)
-			m_posChanged = true;
+		Set(field, value);
 
-		Set(field, value, setUpdateFlags);
+		if (setUpdateFlags)
+			m_updateFlags.m_posChanged = true;
 	}
 
 	template <class Field>
 	void SetVis(Field* field, char* value, bool setUpdateFlags = true) {
-		if (setUpdateFlags)
-			m_visChanged = true;
+		Set(field, value);
 
-		Set(field, value, setUpdateFlags);
+		if (setUpdateFlags)
+			m_updateFlags.m_visChanged = true;
 	}
 
 	template <class Field>
 	void SetInfo(Field* field, char* value, bool setUpdateFlags = true) {
-		if (setUpdateFlags)
-			m_infoChanged = true;
+		Set(field, value);
 
-		Set(field, value, setUpdateFlags);
+		if (setUpdateFlags)
+			m_updateFlags.m_infoChanged = true;
 	}
 
 	template <class Field>
 	void SetTitle(Field* field, char* value, bool setUpdateFlags = true) {
-		if (setUpdateFlags)
-			m_titleChanged = true;
+		Set(field, value);
 
-		Set(field, value, setUpdateFlags);
+		if (setUpdateFlags)
+			m_updateFlags.m_titleChanged = true;
 	}
 
 
@@ -149,8 +155,6 @@ public:
 	void SetVisUnknown2A(uint8_t value, uint8_t index, bool updateFlags = true) {
 		SetVis(&m_visStruct.unknown2a[index], value, updateFlags);
 	}
-
-
 
 	void SetModelType(uint32_t value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.model_type, value, updateFlags);
@@ -362,8 +366,6 @@ public:
 	void SetDifficulty(uint8_t value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.difficulty, value, updateFlags);
 	}
-
-
 
 	void SetGridID(uint32_t grid, bool updateFlags = true) {
 		SetPos(&m_posStruct.grid_id, grid, updateFlags);
