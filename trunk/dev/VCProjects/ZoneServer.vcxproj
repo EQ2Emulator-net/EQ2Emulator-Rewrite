@@ -146,6 +146,14 @@
     <ClInclude Include="..\..\source\common\util.h" />
     <ClInclude Include="..\..\source\common\version.h" />
     <ClInclude Include="..\..\source\ZoneServer\Commands\CommandToken.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Controllers\BaseController.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Controllers\BotController.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Controllers\CosmeticPetController.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Controllers\DumbfirePetController.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Controllers\MercenaryController.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Controllers\NPCController.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Controllers\PetController.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Controllers\PlayerController.h" />
     <ClInclude Include="..\..\source\ZoneServer\Database\ZoneDatabase.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\EncodedPackets.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_ClientCmdMsg_Packet.h" />

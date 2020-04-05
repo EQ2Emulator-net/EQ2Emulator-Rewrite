@@ -49,6 +49,9 @@
     <Filter Include="source\Commands">
       <UniqueIdentifier>{296eac1b-8f2b-49e6-b21c-aed066f677d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\Controllers">
+      <UniqueIdentifier>{776d95f2-7c71-4faa-ad61-02499462b13c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\ZoneServer\main.cpp">
@@ -526,6 +529,30 @@
     </ClInclude>
     <ClInclude Include="..\..\source\common\NetUtil.h">
       <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Controllers\BaseController.h">
+      <Filter>source\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Controllers\PlayerController.h">
+      <Filter>source\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Controllers\NPCController.h">
+      <Filter>source\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Controllers\PetController.h">
+      <Filter>source\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Controllers\DumbfirePetController.h">
+      <Filter>source\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Controllers\CosmeticPetController.h">
+      <Filter>source\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Controllers\MercenaryController.h">
+      <Filter>source\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Controllers\BotController.h">
+      <Filter>source\Controllers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
