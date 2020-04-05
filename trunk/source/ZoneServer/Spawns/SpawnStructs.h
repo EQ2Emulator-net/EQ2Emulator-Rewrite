@@ -936,7 +936,7 @@ public:
 		std::vector<Substruct_TransportPath> coord_array;
 	};
 
-	void RegisterElements() {
+	void RegisterElements() override {
 		Register16String(name);
 		RegisterUInt8(unknown);
 		RegisterBool(is_player);
@@ -961,4 +961,76 @@ public:
 	std::string pvp_title;
 	std::string guild;
 	std::vector<Substruct_TransportPath> transport_array;
+};
+
+class Substruct_WidgetFooter : public PacketSubstruct {
+public:
+	Substruct_WidgetFooter(uint32_t p_version) : PacketSubstruct(p_version),
+	widgetID(0),
+	widgetX(0.f),
+	widgetY(0.f),
+	widgetZ(0.f)
+	{
+		RegisterElements();
+	}
+
+	void RegisterElements() override {
+		RegisterUInt32(widgetID);
+		RegisterFloat(widgetX);
+		RegisterFloat(widgetY);
+		RegisterFloat(widgetZ);
+	}
+
+	uint32_t widgetID;
+	float widgetX;
+	float widgetY;
+	float widgetZ;
+};
+
+class Substruct_SignFooter : public PacketSubstruct {
+public:
+	Substruct_SignFooter(uint32_t p_version) : PacketSubstruct(p_version),
+		distance(0.f),
+		language(0),
+		show(true),
+		unkStringArray(0)
+	{
+		RegisterElements();
+	}
+
+	void RegisterElements() override {
+		Register16String(title);
+		Register16String(description);
+		RegisterFloat(distance);
+		RegisterBool(show);
+		if (GetVersion() > 283) {
+			RegisterUInt8(language);
+			if (GetVersion() > 60069) {
+				auto arrSize = RegisterUInt8(unkStringArrayCount);
+				arrSize->SetMyArray(RegisterArray(unkStringArray, Substruct_SignFooterArray));
+			}
+		}
+	}
+
+	class Substruct_SignFooterArray : public PacketSubstruct {
+	public:
+		Substruct_SignFooterArray(uint32_t p_version = 0) : PacketSubstruct(p_version) {
+			RegisterElements();
+		}
+
+		void RegisterElements() override {
+			Register16String(unkString);
+		}
+
+		std::string unkString;
+	};
+
+	std::string title;
+	std::string description;
+	float distance;
+	uint8_t language;
+	bool show;
+	uint8_t unkStringArrayCount;
+	std::vector<Substruct_SignFooterArray> unkStringArray;
+	
 };

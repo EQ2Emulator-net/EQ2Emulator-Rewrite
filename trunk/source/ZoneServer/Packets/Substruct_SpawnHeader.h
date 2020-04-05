@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../../common/Packets/PacketElements/PacketElements.h"
 #include <string>
 #include <vector>

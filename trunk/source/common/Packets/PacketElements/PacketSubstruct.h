@@ -83,14 +83,14 @@ protected:
 	}
 
 	//Copy constructor
-	PacketSubstruct(const PacketSubstruct& other) {
+	PacketSubstruct(const PacketSubstruct& other) noexcept {
 		elements.reserve(other.elements.size());
 		version = other.version;
 		elementsInitialized = false;
 	}
 
 	//Move constructor
-	PacketSubstruct(PacketSubstruct&& other) {
+	PacketSubstruct(PacketSubstruct&& other) noexcept {
 		elements.reserve(other.elements.size());
 		version = other.version;
 		elementsInitialized = false;

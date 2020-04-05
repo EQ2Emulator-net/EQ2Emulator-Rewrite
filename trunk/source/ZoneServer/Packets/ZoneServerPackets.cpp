@@ -18,6 +18,8 @@
 #include "OP_UpdatePositionMsg.h"
 #include "OP_SetRemoteCmdsMsg_Packet.h"
 #include "OP_RemoteCmdMsg_Packet.h"
+#include "OP_CreateSignWidgetCmd_Packet.h"
+#include "OP_CreateWidgetCmd_Packet.h"
 
 // Server to Client
 RegisterZoneStruct("OP_ZoneInfoMsg", OP_ZoneInfoMsg_Packet, 283, 284, 942, 957, 959, 1067, 1096, 1142, 1193, 63119, 63182);
@@ -26,6 +28,10 @@ RegisterZoneStruct("OP_ClientCmdMsg", OP_ClientCmdMsg_Packet, 1);
 RegisterZoneStruct("OP_EqSetPOVGhostCmd", OP_EqSetPOVGhostCmd_Packet, 1);
 RegisterZoneStruct("OP_EqSetControlGhostCmd", OP_EqSetControlGhostCmd_Packet, 283, 284, 1096, 1119, 1193);
 RegisterZoneStruct("OP_EqCreateGhostCmd", OP_CreateGhostCmd_Packet, 1, 860, 864, 927, 936, 
+	954, 955, 996, 1096, 1119, 1142, 1161, 1188, 1198, 57080, 68618, 60055, 67633);
+RegisterZoneStruct("OP_EqCreateWidgetCmd", OP_CreateWidgetCmd_Packet, 1, 860, 864, 927, 936,
+	954, 955, 996, 1096, 1119, 1142, 1161, 1188, 1198, 57080, 68618, 60055, 67633);
+RegisterZoneStruct("OP_EqCreateSignWidgetCmd", OP_CreateSignWidgetCmd_Packet, 1, 860, 864, 927, 936,
 	954, 955, 996, 1096, 1119, 1142, 1161, 1188, 1198, 57080, 68618, 60055, 67633);
 RegisterZoneStruct("OP_UpdateCharacterSheetMsg", OP_UpdateCharacterSheetMsg_Packet, 1);
 RegisterZoneStruct("OP_DefaultGroupOptionsMsg", OP_DefaultGroupOptionsMsg_Packet, 1);

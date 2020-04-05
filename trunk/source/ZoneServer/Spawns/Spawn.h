@@ -4,6 +4,8 @@
 #include <string.h>
 #include <atomic>
 #include <memory>
+#include "Widget.h"
+#include "Sign.h"
 
 class ZoneServer;
 
@@ -50,8 +52,8 @@ private:
 		uint8_t m_updateFlagsByte;
 	};
 
-	std::unique_ptr<class Sign> signData;
-	std::unique_ptr<class Widget> widgetData;
+	std::unique_ptr<Sign> signData;
+	std::unique_ptr<Widget> widgetData;
 
 public:
 	/* I put the template functions down here so they aren't cluttering up the rest of the class */

@@ -354,7 +354,7 @@ public:
 				RegisterUInt8(tradeskill_class); // 887
 				RegisterUInt32(tradeskill_level); //887
 			}
-			RegisterUInt8(netAppearanceVersion); // NetAppearance version
+			RegisterUInt8(netAppearanceVersion);
 			RegisterUInt16(race_type);
 			RegisterEQ2Color(skin_color);
 			RegisterEQ2Color(eye_color);

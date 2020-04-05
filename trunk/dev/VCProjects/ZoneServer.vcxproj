@@ -157,6 +157,8 @@
     <ClInclude Include="..\..\source\ZoneServer\Database\ZoneDatabase.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\EncodedPackets.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_ClientCmdMsg_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_CreateSignWidgetCmd_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_CreateWidgetCmd_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DefaultGroupOptionsMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DefaultGroupOptionsRequestMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DoneLoadingEntityResourcesMsg_Packet.h" />

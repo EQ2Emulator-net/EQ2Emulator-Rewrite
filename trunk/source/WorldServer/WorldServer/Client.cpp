@@ -158,6 +158,8 @@ void Client::SaveErrorsToDB(std::string log, std::string type) {
 
 	inflateEnd(&zstream);
 
+	LogDebug(LOG_PACKET, 0, "%s : %s", type.c_str(), unpackedMessage.c_str());
+
 	database.SaveClientLog(type, unpackedMessage, GetVersion());
 }
 
