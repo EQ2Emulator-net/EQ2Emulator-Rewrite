@@ -16,11 +16,11 @@ class ProtocolPacket;
 #define RATEBASE	1048576 // 1 MB
 #define DECAYBASE	78642	// RATEBASE/10
 
-typedef enum {
+enum class EQStreamState {
 	ESTABLISHED,
 	CLOSING,
 	CLOSED
-} EQStreamState;
+};
 
 class EQ2Stream : public Stream, public std::enable_shared_from_this<EQ2Stream> {
 public:
@@ -34,8 +34,8 @@ public:
 	inline EQStreamState GetState() { return State; }
 	inline void SetState(EQStreamState state) { State = state; }
 
-	bool CheckActive() { return GetState() == ESTABLISHED; }
-	bool CheckClosed() { return GetState() == CLOSED; }
+	bool CheckActive() { return GetState() == EQStreamState::ESTABLISHED; }
+	bool CheckClosed() { return GetState() == EQStreamState::CLOSED; }
 
 	void PreparePacket(EQ2Packet* app, uint8_t offset = 0);
 

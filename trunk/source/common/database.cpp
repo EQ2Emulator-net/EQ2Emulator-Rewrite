@@ -253,7 +253,7 @@ bool Database::Select(DatabaseResult* result, const char* fmt, ...) {
 string Database::Escape(const char* str, size_t len) {
 	char stackBuf[4096];
 	unique_ptr<char[]> oversizedBuf;
-	uint32_t reqSize = len * 2 + 1;
+	size_t reqSize = len * 2 + 1;
 	
 	char* buf = stackBuf;
 	if (reqSize > sizeof(stackBuf)) {
@@ -262,7 +262,7 @@ string Database::Escape(const char* str, size_t len) {
 	}
 
 	DatabaseConnection* con = GetPooledConnection();
-	unsigned long size = mysql_real_escape_string(con->mysql_con, buf, str, len);
+	unsigned long size = mysql_real_escape_string(con->mysql_con, buf, str, static_cast<unsigned long>(len));
 	AddConnectionToPool(con);
 
 	if (size == ~0ul) {
@@ -286,11 +286,11 @@ string Database::Escape(const char* str, bool with_percent) {
 		return empty_string;
 
 	stringstream ss;
-	string temp = string(str);				// in case it's ok, pass this to Escape
-	int16_t pos = temp.find_first_of('%');	// find at least 1 % symbol
+	string temp = str;				// in case it's ok, pass this to Escape
+	size_t pos = temp.find_first_of('%');	// find at least 1 % symbol
 
 	if (pos > 0) {
-		for (uint16_t i = 0; i < strlen(str); i++) {
+		for (size_t i = 0; i < strlen(str); i++) {
 			if (str[i] == '%') {
 				ss << '%' << str[i];
 			}
@@ -415,7 +415,6 @@ QueryResult::~QueryResult() {
 
 bool Database::QueriesFromFile(const char* file) {
 	bool success = true;
-	long size;
 	char* buf;
 	int ret;
 	MYSQL_RES* res;
@@ -428,30 +427,29 @@ bool Database::QueriesFromFile(const char* file) {
 	}
 
 	fseek(f, 0, SEEK_END);
-	size = ftell(f);
+	size_t size = ftell(f);
 	fseek(f, 0, SEEK_SET);
 
-	buf = (char*)malloc(size + 1);
+	buf = (char*)malloc(size);
 	if (buf == NULL) {
 		fclose(f);
-		LogError(LOG_DATABASE, 0, "Out of memory trying to allocate %u bytes in %s:%u\n", size + 1, __FUNCTION__, __LINE__);
+		LogError(LOG_DATABASE, 0, "Out of memory trying to allocate %u bytes in %s:%u\n", size, __FUNCTION__, __LINE__);
 		return false;
 	}
 
-	if (fread(buf, sizeof(*buf), size, f) != (size_t)size) {
+	if (fread(buf, sizeof(*buf), size, f) != size) {
 		LogError(LOG_DATABASE, 0, "Failed to read from '%s': %s", file, strerror(errno));
 		fclose(f);
 		free(buf);
 		return false;
 	}
 
-	buf[size] = '\0';
 	fclose(f);
 
 	DatabaseConnection* con = GetPooledConnection();
 
 	mysql_set_server_option(con->mysql_con, MYSQL_OPTION_MULTI_STATEMENTS_ON);
-	ret = mysql_real_query(con->mysql_con, buf, size);
+	ret = mysql_real_query(con->mysql_con, buf, static_cast<unsigned long>(size));
 	free(buf);
 
 	if (ret != 0) {

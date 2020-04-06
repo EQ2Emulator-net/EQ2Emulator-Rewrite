@@ -49,6 +49,14 @@ public:
 
 	Substruct_SpawnHeader(uint32_t version) : PacketSubstruct(version) {
 		spawn_anim = 0;
+		group_size = 0;
+		max_distance = 0;
+		time_stamp = 0;
+		crc = 0;
+		index = 0;
+		command_list_size = 0;
+		spawn_id = 0;
+		unknown2 = 0;
 	}
 
 	void RegisterElements() {

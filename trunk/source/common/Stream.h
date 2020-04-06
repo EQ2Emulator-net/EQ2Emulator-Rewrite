@@ -14,6 +14,7 @@ class Server;
 class Stream {
 public:
 	Stream(unsigned int ip, unsigned short port);
+	virtual ~Stream() = default;
 
 	virtual void Process(const unsigned char* data, unsigned int length);
 	virtual void Process(){};

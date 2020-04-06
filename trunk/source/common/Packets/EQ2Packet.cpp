@@ -8,6 +8,10 @@ EQ2Packet::EQ2Packet(uint32_t version) {
 	app_opcode_size = 2;
 	Version = version;
 	bOpcodeError = false;
+	PacketEncrypted = false;
+	EQ2Compressed = false;
+	PacketPrepared = false;
+	opcode = 0;
 }
 
 uint8_t EQ2Packet::PreparePacket(uint16_t MaxLen) {

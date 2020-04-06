@@ -150,13 +150,13 @@ uint32_t DoPackClassic(uint8_t* input, int32_t inputSize, uint8_t* outBuf, int32
 		input += zeroLen;
 	}
 
-	uint32_t packSize = outBuf - outBufStart;
+	uint32_t packSize = static_cast<uint32_t>(outBuf - outBufStart);
 	memcpy(&outBufStart, &packSize, sizeof(uint32_t));
 
 	return packSize + 4;
 }
 
-bool DoUnpack(uint32_t srcLen, uint8_t* data, uint32_t& outsize, uint8_t* dst, uint16_t dstLen, bool reverse) {
+bool DoUnpack(uint32_t srcLen, uint8_t* data, int32_t& outsize, uint8_t* dst, uint16_t dstLen, bool reverse) {
 	if (reverse)
 		DoPackReverse(data, srcLen);
 	uint32_t dst_pos = 0;
@@ -269,7 +269,7 @@ int32_t DoUnpackClassic(const uint8_t* input, int32_t inputSize, uint8_t* outBuf
 		outBufSize = nOutRemaining;
 	}
 
-	uint32_t unpackedSize = outBuf - outStart - 4;
+	uint32_t unpackedSize = static_cast<uint32_t>(outBuf - outStart - 4);
 	memcpy(outStart, &unpackedSize, sizeof(unpackedSize));
 
 	return unpackedSize + 4;
@@ -313,32 +313,29 @@ public:
 			return false;
 		}
 
-		unsigned char tmpSrc[32768];
+		vector<unsigned char> tmpSrc(lastPackedSize);
 
-		if (lastPackedSize > sizeof(tmpSrc)) {
-			LogDebug(LOG_PACKET, 0, "PacketPackedData::ReadElement tried to read a packet sized larger than its buffer!");
-			return false;
-		}
-
-		memcpy(tmpSrc, srcbuf + offset, lastPackedSize);
+		memcpy(tmpSrc.data(), srcbuf + offset, lastPackedSize);
 		offset += lastPackedSize;
 
-		unsigned char tmpDst[32768];
+		vector<unsigned char> tmpDst(32768);
 
-		uint32_t outsize;
+		int32_t outsize = 0;
 
 		if (bClassic) {
-			if (DoUnpackClassic(tmpSrc, lastPackedSize, tmpDst, sizeof(tmpDst)) < 0) {
+			if ( (outsize = DoUnpackClassic(tmpSrc.data(), lastPackedSize, tmpDst.data(), static_cast<uint32_t>(tmpDst.size()))) < 0) {
 				LogDebug(LOG_PACKET, 0, "PacketPackedData::ReadElement unable to unpack data!");
 				return false;
 			}
 		}
 		else {
-			if (!DoUnpack(lastPackedSize, tmpSrc, outsize, tmpDst, sizeof(tmpDst), true)) {
+			if (!DoUnpack(lastPackedSize, tmpSrc.data(), outsize, tmpDst.data(), static_cast<uint32_t>(tmpDst.size()), true)) {
 				LogDebug(LOG_PACKET, 0, "PacketPackedData::ReadElement unable to unpack data!");
 				return false;
 			}
 		}
+
+		tmpSrc.clear();
 
 		uint32_t readOffset = 0;
 
@@ -347,7 +344,7 @@ public:
 				continue;
 			}
 
-			if (!itr->ReadElement(tmpDst, readOffset, outsize)) {
+			if (!itr->ReadElement(tmpDst.data(), readOffset, outsize)) {
 				return false;
 			}
 		}
@@ -394,10 +391,10 @@ public:
 			packedSize = 0;
 		}
 		else if (bClassic) {
-			packedSize = DoPackClassic(buf.data(), buf.size(), tmp.data(), unpackedSize) - 4;
+			packedSize = DoPackClassic(buf.data(), static_cast<uint32_t>(buf.size()), tmp.data(), unpackedSize) - 4;
 		}
 		else {
-			packedSize = DoPack(buf.data(), tmp.data(), unpackedSize, buf.size()) - 4;
+			packedSize = DoPack(buf.data(), tmp.data(), unpackedSize, static_cast<uint32_t>(buf.size())) - 4;
 		}
 
 		uint32_t effectiveSize = nSizeBytes;

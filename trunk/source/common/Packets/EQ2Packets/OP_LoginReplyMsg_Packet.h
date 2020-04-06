@@ -88,12 +88,6 @@ public:
 				SlotID = 0;
 				UseColor = 1;
 				UseHighlightColor = 1;
-				ModelColor.Red = 255;
-				ModelColor.Green = 255;
-				ModelColor.Blue = 255;
-				ModelHighlightColor.Red = 255;
-				ModelHighlightColor.Green = 255;
-				ModelHighlightColor.Blue = 255;
 
 				RegisterElements();
 			}

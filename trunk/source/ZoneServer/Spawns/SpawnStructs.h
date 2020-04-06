@@ -891,7 +891,11 @@ public:
 		float z;
 		float deltaTime;
 
-		Substruct_LerpWayPoint(uint32_t p_version = 0) : PacketSubstruct(p_version) {
+		Substruct_LerpWayPoint(uint32_t p_version = 0) : PacketSubstruct(p_version),
+		x(0.f),
+		y(0.f),
+		z(0.f),
+		deltaTime(0.f){
 		}
 
 		void RegisterElements() {

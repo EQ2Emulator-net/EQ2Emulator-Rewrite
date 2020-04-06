@@ -38,6 +38,7 @@ public:
 protected:
 	Packet() : buffer(nullptr) {
 		offset = 0;
+		Size = 0;
 	}
 
 	uint32_t offset;

@@ -36,7 +36,7 @@ public:
 	}
 
 protected:
-	PacketVariableEquality() : check_element(nullptr) {}
+	PacketVariableEquality() : check_element(nullptr), check_value(0), equality_type(false) {}
 
 private:
 	//Note this class could be derived from further for different types, just using int for now

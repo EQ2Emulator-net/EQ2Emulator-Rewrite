@@ -98,7 +98,7 @@ bool WorldDatabase::GetAccount(Client* client, std::string user, std::string pas
 						"INSERT INTO account(`name`, `passwd`, `ip_address`, `last_client_version`) VALUES ('%s', md5('%s'), '%s', %u)",
 						esc_user.c_str(), esc_pass.c_str(), inet_ntoa(ip_addr), client->GetVersion());
 					if (result) 
-						client->SetAccount(result.last_insert_id);
+						client->SetAccount(static_cast<uint32_t>(result.last_insert_id));
 				}
 					
 			}
@@ -518,7 +518,7 @@ uint32_t WorldDatabase::CreateCharacter(uint32_t account_id, OP_CreateCharacterR
 		return 0;
 	}
 
-	uint32_t char_id = res.last_insert_id;
+	uint32_t char_id = static_cast<uint32_t>(res.last_insert_id);
 	UpdateStartingFactions(char_id, packet->starting_zone);
 	UpdateStartingZone(char_id, packet->_class, packet->race, packet->starting_zone);
 	// Starting here
@@ -597,11 +597,11 @@ uint16_t WorldDatabase::GetAppearanceID(std::string name) {
 	return id;
 }
 
-void WorldDatabase::UpdateStartingFactions(uint32_t char_id, uint8_t choice) {
+void WorldDatabase::UpdateStartingFactions(uint32_t char_id, uint16_t choice) {
 	Query("INSERT INTO character_factions (char_id, faction_id, faction_level) SELECT %u, faction_id, value FROM starting_factions WHERE starting_city = %u", char_id, choice);
 }
 
-void WorldDatabase::UpdateStartingZone(uint32_t char_id, uint8_t class_id, uint8_t race_id, uint8_t choice) {
+void WorldDatabase::UpdateStartingZone(uint32_t char_id, uint8_t class_id, uint8_t race_id, uint16_t choice) {
 	DatabaseResult result;
 	bool success;
 

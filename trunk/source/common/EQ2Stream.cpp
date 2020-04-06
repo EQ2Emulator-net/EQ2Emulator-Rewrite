@@ -92,7 +92,7 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 		LogDebug(LOG_NET, 0, "OP_SessionRequest unknowna: %u, Session: %u, MaxLength: %u", request->UnknownA, request->Session, request->MaxLength);
 
 		SendSessionResponse();
-		SetState(ESTABLISHED);
+		SetState(EQStreamState::ESTABLISHED);
 		break;
 	}
 	case OP_SessionDisconnect: {

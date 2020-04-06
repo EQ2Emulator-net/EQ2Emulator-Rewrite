@@ -4,6 +4,7 @@
 #include "PacketEQ2Color.h"
 
 struct EQ2EquipmentItem {
+	EQ2EquipmentItem() : type(0) {}
 	uint16_t type;
 	EQ2Color color;
 	EQ2Color highlight;

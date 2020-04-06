@@ -3,6 +3,7 @@
 #include "../PacketElement.h"
 
 struct EQ2Color {
+	EQ2Color() : Red(0xFF), Green(0xFF), Blue(0xFF) {}
 	uint8_t Red;
 	uint8_t Green;
 	uint8_t Blue;
