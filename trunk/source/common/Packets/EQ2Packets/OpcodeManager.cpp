@@ -55,6 +55,7 @@ bool OpcodeManager::SetOpcodeForPacket(EQ2Packet* packet) {
 						}
 					}
 #endif
+					LogDebug(LOG_PACKET, 0, "Found opcode: %s", allocator->opName);
 					packet->opcode = op.first;
 					return true;
 				}

@@ -69,8 +69,6 @@ int main(int argc, char **argv)
 
 	LogInfo(LOG_GENERAL, 0, "Shutting down...");
 
-	database.Stop();
-
 	logging = false;
 	logging_thread.join();
 	LoggingSystem::LogStop();

@@ -10,7 +10,6 @@ public:
 	~ZoneDatabase();
 
 	bool Start();
-	void Stop();
 
 	bool LoadOpcodes();
 	bool LoadZoneInfo(ZoneServer* z);

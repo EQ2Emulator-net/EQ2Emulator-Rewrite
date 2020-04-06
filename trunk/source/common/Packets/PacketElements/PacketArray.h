@@ -36,7 +36,7 @@ class PacketArray : public PacketArrayBase {
 	static_assert(std::is_base_of<PacketSubstruct, T>::value, "PacketArray must use a class derived from PacketSubtruct for its template!");
 
 public:
-	PacketArray(std::vector<T>& in_element) : element(&in_element) {
+	PacketArray(std::vector<T>& in_element) : element(&in_element), version(0) {
 	}
 	~PacketArray() = default;
 
@@ -64,6 +64,9 @@ public:
 		uint32_t size = 0;
 		for (int i = 0; i < count; i++) {
 			for (auto& itr : element[i]) {
+				if (itr.GetVersion() != version) {
+					itr.ResetVersion(version);
+				}
 				size += itr.GetSize();
 			}
 		}
@@ -80,6 +83,11 @@ public:
 		return static_cast<uint32_t>(element[0].size());
 	}
 
+	void SetVersion(uint32_t ver) {
+		version = ver;
+	}
+
 private:
 	std::vector<T>* element;
+	uint32_t version;
 };

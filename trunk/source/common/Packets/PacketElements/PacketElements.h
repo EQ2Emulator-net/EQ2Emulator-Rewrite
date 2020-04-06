@@ -49,7 +49,7 @@
 #define RegisterInt32(e) PushElementForRegistration(new PacketInt32(e), #e, PacketInt32)
 #define RegisterInt64(e) PushElementForRegistration(new PacketInt64(e), #e, PacketInt64)
 #define RegisterSubstruct(e) PushElementForRegistration(new PacketSubstructParent<std::remove_reference_t<decltype(e)>>(e), #e, PacketSubstructParent<std::remove_reference_t<decltype(e)>>)
-#define RegisterArray(e, t) PushElementForRegistration(new PacketArray<t>(e), #e, PacketArrayBase)
+#define RegisterArray(e, t) (static_cast<PacketArray<t>*>(PushElementForRegistration(new PacketArray<t>(e), #e, PacketArrayBase))->SetVersion(GetVersion()), static_cast<PacketArrayBase*>(elements.back()))
 #define RegisterEQ2Color(e) PushElementForRegistration(new PacketEQ2Color(e), #e, PacketEQ2Color)
 #define RegisterEQ2ColorFloat(e) PushElementForRegistration(new PacketEQ2ColorFloat(e), #e, PacketEQ2ColorFloat)
 #define RegisterEQ2EquipmentItem(e) PushElementForRegistration(new PacketEQ2EquipmentItem(e), #e, PacketEQ2EquipmentItem)

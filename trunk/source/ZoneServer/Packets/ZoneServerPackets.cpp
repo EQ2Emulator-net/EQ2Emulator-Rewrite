@@ -24,7 +24,7 @@
 // Server to Client
 RegisterZoneStruct("OP_ZoneInfoMsg", OP_ZoneInfoMsg_Packet, 283, 284, 942, 957, 959, 1067, 1096, 1142, 1193, 63119, 63182);
 RegisterZoneStruct("OP_DoneSendingInitialEntitiesMsg", OP_DoneSendingInitialEntitiesMsg_Packet, 1);
-RegisterZoneStruct("OP_ClientCmdMsg", OP_ClientCmdMsg_Packet, 1);
+RegisterZoneStruct("OP_ClientCmdMsg", OP_ClientCmdMsg_Packet, 283, 284);
 RegisterZoneStruct("OP_EqSetPOVGhostCmd", OP_EqSetPOVGhostCmd_Packet, 1);
 RegisterZoneStruct("OP_EqSetControlGhostCmd", OP_EqSetControlGhostCmd_Packet, 283, 284, 1096, 1119, 1193);
 RegisterZoneStruct("OP_EqCreateGhostCmd", OP_CreateGhostCmd_Packet, 1, 860, 864, 927, 936, 

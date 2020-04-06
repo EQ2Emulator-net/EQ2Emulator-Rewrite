@@ -1,314 +1,510 @@
 #include "stdafx.h"
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
+#include <sstream>
 #include "database.h"
+#include "log.h"
 
-//Might want to move this "string.h" stuff somewhere else/rename... little confusing
-#include "string.h"
-//Again... not great to be using stdlib names
-#include "stdio.h"
-
-#include <string>
-
-// fix for incompatible mysqlclient.lib
-// http://stackoverflow.com/questions/30450042/unresolved-external-symbol-imp-iob-func-referenced-in-function-openssldie
-#if defined(_WIN32)
-FILE _iob[] = { *stdin, *stdout, *stderr };
-extern "C" FILE * __cdecl __iob_func(void) { return _iob; }
-#endif
+using namespace std;
 
 Database::Database() {
-	mysql_init(&mysql);
-    connected = false;
-    memset(&callbacks, 0, sizeof(callbacks));
-    host[0] = '\0';
+	mysql_library_init(0, nullptr, nullptr);
 	port = 3306;
-    user[0] = '\0';
-    password[0] = '\0';
-    db[0] = '\0';
-    error[0] = '\0';
 }
 
 Database::~Database() {
-    Disconnect();
+	m_connection_pool.Lock();
+	while (!connection_pool.empty()) {
+		delete connection_pool.top();
+		connection_pool.pop();
+	}
+	m_connection_pool.Unlock();
+	mysql_library_end();
 }
 
-void Database::SetCallbacks(DatabaseCallbacks *callbacks) {
-    memcpy(&this->callbacks, callbacks, sizeof(this->callbacks));
-}
-
-void Database::SetHost(const char *host) {
-    if (host == NULL)
-        this->host[0] = '\0';
-    else
-	    strlcpy(this->host, host, sizeof(this->host));
+void Database::SetHost(const char* p_host) {
+	host = p_host;
 }
 
 void Database::SetPort(unsigned int port) {
-	this->port = port;
+	port = port;
 }
 
-void Database::SetUser(const char *user) {
-	strlcpy(this->user, user, sizeof(this->user));
+void Database::SetUser(const char* p_user) {
+	user = p_user;
 }
 
-void Database::SetPassword(const char *password) {
-	strlcpy(this->password, password, sizeof(this->password));
+void Database::SetPassword(const char* p_password) {
+	password = p_password;
 }
 
-void Database::SetDatabase(const char *db) {
-	strlcpy(this->db, db, sizeof(this->db));
+void Database::SetDatabase(const char* p_db) {
+	db = p_db;
 }
 
-const char * Database::GetHost() {
-	return host;
+const char* Database::GetHost() {
+	return host.c_str();
 }
 
 unsigned int Database::GetPort() {
 	return port;
 }
 
-unsigned int Database::GetErrno() {
-    return mysql_errno(&mysql);
+const char* Database::GetDatabase() {
+	return db.c_str();
 }
 
-const char * Database::GetError() {
-    return error;
+bool Database::ValidateConfig() {
+	if (host.empty()) {
+		LogError(LOG_DATABASE, 0, "Database config is invalid: 'host' not set");
+		return false;
+	}
+	if (user.empty()) {
+		LogError(LOG_DATABASE, 0, "Database config is invalid: 'user' not set");
+		return false;
+	}
+	if (password.empty()) {
+		LogError(LOG_DATABASE, 0, "Database config is invalid: 'password' not set");
+		return false;
+	}
+	if (db.empty()) {
+		LogError(LOG_DATABASE, 0, "Database config is invalid: 'db' not set");
+		return false;
+	}
+
+	return true;
 }
 
-void Database::SetIgnoredErrno(unsigned int db_errno) {
-    std::vector<unsigned int>::iterator itr;
-
-    for (itr = ignored_errnos.begin(); itr != ignored_errnos.end(); itr++) {
-        if ((*itr) == db_errno)
-            return;
-    }
-
-    ignored_errnos.push_back(db_errno);
-}
-
-void Database::RemoveIgnoredErrno(unsigned int db_errno) {
-	std::vector<unsigned int>::iterator itr;
-
-    for (itr = ignored_errnos.begin(); itr != ignored_errnos.end(); itr++) {
-        if ((*itr) == db_errno) {
-            ignored_errnos.erase(itr);
-            break;
-        }
-    }
-}
-
-bool Database::IsIgnoredErrno(unsigned int db_errno) {
-	std::vector<unsigned int>::iterator itr;
-
-    for (itr = ignored_errnos.begin(); itr != ignored_errnos.end(); itr++) {
-        if ((*itr) == db_errno)
-            return true;
-    }
-
-    return false;
-}
+#define CONNECTION_POOL_SIZE 10
 
 bool Database::Connect() {
-    my_bool reconnect = true;
-    unsigned int timeout = 5;
+	SpinLocker lock(m_connection_pool);
+	for (int i = 0; i < CONNECTION_POOL_SIZE; i++) {
+		DatabaseConnection* con = OpenNewConnection();
+		if (!con) {
+			break;
+		}
 
-    if (!connected) {
-        mysql_options(&mysql, MYSQL_OPT_CONNECT_TIMEOUT, &timeout);
-        mysql_options(&mysql, MYSQL_OPT_RECONNECT, &reconnect);
-
-	    connected = mysql_real_connect(&mysql, host, user, password, db, port, NULL, 0) != NULL;
-        if (!connected)
-		    snprintf(error, sizeof(error), "Could not connect to MySQL server (%d): %s", mysql_errno(&mysql), mysql_error(&mysql));
+		connection_pool.push(con);
 	}
 
-	return connected;
+	return true;
 }
 
-void Database::Disconnect() {
-    if (connected) {
-        mysql_close(&mysql);
-        connected = false;
-    }
+DatabaseConnection* Database::OpenNewConnection() {
+	DatabaseConnection* con = new DatabaseConnection(host.c_str(), port, user.c_str(), password.c_str(), db.c_str());
+	if (con->bError) {
+		delete con;
+		con = nullptr;
+	}
+
+	return con;
 }
 
-bool Database::Query(const char *fmt, ...) {
+QueryResult Database::QueryWithFetchedResult(uint32_t result_flags, const char* fmt, ...) {
 	bool success = true;
-	char *query;
 	int count;
 	va_list ap;
+	my_ulonglong affected_rows = 0;
+	my_ulonglong last_insert_id = 0;
+
+	std::unique_ptr<char[]> oversizedBuf;
+	char buf[4096];
 
 	va_start(ap, fmt);
-	count = vasprintf(&query, fmt, ap);
+	count = vsnprintf(buf, sizeof(buf), fmt, ap);
+
+	const char* query = buf;
+	if (count > sizeof(buf) - 1) {
+		oversizedBuf.reset(new char[count + 1]);
+		vsprintf(oversizedBuf.get(), fmt, ap);
+		query = oversizedBuf.get();
+	}
 	va_end(ap);
 
-	if (count == -1) {
-		strlcpy(error, "Out of memory", sizeof(error));
-		return false;
+	LogDebug(LOG_DATABASE, 5, "Query:\n%s", query);
+
+	DatabaseConnection* connection = GetPooledConnection();
+	MYSQL* mysql = connection->mysql_con;
+	if (mysql_real_query(mysql, query, (unsigned long)count) != 0) {
+		LogError(LOG_DATABASE, 0, "Error running MySQL query (%d): %s\n%s", mysql_errno(mysql), mysql_error(mysql), query);
+		success = false;
+	}
+	else if (MYSQL_RES* res = mysql_use_result(mysql)) {
+		mysql_free_result(res);
 	}
 
-	if (mysql_real_query(&mysql, query, (unsigned long)count) != 0) {
-        if (!IsIgnoredErrno(mysql_errno(&mysql))) {
-		    snprintf(error, sizeof(error), "Error running MySQL query (%d): %s\n%s", mysql_errno(&mysql), mysql_error(&mysql), query);
-		    success = false;
-            if (callbacks.query_error)
-                callbacks.query_error(this);
-        }
-	}
-
-	free(query);
-	return success;
-}
-
-bool Database::Select(DatabaseResult *result, const char *fmt, ...) {
-	bool success = true;
-	char *query;
-	int count;
-	va_list ap;
-	MYSQL_RES *res;
-
-	va_start(ap, fmt);
-	count = vasprintf(&query, fmt, ap);
-	va_end(ap);
-
-	if (count == -1) {
-		strlcpy(error, "Out of memory", sizeof(error));
-		return false;
-	}
-
-	if (mysql_real_query(&mysql, query, (unsigned long)count) != 0) {
-        if (!IsIgnoredErrno(mysql_errno(&mysql))) {
-		    snprintf(error, sizeof(error), "Error running MySQL query (%d): %s\n%s", mysql_errno(&mysql), mysql_error(&mysql), query);
-		    success = false;
-            if (callbacks.query_error)
-                callbacks.query_error(this);
-        }
-	}
-
-	if (success && !IsIgnoredErrno(mysql_errno(&mysql))) {
-		res = mysql_store_result(&mysql);
-
-        if (res != NULL)
-			result->SetResult(res);
-		else {
-			snprintf(error, sizeof(error), "Error storing MySql query result (%d): %s\n%s", mysql_errno(&mysql), mysql_error(&mysql), query);
-			success = false;
-            if (callbacks.query_error)
-                callbacks.query_error(this);
+	if (success && result_flags) {
+		if (result_flags & QUERY_RESULT_FLAG_AFFECTED_ROWS) {
+			affected_rows = mysql_affected_rows(mysql);
+		}
+		if (result_flags & QUERY_RESULT_FLAG_LAST_INSERT_ID) {
+			last_insert_id = mysql_insert_id(mysql);
 		}
 	}
 
-	free(query);
+	while (mysql_next_result(mysql) == 0) {
+		if (MYSQL_RES* res = mysql_use_result(mysql)) {
+			mysql_free_result(res);
+		}
+	}
+
+	AddConnectionToPool(connection);
+
+	return QueryResult(success, affected_rows, last_insert_id);
+}
+
+bool Database::Query(const char* fmt, ...) {
+	bool success = true;
+	int count;
+	va_list ap;
+
+	std::unique_ptr<char[]> oversizedBuf;
+	char buf[4096];
+
+	va_start(ap, fmt);
+	count = vsnprintf(buf, sizeof(buf), fmt, ap);
+
+	const char* query = buf;
+	if (count > sizeof(buf) - 1) {
+		oversizedBuf.reset(new char[count + 1]);
+		vsprintf(oversizedBuf.get(), fmt, ap);
+		query = oversizedBuf.get();
+	}
+	va_end(ap);
+
+	if (query == NULL) {
+		LogError(LOG_DATABASE, 0, "Out of memory trying to allocate database query in %s:%u", __FUNCTION__, __LINE__);
+		return false;
+	}
+
+	LogDebug(LOG_DATABASE, 5, "Query:\n%s", query);
+
+	DatabaseConnection* connection = GetPooledConnection();
+	MYSQL* mysql = connection->mysql_con;
+	if (mysql_real_query(mysql, query, (unsigned long)count) != 0) {
+		LogError(LOG_DATABASE, 0, "Error running MySQL query (%d): %s\n%s", mysql_errno(mysql), mysql_error(mysql), query);
+		success = false;
+	}
+	else if (MYSQL_RES* res = mysql_use_result(mysql)) {
+		mysql_free_result(res);
+	}
+
+	while (mysql_next_result(mysql) == 0) {
+		if (MYSQL_RES* res = mysql_use_result(mysql)) {
+			mysql_free_result(res);
+		}
+	}
+
+	AddConnectionToPool(connection);
+
 	return success;
 }
 
-bool Database::QueriesFromFile(const char *file) {
-    bool success = true;
-    long size;
-    char *buf;
-    int ret;
-    MYSQL_RES *res;
-    FILE *f;
+bool Database::Select(DatabaseResult* result, const char* fmt, ...) {
+	bool success = true;
+	int count;
+	va_list ap;
+	MYSQL_RES* res;
 
-    f = fopen(file, "rb");
-    if (f == NULL) {
-        snprintf(error, sizeof(error), "Unable to open '%s' for reading: %s", file, strerror(errno));
-        return false;
-    }
+	std::unique_ptr<char[]> oversizedBuf;
+	char buf[4096];
 
-    fseek(f, 0, SEEK_END);
-    size = ftell(f);
-    fseek(f, 0, SEEK_SET);
+	va_start(ap, fmt);
+	count = vsnprintf(buf, sizeof(buf), fmt, ap);
 
-    buf = (char *)malloc(size + 1);
-    if (buf == NULL) {
-        fclose(f);
-        strlcpy(error, "Out of memory", sizeof(error));
-        return false;
-    }
+	const char* query = buf;
+	if (count > sizeof(buf) - 1) {
+		oversizedBuf.reset(new char[count + 1]);
+		vsprintf(oversizedBuf.get(), fmt, ap);
+		query = oversizedBuf.get();
+	}
+	va_end(ap);
 
-    if (fread(buf, sizeof(*buf), size, f) != (size_t)size) {
-        snprintf(error, sizeof(error), "Failed to read from '%s': %s", file, strerror(errno));
-        fclose(f);
-        return false;
-    }
+	if (query == NULL) {
+		LogError(LOG_DATABASE, 0, "Out of memory trying to allocate database query in %s:%u", __FUNCTION__, __LINE__);
+		return false;
+	}
 
-    buf[size] = '\0';
-    fclose(f);
+	LogDebug(LOG_DATABASE, 5, "Select:\n%s", query);
 
-    mysql_set_server_option(&mysql, MYSQL_OPTION_MULTI_STATEMENTS_ON);
-    ret = mysql_real_query(&mysql, buf, size);
-    free(buf);
-
-    if (ret != 0) {
-        snprintf(error, sizeof(error), "Error running MySQL queries from file '%s' (%d): %s", file, mysql_errno(&mysql), mysql_error(&mysql));
+	DatabaseConnection* connection = GetPooledConnection();
+	MYSQL* mysql = connection->mysql_con;
+	if (mysql_real_query(mysql, query, (unsigned long)count) != 0) {
+		LogError(LOG_DATABASE, 0, "Error running MySQL query (%d): %s\n%s", mysql_errno(mysql), mysql_error(mysql), query);
 		success = false;
-        if (callbacks.query_error)
-            callbacks.query_error(this);
-    }
-    else {
-        //all results must be processed
-        do {
-            res = mysql_store_result(&mysql);
-            if (res != NULL)
-                mysql_free_result(res);
-            ret = mysql_next_result(&mysql);
+	}
 
-            if (ret > 0) {
-                snprintf(error, sizeof(error), "Error running MySQL queries from file '%s' (%d): %s", file, mysql_errno(&mysql), mysql_error(&mysql));
-                success = false;
-                if (callbacks.query_error)
-                    callbacks.query_error(this);
-            }
-                
-        }
-        while (ret == 0);
-    }
-    mysql_set_server_option(&mysql, MYSQL_OPTION_MULTI_STATEMENTS_OFF);
+	if (success && (res = mysql_store_result(mysql))) {
+		for (bool first = true; res != NULL || mysql_next_result(mysql) == 0; first = false, res = mysql_store_result(mysql)) {
+			if (res != NULL) {
+				result->AddResult(res, first);
+			}
+		}
+	}
+	AddConnectionToPool(connection);
 
-    return success;
+	return success;
 }
 
-unsigned long Database::LastInsertID() {
-	return (unsigned long)mysql_insert_id(&mysql);
+string Database::Escape(const char* str, size_t len) {
+	char stackBuf[4096];
+	unique_ptr<char[]> oversizedBuf;
+	uint32_t reqSize = len * 2 + 1;
+	
+	char* buf = stackBuf;
+	if (reqSize > sizeof(stackBuf)) {
+		oversizedBuf.reset(new char[reqSize]);
+		buf = oversizedBuf.get();
+	}
+
+	DatabaseConnection* con = GetPooledConnection();
+	unsigned long size = mysql_real_escape_string(con->mysql_con, buf, str, len);
+	AddConnectionToPool(con);
+
+	if (size == ~0ul) {
+		LogError(LOG_DATABASE, 0, "Error escaping string %s!", str);
+		return "";
+	}
+
+	return string(buf, size);
 }
 
-unsigned long Database::AffectedRows() {
-	return (unsigned long)mysql_affected_rows(&mysql);
+string Database::Escape(const char* str) {
+	if (str == NULL) {
+		return string();
+	}
+	return Escape(str, strlen(str));
 }
 
-std::string Database::Escape(const char *str, size_t len) {
-	std::vector<char> buf(len * 2 + 1);
+string Database::Escape(const char* str, bool with_percent) {
+	static char empty_string[] = "";
+	if (str == NULL)
+		return empty_string;
 
-	mysql_real_escape_string(&mysql, buf.data(), str, (unsigned long)len);
+	stringstream ss;
+	string temp = string(str);				// in case it's ok, pass this to Escape
+	int16_t pos = temp.find_first_of('%');	// find at least 1 % symbol
 
-	return std::move(std::string(buf.data()));
+	if (pos > 0) {
+		for (uint16_t i = 0; i < strlen(str); i++) {
+			if (str[i] == '%') {
+				ss << '%' << str[i];
+			}
+			else {
+				ss << str[i];
+			}
+		}
+
+		if (ss.str().length() > 0) {
+			temp = ss.str();
+		}
+	}
+
+	return Escape(temp.c_str(), temp.length());
 }
 
-std::string Database::Escape(const char *str) {
-	return std::move(Escape(str, strlen(str)));
+string Database::Escape(const std::string& str) {
+	return Escape(str.c_str(), str.length());
 }
 
-std::string Database::Escape(const std::string& str) {
-	return std::move(Escape(str.c_str(), str.length()));
-}
-
-void Database::BeginTransaction() {
-    mysql_autocommit(&mysql, 0);
-//    mysql_real_query(&mysql, "START TRANSACTION", 17);
-}
-
-void Database::CommitTransaction() {
-    mysql_commit(&mysql);
-    mysql_autocommit(&mysql, 1);
-//    mysql_real_query(&mysql, "COMMIT", 6);
-}
-
-void Database::RollbackTransaction() {
-    mysql_rollback(&mysql);
-    mysql_autocommit(&mysql, 1);
-//    mysql_real_query(&mysql, "ROLLBACK", 8);
-}
-
+//Since we have multiple connections now and this is a keepalive, get as many from the pool as we can
+//Any connections not in the pool are in use so probably don't need a ping anyway
 void Database::PingDatabase() {
-	mysql_ping(&mysql);
+	vector<DatabaseConnection*> connections;
+	while (DatabaseConnection* con = GetPooledConnection(false)) {
+		connections.push_back(con);
+	}
+
+	for (auto& itr : connections) {
+		mysql_ping(itr->mysql_con);
+		AddConnectionToPool(itr);
+	}
+}
+
+//This will hold onto a single connection for this thread until a transaction is completed
+thread_local DatabaseTransaction* currentTransaction = nullptr;
+
+DatabaseConnection* Database::GetPooledConnection(bool bBlock) {
+	//Each thread needs to be initialized to use MySQL safely
+	class MySQLThreadInitializer {
+	public:
+		MySQLThreadInitializer() {
+			mysql_thread_init();
+		}
+
+		~MySQLThreadInitializer() {
+			mysql_thread_end();
+		}
+	};
+	//This will be constructed the first time a thread hits this func, and destroyed when the thread ends
+	thread_local MySQLThreadInitializer thread_initializer;
+
+	DatabaseConnection* ret = nullptr;
+
+	if (auto trans = currentTransaction) {
+		ret = trans->conn;
+	}
+	else {
+		do {
+			m_connection_pool.Lock();
+			if (!connection_pool.empty()) {
+				ret = connection_pool.top();
+				connection_pool.pop();
+			}
+			m_connection_pool.Unlock();
+		} while (ret == nullptr && bBlock);
+	}
+
+	return ret;
+}
+
+void Database::AddConnectionToPool(DatabaseConnection* con) {
+	if (!currentTransaction) {
+		m_connection_pool.Lock();
+		connection_pool.push(con);
+		m_connection_pool.Unlock();
+	}
+}
+
+DatabaseConnection::DatabaseConnection(const char* host, unsigned int port, const char* user, const char* password, const char* db) {
+	//mutexing this call per SQL documentation since mysql_init will try to call mysql_library_init which is not thread safe
+	static SpinLock lock;
+	lock.Lock();
+	//allow mysql to allocate this in case our alignment is different
+	mysql_con = mysql_init(nullptr);
+
+	lock.Unlock();
+
+	my_bool reconnect = 1;
+	mysql_options(mysql_con, MYSQL_OPT_RECONNECT, &reconnect);
+
+	unsigned int conn_timeout = 10;
+	mysql_options(mysql_con, MYSQL_OPT_CONNECT_TIMEOUT, &conn_timeout); // 10 seconds
+
+	if (mysql_real_connect(mysql_con, host, user, password, db, port, NULL, CLIENT_MULTI_STATEMENTS) == NULL) {
+		LogError(LOG_DATABASE, 0, "Could not connect to MySQL server (%d): %s", mysql_errno(mysql_con), mysql_error(mysql_con));
+		bError = true;
+	}
+	else {
+		bError = false;
+	}
+}
+
+DatabaseConnection::~DatabaseConnection() {
+	mysql_close(mysql_con);
+}
+
+QueryResult::QueryResult() :
+	query_success(false),
+	affected_rows(0),
+	last_insert_id(0)
+{}
+
+QueryResult::QueryResult(bool res, my_ulonglong rows, my_ulonglong last_insert) :
+	query_success(res),
+	affected_rows(rows),
+	last_insert_id(last_insert)
+{}
+
+QueryResult::~QueryResult() {
+}
+
+bool Database::QueriesFromFile(const char* file) {
+	bool success = true;
+	long size;
+	char* buf;
+	int ret;
+	MYSQL_RES* res;
+	FILE* f;
+
+	f = fopen(file, "rb");
+	if (f == NULL) {
+		LogError(LOG_DATABASE, 0, "Unable to open '%s' for reading: %s", file, strerror(errno));
+		return false;
+	}
+
+	fseek(f, 0, SEEK_END);
+	size = ftell(f);
+	fseek(f, 0, SEEK_SET);
+
+	buf = (char*)malloc(size + 1);
+	if (buf == NULL) {
+		fclose(f);
+		LogError(LOG_DATABASE, 0, "Out of memory trying to allocate %u bytes in %s:%u\n", size + 1, __FUNCTION__, __LINE__);
+		return false;
+	}
+
+	if (fread(buf, sizeof(*buf), size, f) != (size_t)size) {
+		LogError(LOG_DATABASE, 0, "Failed to read from '%s': %s", file, strerror(errno));
+		fclose(f);
+		free(buf);
+		return false;
+	}
+
+	buf[size] = '\0';
+	fclose(f);
+
+	DatabaseConnection* con = GetPooledConnection();
+
+	mysql_set_server_option(con->mysql_con, MYSQL_OPTION_MULTI_STATEMENTS_ON);
+	ret = mysql_real_query(con->mysql_con, buf, size);
+	free(buf);
+
+	if (ret != 0) {
+		LogError(LOG_DATABASE, 0, "Error running MySQL queries from file '%s' (%d): %s", file, mysql_errno(con->mysql_con), mysql_error(con->mysql_con));
+		success = false;
+	}
+	else {
+		//all results must be processed
+		do {
+			res = mysql_store_result(con->mysql_con);
+			if (res != NULL)
+				mysql_free_result(res);
+			ret = mysql_next_result(con->mysql_con);
+
+			if (ret > 0) {
+				LogError(LOG_DATABASE, 0, "Error running MySQL queries from file '%s' (%d): %s", file, mysql_errno(con->mysql_con), mysql_error(con->mysql_con));
+				success = false;
+			}
+		} while (ret == 0);
+	}
+	mysql_set_server_option(con->mysql_con, MYSQL_OPTION_MULTI_STATEMENTS_OFF);
+
+	AddConnectionToPool(con);
+
+	return success;
+}
+
+DatabaseTransaction::DatabaseTransaction(Database& in_db)
+	:db(in_db) {
+	//Not allowing someone to try and open 2 transactions on the same thread at once, fix if it hits this
+	assert(currentTransaction == nullptr);
+	conn = db.GetPooledConnection();
+	currentTransaction = this;
+
+	mysql_autocommit(conn->mysql_con, 0);
+}
+
+DatabaseTransaction::~DatabaseTransaction() {
+	assert(currentTransaction == this);
+	Rollback();
+	mysql_autocommit(conn->mysql_con, 1);
+	currentTransaction = nullptr;
+	db.AddConnectionToPool(conn);
+}
+
+void DatabaseTransaction::Commit() {
+	if (mysql_commit(conn->mysql_con)) {
+		LogError(LOG_DATABASE, 0, "Error in mysql_commit");
+	}
+}
+
+void DatabaseTransaction::Rollback() {
+	if (mysql_rollback(conn->mysql_con)) {
+		LogError(LOG_DATABASE, 0, "Error in mysql_rollback");
+	}
 }

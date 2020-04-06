@@ -928,8 +928,6 @@ public:
 		RegisterElements();
 	}
 
-	
-
 	void RegisterElements() override {
 		Register16String(name);
 		RegisterUInt8(unknown);

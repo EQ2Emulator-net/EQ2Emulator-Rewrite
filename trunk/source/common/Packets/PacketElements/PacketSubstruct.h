@@ -14,11 +14,13 @@ public:
 	}
 
 	void ResetVersion(uint32_t p_version) {
-		version = p_version;
-		for (auto& itr : elements) {
-			delete itr;
+		if (version != p_version) {
+			version = p_version;
+			for (auto& itr : elements) {
+				delete itr;
+			}
+			elements.clear();
 		}
-		elements.clear();
 		RegisterElements();
 	}
 

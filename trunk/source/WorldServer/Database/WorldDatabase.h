@@ -14,7 +14,6 @@ public:
 	~WorldDatabase();
 
 	bool Start();
-	void Stop();
 
 	bool LoadOpcodes();
 
