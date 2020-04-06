@@ -20,6 +20,7 @@
 #include "OP_RemoteCmdMsg_Packet.h"
 #include "OP_CreateSignWidgetCmd_Packet.h"
 #include "OP_CreateWidgetCmd_Packet.h"
+#include "OP_UpdateSpawnCmdMsg.h"
 
 // Server to Client
 RegisterZoneStruct("OP_ZoneInfoMsg", OP_ZoneInfoMsg_Packet, 283, 284, 942, 957, 959, 1067, 1096, 1142, 1193, 63119, 63182);
@@ -38,6 +39,7 @@ RegisterZoneStruct("OP_DefaultGroupOptionsMsg", OP_DefaultGroupOptionsMsg_Packet
 RegisterZoneStruct("OP_MoveableObjectPlacementCriteri", OP_MoveableObjectPlacementCriteri_Packet, 1);
 RegisterZoneStruct("OP_GameWorldTimeMsg", OP_GameWorldTimeMsg_Packet, 1, 1193);
 RegisterZoneStruct("OP_SetRemoteCmdsMsg", OP_SetRemoteCmdsMsg_Packet, 1);
+RegisterZoneStruct("OP_EqUpdateGhostCmdMsg", OP_UpdateGhostCmdMsg_Packet, 1, 1188);
 
 // Client to Server
 RegisterZoneStruct("OP_LoginByNumRequestMsg", OP_LoginByNumRequestMsg_Packet, 1, 1212);

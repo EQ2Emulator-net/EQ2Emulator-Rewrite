@@ -3,7 +3,6 @@
 #include "../../common/Packets/PacketElements/PacketElements.h"
 #include "OP_ClientCmdMsg_Packet.h"
 #include "../Spawns/SpawnStructs.h"
-#include "Substruct_SpawnHeader.h"
 #include "../../common/Packets/PacketElements/PacketPackedData.h"
 #include "../ZoneServer/Client.h"
 
