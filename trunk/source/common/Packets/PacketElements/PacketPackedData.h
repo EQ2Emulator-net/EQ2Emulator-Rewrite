@@ -357,6 +357,9 @@ public:
 
 	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
 		assert(bBufInitialized);
+		if (buf.empty()) {
+			return;
+		}
 		memcpy(outbuf + offset, buf.data(), buf.size());
 		offset += static_cast<uint32_t>(buf.size());
 	}
@@ -387,7 +390,10 @@ public:
 		}
 
 		uint32_t packedSize;
-		if (bClassic) {
+		if (unpackedSize == 0) {
+			packedSize = 0;
+		}
+		else if (bClassic) {
 			packedSize = DoPackClassic(buf.data(), buf.size(), tmp.data(), unpackedSize) - 4;
 		}
 		else {
@@ -409,11 +415,13 @@ public:
 		else {
 			memcpy(tmp.data(), &packedSize, nSizeBytes);
 		}
-		memcpy(tmp.data() + effectiveSize, buf.data() + 4, packedSize);
 		tmp.resize(packedSize + effectiveSize);
-		buf.swap(tmp);
+		if (packedSize > 0) {
+			memcpy(tmp.data() + effectiveSize, buf.data() + 4, packedSize);
+		}
+		buf = std::move(tmp);
 		bBufInitialized = true;
-		return packedSize + nSizeBytes;
+		return packedSize + effectiveSize;
 	}
 
 	//This will add an external substruct to this packed data's elements list
