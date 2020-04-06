@@ -8,9 +8,9 @@
 #include "Substruct_MaintainedEffects.h"
 #include "Substruct_GroupMember.h"
 
-class UpdateCharacterSheetMsgData : public PacketSubstruct {
+class UpdateCharacterSheetMsgData : public PacketEncodedData {
 public:
-	UpdateCharacterSheetMsgData(uint32_t version) : PacketSubstruct(version) {
+	UpdateCharacterSheetMsgData(uint32_t version) : PacketEncodedData(version) {
 		RegisterElements();
 
 		memset(character_name, 0, sizeof(character_name));

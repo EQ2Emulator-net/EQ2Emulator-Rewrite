@@ -43,6 +43,7 @@ public:
 		client->QueuePacket(control);
 
 		OP_UpdateCharacterSheetMsg_Packet* char_sheet = new OP_UpdateCharacterSheetMsg_Packet(client->GetVersion());
+		char_sheet->SetEncodedBuffer(client->encoded_packets.GetBuffer(EEncoded_UpdateCharSheet));
 		strcpy(char_sheet->character_name, "Foof");
 		strcpy(char_sheet->character_name2, "Foof");
 		strcpy(char_sheet->character_name3, "Foof");
