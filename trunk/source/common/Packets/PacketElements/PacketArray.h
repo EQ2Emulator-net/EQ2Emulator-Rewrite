@@ -76,6 +76,9 @@ public:
 	void SetArraySize(uint32_t size) override {
 		for (int i = 0; i < count; i++) {
 			element[i].resize(size);
+			for (auto& itr : element[i]) {
+				itr.ResetVersion(version);
+			}
 		}
 	}
 

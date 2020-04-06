@@ -4,6 +4,7 @@
 #include <string>
 #include "../../common/Packets/PacketElements/PacketEQ2Color.h"
 #include "../../common/Packets/PacketElements/PacketElements.h"
+#include "../../common/Packets/PacketElements/PacketEncodedData.h"
 
 /* These structs should match the latest xml structs exactly, if changes are made to one the should also be made to the other */
 
@@ -50,9 +51,9 @@ struct SpawnPositionStruct {
 	}
 };
 
-class Substruct_SpawnPosition : public SpawnPositionStruct, public PacketSubstruct {
+class Substruct_SpawnPosition : public SpawnPositionStruct, public PacketEncodedData {
 public:
-	Substruct_SpawnPosition(uint32_t version) : PacketSubstruct(version) {	
+	Substruct_SpawnPosition(uint32_t version) : PacketEncodedData(version) {	
 		RegisterElements();
 	}
 
@@ -156,9 +157,9 @@ struct SpawnVisualizationStruct {
 	}
 };
 
-class Substruct_SpawnVisualization : public SpawnVisualizationStruct, public PacketSubstruct {
+class Substruct_SpawnVisualization : public SpawnVisualizationStruct, public PacketEncodedData {
 public:
-	Substruct_SpawnVisualization(uint32_t version) : PacketSubstruct(version) {
+	Substruct_SpawnVisualization(uint32_t version) : PacketEncodedData(version) {
 		RegisterElements();
 	}
 
@@ -372,9 +373,9 @@ protected:
 	uint16_t equipment_types_int16[25];
 };
 
-class Substruct_SpawnInfo : public SpawnInfoStruct, public PacketSubstruct {
+class Substruct_SpawnInfo : public SpawnInfoStruct, public PacketEncodedData {
 public:
-	Substruct_SpawnInfo(uint32_t version) : PacketSubstruct(version) { 
+	Substruct_SpawnInfo(uint32_t version) : PacketEncodedData(version) {
 		for (int i = 0; i < 30; i++) {
 			spell_effects[i].ResetVersion(version);
 		}

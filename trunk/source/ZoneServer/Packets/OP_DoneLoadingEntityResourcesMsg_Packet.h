@@ -20,6 +20,7 @@ public:
 	void HandlePacket(std::shared_ptr<Client> client) {
 		OP_CreateGhostCmd_Packet* ghost = new OP_CreateGhostCmd_Packet(client->GetVersion());
 		ghost->SetTestData();
+		ghost->SetEncodedBuffers(client, ghost->header.index);
 		client->QueuePacket(ghost);
 
 		OP_EqSetPOVGhostCmd_Packet* pov = new OP_EqSetPOVGhostCmd_Packet(client->GetVersion());

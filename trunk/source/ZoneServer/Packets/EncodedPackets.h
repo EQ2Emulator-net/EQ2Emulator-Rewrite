@@ -8,7 +8,9 @@
 enum EEncodedPackets {
 	EEncoded_UpdatePosition,
 	EEncoded_UpdateCharSheet,
-	EEncoded_UpdateSpawn,
+	EEncoded_UpdateSpawnVis,
+	EEncoded_UpdateSpawnPos,
+	EEncoded_UpdateSpawnInfo,
 	EEncoded_COUNTVAR
 };
 

@@ -278,7 +278,8 @@ int32_t DoUnpackClassic(const uint8_t* input, int32_t inputSize, uint8_t* outBuf
 //You may choose to either inherit from this class or simply use PacketPackedData::LinkSubstruct in the desired order of your packed data
 class PacketPackedData : public PacketSubstruct {
 public:
-	PacketPackedData(bool bClassicClient, uint32_t p_nSizeBytes = 4) : PacketSubstruct(0), lastPackedSize(0), nSizeBytes(p_nSizeBytes), bBufInitialized(false), bClassic(bClassicClient) {}
+	PacketPackedData(bool bClassicClient, bool bOversized = false, uint32_t p_nSizeBytes = 4) : PacketSubstruct(0),
+		lastPackedSize(0), nSizeBytes(p_nSizeBytes), bBufInitialized(false), bClassic(bClassicClient), bOversizedByte(bOversized) {}
 
 	~PacketPackedData() = default;
 
@@ -289,13 +290,20 @@ public:
 
 		lastPackedSize = 0;
 
-		if (offset + nSizeBytes > bufsize) {
+		if (bOversizedByte) {
+			lastPackedSize = srcbuf[offset++];
+			if (lastPackedSize == 255) {
+				memcpy(&lastPackedSize, srcbuf + offset, 2);
+				offset += 2;
+			}
+		}
+		else if (offset + nSizeBytes > bufsize) {
 			return false;
 		}
-
-		memcpy(&lastPackedSize, srcbuf + offset, nSizeBytes);
-
-		offset += nSizeBytes;
+		else {
+			memcpy(&lastPackedSize, srcbuf + offset, nSizeBytes);
+			offset += nSizeBytes;
+		}
 
 		if (lastPackedSize == 0) {
 			return true;
@@ -381,14 +389,28 @@ public:
 		uint32_t packedSize;
 		if (bClassic) {
 			packedSize = DoPackClassic(buf.data(), buf.size(), tmp.data(), unpackedSize) - 4;
-			
 		}
 		else {
 			packedSize = DoPack(buf.data(), tmp.data(), unpackedSize, buf.size()) - 4;
 		}
-		memcpy(tmp.data(), &packedSize, nSizeBytes);
-		memcpy(tmp.data() + nSizeBytes, buf.data() + 4, packedSize);
-		tmp.resize(packedSize + nSizeBytes);
+
+		uint32_t effectiveSize = nSizeBytes;
+		if (bOversizedByte) {
+			if (packedSize >= 255) {
+				effectiveSize = 3;
+				*tmp.data() = 0xFF;
+				memcpy(tmp.data() + 1, &packedSize, 2);
+			}
+			else {
+				effectiveSize = 1;
+				*tmp.data() = static_cast<uint8_t>(packedSize);
+			}
+		}
+		else {
+			memcpy(tmp.data(), &packedSize, nSizeBytes);
+		}
+		memcpy(tmp.data() + effectiveSize, buf.data() + 4, packedSize);
+		tmp.resize(packedSize + effectiveSize);
 		buf.swap(tmp);
 		bBufInitialized = true;
 		return packedSize + nSizeBytes;
@@ -407,5 +429,6 @@ private:
 	std::vector<unsigned char> buf;
 	bool bBufInitialized;
 	bool bClassic;
+	bool bOversizedByte;
 	uint32_t nSizeBytes;
 };

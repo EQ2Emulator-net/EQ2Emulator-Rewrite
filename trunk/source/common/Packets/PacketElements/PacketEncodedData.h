@@ -42,6 +42,8 @@ public:
 	}
 
 	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
+		EncodeData();
+
 		assert(b_write_buf_initialized);
 		b_write_buf_initialized = false;
 
@@ -63,17 +65,24 @@ public:
 		return PacketSubstruct::ReadElement(p, tmp, static_cast<uint32_t>(buf.size()));
 	}
 
-	void EncodeData(std::shared_ptr<EncodedBuffer>& xorBuf) {
+	void EncodeData() {
+		//If you fail this assert, make sure you are setting the buffer with SetEncodedBuffer()
+		assert(encodingBuf);
 		GetSize();
 		buf.resize(element_size);
 		uint32_t tmp = 0;
 		PacketSubstruct::WriteElement(buf.data(), tmp);
 		b_write_buf_initialized = true;
-		WriteLocker lock = xorBuf->GetBufLock();
-		memcpy(buf.data(), xorBuf->Encode(buf.data(), element_size), element_size);
+		WriteLocker lock = encodingBuf->GetBufLock();
+		memcpy(buf.data(), encodingBuf->Encode(buf.data(), element_size), element_size);
+	}
+
+	void SetEncodedBuffer(const std::shared_ptr<EncodedBuffer>& buf) {
+		encodingBuf = buf;
 	}
 
 private:
+	std::shared_ptr<EncodedBuffer> encodingBuf;
 	std::vector<unsigned char> buf;
 	uint32_t element_size;
 	bool b_size_initialized;

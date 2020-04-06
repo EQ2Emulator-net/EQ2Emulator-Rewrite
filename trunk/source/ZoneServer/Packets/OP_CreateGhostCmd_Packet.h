@@ -5,6 +5,7 @@
 #include "../Spawns/SpawnStructs.h"
 #include "Substruct_SpawnHeader.h"
 #include "../../common/Packets/PacketElements/PacketPackedData.h"
+#include "../ZoneServer/Client.h"
 
 class OP_CreateGhostCmd_Packet : public OP_ClientCmdMsg_Packet {
 public:
@@ -48,6 +49,12 @@ public:
 
 		info.interaction_flag = 12;
 		info.emote_voice = 1023;
+	}
+
+	void SetEncodedBuffers(const std::shared_ptr<Client>& client, uint32_t spawnIndex) {
+		pos.SetEncodedBuffer(client->encoded_packets.GetBuffer(EEncoded_UpdateSpawnPos, spawnIndex));
+		info.SetEncodedBuffer(client->encoded_packets.GetBuffer(EEncoded_UpdateSpawnInfo, spawnIndex));
+		vis.SetEncodedBuffer(client->encoded_packets.GetBuffer(EEncoded_UpdateSpawnVis, spawnIndex));
 	}
 
 	PacketPackedData packedData;
