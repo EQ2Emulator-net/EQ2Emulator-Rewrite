@@ -7,6 +7,7 @@
 #include "../../common/Packets/PacketElements/PacketPackedData.h"
 #include "../ZoneServer/Client.h"
 #include "../Spawns/Spawn.h"
+#include "../../common/timer.h"
 
 class OP_CreateGhostCmd_Packet : public OP_ClientCmdMsg_Packet {
 public:

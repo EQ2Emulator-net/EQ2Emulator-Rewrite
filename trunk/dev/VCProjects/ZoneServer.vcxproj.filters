@@ -539,5 +539,29 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_UpdateSpawnCmdMsg.h">
       <Filter>source\Packets\Server-&gt;Client</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Controllers\BaseController.h">
+      <Filter>source\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Controllers\BotController.h">
+      <Filter>source\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Controllers\CosmeticPetController.h">
+      <Filter>source\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Controllers\DumbfirePetController.h">
+      <Filter>source\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Controllers\MercenaryController.h">
+      <Filter>source\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Controllers\NPCController.h">
+      <Filter>source\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Controllers\PetController.h">
+      <Filter>source\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Controllers\PlayerController.h">
+      <Filter>source\Controllers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

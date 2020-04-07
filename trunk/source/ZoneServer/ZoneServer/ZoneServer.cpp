@@ -7,8 +7,17 @@
 #include "Client.h"
 #include "../../common/thread.h"
 
+// Packets
 #include "../Packets/OP_ZoneInfoMsg_Packet.h"
 #include "../Packets/OP_SetRemoteCmdsMsg_Packet.h"
+#include "../Packets/OP_CreateGhostCmd_Packet.h"
+
+// Spawns
+#include "../Spawns/Spawn.h"
+#include "../Spawns/Entity.h"
+#include "../Spawns/Object.h"
+#include "../Spawns/Widget.h"
+#include "../Spawns/Sign.h"
 
 extern ZoneDatabase database;
 extern ZoneOperator z;
@@ -132,4 +141,19 @@ bool ZoneServer::AddClient(std::weak_ptr<Client> client) {
 	c->QueuePacket(commands);
 
 	return true;
+}
+
+void ZoneServer::SendCharacterInfo(std::shared_ptr<Client> client) {
+	std::shared_ptr<Entity> entity = std::make_shared<Entity>();
+
+	database.LoadCharacter(client->GetCharacterID(), client->GetAccountID(), entity);
+
+	players.push_back(entity);
+
+	/*OP_CreateGhostCmd_Packet* ghost = new OP_CreateGhostCmd_Packet(client->GetVersion());
+	ghost->InsertSpawnData(entity, 1);
+	//ghost->SetTestData();
+	ghost->SetEncodedBuffers(client, ghost->header.index);
+	client->QueuePacket(ghost);*/
+
 }

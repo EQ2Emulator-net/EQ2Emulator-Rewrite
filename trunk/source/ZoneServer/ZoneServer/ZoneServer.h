@@ -6,6 +6,7 @@
 #include <thread>
 
 class Client;
+class Entity;
 
 // This will be where every thing happens
 class ZoneServer {
@@ -20,9 +21,12 @@ public:
 	bool AddClient(std::weak_ptr<Client> client);
 
 
-
+	void SendCharacterInfo(std::shared_ptr<Client> client);
 
 private:
+
+	std::vector<std::shared_ptr<Entity> > players;
+
 
 	std::map<uint32_t, std::weak_ptr<Client> > Clients;
 	std::thread process_thread;
