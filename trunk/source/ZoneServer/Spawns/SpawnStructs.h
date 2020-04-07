@@ -5,7 +5,6 @@
 #include "../../common/Packets/PacketElements/PacketEQ2Color.h"
 #include "../../common/Packets/PacketElements/PacketElements.h"
 #include "../../common/Packets/PacketElements/PacketEncodedData.h"
-#include "Spawn.h"
 
 /* These structs should match the latest xml structs exactly, if changes are made to one the should also be made to the other */
 
