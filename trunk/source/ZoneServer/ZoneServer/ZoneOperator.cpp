@@ -77,7 +77,7 @@ void ZoneOperator::ClientLogIn(std::shared_ptr<Client> client, OP_LoginByNumRequ
 			return;
 		}
 
-		ZoneServer* z = GetZone(itr->second.zone_id, itr->second.instance_id);
+		std::shared_ptr<ZoneServer> z = GetZone(itr->second.zone_id, itr->second.instance_id);
 		if (!z) {
 			client->SendLoginReply(3);
 			return;
@@ -98,8 +98,8 @@ void ZoneOperator::AddPendingClient(uint32_t account_id, PendingClient pending_c
 	pending_clients[account_id] = pending_client;
 }
 
-ZoneServer* ZoneOperator::AddNewZone(uint32_t zone_id, uint32_t instance_id) {
-	ZoneServer* ret = nullptr;
+std::shared_ptr<ZoneServer> ZoneOperator::AddNewZone(uint32_t zone_id, uint32_t instance_id) {
+	std::shared_ptr<ZoneServer> ret = nullptr;
 
 	ret = GetZone(zone_id, instance_id);
 	if (ret) {
@@ -108,7 +108,7 @@ ZoneServer* ZoneOperator::AddNewZone(uint32_t zone_id, uint32_t instance_id) {
 	}
 
 	// TODO: Make an instance
-	ZoneServer* z = new ZoneServer(zone_id);
+	std::shared_ptr<ZoneServer> z = make_shared<ZoneServer>(zone_id);
 	if (z->Init()) {
 		std::pair<uint32_t, uint32_t> key = std::make_pair(zone_id, instance_id);
 		zones[key] = z;
@@ -116,15 +116,14 @@ ZoneServer* ZoneOperator::AddNewZone(uint32_t zone_id, uint32_t instance_id) {
 	}
 	else {
 		LogError(LOG_ZONE, 0, "Failed to start zone %u", zone_id);
-		delete z;
 	}
 
 	return ret;
 }
 
-ZoneServer* ZoneOperator::GetZone(uint32_t zone_id, uint32_t instance_id) {
+std::shared_ptr<ZoneServer> ZoneOperator::GetZone(uint32_t zone_id, uint32_t instance_id) {
 	std::pair<uint32_t, uint32_t> key = std::make_pair(zone_id, instance_id);
-	std::map<std::pair<uint32_t, uint32_t>, ZoneServer*>::iterator itr = zones.find(key);
+	std::map<std::pair<uint32_t, uint32_t>, std::shared_ptr<ZoneServer> >::iterator itr = zones.find(key);
 	if (itr != zones.end())
 		return itr->second;
 

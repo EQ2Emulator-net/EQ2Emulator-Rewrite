@@ -33,7 +33,7 @@ void Emu_RequestZone_Packet::HandlePacket(std::shared_ptr<WorldStream> w) {
 		return;
 	}
 
-	ZoneServer* zone = z.AddNewZone(zone_id, instance_id);
+	std::shared_ptr<ZoneServer> zone = z.AddNewZone(zone_id, instance_id);
 	if (zone) {
 		p->reply = zone->GetID();
 		w->QueuePacket(p);

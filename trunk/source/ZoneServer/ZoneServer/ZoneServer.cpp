@@ -101,6 +101,7 @@ void ZoneServer::Process() {
 bool ZoneServer::AddClient(std::weak_ptr<Client> client) {
 	std::shared_ptr<Client> c = client.lock();
 	if (c) {
+		c->SetZone(shared_from_this());
 		Clients[c->GetAccountID()] = client;
 
 		OP_ZoneInfoMsg_Packet* zone = new OP_ZoneInfoMsg_Packet(c->GetVersion());
@@ -150,10 +151,17 @@ void ZoneServer::SendCharacterInfo(std::shared_ptr<Client> client) {
 
 	players.push_back(entity);
 
-	/*OP_CreateGhostCmd_Packet* ghost = new OP_CreateGhostCmd_Packet(client->GetVersion());
-	ghost->InsertSpawnData(entity, 1);
-	//ghost->SetTestData();
-	ghost->SetEncodedBuffers(client, ghost->header.index);
-	client->QueuePacket(ghost);*/
+	// Set this in the spawn constructor
+	entity->SetState(16512, false);
+	entity->SetSize(0, false);
+	entity->SetCollisionRadius(28, false);
+	entity->SetSizeRatio(1.0f, false);
+	entity->SetSizeMultiplierRatio(1.0f, false);
+	entity->SetVisFlags(55, false);
+	entity->SetInteractionFlag(12);
 
+	OP_CreateGhostCmd_Packet* ghost = new OP_CreateGhostCmd_Packet(client->GetVersion());
+	ghost->InsertSpawnData(entity, 1);
+	ghost->SetEncodedBuffers(client, ghost->header.index);
+	client->QueuePacket(ghost);
 }

@@ -3,6 +3,8 @@
 #include "../../common/EQ2Stream.h"
 #include "../Packets/EncodedPackets.h"
 
+class ZoneServer;
+
 class Client : public EQ2Stream {
 public:
 	Client(unsigned int ip, unsigned short port);
@@ -21,6 +23,8 @@ private:
 	uint32_t account_id;
 	uint32_t character_id;
 
+	std::weak_ptr<ZoneServer> m_zone;
+
 
 public:
 	void SetAccountID(uint32_t val) { account_id = val; }
@@ -28,4 +32,7 @@ public:
 
 	void SetCharacterID(uint32_t val) { character_id = val; }
 	uint32_t GetCharacterID() { return character_id; }
+
+	std::shared_ptr<ZoneServer> GetZone() { return m_zone.lock(); }
+	void SetZone(std::weak_ptr<ZoneServer> zone) { m_zone = zone; }
 };

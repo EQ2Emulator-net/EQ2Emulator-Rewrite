@@ -10,7 +10,7 @@ class Client;
 class Entity;
 
 // This will be where every thing happens
-class ZoneServer {
+class ZoneServer : public std::enable_shared_from_this<ZoneServer> {
 public:
 	ZoneServer(uint32_t zone_id);
 	~ZoneServer();

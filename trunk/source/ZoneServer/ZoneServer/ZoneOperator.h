@@ -38,9 +38,9 @@ public:
 
 	void AddPendingClient(uint32_t account_id, PendingClient pending_client);
 
-	ZoneServer* AddNewZone(uint32_t zone_id, uint32_t instance_id);
+	std::shared_ptr<ZoneServer> AddNewZone(uint32_t zone_id, uint32_t instance_id);
 
-	ZoneServer* GetZone(uint32_t zone_id, uint32_t instance_id);
+	std::shared_ptr<ZoneServer> GetZone(uint32_t zone_id, uint32_t instance_id);
 
 	void AddCommand(uint32_t id, std::string name);
 	void AddSubCommand(std::string parent_cmd, uint32_t id, std::string name);
@@ -52,7 +52,7 @@ private:
 	// key = account id
 	std::map<uint32_t, PendingClient> pending_clients;
 	// pair<zoneID, instanceID>
-	std::map<std::pair<uint32_t, uint32_t>, ZoneServer*> zones;
+	std::map<std::pair<uint32_t, uint32_t>, std::shared_ptr<ZoneServer> > zones;
 
 	std::map<uint32_t, Command*> commands;
 	OP_SetRemoteCmdsMsg_Packet* commands_packet;
