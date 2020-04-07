@@ -17,7 +17,7 @@ public:
 	float GetX() const { return m_posStruct.X; }
 	float GetY() const { return m_posStruct.Y; }
 	float GetZ() const { return m_posStruct.Z; }
-	uint32_t GetID() const { return 0; }
+	uint32_t GetID() const { return m_spawnID; }
 	std::string GetName() const { return m_titleStruct.name; }
 
 	ZoneServer* GetZone() const { return m_zone; }
@@ -38,7 +38,7 @@ public:
 	UpdateFlags PopUpdateFlags();
 
 private:
-	static std::atomic<uint32_t> m_spawnID;
+	static std::atomic<uint32_t> g_spawnID;
 
 	ZoneServer* m_zone;
 
@@ -54,6 +54,7 @@ private:
 
 	std::unique_ptr<Sign> signData;
 	std::unique_ptr<Widget> widgetData;
+	uint32_t m_spawnID;
 
 public:
 	/* I put the template functions down here so they aren't cluttering up the rest of the class */
