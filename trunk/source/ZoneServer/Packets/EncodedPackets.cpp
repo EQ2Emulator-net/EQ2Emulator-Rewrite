@@ -6,7 +6,7 @@ using namespace std;
 void EncodedPackets::TypeRefCheck(EEncodedPackets t, uint32_t ref) {
 	if (ref != 0) {
 		//the ref id is only used for certain packets, sanity check
-		assert(t == EEncoded_UpdateSpawnPos || t == EEncoded_UpdateSpawnInfo || t == EEncoded_UpdatePosition);
+		assert(t == EEncoded_UpdateSpawnPos || t == EEncoded_UpdateSpawnInfo || t == EEncoded_UpdateSpawnVis);
 	}
 }
 

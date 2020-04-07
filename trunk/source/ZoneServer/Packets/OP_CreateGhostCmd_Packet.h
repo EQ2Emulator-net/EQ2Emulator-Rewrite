@@ -25,7 +25,7 @@ public:
 	}
 
 	void SetTestData() {
-		header.index = 0;
+		header.index = 1;
 		header.spawn_id = 1;
 		header.spawn_anim = 0xFFFFFFFF;
 		header.crc = 1;

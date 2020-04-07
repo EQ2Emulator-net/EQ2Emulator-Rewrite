@@ -38,8 +38,10 @@ public:
 			uint16_t size = static_cast<uint16_t>(element[i].length());
 			memcpy(outbuf + offset, &size, sizeof(uint16_t));
 			offset += sizeof(uint16_t);
-			memcpy(outbuf + offset, element[i].c_str(), size);
-			offset += size;
+			if (size > 0) {
+				memcpy(outbuf + offset, element[i].c_str(), size);
+				offset += size;
+			}
 		}
 	}
 

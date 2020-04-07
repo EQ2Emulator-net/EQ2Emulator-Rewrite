@@ -23,6 +23,10 @@ public:
 		uint32_t group_spawn_id;
 
 		Substruct_Group() : PacketSubstruct(0) {
+			
+		}
+
+		void RegisterElements() override {
 			RegisterUInt32(group_spawn_id);
 		}
 	};
@@ -37,10 +41,14 @@ public:
 		std::string command_list_command;
 
 		Substruct_CommandList() : PacketSubstruct(0) {
+			
+		}
+
+		void RegisterElements() override {
 			Register16String(command_list_name);
 			RegisterFloat(command_list_max_distance);
-			RegisterUInt8(command_list_error_code);
-			auto e = RegisterUInt8(command_list_unknown);
+			auto e = RegisterUInt8(command_list_error_code);
+			RegisterUInt8(command_list_unknown);
 			Register16String(command_list_command)->SetIsVariableSet(e);
 		}
 	};
@@ -63,15 +71,15 @@ public:
 		RegisterOversizedByte(index);
 		RegisterUInt32(spawn_id);
 
-		if (version < 57080) {
+		if (version >= 57080) {
+			RegisterUInt32(spawn_anim);
+		}
+		else if (version > 283) {
 			uint16_t& spawn_anim = reinterpret_cast<uint16_t&>(this->spawn_anim);
 			RegisterUInt16(spawn_anim);
 		}
-		else {
-			RegisterUInt32(spawn_anim);
-		}
 
-		if (version > 238) {
+		if (version > 283) {
 			RegisterUInt32(unknown2);
 			RegisterUInt32(crc);
 		}
