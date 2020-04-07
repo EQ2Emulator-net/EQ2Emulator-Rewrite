@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <thread>
+#include <memory>
 
 class Client;
 class Entity;

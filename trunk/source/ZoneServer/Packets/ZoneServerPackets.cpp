@@ -8,7 +8,6 @@
 #include "OP_DoneLoadingEntityResourcesMsg_Packet.h"
 #include "OP_EqSetPOVGhostCmd_Packet.h"
 #include "OP_EqSetControlGhostCmd_Packet.h"
-#include "OP_CreateGhostCmd_Packet.h"
 #include "OP_UpdateCharacterSheetMsg_Packet.h"
 #include "OP_DefaultGroupOptionsRequestMsg_Packet.h"
 #include "OP_DefaultGroupOptionsMsg_Packet.h"
