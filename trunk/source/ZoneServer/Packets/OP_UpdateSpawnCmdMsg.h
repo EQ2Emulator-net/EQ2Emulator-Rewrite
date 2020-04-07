@@ -8,29 +8,11 @@
 
 class Substruct_SpawnPosUpdate : public PacketSubstruct {
 public:
-	Substruct_SpawnPosUpdate(uint32_t version) : PacketSubstruct(version), data(version), spawnIndex(0) {
+	Substruct_SpawnPosUpdate(uint32_t version) : PacketSubstruct(version), data(version), spawnIndex(0), isPlayer(false), coeTimestamp(0) {
 
 	}
 
 	~Substruct_SpawnPosUpdate() = default;
-
-	void RegisterElements() {
-		PacketElement* e = RegisterOversizedByte(spawnIndex);
-		e->SetIsVariableSet(e);
-		RegisterSubstruct(data)->SetIsVariableSet(e);
-	}
-
-	Substruct_SpawnPosition data;
-	uint16_t spawnIndex;
-};
-
-class Substruct_SpawnInfoUpdate : public PacketSubstruct {
-public:
-	Substruct_SpawnInfoUpdate(uint32_t version) : PacketSubstruct(version), data(version), spawnIndex(0), isPlayer(false), coeTimestamp(0) {
-
-	}
-
-	~Substruct_SpawnInfoUpdate() = default;
 
 	void RegisterElements() {
 		PacketElement* e = RegisterOversizedByte(spawnIndex);
@@ -44,10 +26,29 @@ public:
 		}
 	}
 
-	Substruct_SpawnInfo data;
+	Substruct_SpawnPosition data;
 	uint16_t spawnIndex;
 	bool isPlayer;
 	uint32_t coeTimestamp;
+};
+
+class Substruct_SpawnInfoUpdate : public PacketSubstruct {
+public:
+	Substruct_SpawnInfoUpdate(uint32_t version) : PacketSubstruct(version), data(version), spawnIndex(0) {
+
+	}
+
+	~Substruct_SpawnInfoUpdate() = default;
+
+	void RegisterElements() {
+		PacketElement* e = RegisterOversizedByte(spawnIndex);
+		e->SetIsVariableSet(e);
+		RegisterSubstruct(data)->SetIsVariableSet(e);
+	}
+
+	Substruct_SpawnInfo data;
+	uint16_t spawnIndex;
+	
 };
 
 class Substruct_SpawnVisUpdate : public PacketSubstruct {

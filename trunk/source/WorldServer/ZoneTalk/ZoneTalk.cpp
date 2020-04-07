@@ -64,6 +64,7 @@ bool ZoneTalk::GetAvailableZone(std::shared_ptr<Client> client, uint32_t char_id
 			// no zone servers connected
 			OP_PlayCharacterReplyMsg_Packet* p = new OP_PlayCharacterReplyMsg_Packet(client->GetVersion());
 			p->response = PlayCharacterResponse::EZoneDown;
+			client->QueuePacket(p);
 		}
 
 	}

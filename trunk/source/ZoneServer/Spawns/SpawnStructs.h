@@ -5,6 +5,7 @@
 #include "../../common/Packets/PacketElements/PacketEQ2Color.h"
 #include "../../common/Packets/PacketElements/PacketElements.h"
 #include "../../common/Packets/PacketElements/PacketEncodedData.h"
+#include "Spawn.h"
 
 /* These structs should match the latest xml structs exactly, if changes are made to one the should also be made to the other */
 
@@ -872,14 +873,37 @@ public:
 };
 
 struct SpawnTitleStruct {
+	SpawnTitleStruct() : isPlayer(false), unknown1(0) {}
+
 	std::string name;
 	uint8_t unknown1;
-	uint8_t isPlayer;
+	bool isPlayer;
 	std::string last_name;
 	std::string suffix_title;
 	std::string prefix_title;
 	std::string pvp_title;
 	std::string guild;
+};
+
+class Substruct_SpawnTitleStruct : public SpawnTitleStruct, public PacketSubstruct {
+public:
+	Substruct_SpawnTitleStruct(uint32_t version) : PacketSubstruct(version) {
+		RegisterElements();
+	}
+
+	void RegisterElements() override {
+		std::string& name = SpawnTitleStruct::name;
+		Register16String(name);
+		RegisterUInt8(unknown1);
+		RegisterBool(isPlayer);
+		Register16String(last_name);
+		Register16String(suffix_title);
+		Register16String(prefix_title);
+		Register16String(pvp_title);
+		Register16String(guild);
+	}
+
+	~Substruct_SpawnTitleStruct() = default;
 };
 
 class Substruct_Lerp : public PacketSubstruct {
@@ -925,39 +949,23 @@ public:
 
 class Substruct_SpawnFooter : public PacketSubstruct {
 public:
-	Substruct_SpawnFooter(uint32_t p_version) : PacketSubstruct(p_version), lerp1(p_version), lerp2(p_version) {
-		unknown = 0;
+	Substruct_SpawnFooter(uint32_t p_version) : PacketSubstruct(p_version), titleStruct(p_version), lerp1(p_version), lerp2(p_version) {
 		has_lerp = false;
 		spawn_type = 0;
-		is_player = false;
 		RegisterElements();
 	}
 
 	void RegisterElements() override {
-		Register16String(name);
-		RegisterUInt8(unknown);
-		RegisterBool(is_player);
-		Register16String(last_name);
-		Register16String(suffix);
-		Register16String(prefix);
-		Register16String(pvp_title);
-		Register16String(guild);
+		RegisterSubstruct(titleStruct);
 		auto e = RegisterBool(has_lerp);
 		RegisterSubstruct(lerp1)->SetIsVariableSet(e);
 		RegisterSubstruct(lerp2)->SetIsVariableSet(e);
 		RegisterUInt8(spawn_type);
 	}
 
-	std::string name;
-	uint8_t unknown;
-	bool is_player;
-	bool has_lerp;
+	Substruct_SpawnTitleStruct titleStruct;
 	uint8_t spawn_type;
-	std::string last_name;
-	std::string suffix;
-	std::string prefix;
-	std::string pvp_title;
-	std::string guild;
+	bool has_lerp;
 	Substruct_Lerp lerp1;
 	Substruct_Lerp lerp2;
 };

@@ -6,6 +6,7 @@
 #include "Substruct_SpawnHeader.h"
 #include "../../common/Packets/PacketElements/PacketPackedData.h"
 #include "../ZoneServer/Client.h"
+#include "../Spawns/Spawn.h"
 
 class OP_CreateGhostCmd_Packet : public OP_ClientCmdMsg_Packet {
 public:
@@ -22,6 +23,29 @@ public:
 		packedData.LinkSubstruct(info, "info");
 		RegisterSubstruct(packedData);
 		RegisterSubstruct(footer);
+	}
+
+	virtual void InsertSpawnData(const std::shared_ptr<Spawn>& spawn, uint16_t index) {
+		SetHeaderData(spawn, index);
+		static_cast<SpawnPositionStruct&>(pos) = *spawn->GetPosStruct();
+		static_cast<SpawnInfoStruct&>(info) = *spawn->GetInfoStruct();
+		static_cast<SpawnVisualizationStruct&>(vis) = *spawn->GetVisStruct();
+		SetFooterData(spawn);
+	}
+
+	void SetHeaderData(const std::shared_ptr<Spawn>& spawn, uint16_t index) {
+		header.index = index;
+		header.spawn_id = spawn->GetID();
+		header.spawn_anim = 0xFFFFFFFF;
+		header.crc = spawn->GetID();
+		header.time_stamp = Timer::GetCurrentTime2();
+	}
+
+	void SetFooterData(const std::shared_ptr<Spawn>& spawn) {
+		static_cast<SpawnTitleStruct&>(footer.titleStruct) = *spawn->GetTitleStruct();
+
+		//ADD PROPER WAY TO GET SPAWN TYPE
+		footer.spawn_type = 1;
 	}
 
 	void SetTestData() {
@@ -43,9 +67,9 @@ public:
 		info.model_type = 116;
 		info.soga_model_type = 114;
 		info.hp_remaining = 101;
-		footer.name = "Foof";
-		footer.spawn_type = 1;
-		footer.is_player = true;
+		//footer.name = "Foof";
+		//footer.spawn_type = 1;
+		//footer.is_player = true;
 
 		info.interaction_flag = 12;
 		info.emote_voice = 1023;

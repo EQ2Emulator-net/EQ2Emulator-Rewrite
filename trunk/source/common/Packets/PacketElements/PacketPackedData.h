@@ -92,7 +92,7 @@ uint32_t DoPack(uint8_t* data, uint8_t* src, uint16_t srcLen, uint16_t dstLen) {
 	return dataLen + 4;
 }
 
-uint32_t DoPackClassic(uint8_t* input, int32_t inputSize, uint8_t* outBuf, int32_t outBufSize) {
+uint32_t DoPackClassic(const uint8_t* input, int32_t inputSize, uint8_t* outBuf, int32_t outBufSize) {
 	assert(outBufSize > 4);
 	int32_t inputCount = inputSize;
 	uint8_t * outBufStart = outBuf;
@@ -151,7 +151,7 @@ uint32_t DoPackClassic(uint8_t* input, int32_t inputSize, uint8_t* outBuf, int32
 	}
 
 	uint32_t packSize = static_cast<uint32_t>(outBuf - outBufStart);
-	memcpy(&outBufStart, &packSize, sizeof(uint32_t));
+	memcpy(outBufStart, &packSize, sizeof(uint32_t));
 
 	return packSize + 4;
 }
@@ -391,7 +391,9 @@ public:
 			packedSize = 0;
 		}
 		else if (bClassic) {
-			packedSize = DoPackClassic(buf.data(), static_cast<uint32_t>(buf.size()), tmp.data(), unpackedSize) - 4;
+			packedSize = DoPackClassic(tmp.data(), static_cast<uint32_t>(tmp.size()), buf.data(), unpackedSize) - 4;
+			vector<unsigned char> derp(unpackedSize + 10);
+			assert(DoUnpackClassic(buf.data(), packedSize + 4, derp.data(), derp.size()) - 4 == unpackedSize);
 		}
 		else {
 			packedSize = DoPack(buf.data(), tmp.data(), unpackedSize, static_cast<uint32_t>(buf.size())) - 4;
