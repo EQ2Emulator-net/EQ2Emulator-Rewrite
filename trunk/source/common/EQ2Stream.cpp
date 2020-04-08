@@ -262,6 +262,11 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 			}
 
 			ProtocolPacket* subPacket = ProtocolPacket::GetProtocolPacket(p->buffer + processed + offset, subpacket_length, false);
+
+			if (!subPacket) {
+				break;
+			}
+
 			ProcessPacket(subPacket);
 			delete subPacket;
 
