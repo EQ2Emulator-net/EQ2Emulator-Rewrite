@@ -40,7 +40,7 @@ public:
 		uint8_t command_list_unknown;
 		std::string command_list_command;
 
-		Substruct_CommandList() : PacketSubstruct(0) {
+		Substruct_CommandList() : PacketSubstruct(0), command_list_max_distance(0.f), command_list_error_code(0), command_list_unknown(0) {
 			
 		}
 

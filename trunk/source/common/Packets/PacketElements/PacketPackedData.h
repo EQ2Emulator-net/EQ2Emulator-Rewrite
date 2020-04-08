@@ -121,8 +121,8 @@ public:
 		}
 		else if (bClassic) {
 			packedSize = DoPackClassic(tmp.data(), static_cast<uint32_t>(tmp.size()), buf.data(), unpackedSize) - 4;
-			vector<unsigned char> derp(unpackedSize + 10);
-			assert(DoUnpackClassic(buf.data(), packedSize + 4, derp.data(), derp.size()) - 4 == unpackedSize);
+			//vector<unsigned char> derp(unpackedSize + 10);
+			//assert(DoUnpackClassic(buf.data(), packedSize + 4, derp.data(), derp.size()) - 4 == unpackedSize);
 		}
 		else {
 			packedSize = DoPack(buf.data(), tmp.data(), unpackedSize, static_cast<uint32_t>(buf.size())) - 4;

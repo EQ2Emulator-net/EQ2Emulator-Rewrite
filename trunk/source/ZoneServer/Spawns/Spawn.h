@@ -14,9 +14,9 @@ public:
 	Spawn();
 	~Spawn();
 
-	float GetX() const { return m_posStruct.X; }
-	float GetY() const { return m_posStruct.Y; }
-	float GetZ() const { return m_posStruct.Z; }
+	float GetX() const { return m_posStruct.x; }
+	float GetY() const { return m_posStruct.y; }
+	float GetZ() const { return m_posStruct.z; }
 	uint32_t GetID() const { return m_spawnID; }
 	std::string GetName() const { return m_titleStruct.name; }
 
@@ -60,7 +60,7 @@ public:
 	/* I put the template functions down here so they aren't cluttering up the rest of the class */
 	template <class Field, class Value>
 	void Set(Field* field, Value value) {
-		*field = value;
+		*field = static_cast<Field>(value);
 	}
 
 	template <class Field>
@@ -379,113 +379,70 @@ public:
 		SetPos(&m_posStruct.grid_id, grid, updateFlags);
 	}
 	void SetX(float x, bool updateFlags = true){
-		SetPos(&m_posStruct.X, x, updateFlags);
+		SetPos(&m_posStruct.x, x, updateFlags);
 	}
 	void SetY(float y, bool updateFlags = true){
-		SetPos(&m_posStruct.Y, y, updateFlags);
+		SetPos(&m_posStruct.y, y, updateFlags);
 	}
 	void SetZ(float z, bool updateFlags = true){
-		SetPos(&m_posStruct.Z, z, updateFlags);
+		SetPos(&m_posStruct.z, z, updateFlags);
 	}
-	void SetHeading(int16_t dir1, int16_t dir2, bool updateFlags = true){
-		SetPos(&m_posStruct.heading1, dir1, updateFlags);
-		SetPos(&m_posStruct.heading2, dir2, updateFlags);
+	void SetLocation(float x, float y, float z, bool updateFlags = true) {
+		SetX(x, false);
+		SetY(y, false);
+		SetZ(z, updateFlags);
 	}
 	void SetHeading(float heading, bool updateFlags = true){
-		if (heading != 180)
-			heading = (heading - 180) * 64;
-		SetPos(&m_posStruct.heading1, (int16_t)heading, updateFlags);
-		SetPos(&m_posStruct.heading2, (int16_t)heading, updateFlags);
+		m_posStruct.heading = heading;
+		SetPos(&m_posStruct.desiredHeading, heading, updateFlags);
 	}
-	void SetSpeed(uint16_t speed, bool updateFlags = true) {
-		SetPos(&m_posStruct.speed, speed, updateFlags);
+	void SetSpeed(float speed, bool updateFlags = true) {
+		SetPos(&m_posStruct.desiredForwardSpeed, speed, updateFlags);
 	}
-	void SetState(uint16_t state, bool updateFlags = true) {
-		SetPos(&m_posStruct.state, state, updateFlags);
+	void SetState(uint32_t state, bool updateFlags = true) {
+		SetPos(&m_posStruct.positionState, state, updateFlags);
 	}
-	void SetUnknown2(uint8_t value, uint8_t index, bool updateFlags = true) {
-		SetPos(&m_posStruct.unknown2[index], value, updateFlags);
+	void SetDestX(float x, bool updateFlags = true) {
+		SetPos(&m_posStruct.destLocX, x, updateFlags);
 	}
-	void SetNextX(float x, bool updateFlags = true) {
-		SetPos(&m_posStruct.next_X, x, updateFlags);
+	void SetDestY(float y, bool updateFlags = true) {
+		SetPos(&m_posStruct.destLocY, y, updateFlags);
 	}
-	void SetNextY(float y, bool updateFlags = true) {
-		SetPos(&m_posStruct.next_Y, y, updateFlags);
+	void SetDestZ(float z, bool updateFlags = true) {
+		SetPos(&m_posStruct.destLocZ, updateFlags);
 	}
-	void SetNextZ(float z, bool updateFlags = true) {
-		SetPos(&m_posStruct.next_Z, z, updateFlags);
+	void SetDestX2(float x, bool updateFlags = true) {
+		SetPos(&m_posStruct.destLocX2, x, updateFlags);
 	}
-	void SetX3(float x, bool updateFlags = true) {
-		SetPos(&m_posStruct.X3, x, updateFlags);
+	void SetDestY2(float y, bool updateFlags = true) {
+		SetPos(&m_posStruct.destLocY2, y, updateFlags);
 	}
-	void SetY3(float y, bool updateFlags = true) {
-		SetPos(&m_posStruct.Y3, y, updateFlags);
-	}
-	void SetZ3(float z, bool updateFlags = true) {
-		SetPos(&m_posStruct.Z3, z, updateFlags);
+	void SetDestZ2(float z, bool updateFlags = true) {
+		SetPos(&m_posStruct.destLocZ2, z, updateFlags);
 	}
 	void SetMovementMode(uint8_t value, bool updateFlags = true) {
-		SetPos(&m_posStruct.movement_mode, value, updateFlags);
-	}
-	void SetUnknown3b(uint8_t value, bool updateFlags = true) {
-		SetPos(&m_posStruct.unknown3b, value, updateFlags);
-	}
-	void SetUnknown4(uint16_t value, uint8_t index, bool updateFlags = true) {
-		SetPos(&m_posStruct.unknown4[index], value, updateFlags);
-	}
-	void SetMoveType(uint16_t value, bool updateFlags = true) {
-		SetPos(&m_posStruct.move_type, value, updateFlags);
-	}
-	void SetUnknown6(uint16_t value, uint8_t index, bool updateFlags = true) {
-		SetPos(&m_posStruct.unknown6[index], value, updateFlags);
-	}
-	void SetPitch(int16_t pitch1, int16_t pitch2, bool updateFlags = true){
-		SetPos(&m_posStruct.pitch1, (int16_t)pitch1, updateFlags);
-		SetPos(&m_posStruct.pitch2, (int16_t)pitch2, updateFlags);
+		SetPos(&m_posStruct.movementMode, value, updateFlags);
 	}
 	void SetPitch(float pitch, bool updateFlags = true){
-		if (pitch == 0){
-			SetPos(&m_posStruct.pitch1, (int16_t)0, updateFlags);
-			SetPos(&m_posStruct.pitch2, (int16_t)0, updateFlags);
-			return;
-		}
-		if (pitch != 180)
-			pitch = (pitch - 180) * 64;
-		SetPos(&m_posStruct.pitch1, (int16_t)pitch, updateFlags);
-		SetPos(&m_posStruct.pitch2, (int16_t)pitch, updateFlags);
-	}
-	void SetUnknown7(uint16_t value, uint8_t index, bool updateFlags = true) {
-		SetPos(&m_posStruct.unknown7[index], value, updateFlags);
+		m_posStruct.pitch = pitch;
+		SetPos(&m_posStruct.desiredPitch, pitch, updateFlags);
 	}
 	void SetCollisionRadius(uint32_t radius, bool updateFlags = true){
-		SetPos(&m_posStruct.collision_radius, radius, updateFlags);
+		SetPos(&m_posStruct.collisionRadius, radius, updateFlags);
 	}
-	void SetSize(uint16_t new_size, bool updateFlags = true) {
+	void SetSize(float new_size, bool updateFlags = true) {
 		SetPos(&m_posStruct.size, new_size, updateFlags);
 	}
 	void SetSizeRatio(float value, bool updateFlags = true) {
-		SetPos(&m_posStruct.size_ratio, value, updateFlags);
+		SetPos(&m_posStruct.sizeRatio, value, updateFlags);
 	}
 	void SetSizeMultiplierRatio(float value, bool updateFlags = true) {
-		SetPos(&m_posStruct.size_multiplier_ratio, value, updateFlags);
-	}
-	void SetUnknown10(uint16_t value, uint8_t index, bool updateFlags = true) {
-		SetPos(&m_posStruct.unknown10[index], value, updateFlags);
+		SetPos(&m_posStruct.sizeMultiplierRatio, value, updateFlags);
 	}
 	void SetRoll(float roll, bool updateFlags = true){
-		if (roll == 0){
-			SetPos(&m_posStruct.roll, (int16_t)0, updateFlags);
-			return;
-		}
-		else if (roll != 180)
-			roll = (roll - 180) * 64;
-		SetPos(&m_posStruct.roll, (int16_t)roll, updateFlags);
+		m_posStruct.roll = roll;
+		SetPos(&m_posStruct.desiredRoll, roll, updateFlags);
 	}
-	void SetUnknown12(uint16_t value, uint8_t index, bool updateFlags = true) {
-		SetPos(&m_posStruct.unknown12[index], value, updateFlags);
-	}
-
-
 
 	void SetName(std::string value, bool updateFlags = true) {
 		SetTitle(&m_titleStruct.name, value, updateFlags);
@@ -511,5 +468,8 @@ public:
 	void SetGuild(std::string value, bool updateFlags = true) {
 		SetTitle(&m_titleStruct.guild, value, updateFlags);
 	}
-
+	void SetSpawnPositionData(const SpawnPositionStruct& pos) {
+		static_cast<SpawnPositionStruct&>(m_posStruct) = pos;
+		m_updateFlags.m_posChanged = true;
+	}
 };

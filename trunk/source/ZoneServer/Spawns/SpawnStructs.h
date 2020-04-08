@@ -6,126 +6,289 @@
 #include "../../common/Packets/PacketElements/PacketElements.h"
 #include "../../common/Packets/PacketElements/PacketEncodedData.h"
 
-/* These structs should match the latest xml structs exactly, if changes are made to one the should also be made to the other */
-
 ///<summary>Packet struct containing the spawns position information</summary>
 struct SpawnPositionStruct {
-	uint32_t	grid_id;
-	float		X;
-	float		Y;
-	float		Z;
-	int16_t     velocity_X;
-	int16_t     velocity_Y;
-	int16_t     velocity_Z;
-	int16_t		heading1;
-	int16_t		heading2;
-	uint16_t	speed;
-	uint16_t	state;
-	uint8_t		unknown2[6];
-	float		next_X;
-	float		next_Y;
-	float		next_Z;
-	float		X3;
-	float		Y3;
-	float		Z3;
-	uint8_t		movement_mode;
-	uint8_t		unknown3b;
-	uint16_t	unknown4[3];
-	uint16_t	move_type;
-	uint16_t	unknown6[3];
-	uint16_t    unknown6a[4];
-	uint16_t    side_speed;
-	int16_t		pitch1;
-	uint16_t	unknown7[4];
-	int16_t		pitch2;
-	uint16_t	collision_radius;
-	uint16_t	size;
-	float		size_ratio;
-	float		size_multiplier_ratio;
-	uint16_t	unknown10[6];
-	int16_t		roll;
-	uint16_t	unknown12[2];
-
 	SpawnPositionStruct() {
-		memset(this, 0, sizeof(SpawnPositionStruct));
+		memset(this, 0, sizeof(*this));
+		sizeUnknown = 3.f;
 	}
+
+	uint32_t positionState;
+	float desiredHeading;
+	float desiredHeadingVelocity;
+	float desiredRoll;
+	float desiredRollVelocity;
+	float desiredPitch;
+	float desiredPitchVelocity;
+	float unusedUnknown;
+	uint32_t grid_id;
+	float x;
+	float y;
+	float z;
+	uint8_t movementMode;
+	uint8_t unkByte;
+	int16_t unk72;
+	float heading;
+	float pitch;
+	float roll;
+	float unk20;
+	float destLocX;
+	float destLocY;
+	float destLocZ;
+	float destLocX2;
+	float destLocY2;
+	float destLocZ2;
+	float size;
+	float collisionRadius;
+	float sizeRatio;
+	float sizeMultiplierRatio;
+	uint32_t faceActorID;
+	float baseLocX;
+	float baseLocY;
+	float baseLocZ;
+	float desiredForwardSpeed;
+	float speedModifier;
+	float swimmingSpeedModifier;
+	float unkSpeed3;
+	float desiredVertSpeed;
+	float desiredStrafeSpeed;
+	float unknown20;
+	float velocityX;
+	float velocityY;
+	float velocityZ;
+	float moveType;
+	float sizeUnknown;
+	float actorStopRange;
+	float unk70;
 };
 
-class Substruct_SpawnPosition : public SpawnPositionStruct, public PacketEncodedData {
+struct CompressedSpawnPositionData {
+	CompressedSpawnPositionData() {
+		memset(this, 0, sizeof(*this));
+	}
+	//The following are only used in packets, they do not represents values we use for calculations
+	uint16_t alignment_filler;
+	int16_t velocityX_compressed;
+	int16_t velocityY_compressed;
+	int16_t velocityZ_compressed;
+	int16_t heading_compressed;
+	int16_t desiredHeading_compressed;
+	int16_t desiredForwardSpeed_compressed;
+	int16_t desiredHeadingVelocity_compressed;
+	int16_t speedModifier_compressed;
+	int16_t swimmingSpeedModifier_compressed;
+	int16_t moveType_compressed;
+	int16_t desiredStrafeSpeed_compressed;
+	int16_t desiredVertSpeed_compressed;
+	int16_t unkSpeed3_compressed;
+	int16_t desiredRoll_compressed;
+	int16_t desiredRollVelocity_compressed;
+	int16_t desiredPitch_compressed;
+	int16_t desiredPitchVelocity_compressed;
+	int16_t baseLocX_compressed;
+	int16_t baseLocY_compressed;
+	int16_t baseLocZ_compressed;
+	int16_t pitch_compressed;
+	int16_t collisionRadius_compressed;
+	int16_t size_compressed;
+	int16_t actorStopRange_compressed;
+	int16_t roll_compressed;
+	int16_t unk70_compressed;
+	int16_t x_compressed;
+	int16_t y_compressed;
+	int16_t z_compressed;
+	int16_t destX_compressed;
+	int16_t destY_compressed;
+	int16_t destZ_compressed;
+	int16_t destX2_compressed;
+	int16_t destY2_compressed;
+	int16_t destZ2_compressed;
+	int16_t sizeUnknown_compressed;
+};
+
+class Substruct_SpawnPosition : public PacketEncodedData, public SpawnPositionStruct, protected CompressedSpawnPositionData  {
 public:
 	Substruct_SpawnPosition(uint32_t version) : PacketEncodedData(version) {	
 		RegisterElements();
 	}
 
-	void RegisterElements() {
+	inline int16_t CompressFloat(const float& f, const float& factor) {
+		return static_cast<int16_t>(f * factor);
+	}
+
+	//Many elements in this packet are compressed from a float (4 bytes) to a short (2 bytes). Handle those conversions here
+	void CompressData() {
+		heading_compressed = CompressFloat(heading, 64);
+		pitch_compressed = CompressFloat(pitch, 64);
+		roll_compressed = CompressFloat(roll, 64);
+		velocityX_compressed = CompressFloat(velocityX, 32);
+		velocityY_compressed = CompressFloat(velocityY, 32);
+		velocityZ_compressed = CompressFloat(velocityZ, 32);
+		if (GetVersion() > 283) {
+			baseLocX_compressed = CompressFloat(baseLocX, 16384);
+			baseLocY_compressed = CompressFloat(baseLocY, 16384);
+			baseLocZ_compressed = CompressFloat(baseLocZ, 16834);
+		}
+		desiredHeading_compressed = CompressFloat(desiredHeading, 64);
+		desiredPitch_compressed = CompressFloat(desiredPitch, 64);
+		desiredPitchVelocity_compressed = CompressFloat(desiredPitchVelocity, 32);
+		desiredHeadingVelocity_compressed = CompressFloat(desiredHeadingVelocity, 32);
+		desiredRollVelocity_compressed = CompressFloat(desiredPitchVelocity, 32);
+		collisionRadius_compressed = CompressFloat(collisionRadius, 32);
+		speedModifier_compressed = CompressFloat(speedModifier, 32);
+		swimmingSpeedModifier_compressed = CompressFloat(speedModifier, 32);
+		unkSpeed3_compressed = CompressFloat(unkSpeed3, 32);
+		desiredVertSpeed_compressed = CompressFloat(desiredVertSpeed, 32);
+		desiredStrafeSpeed_compressed = CompressFloat(desiredStrafeSpeed, 32);
+		moveType_compressed = CompressFloat(moveType, 32);
+		desiredForwardSpeed_compressed = CompressFloat(desiredForwardSpeed, 256);
+		desiredRoll_compressed = CompressFloat(desiredRoll, 256);
+		desiredRollVelocity_compressed = CompressFloat(desiredRollVelocity, 256);
+		size_compressed = CompressFloat(size, 32);
+		if (version > 910) {
+			//Looks like size moved after 910 back 2 bytes where collisionRadius was prior and they thought this element was size
+			//Not sure what this is but has a massive compression ratio so can only be low number values
+			sizeUnknown_compressed = CompressFloat(sizeUnknown, 16384);
+		}
+		unk70_compressed = CompressFloat(unk70, 256);
+		actorStopRange_compressed = CompressFloat(actorStopRange, 32);
+	}
+
+	inline float ExpandFloat(const int16_t& i, const float& factor) {
+		return static_cast<float>(i / factor);
+	}
+
+	void DecompressData() {
+		heading = ExpandFloat(heading_compressed, 64);
+		pitch = ExpandFloat(pitch_compressed, 64);
+		roll = ExpandFloat(roll_compressed, 64);
+		velocityX = ExpandFloat(velocityX_compressed, 32);
+		velocityY = ExpandFloat(velocityY_compressed, 32);
+		velocityZ = ExpandFloat(velocityZ_compressed, 32);
+		if (GetVersion() > 283) {
+			baseLocX = ExpandFloat(baseLocX_compressed, 16384);
+			baseLocY = ExpandFloat(baseLocY_compressed, 16384);
+			baseLocZ = ExpandFloat(baseLocZ_compressed, 16384);
+		}
+		desiredHeading = ExpandFloat(desiredHeading_compressed, 64);
+		desiredPitch = ExpandFloat(desiredPitch_compressed, 64);
+		desiredPitchVelocity = ExpandFloat(desiredPitchVelocity_compressed, 32);
+		desiredHeadingVelocity = ExpandFloat(desiredHeadingVelocity_compressed, 32);
+		desiredRollVelocity = ExpandFloat(desiredRollVelocity_compressed, 32);
+		collisionRadius = ExpandFloat(collisionRadius_compressed, 32);
+		speedModifier = ExpandFloat(speedModifier_compressed, 32);
+		swimmingSpeedModifier = ExpandFloat(swimmingSpeedModifier_compressed, 32);
+		unkSpeed3 = ExpandFloat(unkSpeed3_compressed, 32);
+		desiredVertSpeed = ExpandFloat(desiredVertSpeed_compressed, 32);
+		desiredStrafeSpeed = ExpandFloat(desiredStrafeSpeed_compressed, 32);
+		moveType = ExpandFloat(moveType_compressed, 32);
+		desiredForwardSpeed = ExpandFloat(desiredForwardSpeed_compressed, 256);
+		desiredRoll = ExpandFloat(desiredRoll_compressed, 256);
+		desiredRollVelocity = ExpandFloat(desiredRollVelocity_compressed, 256);
+		size = ExpandFloat(size_compressed, 32);
+		if (version > 910) {
+			sizeUnknown = ExpandFloat(sizeUnknown_compressed, 16384);
+		}
+		unk70 = ExpandFloat(unk70_compressed, 256);
+		actorStopRange = ExpandFloat(actorStopRange_compressed, 32);
+	}
+
+	void RegisterElements() override {
 		RegisterUInt32(grid_id);
-		RegisterFloat(X);
-		RegisterFloat(Y);
-		RegisterFloat(Z);
-		RegisterInt16(velocity_X);
-		RegisterInt16(velocity_Y);
-		RegisterInt16(velocity_Z);
-		RegisterInt16(heading1);
-		RegisterInt16(heading2);
-		RegisterUInt16(speed);
-		RegisterUInt16(state);
-		uint8_t& unknown2 = this->unknown2[0];
-		RegisterUInt8(unknown2)->SetCount(6);
-		if (version < 936) {
-			//These moved past xyz3 in 936
-			RegisterUInt8(movement_mode);
-			RegisterUInt8(unknown3b);
-		}
-		RegisterFloat(next_X);
-		RegisterFloat(next_Y);
-		RegisterFloat(next_Z);
-		RegisterFloat(X3);
-		RegisterFloat(Y3);
-		RegisterFloat(Z3);
-		if (version >= 936) {
-			RegisterUInt8(movement_mode);
-			RegisterUInt8(unknown3b);
-		}
-		uint16_t& unknown4 = this->unknown4[0];
-		PacketUInt16* u4 = RegisterUInt16(unknown4);
-		if (version < 1096) {
-			u4->SetCount(2);
+		if (GetVersion() > 283) {
+			RegisterFloat(x);
+			RegisterFloat(y);
+			RegisterFloat(z);
 		}
 		else {
-			u4->SetCount(3);
+			RegisterInt16(x_compressed);
+			RegisterInt16(y_compressed);
+			RegisterInt16(z_compressed);
 		}
-		RegisterUInt16(move_type);
-		uint16_t& unknown6 = this->unknown6[0];
-		RegisterUInt16(unknown6)->SetCount(3);
-		RegisterUInt16(side_speed);
-		uint16_t& unknown6a = this->unknown6a[0];
-		if (version < 1119) {
-			RegisterUInt16(unknown6a)->SetCount(4);
-		}
-		else {
-			RegisterUInt16(unknown6a);
-			RegisterInt16(pitch1);
-			uint16_t& unknown7 = this->unknown7[0];
-			RegisterUInt16(unknown7)->SetCount(4);
-			RegisterInt16(pitch2);
-		}
-		RegisterUInt16(collision_radius);
-		RegisterUInt16(size);
-		RegisterFloat(size_ratio);
-		RegisterFloat(size_multiplier_ratio);
-		uint16_t& unknown10 = this->unknown10[0];
-		if (version == 927 || version == 1096) {
-			RegisterUInt16(unknown10)->SetCount(5);
-		}
-		else if (version < 1119) {
-			RegisterUInt16(unknown10)->SetCount(6);
+		RegisterInt16(velocityX_compressed);
+		RegisterInt16(velocityY_compressed);
+		RegisterInt16(velocityZ_compressed);
+		RegisterInt16(heading_compressed);
+		RegisterInt16(desiredHeading_compressed);
+		RegisterInt16(desiredForwardSpeed_compressed);
+		RegisterUInt32(positionState);
+		if (GetVersion() > 283) {
+			RegisterFloat(unk20);
+			RegisterFloat(destLocX);
+			RegisterFloat(destLocY);
+			RegisterFloat(destLocZ);
+			RegisterFloat(destLocX2);
+			RegisterFloat(destLocY2);
+			RegisterFloat(destLocZ2);
+			RegisterUInt8(movementMode);
+			RegisterUInt8(unkByte);
 		}
 		else {
-			RegisterUInt16(unknown10)->SetCount(3);
-			RegisterInt16(roll);
-			uint16_t& unknown12 = this->unknown12[0];
-			RegisterUInt16(unknown12)->SetCount(2);
+			RegisterUInt8(movementMode);
+			RegisterInt16(destX_compressed);
+			RegisterInt16(destY_compressed);
+			RegisterInt16(destZ_compressed);
+			RegisterInt16(destX2_compressed);
+			RegisterInt16(destY2_compressed);
+			RegisterInt16(destZ2_compressed);
 		}
+		RegisterInt16(desiredHeadingVelocity_compressed);
+		RegisterInt16(speedModifier_compressed);
+		RegisterInt16(swimmingSpeedModifier_compressed);
+		if (GetVersion() > 283) {
+			RegisterInt16(moveType_compressed);
+		}
+		RegisterInt16(desiredStrafeSpeed_compressed);
+		RegisterInt16(desiredVertSpeed_compressed);
+		RegisterInt16(unkSpeed3_compressed);
+		if (GetVersion() > 283) {
+			RegisterInt16(desiredRoll_compressed);
+			RegisterInt16(desiredRollVelocity_compressed);
+		}
+		RegisterInt16(desiredPitch_compressed);
+		RegisterInt16(desiredPitchVelocity_compressed);
+		if (GetVersion() > 283) {
+			RegisterInt16(baseLocX_compressed);
+			RegisterInt16(baseLocY_compressed);
+			RegisterInt16(baseLocZ_compressed);
+		}
+		else {
+			RegisterFloat(baseLocX);
+			RegisterFloat(baseLocY);
+			RegisterFloat(baseLocZ);
+		}
+		RegisterInt16(pitch_compressed);
+		if (GetVersion() <= 910) {
+			RegisterInt16(collisionRadius_compressed);
+			RegisterInt16(size_compressed);
+		}
+		else {
+			RegisterInt16(size_compressed);
+			RegisterInt16(sizeUnknown_compressed);
+		}
+		
+		if (GetVersion() > 283) {
+			RegisterFloat(sizeRatio);
+			RegisterFloat(sizeMultiplierRatio);
+		}
+		RegisterUInt32(faceActorID);
+		RegisterInt16(actorStopRange_compressed);
+		if (GetVersion() > 283) {
+			RegisterInt16(roll_compressed);
+			RegisterInt16(unk70_compressed);
+			RegisterInt16(unk72);
+		}
+	}
+
+	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
+		CompressData();
+		PacketEncodedData::WriteElement(outbuf, offset);
+	}
+
+	bool ReadElement(const unsigned char* buf, uint32_t& offset, uint32_t bufsize) override {
+		bool ret = PacketEncodedData::ReadElement(buf, offset, bufsize);
+		DecompressData();
+		return ret;
 	}
 };
 
@@ -265,29 +428,6 @@ struct SpawnInfoStruct {
 	uint8_t							visual_flag;
 	uint8_t							interaction_flag;
 	uint8_t							unknown60055[18];
-	EQ2Color						equipment_colors[25];
-	EQ2Color						unknown7b[2];
-	EQ2Color						hair_type_color;
-	EQ2Color						hair_face_color;
-	EQ2Color						wing_color1;
-	EQ2Color						unknown10[3];
-	EQ2Color						equipment_highlights[25];
-	EQ2Color						unknown7c[2];
-	EQ2Color						hair_type_highlight_color;
-	EQ2Color						hair_face_highlight_color;
-	EQ2Color						wing_color2;
-	EQ2Color						unknown11[3];
-	EQ2Color						soga_hair_type_color;
-	EQ2Color						soga_hair_type_highlight_color;
-	EQ2Color						soga_hair_face_color;
-	EQ2Color						soga_hair_face_highlight_color;
-	EQ2Color						skin_color;
-	EQ2Color						eye_color;
-	EQ2Color						soga_eye_color;
-	EQ2Color						soga_skin_color;
-	EQ2Color						kunark_unknown_color1;
-	EQ2Color						kunark_unknown_color2;
-	EQ2Color						unknown12;
 	int8_t							eye_type[3];
 	int8_t							ear_type[3];
 	int8_t							eye_brow_type[3];
@@ -305,14 +445,6 @@ struct SpawnInfoStruct {
 	int8_t							soga_chin_type[3];
 	int8_t							soga_nose_type[3];
 	uint8_t							unknown14b[2];
-	EQ2Color						mount_color;
-	EQ2Color						mount_saddle_color;
-	EQ2Color						hair_color1;
-	EQ2Color						hair_color2;
-	EQ2Color						hair_highlight;
-	EQ2Color						soga_hair_color1;
-	EQ2Color						soga_hair_color2;
-	EQ2Color						soga_hair_highlight;
 	uint32_t						action_state;
 	uint32_t						visual_state;
 	uint32_t						mood_state;
@@ -364,8 +496,41 @@ struct SpawnInfoStruct {
 	uint8_t                         unknown67633[3];
 	uint8_t                         unknown67633b;
 
+	EQ2Color						equipment_colors[25];
+	EQ2Color						hair_type_color;
+	EQ2Color						hair_face_color;
+	EQ2Color						unknown7b[2];
+	EQ2Color						wing_color1;
+	EQ2Color						unknown10[3];
+	EQ2Color						equipment_highlights[25];
+	EQ2Color						unknown7c[2];
+	EQ2Color						hair_type_highlight_color;
+	EQ2Color						hair_face_highlight_color;
+	EQ2Color						wing_color2;
+	EQ2Color						unknown11[3];
+	EQ2Color						soga_hair_type_color;
+	EQ2Color						soga_hair_type_highlight_color;
+	EQ2Color						soga_hair_face_color;
+	EQ2Color						soga_hair_face_highlight_color;
+	EQ2Color						skin_color;
+	EQ2Color						eye_color;
+	EQ2Color						soga_eye_color;
+	EQ2Color						soga_skin_color;
+	EQ2Color						kunark_unknown_color1;
+	EQ2Color						kunark_unknown_color2;
+	EQ2Color						unknown12;
+	EQ2Color						mount_color;
+	EQ2Color						mount_saddle_color;
+	EQ2Color						hair_color1;
+	EQ2Color						hair_color2;
+	EQ2Color						hair_highlight;
+	EQ2Color						soga_hair_color1;
+	EQ2Color						soga_hair_color2;
+	EQ2Color						soga_hair_highlight;
+
 	SpawnInfoStruct() {
-		memset(this, 0, sizeof(SpawnInfoStruct));
+		//Hack to zero out most of the data allowing default values for the eq2 colors
+		memset(&model_type, 0, equipment_colors - static_cast<void*>(&model_type));
 	}
 
 protected:

@@ -5,7 +5,6 @@
 std::atomic<uint32_t> Spawn::g_spawnID(1);
 
 Spawn::Spawn() : m_updateFlagsByte(0), m_zone(nullptr) {
-	memset(&m_posStruct, 0, sizeof(m_posStruct));
 	memset(&m_infoStruct, 0, sizeof(m_infoStruct));
 	memset(&m_visStruct, 0, sizeof(m_visStruct));
 	m_spawnID = g_spawnID.fetch_add(1);

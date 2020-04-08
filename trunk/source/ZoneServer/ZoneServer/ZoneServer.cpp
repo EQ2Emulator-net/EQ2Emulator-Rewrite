@@ -6,6 +6,7 @@
 #include "ZoneOperator.h"
 #include "Client.h"
 #include "../../common/thread.h"
+#include "../Controllers/PlayerController.h"
 
 // Packets
 #include "../Packets/OP_ZoneInfoMsg_Packet.h"
@@ -149,19 +150,21 @@ void ZoneServer::SendCharacterInfo(std::shared_ptr<Client> client) {
 
 	database.LoadCharacter(client->GetCharacterID(), client->GetAccountID(), entity);
 
-	players.push_back(entity);
-
 	// Set this in the spawn constructor
 	entity->SetState(16512, false);
-	entity->SetSize(0, false);
+	entity->SetSize(0.875f, false);
 	entity->SetCollisionRadius(28, false);
 	entity->SetSizeRatio(1.0f, false);
 	entity->SetSizeMultiplierRatio(1.0f, false);
 	entity->SetVisFlags(55, false);
-	entity->SetInteractionFlag(12);
+	entity->SetInteractionFlag(12, false);
+
+	players.push_back(entity);
 
 	OP_CreateGhostCmd_Packet* ghost = new OP_CreateGhostCmd_Packet(client->GetVersion());
-	ghost->InsertSpawnData(entity, 1);
+	ghost->InsertSpawnData(entity, client->AddSpawnToIndexMap(entity));
 	ghost->SetEncodedBuffers(client, ghost->header.index);
+	std::shared_ptr<PlayerController> controller = client->GetController();
+	controller->SetControlled(entity);
 	client->QueuePacket(ghost);
 }

@@ -18,7 +18,7 @@ void Emu_RegisterZoneServer_Packet::HandlePacket(std::shared_ptr<ZoneStream> z) 
 	// Set the ZoneServer info
 	z->SetIP(ip);
 	z->SetPort(port);
-	LogDebug(LOG_NET, 0, "New zone server registed.  ip = %s:%u", ip.c_str(), port);
+	LogDebug(LOG_NET, 0, "New zone server registered.  ip = %s:%u", ip.c_str(), port);
 }
 
 void Emu_RequestZoneReply_Packet::HandlePacket(std::shared_ptr<ZoneStream> z) {

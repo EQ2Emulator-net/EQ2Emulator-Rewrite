@@ -4,79 +4,72 @@
 #include "../../common/Packets/PacketElements/PacketElements.h"
 #include "../../common/Packets/PacketElements/PacketPackedData.h"
 #include "../../common/Packets/PacketElements/PacketEncodedData.h"
+#include "../Controllers/PlayerController.h"
 
-struct Substruct_MovementData : public PacketEncodedData {
+struct Substruct_MovementData : public PacketEncodedData, public SpawnPositionStruct {
 	Substruct_MovementData(uint32_t version) : PacketEncodedData(version) {
-		unk_speed = 0.f;
-		memset(unknown3 + 8, 0, sizeof(float) * 4);
 		RegisterElements();
 	}
 
-	uint32_t activity;
-	float unknown2;
-	float direction1;
-	float unknown3[12];
-	float unk_speed;
-	float speed;
-	float side_speed;
-	float unknown4;
-	float orig_x;
-	float orig_y;
-	float orig_z;
-	float orig_x2;
-	float orig_y2;
-	float orig_z2;
-	float unknown5[3];
-	uint32_t unknown6;
-	float unknown7[3];
-	uint32_t unknown8;
-	uint32_t grid_location;
-	float x;
-	float y;
-	float z;
-
-	float direction2;
-	float pitch;
-	float unknown10;
-	float speed_x;
-	float speed_y;
-	float speed_z;
-
 	void RegisterElements() override {
-		RegisterUInt32(activity);
-		RegisterFloat(unknown2);
-		RegisterFloat(direction1);
-		RescopeArrayElement(unknown3);
-		RegisterFloat(unknown3)->SetCount(version >= 1144 ? 12 : 8);
-		if (version >= 1096) {
-			RegisterFloat(unk_speed);
+		RegisterUInt32(positionState);
+		if (GetVersion() > 283) {
+			RegisterFloat(unknown20);
 		}
-		RegisterFloat(speed);
-		RegisterFloat(side_speed);
-		RegisterFloat(unknown4);
-		RegisterFloat(orig_x);
-		RegisterFloat(orig_y);
-		RegisterFloat(orig_z);
-		RegisterFloat(orig_x2);
-		RegisterFloat(orig_y2);
-		RegisterFloat(orig_z2);
-		
-		RescopeArrayElement(unknown5);
-		RegisterFloat(unknown5)->SetCount(3);
-		RegisterUInt32(unknown6);
-		RescopeArrayElement(unknown7);
-		RegisterFloat(unknown7)->SetCount(3);
-		RegisterUInt32(unknown8);
-		RegisterUInt32(grid_location);
+		RegisterFloat(desiredHeading);
+		RegisterFloat(desiredPitch);
+		if (GetVersion() > 283) {
+			RegisterFloat(unusedUnknown);
+		}
+		RegisterFloat(desiredHeadingVelocity);
+		RegisterFloat(desiredPitchVelocity);
+		RegisterFloat(size);
+		RegisterFloat(sizeRatio);
+		RegisterFloat(sizeMultiplierRatio);
+		RegisterFloat(speedModifier);
+		RegisterFloat(swimmingSpeedModifier);
+		RegisterFloat(desiredStrafeSpeed);
+		RegisterFloat(desiredVertSpeed);
+		if (GetVersion() > 283) {
+			RegisterFloat(unkSpeed3);
+			RegisterFloat(moveType);
+		}
+		RegisterFloat(desiredForwardSpeed);
+		if (GetVersion() > 283) {
+			RegisterFloat(desiredRoll);
+			RegisterFloat(desiredRollVelocity);
+		}
+		RegisterFloat(destLocX);
+		RegisterFloat(destLocY);
+		RegisterFloat(destLocZ);
+		RegisterFloat(destLocX2);
+		RegisterFloat(destLocY2);
+		RegisterFloat(destLocZ2);
+		if (GetVersion() > 283) {
+			RegisterFloat(baseLocX);
+			RegisterFloat(baseLocY);
+			RegisterFloat(baseLocZ);
+		}
+		RegisterUInt32(faceActorID);
+		RegisterFloat(actorStopRange);
+		if (GetVersion() > 283) {
+			RegisterFloat(sizeUnknown);
+			RegisterFloat(unk70);
+			RegisterUInt8(movementMode);
+			RegisterUInt8(unkByte);
+			static uint16_t align_trash;
+			RegisterUInt16(align_trash);
+		}
+		RegisterUInt32(grid_id);
 		RegisterFloat(x);
 		RegisterFloat(y);
 		RegisterFloat(z);
-		RegisterFloat(direction2);
+		RegisterFloat(heading);
 		RegisterFloat(pitch);
-		RegisterFloat(unknown10);
-		RegisterFloat(speed_x);
-		RegisterFloat(speed_y);
-		RegisterFloat(speed_z);
+		RegisterFloat(roll);
+		RegisterFloat(velocityX);
+		RegisterFloat(velocityY);
+		RegisterFloat(velocityZ);
 	}
 };
 
@@ -98,7 +91,12 @@ public:
 			return;
 		}
 
-		LogDebug(LOG_PACKET, 0, "%f, %f, %f", movement.x, movement.y, movement.z);
+		auto controller = client->GetController();
+		auto entity = controller->GetControlled();
+
+		if (entity) {
+			entity->SetSpawnPositionData(static_cast<const SpawnPositionStruct&>(movement));
+		}
 	}
 
 	PacketPackedData packedData;

@@ -2,8 +2,11 @@
 
 #include "../../common/EQ2Stream.h"
 #include "../Packets/EncodedPackets.h"
+#include <map>
 
 class ZoneServer;
+class Spawn;
+class PlayerController;
 
 class Client : public EQ2Stream {
 public:
@@ -22,9 +25,11 @@ private:
 
 	uint32_t account_id;
 	uint32_t character_id;
+	std::atomic<uint16_t> m_nextSpawnIndex;
 
 	std::weak_ptr<ZoneServer> m_zone;
-
+	std::map<std::weak_ptr<Spawn>, uint16_t, std::owner_less<std::weak_ptr<Spawn>> > m_spawnIndexMap;
+	std::shared_ptr<PlayerController> m_controller;
 
 public:
 	void SetAccountID(uint32_t val) { account_id = val; }
@@ -35,4 +40,8 @@ public:
 
 	std::shared_ptr<ZoneServer> GetZone() { return m_zone.lock(); }
 	void SetZone(std::weak_ptr<ZoneServer> zone) { m_zone = zone; }
+
+	bool WasSentSpawn(const std::shared_ptr<Spawn>& spawn);
+	uint16_t AddSpawnToIndexMap(const std::shared_ptr<Spawn>& spawn);
+	std::shared_ptr<PlayerController> GetController();
 };
