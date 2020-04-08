@@ -530,7 +530,7 @@ struct SpawnInfoStruct {
 
 	SpawnInfoStruct() {
 		//Hack to zero out most of the data allowing default values for the eq2 colors
-		memset(&model_type, 0, equipment_colors - static_cast<void*>(&model_type));
+		memset(&model_type, 0, reinterpret_cast<uint64_t>(equipment_colors) - reinterpret_cast<uint64_t>(&model_type));
 	}
 
 protected:
