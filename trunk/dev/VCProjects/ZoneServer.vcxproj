@@ -39,6 +39,7 @@
     <ClCompile Include="..\..\source\common\Packets\PacketElements\PacketCriteria.cpp" />
     <ClCompile Include="..\..\source\common\Packets\ProtocolPacket.cpp" />
     <ClCompile Include="..\..\source\common\RC4.cpp" />
+    <ClCompile Include="..\..\source\common\Separator.cpp" />
     <ClCompile Include="..\..\source\common\Server.cpp" />
     <ClCompile Include="..\..\source\common\stdio.cpp" />
     <ClCompile Include="..\..\source\common\Stream.cpp" />
@@ -49,6 +50,7 @@
     <ClCompile Include="..\..\source\common\timer.cpp" />
     <ClCompile Include="..\..\source\common\UDPServer.cpp" />
     <ClCompile Include="..\..\source\common\util.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Commands\CommandProcess.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Database\ZoneDatabase.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\main.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
@@ -134,6 +136,7 @@
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_SessionResponse_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\ProtocolPackets.h" />
     <ClInclude Include="..\..\source\common\RC4.h" />
+    <ClInclude Include="..\..\source\common\Separator.h" />
     <ClInclude Include="..\..\source\common\Server.h" />
     <ClInclude Include="..\..\source\common\stdio.h" />
     <ClInclude Include="..\..\source\common\Stream.h" />
@@ -145,6 +148,7 @@
     <ClInclude Include="..\..\source\common\UDPServer.h" />
     <ClInclude Include="..\..\source\common\util.h" />
     <ClInclude Include="..\..\source\common\version.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Commands\CommandProcess.h" />
     <ClInclude Include="..\..\source\ZoneServer\Commands\CommandToken.h" />
     <ClInclude Include="..\..\source\ZoneServer\Controllers\BaseController.h" />
     <ClInclude Include="..\..\source\ZoneServer\Controllers\BotController.h" />

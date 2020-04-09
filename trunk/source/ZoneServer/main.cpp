@@ -8,10 +8,12 @@
 #include "../common/timer.h"
 #include "../common/Classes.h"
 #include "ZoneServer/ZoneOperator.h"
+#include "Commands/CommandProcess.h"
 
 ZoneDatabase database;
 Classes classes;
 ZoneOperator z;
+CommandProcess g_commandProcess;
 
 int main() {
 	bool looping = true;
@@ -39,7 +41,7 @@ int main() {
 
 	if (success) {
 		LogDebug(LOG_DATABASE, 0, "Loading commands...");
-		success = database.LoadCommands();
+		success = database.LoadCommands(g_commandProcess);
 	}
 
 	if (success)

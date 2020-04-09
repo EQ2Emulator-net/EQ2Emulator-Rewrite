@@ -67,6 +67,10 @@ public:
 		return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c == '-');
 	}
 
+	bool MatchesAllTokens(const CommandToken& other) {
+		return (bitmask & other.bitmask) == bitmask;
+	}
+
 private:
 	uint64_t bitmask;
 

@@ -318,23 +318,24 @@ void EQ2Stream::WritePacket(ProtocolPacket* p) {
 }
 
 // Copy & paste from old code
-void EQ2Stream::EQ2QueuePacket(EQ2Packet* app, bool attempted_combine) {
+void EQ2Stream::EQ2QueuePacket(EQ2Packet* app, bool attempted_combine, bool bDelete) {
 	if (CheckActive()) {
-		if (app->Size < 600 && !attempted_combine) {
+		//Need to implement this before uncommenting
+		//if (app->Size < 600 && !attempted_combine) {
 			//MCombineQueueLock.lock();
-			combine_queue.push_back(app);
+			//combine_queue.push_back(app);
 			//MCombineQueueLock.unlock();
-		}
-		else {
+		//}
+		//else {
 			PreparePacket(app);
 #ifdef LE_DEBUG
 			LogWrite(PACKET__DEBUG, 0, "Packet", "After B in %s, line %i:", __FUNCTION__, __LINE__);
 			DumpPacket(app);
 #endif
-			SendPacket(app);
-		}
+			SendPacket(app, bDelete);
+		//}
 	}
-	else {
+	else if (bDelete) {
 		delete app;
 	}
 }
@@ -424,7 +425,7 @@ void EQ2Stream::EncryptPacket(EQ2Packet* app, uint8_t compress_offset, uint8_t o
 	}
 }
 
-void EQ2Stream::SendPacket(EQ2Packet* p) {
+void EQ2Stream::SendPacket(EQ2Packet* p, bool bDelete) {
 	if (p->Size > (MaxLength - 6)) { // proto-op(2), seq(2) ... data ... crc(2)
 		unsigned char* tmpbuff = p->buffer;
 		uint32_t length = p->Size - 2;
@@ -444,13 +445,15 @@ void EQ2Stream::SendPacket(EQ2Packet* p) {
 			SequencedPush(out);
 			used += chunksize;
 		}
-		delete p;
+		if (bDelete)
+			delete p;
 	}
 	else {
 		OP_Packet_Packet* out = new OP_Packet_Packet();
 		out->Write(p);
 		SequencedPush(out);
-		delete p;
+		if (bDelete)
+			delete p;
 	}
 }
 
@@ -715,7 +718,7 @@ EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size, u
 		return nullptr;
 	}
 
-	EQ2Packet* ret = OpcodeManager::GetGlobal()->GetPacketForVersion(ClientVersion, opcode);
+	std::unique_ptr<EQ2Packet> ret(OpcodeManager::GetGlobal()->GetPacketForVersion(ClientVersion, opcode));
 	if (ret) {
 		if (!ret->Read(data, offset, size)) {
 			DumpBytes(data + offset, size - offset);
@@ -724,9 +727,12 @@ EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size, u
 
 		//Check if there is a sub packet - used for packets that change structs based on the value of an element
 		//One example is ClientCmdMsg
-		while (EQ2Packet* p = ret->GetSubPacket()) {
-			delete ret;
-			ret = p;
+		while (std::unique_ptr<EQ2Packet> p{ ret->GetSubPacket() }) {
+			if (p->GetOpcode() == ret->GetOpcode()) {
+				//Got an infinite loop here but it was due to corrupted encryption, adding a break just incase
+				break;
+			}
+			ret = std::move(p);
 			if (!ret->Read(data, offset, size)) {
 				DumpBytes(data + offset, size - offset);
 				LogWarn(LOG_PACKET, 0, "BLAH!!!");
@@ -738,7 +744,7 @@ EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size, u
 		DumpBytes(data + offset, size - offset);
 	}
 
-	return ret;
+	return ret.release();
 }
 
 EQ2Packet* EQ2Stream::ProcessEncryptedPacket(ProtocolPacket *p) {
@@ -778,17 +784,22 @@ void EQ2Stream::InboundQueueClear() {
 	}
 }
 
-void EQ2Stream::QueuePacket(EQ2Packet* p) {
+void EQ2Stream::QueuePacket(EQ2Packet* p, bool bDelete) {
 	unsigned char* buf = nullptr;
 	p->Write(buf);
 	if (p->bOpcodeError) {
 		//The opcode manager will spit out an error about this
-		delete p;
+		if (bDelete)
+			delete p;
 	}
 	else {
 		DumpBytes(buf, p->Size);
-		EQ2QueuePacket(p, true);
+		EQ2QueuePacket(p, true, bDelete);
 	}
+}
+
+void EQ2Stream::QueuePacket(EQ2Packet& packet) {
+	QueuePacket(&packet, false);
 }
 
 void EQ2Stream::SendAck(uint16_t seq) {

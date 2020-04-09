@@ -7,6 +7,7 @@
 #include "Client.h"
 #include "../../common/thread.h"
 #include "../Controllers/PlayerController.h"
+#include "../Commands/CommandProcess.h"
 
 // Packets
 #include "../Packets/OP_ZoneInfoMsg_Packet.h"
@@ -22,6 +23,7 @@
 
 extern ZoneDatabase database;
 extern ZoneOperator z;
+extern CommandProcess g_commandProcess;
 
 ZoneServer::ZoneServer(uint32_t zone_id) {
 	id = zone_id;
@@ -139,8 +141,7 @@ bool ZoneServer::AddClient(std::weak_ptr<Client> client) {
 		c->QueuePacket(zone);
 	}
 
-	OP_SetRemoteCmdsMsg_Packet* commands = z.GetCommandsPacket(c->GetVersion());
-	c->QueuePacket(commands);
+	g_commandProcess.SendCommandList(c);
 
 	return true;
 }

@@ -87,40 +87,6 @@ bool ZoneDatabase::LoadZoneInfo(ZoneServer* z) {
 	return true;
 }
 
-bool ZoneDatabase::LoadCommands() {
-	DatabaseResult result;
-	bool ret = Select(&result, "SELECT id, command, required_status FROM commands WHERE length(subcommand) = 0 ORDER BY id ASC");
-	if (!ret)
-		return ret;
-
-	uint32_t count = 0;
-	while (result.Next()) {
-		z.AddCommand(result.GetUInt32(0), result.GetString(1));
-		count++;
-	}
-
-	LogDebug(LOG_COMMAND, 0, "--Loaded %u commands", count);
-
-	ret = LoadSubcommands();
-	return ret;
-}
-
-bool ZoneDatabase::LoadSubcommands() {
-	DatabaseResult result;
-	bool ret = Select(&result, "SELECT id, command, subcommand, required_status FROM commands WHERE length(subcommand) > 0 ORDER BY id ASC");
-	if (!ret)
-		return ret;
-
-	uint32_t count = 0;
-	while (result.Next()) {
-		z.AddSubCommand(result.GetString(1), result.GetUInt32(0), result.GetString(2));
-		count++;
-	}
-
-	LogDebug(LOG_COMMAND, 0, "---Loaded %u subcommands", count);
-	return ret;
-}
-
 bool ZoneDatabase::LoadCharacter(uint32_t char_id, uint32_t account_id, std::shared_ptr<Entity> entity) {
 	DatabaseResult result;
 	bool ret = Select(&result, "SELECT `name`, `race`, `class`, `gender`, `deity`, `body_size`, `body_age`, `level`, `tradeskill_class`, `tradeskill_level`, `soga_wing_type`, `soga_chest_type`, `soga_legs_type`, `soga_hair_type`, `soga_facial_hair_type`, `soga_model_type`, `legs_type`, `chest_type`, `wing_type`, `hair_type`, `facial_hair_type`, `model_type`, `x`, `y`, `z`, `heading`, `starting_city`, DATEDIFF(curdate(), `created_date`) as accage FROM characters WHERE id = %u AND account_id = %u AND deleted = 0", char_id, account_id);

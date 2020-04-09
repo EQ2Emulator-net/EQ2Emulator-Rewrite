@@ -192,6 +192,12 @@
     <ClCompile Include="..\..\source\common\NetUtil.cpp">
       <Filter>common</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\common\Separator.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Commands\CommandProcess.cpp">
+      <Filter>source\Commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h">
@@ -562,6 +568,12 @@
     </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\Controllers\PlayerController.h">
       <Filter>source\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Separator.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Commands\CommandProcess.h">
+      <Filter>source\Commands</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

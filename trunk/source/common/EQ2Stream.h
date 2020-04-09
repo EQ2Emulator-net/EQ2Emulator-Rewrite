@@ -29,7 +29,7 @@ public:
 
 	void Process(const unsigned char* data, unsigned int length) override;
 
-	void EQ2QueuePacket(EQ2Packet* app, bool attempted_combine = false);
+	void EQ2QueuePacket(EQ2Packet* app, bool attempted_combine = false, bool bDelete = true);
 
 	inline EQStreamState GetState() { return State; }
 	inline void SetState(EQStreamState state) { State = state; }
@@ -44,7 +44,8 @@ public:
 	void SetVersion(uint32_t version) { ClientVersion = version; }
 	uint32_t GetVersion() { return ClientVersion; }
 
-	void QueuePacket(EQ2Packet* packet);
+	void QueuePacket(EQ2Packet* packet, bool bDelete = true);
+	void QueuePacket(EQ2Packet& packet);
 
 	std::deque<EQ2Packet*> combine_queue; // public in old code?
 
@@ -75,7 +76,7 @@ private:
 	void ProcessPacket(ProtocolPacket* p);
 	bool ValidateCRC(unsigned char* buffer, uint16_t length, uint32_t key);
 	void EncryptPacket(EQ2Packet* app, uint8_t compress_offset, uint8_t offset);
-	void SendPacket(EQ2Packet* p);
+	void SendPacket(EQ2Packet* p, bool bDelete = true);
 	void SequencedPush(ProtocolPacket* p);
 	void NonSequencedPush(ProtocolPacket* p);
 	void WritePacket(ProtocolPacket* p);

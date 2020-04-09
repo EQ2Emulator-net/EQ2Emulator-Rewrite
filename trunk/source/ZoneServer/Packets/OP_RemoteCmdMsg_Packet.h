@@ -2,6 +2,9 @@
 
 #include "../../common/Packets/PacketElements/PacketElements.h"
 #include "../../common/Packets/EQ2Packet.h"
+#include "../Commands/CommandProcess.h"
+
+extern CommandProcess g_commandProcess;
 
 class OP_RemoteCmdMsg_Packet : public EQ2Packet {
 public:
@@ -18,6 +21,7 @@ public:
 
 	void HandlePacket(std::shared_ptr<Client> client) {
 		LogDebug(LOG_CLIENT, 0, "Command (%u) received", command_handler);
+		g_commandProcess.ProcessCommand(client, command_handler, arguments);
 	}
 
 private:

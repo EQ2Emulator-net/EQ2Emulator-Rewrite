@@ -42,10 +42,6 @@ public:
 
 	std::shared_ptr<ZoneServer> GetZone(uint32_t zone_id, uint32_t instance_id);
 
-	void AddCommand(uint32_t id, std::string name);
-	void AddSubCommand(std::string parent_cmd, uint32_t id, std::string name);
-	OP_SetRemoteCmdsMsg_Packet* GetCommandsPacket(uint32_t version);
-
 private:
 	//Just using the client pointer as a key
 	std::set<std::weak_ptr<Client>, std::owner_less<std::weak_ptr<Client> > > clients;

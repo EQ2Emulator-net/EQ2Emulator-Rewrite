@@ -202,6 +202,7 @@
     <ClCompile Include="..\..\source\common\Packets\PacketElements\PacketCriteria.cpp" />
     <ClCompile Include="..\..\source\common\Packets\ProtocolPacket.cpp" />
     <ClCompile Include="..\..\source\common\RC4.cpp" />
+    <ClCompile Include="..\..\source\common\Separator.cpp" />
     <ClCompile Include="..\..\source\common\Server.cpp" />
     <ClCompile Include="..\..\source\common\stdio.cpp" />
     <ClCompile Include="..\..\source\common\Stream.cpp" />
@@ -285,6 +286,7 @@
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_SessionResponse_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\ProtocolPackets.h" />
     <ClInclude Include="..\..\source\common\RC4.h" />
+    <ClInclude Include="..\..\source\common\Separator.h" />
     <ClInclude Include="..\..\source\common\Server.h" />
     <ClInclude Include="..\..\source\common\TCPServer.h" />
     <ClInclude Include="..\..\source\common\UDPServer.h" />
