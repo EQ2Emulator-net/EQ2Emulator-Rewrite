@@ -56,7 +56,7 @@ void CommandProcess::AddCommand(uint32_t handler_id, const std::string& cmd, uin
 
 	if (parent_id == 0) {
 		//This is a root command with no parent
-		rootCommands[rootCommands.size()] = command;
+		rootCommands[static_cast<uint32_t>(rootCommands.size())] = command;
 	}
 	else {
 		auto itr = commandsParentLookup.find(parent_id);
@@ -127,7 +127,7 @@ void CommandProcess::SendCommandList(const std::shared_ptr<Client>& client) {
 	packet.commands_array.reserve(rootCommands.size());
 
 	for (auto& itr : rootCommands) {
-		packet.commands_array.emplace_back();
+		packet.commands_array.emplace_back(client->GetVersion());
 		auto& entry = packet.commands_array.back();
 		entry.name = itr.second->cmdText;
 	}

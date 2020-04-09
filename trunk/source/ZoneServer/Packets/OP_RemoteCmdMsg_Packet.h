@@ -20,7 +20,6 @@ public:
 	std::string arguments;
 
 	void HandlePacket(std::shared_ptr<Client> client) {
-		LogDebug(LOG_CLIENT, 0, "Command (%u) received", command_handler);
 		g_commandProcess.ProcessCommand(client, command_handler, arguments);
 	}
 

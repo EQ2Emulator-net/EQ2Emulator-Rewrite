@@ -1079,7 +1079,7 @@ public:
 		float z;
 		float deltaTime;
 
-		Substruct_LerpWayPoint(uint32_t p_version = 0) : PacketSubstruct(p_version),
+		Substruct_LerpWayPoint(uint32_t p_version = 0) : PacketSubstruct(p_version, true),
 		x(0.f),
 		y(0.f),
 		z(0.f),
@@ -1185,7 +1185,7 @@ public:
 
 	class Substruct_SignFooterArray : public PacketSubstruct {
 	public:
-		Substruct_SignFooterArray(uint32_t p_version = 0) : PacketSubstruct(p_version) {
+		Substruct_SignFooterArray(uint32_t p_version = 0) : PacketSubstruct(p_version, true) {
 			RegisterElements();
 		}
 

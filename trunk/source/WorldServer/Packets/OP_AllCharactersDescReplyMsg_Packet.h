@@ -115,7 +115,7 @@ public:
 		EQ2Color mountColor2;
 		uint8_t flags;
 
-		CharacterListEntry(uint32_t p_version = 0) : PacketSubstruct(p_version) {
+		CharacterListEntry(uint32_t p_version = 0) : PacketSubstruct(p_version, true) {
 			RegisterElements();
 			version = 0;
 			charid = 0;

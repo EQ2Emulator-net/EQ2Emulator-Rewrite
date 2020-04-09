@@ -78,10 +78,14 @@ public:
 		RegisterElements();
 	}
 
+	bool IsInline() {
+		return bInline;
+	}
+
 	uint32_t GetVersion() { return version; }
 
 protected:
-	PacketSubstruct(uint32_t p_version): elementsInitialized(false), version(p_version) {
+	PacketSubstruct(uint32_t p_version, bool p_inline = false): elementsInitialized(false), version(p_version), bInline(p_inline) {
 	}
 
 	//Copy constructor
@@ -89,6 +93,7 @@ protected:
 		elements.reserve(other.elements.size());
 		version = other.version;
 		elementsInitialized = false;
+		bInline = other.bInline;
 	}
 
 	//Move constructor
@@ -96,6 +101,7 @@ protected:
 		elements.reserve(other.elements.size());
 		version = other.version;
 		elementsInitialized = false;
+		bInline = other.bInline;
 	}
 
 	std::vector<PacketElement*> elements;
@@ -103,7 +109,8 @@ protected:
 	uint32_t version;
 
 private:
-	bool elementsInitialized = false;
+	bool elementsInitialized;
+	bool bInline;
 };
 
 //PacketSubstructParent simply links to a PacketSubstruct object and writes it

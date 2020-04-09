@@ -15,10 +15,7 @@ public:
 
 		std::string name;
 
-		Command() : PacketSubstruct(0) {
-			name = "";
-
-			RegisterElements();
+		Command(uint32_t ver = 0) : PacketSubstruct(ver, true) {
 		}
 
 		void RegisterElements() {
