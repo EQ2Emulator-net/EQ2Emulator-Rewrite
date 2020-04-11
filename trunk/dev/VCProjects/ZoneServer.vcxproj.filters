@@ -575,5 +575,11 @@
     <ClInclude Include="..\..\source\ZoneServer\Commands\CommandProcess.h">
       <Filter>source\Commands</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\XmlStructDumper.h">
+      <Filter>common\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_TeleportWithinZoneNoReloadMsg_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

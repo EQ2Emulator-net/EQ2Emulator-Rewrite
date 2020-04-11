@@ -22,6 +22,7 @@ EQ2Stream::EQ2Stream(unsigned int ip, unsigned short port) : Stream(ip, port) {
 	LastSeqSent = -1;
 	Compressed = false;
 	Encoded = false;
+	bNeedNewClient = false;
 	CombinedAppPacket = nullptr;
 	ClientVersion = 0;
 
@@ -84,7 +85,12 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 	switch (p->GetOpcode()) {
 	case OP_SessionRequest: {
 		OP_SessionRequest_Packet* request = (OP_SessionRequest_Packet*)p;
-		
+
+		if (Session != 0) {
+			bNeedNewClient = true;
+			return;
+		}
+
 		Session = ntohl(request->Session);
 		MaxLength = ntohl(request->MaxLength);
 		NextInSeq = 0;

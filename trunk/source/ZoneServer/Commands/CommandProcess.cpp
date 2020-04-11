@@ -6,6 +6,7 @@
 #include "../Database/ZoneDatabase.h"
 #include "../Packets/OP_EqSetControlGhostCmd_Packet.h"
 #include "../Packets/OP_SetRemoteCmdsMsg_Packet.h"
+#include "../Packets/OP_TeleportWithinZoneNoReloadMsg_Packet.h"
 
 CommandProcess::CommandProcess() {
 	RegisterCommands();
@@ -13,6 +14,7 @@ CommandProcess::CommandProcess() {
 
 void CommandProcess::RegisterCommands() {
 	RegisterCommandHandler(214, CommandSpeed);
+	RegisterCommandHandler(206, CommandMove);
 }
 
 void CommandProcess::RegisterCommandHandler(uint32_t handler_id, CommandHandler_t handler) {
@@ -78,6 +80,10 @@ void CommandProcess::ProcessCommand(const std::shared_ptr<Client>& client, uint3
 	
 	std::shared_ptr<CommandInfo> cmd = itr->second;
 	
+	//This string is for debugging purposes
+	std::ostringstream fullCommand;
+	fullCommand << cmd->cmdText;
+
 	//Is this a sub command?
 	Separator sep(args);
 	while (sep.GetSize()) {
@@ -88,12 +94,13 @@ void CommandProcess::ProcessCommand(const std::shared_ptr<Client>& client, uint3
 
 		//This is a sub command! Update our currently found command and continue searching for child commands
 		cmd = itr->second;
+		fullCommand << ' ' << cmd->cmdText;
 		sep.DropFirstArg();
 		//Since we bumped all arg indices up we don't need to increment for the next check
 	}
 
 	if (!cmd->handler) {
-		LogDebug(LOG_COMMAND, 0, "Player tried to use a command with an undefined handler : %u", cmd->handler);
+		LogDebug(LOG_COMMAND, 0, "Player tried to use a command with an undefined handler : %s", fullCommand.str().c_str());
 		return;
 	}
 
@@ -132,5 +139,22 @@ void CommandProcess::SendCommandList(const std::shared_ptr<Client>& client) {
 		entry.name = itr.second->cmdText;
 	}
 
+	client->QueuePacket(packet);
+}
+
+void CommandProcess::CommandMove(const std::shared_ptr<Client>& client, Separator& sep) {
+	if (sep.GetSize() < 3 || !sep.IsNumber(0) || !sep.IsNumber(1) || !sep.IsNumber(2)) {
+		//syntax error
+		return;
+	}
+
+	float x = sep.GetFloat(0);
+	float y = sep.GetFloat(1);
+	float z = sep.GetFloat(2);
+
+	OP_TeleportWithinZoneNoReloadMsg_Packet packet(client->GetVersion());
+	packet.x = x;
+	packet.y = y;
+	packet.z = z;
 	client->QueuePacket(packet);
 }

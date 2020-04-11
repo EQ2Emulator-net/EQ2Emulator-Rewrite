@@ -15,7 +15,7 @@ Stream::Stream(unsigned int ip, unsigned short port) {
 	address.sin_addr.s_addr = RemoteIP;
 	address.sin_port = RemotePort;
 
-	LastPacketTime = 0;
+	heartbeat = 0;
 	ReceivedPackets = 0;
 	SentPackets = 0;
 	Sock = INVALID_SOCKET;
@@ -37,9 +37,29 @@ void Stream::WritePacket(SOCKET socket, const unsigned char* buffer, int length)
 
 std::string Stream::ToString() {
 	uint32_t port = ntohs(GetPort());
-	uint32_t ip = ntohl(GetIP());
+	std::string ip = GetIPString();
 
 	std::ostringstream ss;
-	ss << ip << '.' << port;
+	ss << ip << ':' << port;
 	return ss.str();
+}
+
+uint64_t Stream::GetConnectionKey() {
+	uint64_t ret = GetIP();
+	ret <<= 16;
+	return ret | GetPort();
+}
+
+void Stream::UpdateHeartbeat(uint32_t time) {
+	heartbeat = time;
+}
+
+uint32_t Stream::CheckHeartbeatDelta(uint32_t time) {
+	return time - heartbeat;
+}
+
+std::string Stream::GetIPString() {
+	char buf[64];
+	inet_ntop(address.sin_family, &address.sin_addr, buf, sizeof(buf));
+	return std::string(buf); 
 }

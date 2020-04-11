@@ -18,20 +18,23 @@ public:
 
 	virtual void Process(const unsigned char* data, unsigned int length);
 	virtual void Process(){};
-	void SetLastPacketTime(unsigned int time) { LastPacketTime = time; }
+	virtual bool RequestNewClient() { return false; }
 	void SetServer(Server* serv) { server = serv; }
 	uint32_t GetIP() { return RemoteIP; }
-	std::string GetIPString() { return inet_ntoa(address.sin_addr); }
+	std::string GetIPString();
 	uint16_t GetPort() { return RemotePort; }
 	void SetSocket(SOCKET s) { Sock = s; }
 	void WritePacket(SOCKET socket, const unsigned char* buffer, int length);
+	void UpdateHeartbeat(uint32_t time);
+	uint32_t CheckHeartbeatDelta(uint32_t time);
 
 	std::string ToString();
 	SOCKET GetSocket() { return Sock; }
 
-protected:
+	uint64_t GetConnectionKey();
 
-	uint32_t LastPacketTime;
+protected:
+	uint32_t heartbeat;
 	uint32_t ReceivedPackets;
 	uint32_t SentPackets;
 	Server* server;

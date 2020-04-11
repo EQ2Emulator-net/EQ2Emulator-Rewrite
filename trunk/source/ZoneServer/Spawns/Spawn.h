@@ -38,7 +38,7 @@ public:
 	UpdateFlags PopUpdateFlags();
 
 private:
-	static std::atomic<uint32_t> g_spawnID;
+	static uint32_t GetNextID();
 
 	ZoneServer* m_zone;
 

@@ -285,6 +285,7 @@
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_SessionRequest_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_SessionResponse_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\ProtocolPackets.h" />
+    <ClInclude Include="..\..\source\common\Packets\XmlStructDumper.h" />
     <ClInclude Include="..\..\source\common\RC4.h" />
     <ClInclude Include="..\..\source\common\Separator.h" />
     <ClInclude Include="..\..\source\common\Server.h" />

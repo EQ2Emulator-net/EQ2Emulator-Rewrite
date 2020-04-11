@@ -19,9 +19,29 @@ Separator::Separator() {
 	size = 0;
 }
 
-Separator::Separator(const Separator& in) {
-	size = 0;
-	*this = in;
+Separator::Separator(const Separator& other) {
+	size = other.size;
+	max = other.max;
+
+	if (size > 0) {
+		args = static_cast<char**>(malloc(size * sizeof(char*)));
+
+		for (int i = 0; i < size; i++) {
+			args[i] = static_cast<char*>(malloc(strlen(other.args[i]) + 1));
+			strcpy(args[i], other.args[i]);
+		}
+	}
+	else {
+		args = nullptr;
+	}
+}
+
+Separator::Separator(Separator&& other) {
+	size = other.size;
+	other.size = 0;
+	args = other.args;
+	other.args = nullptr;
+	max = other.max;
 }
 
 Separator::Separator(const std::string& str) {
@@ -32,10 +52,8 @@ Separator::Separator(const std::string& str) {
 }
 
 Separator::~Separator() {
-	int i;
-
 	if (args != nullptr) {
-		for (i = 0; i < size; i++)
+		for (int i = 0; i < size; i++)
 			free(args[i]);
 		free(args);
 	}
@@ -161,7 +179,7 @@ bool Separator::SetString(const char *str) {
 				++ptr;
 		}
 
-		if (!AddArg(start, ptr - start))
+		if (!AddArg(start, static_cast<int>(ptr - start)))
 			return false;
 
 		//if this is a quoted arg, skip the ending quote
@@ -188,12 +206,11 @@ void Separator::Print() {
 bool Separator::IsNumber(int index) {
 	bool SeenDec = false;
 	const char* arg = GetString(index);
-	int len = strlen(arg);
+	size_t len = strlen(arg);
 	if (len == 0) {
 		return false;
 	}
-	int i;
-	for (i = 0; i < len; i++) {
+	for (size_t i = 0; i < len; i++) {
 		if (arg[i] < '0' || arg[i] > '9') {
 			if (arg[i] == '.' && !SeenDec) {
 				SeenDec = true;
@@ -211,31 +228,6 @@ bool Separator::IsNumber(int index) {
 
 float Separator::GetFloat(int index) {
 	return (float)atof(GetString(index));
-}
-
-Separator& Separator::operator=(const Separator& other) {
-	if (size != 0) {
-		Clear();
-	}
-
-	if (this == &other) {
-		return *this;
-	}
-
-	size = other.size;
-	if (size > 0) {
-		args = static_cast<char**>(malloc(size * sizeof(char*)));
-
-		for (int i = 0; i < size; i++) {
-			args[i] = static_cast<char*>(malloc(strlen(other.args[i]) + 1));
-			strcpy(args[i], other.args[i]);
-		}
-	}
-	else {
-		args = nullptr;
-	}
-	max = other.max;
-	return *this;
 }
 
 void Separator::DropFirstArg() {

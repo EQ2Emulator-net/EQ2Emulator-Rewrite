@@ -9,6 +9,7 @@
 #include "OP_EqSetControlGhostCmd_Packet.h"
 #include "OP_CreateGhostCmd_Packet.h"
 #include "OP_UpdateCharacterSheetMsg_Packet.h"
+#include "../Controllers/PlayerController.h"
 
 #include "../ZoneServer/ZoneServer.h"
 
@@ -25,13 +26,11 @@ public:
 		if (zone) {
 
 			zone->SendCharacterInfo(client);
-			/*OP_CreateGhostCmd_Packet* ghost = new OP_CreateGhostCmd_Packet(client->GetVersion());
-			ghost->SetTestData();
-			ghost->SetEncodedBuffers(client, ghost->header.index);
-			client->QueuePacket(ghost);*/
+
+			auto spawn = client->GetController()->GetControlled();
 
 			OP_EqSetPOVGhostCmd_Packet* pov = new OP_EqSetPOVGhostCmd_Packet(client->GetVersion());
-			pov->spawn_id = 1;
+			pov->spawn_id = spawn->GetID();
 			client->QueuePacket(pov);
 
 			OP_EqSetControlGhostCmd_Packet* control = new OP_EqSetControlGhostCmd_Packet(client->GetVersion());
@@ -45,7 +44,7 @@ public:
 			control->speed = 5;
 			control->air_speed = 5;
 			control->size = 0.8f;
-			control->spawn_id = 1;
+			control->spawn_id = spawn->GetID();
 			control->unknown2 = 0xFF;
 			client->QueuePacket(control);
 

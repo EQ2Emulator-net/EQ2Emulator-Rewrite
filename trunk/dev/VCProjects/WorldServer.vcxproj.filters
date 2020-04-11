@@ -446,5 +446,8 @@
     <ClInclude Include="..\..\source\common\Separator.h">
       <Filter>common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\XmlStructDumper.h">
+      <Filter>common\Packets</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

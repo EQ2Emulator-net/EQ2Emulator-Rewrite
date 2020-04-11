@@ -2,12 +2,10 @@
 
 #include "Spawn.h"
 
-std::atomic<uint32_t> Spawn::g_spawnID(1);
-
 Spawn::Spawn() : m_updateFlagsByte(0), m_zone(nullptr) {
 	memset(&m_infoStruct, 0, sizeof(m_infoStruct));
 	memset(&m_visStruct, 0, sizeof(m_visStruct));
-	m_spawnID = g_spawnID.fetch_add(1);
+	m_spawnID = GetNextID();
 }
 
 Spawn::~Spawn() {
@@ -34,4 +32,12 @@ const SpawnInfoStruct* Spawn::GetInfoStruct() const {
 
 const SpawnTitleStruct* Spawn::GetTitleStruct() const {
 	return &m_titleStruct;
+}
+
+uint32_t Spawn::GetNextID() {
+	static std::atomic<uint32_t> g_spawnID(1);
+	uint32_t ret;
+	//There was a comment in old code about the ID ending in 255 crashing the client, not sure if it's true but doing it anyway
+	while (ret = g_spawnID.fetch_add(1), (ret & 0xFF) == 0xFF);
+	return ret;
 }

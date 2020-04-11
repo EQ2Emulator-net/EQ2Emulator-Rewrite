@@ -55,7 +55,9 @@ public:
 
 		uint32_t size = 0;
 		for (auto& e : elements) {
-			size += e->GetSize();
+			if (e->MeetsCriteria()) {
+				size += e->GetSize();
+			}
 		}
 		return size;
 	}

@@ -28,7 +28,7 @@ public:
 	~ZoneOperator();
 
 	bool Process() override;
-	void AddStream(std::shared_ptr<Stream> stream, std::string key) override;
+	void AddStream(std::shared_ptr<Stream> stream, uint64_t key) override;
 	bool ProcessClientWrite();
 	bool ProcessClients();
 
@@ -49,7 +49,4 @@ private:
 	std::map<uint32_t, PendingClient> pending_clients;
 	// pair<zoneID, instanceID>
 	std::map<std::pair<uint32_t, uint32_t>, std::shared_ptr<ZoneServer> > zones;
-
-	std::map<uint32_t, Command*> commands;
-	OP_SetRemoteCmdsMsg_Packet* commands_packet;
 };

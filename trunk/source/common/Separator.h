@@ -7,6 +7,7 @@ class Separator {
 public:
 	Separator();
 	Separator(const Separator& in);
+	Separator(Separator&& other);
 	Separator(const std::string& str);
 	~Separator();
 
@@ -23,8 +24,6 @@ public:
 	int GetSize();
 
 	void Print();
-
-	Separator& operator=(const Separator& sep);
 
 	void DropFirstArg();
 

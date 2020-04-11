@@ -35,7 +35,13 @@ public:
 	uint32_t Write(unsigned char*& writeBuffer) override {
 		FindOpcode();
 		uint32_t size = GetElementSize();
-		clientCmdSize = size - 4;
+		if (GetVersion() > 283) {
+			clientCmdSize = size - 4;
+		}
+		else {
+			//Get the oversized byte element size directly
+			clientCmdSize = size - elements[0]->GetSize();
+		}
 		return Packet::Write(writeBuffer, size);
 	}
 

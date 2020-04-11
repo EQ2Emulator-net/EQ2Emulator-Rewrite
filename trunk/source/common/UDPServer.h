@@ -13,15 +13,15 @@ public:
 	~UDPServer();
 	bool Open() override;
 	void StreamDisconnected(std::shared_ptr<Stream> stream) override;
-	virtual void AddStream(std::shared_ptr<Stream> stream, std::string key);
+	virtual void AddStream(std::shared_ptr<Stream> stream, uint64_t key);
 
 protected:
 	UDPServer() : bLooping(false) { streamLock.SetName("UDPServer::streamLock"); }
-	std::map<std::string, std::shared_ptr<Stream> > Streams;
+	std::map<uint64_t, std::shared_ptr<Stream> > Streams;
 	Mutex streamLock;
 
 private:
-	std::vector<std::string> clientRemovals;
+	std::vector<std::shared_ptr<Stream> > clientRemovals;
 	SpinLock m_clientRemovals;
 
 	std::thread read_thread;

@@ -77,7 +77,7 @@ public:
 
 		std::string struct_name = name;
 		struct_name.replace(0, 3, struct_prefix);
-		std::vector<int32_t>& vec = struct_versions[name];
+		std::vector<int32_t>& vec = struct_versions[struct_name];
 		vec.resize(num_versions);
 		memcpy(vec.data(), versions, num_versions * sizeof(int32_t));
 	}

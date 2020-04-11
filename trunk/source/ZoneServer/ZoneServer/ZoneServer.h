@@ -19,7 +19,7 @@ public:
 
 	void Process();
 
-	bool AddClient(std::weak_ptr<Client> client);
+	bool AddClient(std::shared_ptr<Client> client);
 
 
 	void SendCharacterInfo(std::shared_ptr<Client> client);

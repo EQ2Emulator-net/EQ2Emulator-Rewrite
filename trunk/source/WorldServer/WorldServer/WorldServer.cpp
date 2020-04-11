@@ -26,12 +26,8 @@ bool WorldServer::Process() {
 bool WorldServer::ProcessClientWrite() {
 	ReadLocker lock(streamLock);
 
-	std::map<std::string, std::shared_ptr<Stream> >::iterator stream_itr;
-	for (stream_itr = Streams.begin(); stream_itr != Streams.end(); stream_itr++) {
-		//std::shared_ptr<Client> client = std::static_pointer_cast<Client>(stream_itr->second);
-		Client* client = (Client*)stream_itr->second.get();
-		if (client)
-			client->Write();
+	for (auto& itr : Streams) {
+		static_cast<Client*>(itr.second.get())->Write();
 	}
 
 	return true;
@@ -40,9 +36,8 @@ bool WorldServer::ProcessClientWrite() {
 bool WorldServer::ProcessClients() {
 	ReadLocker lock(streamLock);
 
-	std::map<std::string, std::shared_ptr<Stream> >::iterator stream_itr;
-	for (stream_itr = Streams.begin(); stream_itr != Streams.end(); stream_itr++) {
-		std::static_pointer_cast<Client>(stream_itr->second)->Process();
+	for (auto& itr : Streams) {
+		static_cast<Client*>(itr.second.get())->Process();
 	}
 
 	return true;

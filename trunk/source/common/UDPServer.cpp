@@ -5,6 +5,7 @@
 #include "Stream.h"
 #include "thread.h"
 #include "NetUtil.h"
+#include "timer.h"
 
 UDPServer::~UDPServer() {
 	if (bLooping) {
@@ -58,21 +59,39 @@ bool UDPServer::Open() {
 
 void UDPServer::ReaderThread() {
 	fd_set readset;
-	std::map<std::string, std::shared_ptr<Stream>>::iterator stream_itr;
 	int num;
 	int length;
 	unsigned char buffer[2048];
 	sockaddr_in from;
 	timeval sleep_time;
+	std::map<uint64_t, std::shared_ptr<Stream> >::iterator stream_itr;
+	//This reference automatically updates
+	const uint32_t& currentTime = Timer::GetCurrentTime2();
+
+	//30 seconds heartbeat timeout
+	const uint32_t TIMEOUT_MS = 30000;
+
+	sleep_time.tv_sec = 5;
+	sleep_time.tv_usec = 0;
 
 	while (bLooping) {
+		//Check for timeouts
+		{
+			ReadLocker lock(streamLock);
+			for (auto& itr : Streams) {
+				if (itr.second->CheckHeartbeatDelta(currentTime) >= TIMEOUT_MS) {
+					LogDebug(LOG_NET, 0, "Client timeout : %s", itr.second->ToString().c_str());
+					StreamDisconnected(itr.second);
+				}
+			}
+		}
 
 		//Check if we need to remove any streams
 		m_clientRemovals.Lock();
 		if (!clientRemovals.empty()) {
 			WriteLocker lock(streamLock);
 			for (auto& itr : clientRemovals) {
-				if ((stream_itr = Streams.find(itr)) != Streams.end()) {
+				if ((stream_itr = Streams.find(itr->GetConnectionKey())) != Streams.end()) {
 					LogDebug(LOG_NET, 0, "Removing client.");
 					//delete stream_itr->second;
 					Streams.erase(stream_itr);
@@ -87,9 +106,6 @@ void UDPServer::ReaderThread() {
 
 		FD_ZERO(&readset);
 		FD_SET(Sock, &readset);
-
-		sleep_time.tv_sec = 30;
-		sleep_time.tv_usec = 0;
 
 		if ((num = select(static_cast<int>(Sock + 1), &readset, NULL, NULL, &sleep_time)) < 0) {
 			LogError(LOG_NET, 0, "select error");
@@ -112,26 +128,32 @@ void UDPServer::ReaderThread() {
 			}
 			else {
 				LogError(LOG_NET, 0, "received %i", length);
-				char temp[25];
-				sprintf(temp, "%u.%d", ntohl(from.sin_addr.s_addr), ntohs(from.sin_port));
-				LogError(LOG_NET, 0, "temp = %s", temp);
+				uint64_t clientKey = static_cast<uint32_t>(from.sin_addr.s_addr);
+				clientKey <<= 16;
+				clientKey |= static_cast<uint16_t>(from.sin_port);
 				WriteLocker lock(streamLock);
-				if ((stream_itr = Streams.find(temp)) == Streams.end()) {
+				if ((stream_itr = Streams.find(clientKey)) == Streams.end()) {
 					LogError(LOG_NET, 0, "new stream");
 					std::shared_ptr<Stream> s = GetNewStream(from.sin_addr.s_addr, from.sin_port);
-					//Stream* s = GetNewStream(from.sin_addr.s_addr, from.sin_port);
 					s->SetServer(this);
-					//Streams[temp] = s;
-					AddStream(s, temp);
+					AddStream(s, clientKey);
 					s->Process(buffer, length);
-					//s->SetLastPacketTime();
+					s->UpdateHeartbeat(currentTime);
 				}
 				else {
 					LogError(LOG_NET, 0, "found stream");
 					std::shared_ptr<Stream> currentStream = stream_itr->second;
 
 					currentStream->Process(buffer, length);
-					//currentStream->SetLastPacketTime();
+					currentStream->UpdateHeartbeat(currentTime);
+					if (currentStream->RequestNewClient()) {
+						//We received a new session request for an old client, generate a new client for this key to reset our client state
+						std::shared_ptr<Stream> s = GetNewStream(from.sin_addr.s_addr, from.sin_port);
+						s->SetServer(this);
+						AddStream(s, clientKey);
+						s->Process(buffer, length);
+						s->UpdateHeartbeat(currentTime);
+					}
 				}
 			}
 		}
@@ -144,9 +166,9 @@ void UDPServer::ReaderThread() {
 void UDPServer::StreamDisconnected(std::shared_ptr<Stream> stream) {
 	std::map<std::string, Stream*>::iterator stream_itr;
 	SpinLocker lock(m_clientRemovals);
-	clientRemovals.push_back(stream->ToString());
+	clientRemovals.push_back(stream);
 }
 
-void UDPServer::AddStream(std::shared_ptr<Stream> stream, std::string key) {
+void UDPServer::AddStream(std::shared_ptr<Stream> stream, uint64_t key) {
 	Streams[key] = stream;
 }

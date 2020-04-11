@@ -22,7 +22,7 @@ public:
 	struct Substruct_Group : public PacketSubstruct {
 		uint32_t group_spawn_id;
 
-		Substruct_Group() : PacketSubstruct(0) {
+		Substruct_Group(uint32_t ver = 0) : PacketSubstruct(ver) {
 			
 		}
 

@@ -67,7 +67,9 @@ public:
 				if (itr.GetVersion() != version) {
 					itr.ResetVersion(version);
 				}
-				size += itr.GetSize();
+				if (MeetsCriteria()) {
+					size += itr.GetSize();
+				}
 			}
 		}
 		return size;

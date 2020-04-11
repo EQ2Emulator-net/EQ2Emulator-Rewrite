@@ -9,21 +9,16 @@
 #include "../Packets/OP_SetRemoteCmdsMsg_Packet.h"
 
 ZoneOperator::ZoneOperator() {
-	commands_packet = nullptr;
 }
 
 ZoneOperator::~ZoneOperator() {
-	delete commands_packet;
-	for (std::pair<uint32_t, Command*> kvp : commands)
-		delete kvp.second;
-	commands.clear();
 }
 
 bool ZoneOperator::Process() {
 	return ProcessClientWrite() && ProcessClients();
 }
 
-void ZoneOperator::AddStream(std::shared_ptr<Stream> stream, std::string key) {
+void ZoneOperator::AddStream(std::shared_ptr<Stream> stream, uint64_t key) {
 	UDPServer::AddStream(stream, key);
 
 	clients.insert(std::static_pointer_cast<Client>(stream));
@@ -32,25 +27,16 @@ void ZoneOperator::AddStream(std::shared_ptr<Stream> stream, std::string key) {
 bool ZoneOperator::ProcessClientWrite() {
 	ReadLocker lock(streamLock);
 
-	std::map<std::string, std::shared_ptr<Stream> >::iterator stream_itr;
-	for (stream_itr = Streams.begin(); stream_itr != Streams.end(); stream_itr++) {
-		std::static_pointer_cast<Client>(stream_itr->second)->Write();
+	for (auto& itr : Streams) {
+		std::static_pointer_cast<Client>(itr.second)->Write();
 	}
 
 	return true;
 }
 
 bool ZoneOperator::ProcessClients() {
-	/*ReadLocker lock(streamLock);
-
-	std::map<std::string, Stream*>::iterator stream_itr;
-	for (stream_itr = Streams.begin(); stream_itr != Streams.end(); stream_itr++) {
-		((Client*)stream_itr->second)->Process();
-	}
-
-	return true;*/
-
 	std::set<std::weak_ptr<Client>, std::owner_less<std::weak_ptr<Client> > > itr_copy = clients;
+
 	for (auto& itr : itr_copy) {
 		if (std::shared_ptr<Client> c = itr.lock()) {
 			c->Process();		
@@ -72,12 +58,15 @@ void ZoneOperator::ClientLogIn(std::shared_ptr<Client> client, OP_LoginByNumRequ
 	client->SetAccountID(packet->account_id);
 	std::map<uint32_t, PendingClient>::iterator itr = pending_clients.find(packet->account_id);
 	if (itr != pending_clients.end()) {
-		if (itr->second.access_code != packet->access_code) {
+		PendingClient pc = itr->second;
+		pending_clients.erase(itr);
+
+		if (pc.access_code != packet->access_code) {
 			client->SendLoginReply(1);
 			return;
 		}
 
-		std::shared_ptr<ZoneServer> z = GetZone(itr->second.zone_id, itr->second.instance_id);
+		std::shared_ptr<ZoneServer> z = GetZone(pc.zone_id, pc.instance_id);
 		if (!z) {
 			client->SendLoginReply(3);
 			return;
@@ -85,7 +74,7 @@ void ZoneOperator::ClientLogIn(std::shared_ptr<Client> client, OP_LoginByNumRequ
 		
 		// Login error, 0 = accepted, 1 = invalid password, 2 = currently playing, 6 = bad version, every thing else = unknown reason
 		client->SendLoginReply(0);
-		client->SetCharacterID(itr->second.character_id);
+		client->SetCharacterID(pc.character_id);
 		clients.erase(client);
 		z->AddClient(client);
 	}
@@ -99,7 +88,7 @@ void ZoneOperator::AddPendingClient(uint32_t account_id, PendingClient pending_c
 }
 
 std::shared_ptr<ZoneServer> ZoneOperator::AddNewZone(uint32_t zone_id, uint32_t instance_id) {
-	std::shared_ptr<ZoneServer> ret = nullptr;
+	std::shared_ptr<ZoneServer> ret;
 
 	ret = GetZone(zone_id, instance_id);
 	if (ret) {

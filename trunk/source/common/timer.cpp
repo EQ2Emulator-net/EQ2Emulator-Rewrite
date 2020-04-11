@@ -27,9 +27,7 @@
 
 #include "timer.h"
 
-uint32_t started_unix_timestamp = 0;
 uint32_t current_time = 0;
-uint32_t last_time = 0;
 
 Timer::Timer(){
 	timer_time = 30000; //default to 30 seconds
@@ -177,11 +175,12 @@ const uint32_t& Timer::SetCurrentTime()
     struct timeval read_time;	
     uint32_t this_time;
 
-    gettimeofday(&read_time,0);
-	if(started_unix_timestamp == 0)
-		started_unix_timestamp = read_time.tv_sec;
+	gettimeofday(&read_time, 0);
+	static uint32_t started_unix_timestamp = read_time.tv_sec;
 
     this_time = (read_time.tv_sec - started_unix_timestamp) * 1000 + read_time.tv_usec / 1000;
+
+	static uint32_t last_time = 0;
 
     if (last_time == 0)
     {
@@ -194,7 +193,6 @@ const uint32_t& Timer::SetCurrentTime()
     
 	last_time = this_time;
 
-//	cerr << "Current time:" << current_time << endl;
 	return current_time;
 }
 

@@ -47,6 +47,8 @@ public:
 	void QueuePacket(EQ2Packet* packet, bool bDelete = true);
 	void QueuePacket(EQ2Packet& packet);
 
+	bool RequestNewClient() override { return bNeedNewClient; }
+
 	std::deque<EQ2Packet*> combine_queue; // public in old code?
 
 protected:
@@ -71,6 +73,8 @@ protected:
 
 	uint32_t ClientVersion; // public in old code
 	uint8_t	CompressedOffset; //public in old code
+
+	bool bNeedNewClient;
 
 private:
 	void ProcessPacket(ProtocolPacket* p);
