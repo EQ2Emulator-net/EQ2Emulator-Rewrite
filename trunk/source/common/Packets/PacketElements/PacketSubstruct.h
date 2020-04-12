@@ -7,6 +7,7 @@
 
 class PacketSubstruct : public PacketElement {
 public:
+	friend class XmlStructDumper;
 	~PacketSubstruct() {
 		for (auto& itr : elements) {
 			delete itr;
@@ -115,11 +116,20 @@ private:
 	bool bInline;
 };
 
+class PacketSubstructParentBase : public PacketElement {
+protected:
+	PacketSubstructParentBase() = default;
+	~PacketSubstructParentBase() = default;
+
+public:
+	virtual PacketSubstruct* GetSubstructs() = 0;
+};
+
 //PacketSubstructParent simply links to a PacketSubstruct object and writes it
 //This is to allow for a size > 1 of PacketSubstruct. It could technically use its *this* pointer and increment it
 //but that's super ugly
 template<typename T>
-class PacketSubstructParent : public PacketElement {
+class PacketSubstructParent : public PacketSubstructParentBase {
 	static_assert(std::is_base_of<PacketSubstruct, T>::value, "A registered substruct element must be derived from PacketSubstruct!");
 
 public:
@@ -152,4 +162,8 @@ public:
 	}
 
 	T* substructs;
+
+	PacketSubstruct* GetSubstructs() override {
+		return substructs;
+	}
 };

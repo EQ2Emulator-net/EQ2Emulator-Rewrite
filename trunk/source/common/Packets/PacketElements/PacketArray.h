@@ -4,15 +4,18 @@
 #include "PacketSubstruct.h"
 #include <type_traits>
 #include <vector>
+#include <memory>
 
 class PacketArrayBase : public PacketElement {
 protected:
-	PacketArrayBase() = default;
+	PacketArrayBase() : arraySizeName("") {}
 	virtual ~PacketArrayBase() = default;
 	
 public:
 	virtual void SetArraySize(uint32_t size) = 0;
 	virtual uint32_t GetArraySize() = 0;
+	virtual std::unique_ptr<PacketSubstruct> GetArraySubstruct() = 0;
+	const char* arraySizeName;
 };
 
 //Just a note to self for xml structs
@@ -20,13 +23,16 @@ public:
 class PacketArraySize {
 protected:
 	PacketArrayBase* myArray;
-
+	
 	PacketArraySize() : myArray(nullptr) {}
 	virtual ~PacketArraySize() = default;
 
 public:
 	void SetMyArray(PacketArrayBase* a) {
 		myArray = a;
+		if (auto e = dynamic_cast<PacketElement*>(this)) {
+			myArray->arraySizeName = e->name;
+		}
 	}
 };
 
@@ -90,6 +96,11 @@ public:
 
 	void SetVersion(uint32_t ver) {
 		version = ver;
+	}
+
+	std::unique_ptr<PacketSubstruct> GetArraySubstruct() override {
+		T* ret = new T(version);
+		return std::unique_ptr<PacketSubstruct>(static_cast<PacketSubstruct*>(ret));
 	}
 
 private:

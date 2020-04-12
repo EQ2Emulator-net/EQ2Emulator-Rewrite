@@ -15,6 +15,7 @@
 #include "../common/ConfigReader.h"
 #include "../common/Classes.h"
 #include "ZoneTalk/ZoneTalk.h"
+#include "../common/Packets/XmlStructDumper.h"
 
 WorldServer s;
 WorldDatabase database;
@@ -55,6 +56,11 @@ int main(int argc, char **argv)
 
 	if (success)
 		success = zoneTalk.Open();
+
+	{
+		XmlStructDumper StructDump;
+		StructDump.DumpStructsFile("LoginStructs.xml");
+	}
 
 	while (success && looping) {
 		Timer::SetCurrentTime();

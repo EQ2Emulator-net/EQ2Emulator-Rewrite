@@ -83,7 +83,7 @@ public:
 			EQ2Color ModelColor;
 			EQ2Color ModelHighlightColor;
 
-			StartingItem() : PacketSubstruct(0, true) {
+			StartingItem(uint32_t ver = 0) : PacketSubstruct(ver, true) {
 				ModelID = 0;
 				SlotID = 0;
 				UseColor = 1;
@@ -108,7 +108,7 @@ public:
 		};
 		std::vector<StartingItem> StartingItems;
 
-		ClassItem() : PacketSubstruct(0, true) {
+		ClassItem(uint32_t ver = 0) : PacketSubstruct(ver, true) {
 			ClassID = 0;
 			NumItems = 0;
 
@@ -126,7 +126,7 @@ public:
 	struct UnknownArray : public PacketSubstruct {
 		uint32_t Array2Unknown;
 
-		UnknownArray() : PacketSubstruct(0, true) {
+		UnknownArray(uint32_t ver = 0) : PacketSubstruct(ver, true) {
 			Array2Unknown = 0;
 
 			RegisterElements();

@@ -9,6 +9,7 @@
 #include "../common/Classes.h"
 #include "ZoneServer/ZoneOperator.h"
 #include "Commands/CommandProcess.h"
+#include "../common/Packets/XmlStructDumper.h"
 
 ZoneDatabase database;
 Classes classes;
@@ -49,6 +50,11 @@ int main() {
 
 	if (success)
 		success = talk.Open();
+
+	{
+		XmlStructDumper structDump;
+		structDump.DumpStructsFile("ZoneStructs.xml");
+	}
 
 	Timer reconnectTimer;
 

@@ -4,9 +4,8 @@
 
 class Substruct_PassiveEffects : public PacketSubstruct {
 public:
-	Substruct_PassiveEffects()
-		: PacketSubstruct(0) {
-		RegisterElements();
+	Substruct_PassiveEffects(uint32_t ver = 0)
+		: PacketSubstruct(ver) {
 
 		spell_id = 0xFFFFFFFF;
 		total_time = 0;

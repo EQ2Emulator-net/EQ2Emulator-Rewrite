@@ -4,9 +4,8 @@
 
 class Substruct_SpellEffects : public PacketSubstruct {
 public:
-	Substruct_SpellEffects()
-		: PacketSubstruct(0) {
-		RegisterElements();
+	Substruct_SpellEffects(uint32_t ver = 0)
+		: PacketSubstruct(ver) {
 
 		spell_id = 0xFFFFFFFF;
 		total_time = 0;
@@ -24,6 +23,7 @@ public:
 	uint16_t icon;
 	uint16_t icon_type;
 	uint8_t unknown2;
+	uint8_t unknown3;
 	uint8_t cancellable;
 	uint8_t CoEunknown[21];
 
@@ -36,8 +36,13 @@ private:
 		RegisterUInt16(icon_type);
 		RegisterUInt8(unknown2);
 		RegisterUInt8(cancellable);
-		RescopeArrayElement(CoEunknown);
-		RegisterUInt8(CoEunknown)->SetCount(21);
+		if (GetVersion() < 843) {
+			RegisterUInt8(unknown3);
+		}
+		if (GetVersion() >= 1193) {
+			RescopeArrayElement(CoEunknown);
+			RegisterUInt8(CoEunknown)->SetCount(21);
+		}
 	}
 
 };

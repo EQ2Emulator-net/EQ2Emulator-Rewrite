@@ -134,8 +134,8 @@ public:
 		std::string adv_name;
 		uint16_t adv_id;
 
-		AdvArray() : PacketSubstruct(0, true) {
-			adv_name = "";
+		AdvArray(uint32_t ver = 0) : PacketSubstruct(ver, true) {
+			//adv_name = "";
 			adv_id = 0;
 
 			RegisterElements();
@@ -152,8 +152,8 @@ public:
 	struct ClientCommands : public PacketSubstruct {
 		std::string client_cmds;
 
-		ClientCommands() : PacketSubstruct(0, true) {
-			client_cmds = "";
+		ClientCommands(uint32_t ver = 0) : PacketSubstruct(ver, true) {
+			//client_cmds = "";
 
 			RegisterElements();
 		}
@@ -171,9 +171,9 @@ public:
 		uint32_t news_id;
 		std::string news;
 
-		NewsItem() : PacketSubstruct(0, true) {
+		NewsItem(uint32_t ver = 0) : PacketSubstruct(ver, true) {
 			news_id = 0;
-			news = "";
+			//news = "";
 
 			RegisterElements();
 		}
@@ -190,9 +190,9 @@ public:
 		uint32_t tab_index;
 		std::string tab_name;
 
-		Tabs() : PacketSubstruct(0, true) {
+		Tabs(uint32_t ver = 0) : PacketSubstruct(ver, true) {
 			tab_index = 0;
-			tab_name = "";
+			//tab_name = "";
 
 			RegisterElements();
 		}

@@ -22,7 +22,7 @@ public:
 	struct Substruct_Group : public PacketSubstruct {
 		uint32_t group_spawn_id;
 
-		Substruct_Group(uint32_t ver = 0) : PacketSubstruct(ver) {
+		Substruct_Group(uint32_t ver = 0) : PacketSubstruct(ver, true) {
 			
 		}
 
@@ -40,7 +40,7 @@ public:
 		uint8_t command_list_unknown;
 		std::string command_list_command;
 
-		Substruct_CommandList() : PacketSubstruct(0, true), command_list_max_distance(0.f), command_list_error_code(0), command_list_unknown(0) {
+		Substruct_CommandList(uint32_t ver = 0) : PacketSubstruct(ver, true), command_list_max_distance(0.f), command_list_error_code(0), command_list_unknown(0) {
 			
 		}
 

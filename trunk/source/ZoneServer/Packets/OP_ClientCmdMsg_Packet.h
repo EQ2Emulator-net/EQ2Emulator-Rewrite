@@ -9,13 +9,13 @@ public:
 	OP_ClientCmdMsg_Packet(uint32_t version) : EQ2Packet(version), subOpcode(0xFFFF) {
 		clientCmdSize = 0;
 		if (version > 283) {
-			RegisterUInt32(clientCmdSize);
+			RegisterUInt32(clientCmdSize)->SetIsHidden(true);
 		}
 		else {
 			uint16_t& clientCmdSize = reinterpret_cast<uint16_t&>(this->clientCmdSize);
-			RegisterOversizedByte(clientCmdSize);
+			RegisterOversizedByte(clientCmdSize)->SetIsHidden(true);
 		}
-		RegisterOversizedByte(subOpcode);
+		RegisterOversizedByte(subOpcode)->SetIsHidden(true);
 	}
 	~OP_ClientCmdMsg_Packet() = default;
 

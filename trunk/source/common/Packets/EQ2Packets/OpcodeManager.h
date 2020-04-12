@@ -34,6 +34,7 @@ public:
 };
 
 class OpcodeManager {
+	friend class XmlStructDumper;
 private:
 	//<name, allocator>
 	std::map<std::string, EQ2PacketAllocatorBase*> allocators;
@@ -50,7 +51,7 @@ private:
 	std::map<std::string, std::vector<std::string> > outfiles;
 
 	//This maps packet names to struct versions for the packet
-	std::map<std::string, std::vector<int32_t> > struct_versions;
+	std::map<std::string, std::vector<uint32_t> > struct_versions;
 
 public:
 	OpcodeManager() = default;
@@ -61,15 +62,7 @@ public:
 	}
 
 	void RegisterAllocator(const char* name, EQ2PacketAllocatorBase* allocator, std::type_index t,
-		const char* outfile, const uint32_t* versions, int32_t num_versions) {
-		//Took the assert out for if the same type is registered twice...
-		//but you must use a new type if writing the packet for FindOpcode
-		assert(allocators.count(name) == 0/* && type_map.count(t) == 0*/);
-
-		allocators[name] = allocator;
-		type_map[t] = allocator;
-		outfiles[outfile].push_back(name);
-
+		const char* outfile, const uint32_t* versions, uint32_t num_versions) {
 		const char* struct_prefix = "WS_";
 		if (strcmp(outfile, "LoginStructs.xml") == 0) {
 			struct_prefix = "LS_";
@@ -77,9 +70,16 @@ public:
 
 		std::string struct_name = name;
 		struct_name.replace(0, 3, struct_prefix);
-		std::vector<int32_t>& vec = struct_versions[struct_name];
+		std::vector<uint32_t>& vec = struct_versions[struct_name];
 		vec.resize(num_versions);
-		memcpy(vec.data(), versions, num_versions * sizeof(int32_t));
+		memcpy(vec.data(), versions, num_versions * sizeof(uint32_t));
+		//Took the assert out for if the same type is registered twice...
+		//but you must use a new type if writing the packet for FindOpcode
+		assert(allocators.count(struct_name) == 0/* && type_map.count(t) == 0*/);
+
+		allocators[struct_name] = allocator;
+		type_map[t] = allocator;
+		outfiles[outfile].push_back(struct_name);
 	}
 
 	static OpcodeManager* GetGlobal();
@@ -127,6 +127,6 @@ public:
 //n is the opcode name, pt is the packet class
 #define RegisterEQ2Opcode(n, pt, f, ...) uint32_t zUNIQUENAMEVERz ## pt [] = { __VA_ARGS__ };\
 OpcodeRegistrar<pt> zUNIQUENAMEz ## pt (n, f, zUNIQUENAMEVERz ## pt, sizeof(zUNIQUENAMEVERz ## pt) / sizeof(uint32_t))
-#define RegisterWorldStruct(n, pt, ...) RegisterEQ2Opcode(n, pt, "WorldStructs.xml", __VA_ARGS__)
+#define RegisterCommonStruct(n, pt, ...) RegisterEQ2Opcode(n, pt, "CommonStructs.xml", __VA_ARGS__)
 #define RegisterLoginStruct(n, pt, ...) RegisterEQ2Opcode(n, pt, "LoginStructs.xml", __VA_ARGS__)
-#define RegisterZoneStruct(n, pt, ...) RegisterEQ2Opcode(n, pt, "ZoneStruct.xml", __VA_ARGS__)
+#define RegisterZoneStruct(n, pt, ...) RegisterEQ2Opcode(n, pt, "ZoneStructs.xml", __VA_ARGS__)

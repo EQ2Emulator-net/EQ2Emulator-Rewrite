@@ -165,6 +165,12 @@
     <ClCompile Include="..\..\source\common\Separator.cpp">
       <Filter>common</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\common\Packets\XmlStructDumper.cpp">
+      <Filter>common\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\WorldServer\Packets\WorldServerSubstructs.cpp">
+      <Filter>source\Packets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\common\io.h">

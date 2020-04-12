@@ -6,6 +6,8 @@
 #include "PacketElements/PacketCriteria.h"
 
 class PacketElement : public PacketVariableEquality {
+	friend class XmlStructDumper;
+	friend class PacketArraySize;
 public:
 	virtual ~PacketElement() = default;
 
@@ -30,6 +32,10 @@ public:
 		ifVariableSet = e;
 	}
 
+	void SetIsHidden(bool bHide) {
+		bHidden = bHide;
+	}
+
 	bool MeetsCriteria() {
 		if (ifVariableSet && (!ifVariableSet->MeetsCriteria() || !ifVariableSet->VariableIsSet())) {
 			return false;
@@ -48,11 +54,13 @@ public:
 	}
 
 protected:
-	PacketElement() : count(1), name(nullptr), ifVariableSet(nullptr) {};
+	PacketElement() : count(1), name(nullptr), ifVariableSet(nullptr), bHidden(false) {};
 	//This is the "size" element in XML structs
 	int32_t count;
 	//This should be a true const char.. not from a string or anything like that
 	const char* name;
 	//Check if this variable is "set" (!= 0) before writing
 	PacketElement* ifVariableSet;
+	//If true this element will not display in an xml dump
+	bool bHidden;
 };

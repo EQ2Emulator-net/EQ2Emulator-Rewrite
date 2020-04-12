@@ -5,6 +5,10 @@
 #include <map>
 #include <string>
 #include <memory>
+#include <deque>
+#include "../../depends/rapid-xml/rapidxml.hpp"
+#include <set>
+#include <typeinfo>
 
 class SubstructAllocatorBase {
 protected:
@@ -39,7 +43,7 @@ public:
 	}
 
 	//This maps packet names to struct versions for the struct
-	std::map<std::string, std::vector<int32_t> > struct_versions;
+	std::map<std::string, std::vector<uint32_t> > struct_versions;
 
 	//<name, allocator>
 	std::map<std::string, std::unique_ptr<SubstructAllocatorBase>> allocators;
@@ -47,15 +51,22 @@ public:
 	//This maps struct file names to packet names used in that file
 	std::map<std::string, std::vector<std::string> > outfiles;
 
-	void RegisterAllocator(const char* name, SubstructAllocatorBase* allocator, const char* outfile, const uint32_t* versions, int32_t num_versions) {
+	//<typeid, name>
+	std::map<const std::type_info*, std::string> struct_name_map;
+
+	std::string GetSubstructName(const std::type_info& t);
+
+	void RegisterAllocator(const char* name, SubstructAllocatorBase* allocator, const std::type_info& t, const char* outfile, const uint32_t* versions, int32_t num_versions) {
 		//Took the assert out for if the same type is registered twice...
 		//but you must use a new type if writing the packet for FindOpcode
-		assert(allocators.count(name) == 0/* && type_map.count(t) == 0*/);
+		assert(allocators.count(name) == 0);
 
 		allocators.emplace(name, allocator);
 		outfiles[outfile].push_back(name);
 
-		std::vector<int32_t>& vec = struct_versions[name];
+		struct_name_map[&t] = name;
+
+		std::vector<uint32_t>& vec = struct_versions[name];
 		vec.resize(num_versions);
 		memcpy(vec.data(), versions, num_versions * sizeof(int32_t));
 	}
@@ -67,76 +78,29 @@ private:
 
 template<typename T>
 class SubstructRegistrar {
-	static_assert(std::is_base_of<SubstructRegistrar, T>::value, "Tried to register a non substruct type!");
+	static_assert(std::is_base_of<PacketSubstruct, T>::value, "Tried to register a non substruct type!");
 public:
 	SubstructRegistrar(const char* Name, const char* outfile, const uint32_t* versions, int32_t version_count) {
-		OpcodeManager::RegisterEQ2OpcodeHelper(opName, new SubstructAllocator<T>(opName), typeid(T), outfile, versions, version_count);
+		SubstructManager::GetGlobal()->RegisterAllocator(Name, new SubstructAllocator<T>(Name), typeid(T), outfile, versions, version_count);
 	}
 };
 
 class XmlStructDumper {
 public:
+	XmlStructDumper() = default;
+	~XmlStructDumper() = default;
 
-	static const char* GetElementType(PacketElement* e) {
-		if (dynamic_cast<PacketUInt8*>(e)) {
-			return "int8";
-		}
-		else if (dynamic_cast<PacketInt8*>(e)) {
-			return "sint8";
-		}
-		else if (dynamic_cast<PacketUInt16*>(e)) {
-			return "int16";
-		}
-		else if (dynamic_cast<PacketInt16*>(e)) {
-			return "sint16";
-		}
-		else if (dynamic_cast<PacketUInt32*>(e)) {
-			return "int32";
-		}
-		else if (dynamic_cast<PacketInt32*>(e)) {
-			return "sint32";
-		}
-		else if (dynamic_cast<PacketUInt64*>(e)) {
-			return "int64";
-		}
-		else if (dynamic_cast<PacketInt64*>(e)) {
-			return "sint64";
-		}
-		else if (dynamic_cast<PacketFloat*>(e)) {
-			return "float";
-		}
-		else if (dynamic_cast<PacketDouble*>(e)) {
-			return "double";
-		}
-		else if (dynamic_cast<PacketEQ2Color*>(e)) {
-			return "EQ2_Color";
-		}
-		else if (dynamic_cast<PacketEQ2ColorFloat*>(e)) {
-			return "EQ2_Color_Float";
-		}
-		else if (dynamic_cast<Packet8String*>(e)) {
-			return "EQ2_8Bit_String";
-		}
-		else if (dynamic_cast<Packet16String*>(e)) {
-			return "EQ2_16Bit_String";
-		}
-		else if (dynamic_cast<Packet32String*>(e)) {
-			return "EQ2_32Bit_String";
-		}
-		else if (dynamic_cast<PacketChar*>(e)) {
-			return "char";
-		}
-		else if (dynamic_cast<PacketBool*>(e)) {
-			return "bool";
-		}
-		else if (dynamic_cast<PacketOversizedByte*>(e)) {
-			return "int16";
-		}
-		else if (dynamic_cast<PacketBool*>(e)) {
-			return "bool";
-		}
-		else if (dynamic_cast<PacketSubstruct*>(e)) {
-			return "substruct";
-		}
-	}
+	void DumpStructsFile(const char* filename);
+
+private:
+	std::deque<rapidxml::xml_node<>*> PacketStructToXml(rapidxml::xml_document<>& doc, const std::string& name);
+	std::deque<rapidxml::xml_node<>*> SubstructToXml(rapidxml::xml_document<>& doc, const std::string& name);
+	static void ElementToXml(PacketElement* e, rapidxml::xml_document<>& doc, rapidxml::xml_node<>& parent);
+	static const char* GetElementType(PacketElement* e);
+
+	void DumpSubstructsToFile(const char* filename, rapidxml::xml_document<>& doc, rapidxml::xml_node<>& root);
+	void DumpPacketStructsToFile(const char* filename, rapidxml::xml_document<>& doc, rapidxml::xml_node<>& root);
 };
+
+#define RegisterXmlSubstruct(pt, f, ...) uint32_t zUNIQUENAMEVERz ## pt [] = { __VA_ARGS__ };\
+SubstructRegistrar<pt> zUNIQUENAMEz ## pt (#pt, f, zUNIQUENAMEVERz ## pt, sizeof(zUNIQUENAMEVERz ## pt) / sizeof(uint32_t))

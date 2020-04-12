@@ -26,7 +26,7 @@ private:
 		RegisterFloat(z);
 		RegisterFloat(heading);
 		RegisterBool(bForceRender);
-		if (GetVersion() > 869) {
+		if (GetVersion() >= 869) {
 			RegisterUInt32(location);
 		}
 	}

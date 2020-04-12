@@ -4,9 +4,8 @@
 
 class Substruct_MaintainedEffects : public PacketSubstruct {
 public:
-	Substruct_MaintainedEffects()
-		: PacketSubstruct(0) {
-		RegisterElements();
+	Substruct_MaintainedEffects(uint32_t ver = 0)
+		: PacketSubstruct(ver) {
 
 		memset(name, 0, sizeof(name));
 		target = 0;
@@ -49,8 +48,10 @@ private:
 		RegisterUInt8(conc_used);
 		RegisterFloat(total_time);
 		RegisterUInt32(expire_timestamp);
-		RescopeArrayElement(CoEunknown);
-		RegisterUInt8(CoEunknown)->SetCount(6);
+		if (GetVersion() >= 1193) {
+			RescopeArrayElement(CoEunknown);
+			RegisterUInt8(CoEunknown)->SetCount(GetVersion() >= 57048 ? 6 : 4);
+		}
 	}
 
 };

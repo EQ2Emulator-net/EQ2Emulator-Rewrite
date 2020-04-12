@@ -115,7 +115,7 @@ public:
 		return ret;
 	}
 
+	bool bSigned;
 private:
 	uint16_t* element;
-	bool bSigned;
 };

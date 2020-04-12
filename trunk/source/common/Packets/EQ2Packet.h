@@ -9,6 +9,7 @@ class Client;
 
 class EQ2Packet : public Packet {
 	friend OpcodeManager;
+	friend XmlStructDumper;
 
 public:
 	void SetVersion(uint32_t new_version) { Version = new_version; }

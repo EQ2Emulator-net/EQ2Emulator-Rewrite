@@ -385,7 +385,7 @@ public:
 ///<summary>Packet sub struct containing spell information</summary>
 class Substruct_TargetSpellInfo : public PacketSubstruct {
 public:
-	Substruct_TargetSpellInfo() : PacketSubstruct(0), 
+	Substruct_TargetSpellInfo(uint32_t ver = 0) : PacketSubstruct(ver), 
 		spell_id(-1), spell_icon(0), spell_triggercount(0), spell_icon_backdrop(0), unknown(0) {}
 
 	void RegisterElements() override {

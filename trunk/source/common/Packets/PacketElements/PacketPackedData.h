@@ -6,8 +6,9 @@
 
 //You may choose to either inherit from this class or simply use PacketPackedData::LinkSubstruct in the desired order of your packed data
 class PacketPackedData : public PacketSubstruct {
+	friend class XmlStructDumper;
 public:
-	PacketPackedData(bool bClassicClient, bool bOversized = false, uint32_t p_nSizeBytes = 4) : PacketSubstruct(0),
+	PacketPackedData(bool bClassicClient, bool bOversized = false, uint32_t p_nSizeBytes = 4) : PacketSubstruct(0, true),
 		lastPackedSize(0), nSizeBytes(p_nSizeBytes), bBufInitialized(false), bClassic(bClassicClient), bOversizedByte(bOversized) {}
 
 	~PacketPackedData() = default;
@@ -42,12 +43,12 @@ public:
 			return false;
 		}
 
-		vector<unsigned char> tmpSrc(lastPackedSize);
+		std::vector<unsigned char> tmpSrc(lastPackedSize);
 
 		memcpy(tmpSrc.data(), srcbuf + offset, lastPackedSize);
 		offset += lastPackedSize;
 
-		vector<unsigned char> tmpDst(32768);
+		std::vector<unsigned char> tmpDst(32768);
 
 		int32_t outsize = 0;
 
@@ -249,7 +250,7 @@ public:
 		memset(outBuf, 0, outBufSize);
 
 		while (inputCount) {
-			int32_t code = min<>(7, inputCount);
+			int32_t code = std::min<>(7, inputCount);
 			int32_t zeroLen = 0;
 			zeroLen = 0;
 			uint8_t bVar5 = 0;

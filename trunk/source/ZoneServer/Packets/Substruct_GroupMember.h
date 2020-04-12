@@ -4,16 +4,12 @@
 
 class Substruct_GroupMember : public PacketSubstruct {
 public:
-	Substruct_GroupMember()
-		: PacketSubstruct(0) {
-		RegisterElements();
-
+	Substruct_GroupMember(uint32_t ver = 0)
+		: PacketSubstruct(ver) {
 		spawn_id = 0;
 		pet_id = 0;
 		hp_current = 0;
-		hp_current2 = 0;
 		hp_max = 0;
-		hp_max2 = 0;
 		power_current = 0;
 		power_max = 0;
 		level_current = 0;
@@ -36,12 +32,10 @@ public:
 
 	uint32_t spawn_id;
 	uint32_t pet_id;
-	int32_t hp_current;
-	int32_t hp_current2;
-	int32_t hp_max;
-	int32_t hp_max2;
-	int32_t power_current;
-	int32_t power_max;
+	int64_t hp_current;
+	int64_t hp_max;
+	int64_t power_current;
+	int64_t power_max;
 	uint16_t level_current;
 	uint16_t level_max;
 	char name[41];
@@ -63,12 +57,26 @@ private:
 	void RegisterElements() {
 		RegisterUInt32(spawn_id);
 		RegisterUInt32(pet_id);
-		RegisterInt32(hp_current);
-		RegisterInt32(hp_current2);
-		RegisterInt32(hp_max);
-		RegisterInt32(hp_max2);
-		RegisterInt32(power_current);
-		RegisterInt32(power_max);
+		if (GetVersion() >= 57048) {
+			RegisterInt64(hp_current);
+			RegisterInt64(hp_max);
+		}
+		else {
+			RescopeToReference(hp_current, int32_t);
+			RegisterInt32(hp_current);
+			RescopeToReference(hp_max, int32_t);
+			RegisterInt32(hp_max);
+		}
+		if (GetVersion() >= 61532) {
+			RegisterInt64(power_current);
+			RegisterInt64(power_max);
+		}
+		else {
+			RescopeToReference(power_current, int32_t);
+			RegisterInt32(power_current);
+			RescopeToReference(power_max, int32_t);
+			RegisterInt32(power_max);
+		}
 		RegisterUInt16(level_current);
 		RegisterUInt16(level_max);
 		// Error parsing the struct, unknown is an unknown type(name);
@@ -93,8 +101,10 @@ private:
 		uint8_t& Unknown5 = unknown5[0];
 		RegisterUInt8(Unknown5)->SetCount(2);
 
-		uint8_t& COEunknown = CoEunknown[0];
-		RegisterUInt8(COEunknown)->SetCount(9);
+		if (GetVersion() >= 1188) {
+			uint8_t& COEunknown = CoEunknown[0];
+			RegisterUInt8(COEunknown)->SetCount(9);
+		}
 	}
 
 };

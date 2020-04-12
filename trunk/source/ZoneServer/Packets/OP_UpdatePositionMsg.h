@@ -4,7 +4,10 @@
 #include "../../common/Packets/PacketElements/PacketElements.h"
 #include "../../common/Packets/PacketElements/PacketPackedData.h"
 #include "../../common/Packets/PacketElements/PacketEncodedData.h"
+#include "../Spawns/SpawnStructs.h"
 #include "../Controllers/PlayerController.h"
+#include "../ZoneServer/Client.h"
+#include "../Spawns/Entity.h"
 
 struct Substruct_MovementData : public PacketEncodedData, public SpawnPositionStruct {
 	Substruct_MovementData(uint32_t version) : PacketEncodedData(version) {
