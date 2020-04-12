@@ -190,6 +190,7 @@ void XmlStructDumper::ElementToXml(PacketElement* e, xml_document<>& doc, xml_no
 		PacketSubstruct* ps = pp->GetSubstructs();
 		ps->name = e->name;
 		ps->ifVariableSet = e->ifVariableSet;
+		ps->count = e->count;
 		ElementToXml(ps, doc, parent);
 		return;
 	}

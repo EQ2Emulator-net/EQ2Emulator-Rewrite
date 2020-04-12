@@ -109,6 +109,24 @@ private:
 
 };
 
+class Substruct_GroupSheet : public PacketSubstruct {
+public:
+	Substruct_GroupSheet(uint32_t ver) : PacketSubstruct(ver), leaderIndex(0) {
+		for (int i = 0; i < 5; i++) {
+			members[i].ResetVersion(ver);
+		}
+	}
+
+	void RegisterElements() override {
+		RescopeArrayElement(members);
+		RegisterSubstruct(members)->SetCount(5);
+		RegisterInt32(leaderIndex);
+	}
+
+	Substruct_GroupMember members[5];
+	int32_t leaderIndex;
+};
+
 /*
 <Struct Name="Substruct_GroupMember" ClientVersion="57048">
 <Data ElementName="spawn_id" Type="int32" Size="1" />

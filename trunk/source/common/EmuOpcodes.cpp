@@ -20,9 +20,9 @@ protected:
 };
 
 namespace EmuOpcode {
-	std::unordered_map<uint8_t, std::unique_ptr<EmuPacketAllocatorBase> > emu_opcodes;
+	std::unordered_map<EmuOpcode_t, std::unique_ptr<EmuPacketAllocatorBase> > emu_opcodes;
 
-	EmuPacket* GetPacketForOpcode(uint8_t op) {
+	EmuPacket* GetPacketForOpcode(EmuOpcode_t op) {
 		auto a = emu_opcodes[op].get();
 
 		if (!a) {
@@ -65,9 +65,9 @@ namespace EmuOpcode {
 #define RegisterEmuOpcode(op, t) EmuOpcodeRegistrar<t> zUNIQUENAMEz ## t (op)
 
 	//Register emu opcodes here
-	RegisterEmuOpcode(EMUOP_REGISTER_ZONESERVER, Emu_RegisterZoneServer_Packet);
-	RegisterEmuOpcode(EMUOP_REGISTER_ZONESERVERREPLY, Emu_RegisterZoneServerReply_Packet);
-	RegisterEmuOpcode(EMUOP_REQUEST_ZONE, Emu_RequestZone_Packet);
-	RegisterEmuOpcode(EMUOP_REQUEST_ZONE_REPLY, Emu_RequestZoneReply_Packet);
-	RegisterEmuOpcode(EMUOP_TRANSFER_CLIENT, Emu_TransferClient_Packet);
+	RegisterEmuOpcode(EmuOpcode_t::EMUOP_REGISTER_ZONESERVER, Emu_RegisterZoneServer_Packet);
+	RegisterEmuOpcode(EmuOpcode_t::EMUOP_REGISTER_ZONESERVERREPLY, Emu_RegisterZoneServerReply_Packet);
+	RegisterEmuOpcode(EmuOpcode_t::EMUOP_REQUEST_ZONE, Emu_RequestZone_Packet);
+	RegisterEmuOpcode(EmuOpcode_t::EMUOP_REQUEST_ZONE_REPLY, Emu_RequestZoneReply_Packet);
+	RegisterEmuOpcode(EmuOpcode_t::EMUOP_TRANSFER_CLIENT, Emu_TransferClient_Packet);
 }

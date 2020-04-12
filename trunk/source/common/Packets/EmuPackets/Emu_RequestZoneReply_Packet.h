@@ -6,7 +6,7 @@
 
 class Emu_RequestZoneReply_Packet : public EmuPacket {
 public:
-	Emu_RequestZoneReply_Packet() : EmuPacket(EMUOP_REQUEST_ZONE_REPLY) {
+	Emu_RequestZoneReply_Packet() : EmuPacket(EmuOpcode_t::EMUOP_REQUEST_ZONE_REPLY) {
 		RegisterElements();
 
 		reply = 0;

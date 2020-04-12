@@ -64,7 +64,7 @@ uint32_t EmuPacket::Write(unsigned char*& retBuffer) {
 	}
 
 	//Set our own protocol data
-	buffer[0] = opcode;
+	buffer[0] = static_cast<uint8_t>(opcode);
 	buffer[1] = (bCompressed ? 0x01 : 0x00);
 
 	retBuffer = buffer;

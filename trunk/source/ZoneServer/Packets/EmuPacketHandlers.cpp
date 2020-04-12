@@ -14,11 +14,11 @@ extern ZoneOperator z;
 
 void Emu_RegisterZoneServerReply_Packet::HandlePacket(std::shared_ptr<WorldStream> w) {
 	if (reply == 1) {
-		w->SetAuthentication(Authentication::EAuthGranted);
+		w->SetAuthentication(EAuthentication::EAuthGranted);
 		LogDebug(LOG_NET, 0, "Zoneserver is now authenticated.");
 	}
 	else {
-		w->SetAuthentication(Authentication::EAuthDenied);
+		w->SetAuthentication(EAuthentication::EAuthDenied);
 		LogDebug(LOG_NET, 0, "World server rejected this zoneserver.");
 	}
 }

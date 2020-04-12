@@ -23,7 +23,9 @@ public:
 		packedData.LinkSubstruct(vis, "vis");
 		packedData.LinkSubstruct(info, "info");
 		RegisterSubstruct(packedData);
-		RegisterSubstruct(footer);
+		if (GetVersion() > 283) {
+			RegisterSubstruct(footer);
+		}
 	}
 
 	virtual void InsertSpawnData(const std::shared_ptr<Spawn>& spawn, uint16_t index) {

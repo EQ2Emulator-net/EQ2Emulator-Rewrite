@@ -2,7 +2,7 @@
 
 #include "../../common/EmuStream.h"
 
-enum Authentication {
+enum class EAuthentication {
 	ENonAuth = 0,
 	EAuthenticating = 1,
 	EAuthGranted = 2,
@@ -16,8 +16,8 @@ public:
 
 	void Process() override;
 
-	void SetAuthentication(Authentication auth) { authentication = auth; }
+	void SetAuthentication(EAuthentication auth) { authentication = auth; }
 
 private:
-	Authentication authentication;
+	EAuthentication authentication;
 };

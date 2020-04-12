@@ -10,7 +10,7 @@
 extern ZoneOperator z;
 
 WorldStream::WorldStream(unsigned int ip, unsigned int port) : EmuStream(ip, port) {
-	authentication = Authentication::ENonAuth;
+	authentication = EAuthentication::ENonAuth;
 }
 
 void WorldStream::Process() {
@@ -22,8 +22,8 @@ void WorldStream::Process() {
 		itr->HandlePacket(shared_from_this());
 	}
 
-	if (authentication == Authentication::ENonAuth) {
-		SetAuthentication(Authentication::EAuthenticating);
+	if (authentication == EAuthentication::ENonAuth) {
+		SetAuthentication(EAuthentication::EAuthenticating);
 
 		Emu_RegisterZoneServer_Packet* p = new Emu_RegisterZoneServer_Packet();	
 		p->ip = z.GetHostString();

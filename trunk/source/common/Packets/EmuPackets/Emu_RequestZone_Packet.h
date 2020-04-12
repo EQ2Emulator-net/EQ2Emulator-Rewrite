@@ -6,7 +6,7 @@
 
 class Emu_RequestZone_Packet : public EmuPacket {
 public:
-	Emu_RequestZone_Packet() : EmuPacket(EMUOP_REQUEST_ZONE) {
+	Emu_RequestZone_Packet() : EmuPacket(EmuOpcode_t::EMUOP_REQUEST_ZONE) {
 		RegisterElements();
 
 		zone_id = 0;

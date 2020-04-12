@@ -2,7 +2,7 @@
 
 #include "Packets/Packet.h"
 
-enum EmuOpcode_t : uint8_t;
+enum class EmuOpcode_t : uint8_t;
 class WorldStream;
 class ZoneStream;
 

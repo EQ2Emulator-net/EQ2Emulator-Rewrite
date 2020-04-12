@@ -10,7 +10,7 @@
 
 class UpdateCharacterSheetMsgData : public PacketEncodedData {
 public:
-	UpdateCharacterSheetMsgData(uint32_t version) : PacketEncodedData(version) {
+	UpdateCharacterSheetMsgData(uint32_t version) : PacketEncodedData(version), groupSheet(version) {
 		RegisterElements();
 
 		memset(character_name, 0, sizeof(character_name));
@@ -710,10 +710,6 @@ public:
 		vision = 0;
 		unknown551 = 0;
 		memset(unknown525, 0, sizeof(unknown525));
-		// Error parsing the struct, XMLStructConverter.Element is an unknown type
-		for (int i = 0; i < 5; i++) {
-			group_members[i].ResetVersion(version);
-		}
 		unknown182 = 0;
 		memset(unknown183, 0, sizeof(unknown183));
 		pet_id = 0;
@@ -1442,7 +1438,7 @@ public:
 	uint16_t vision;
 	uint8_t unknown551;
 	uint8_t unknown525[1062];
-	Substruct_GroupMember group_members[5];
+	Substruct_GroupSheet groupSheet;
 	uint16_t unknown182;
 	uint8_t unknown183[462];
 	uint32_t pet_id;
@@ -2223,13 +2219,10 @@ private:
 		uint8_t& Unknown525 = unknown525[0];
 		RegisterUInt8(Unknown525)->SetCount(1062);
 		
-		RescopeArrayElement(group_members);
-		RegisterSubstruct(group_members)->SetCount(5);
-
-		RegisterUInt16(unknown182);
+		RegisterSubstruct(groupSheet);
 
 		uint8_t& Unknown183 = unknown183[0];
-		RegisterUInt8(Unknown183)->SetCount(462);
+		RegisterUInt8(Unknown183)->SetCount(460);
 		
 		RegisterUInt32(pet_id);
 		char& Pet_name = pet_name[0];

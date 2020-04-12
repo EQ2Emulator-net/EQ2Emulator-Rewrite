@@ -6,7 +6,7 @@
 
 class Emu_RegisterZoneServerReply_Packet : public EmuPacket {
 public:
-	Emu_RegisterZoneServerReply_Packet() : EmuPacket(EMUOP_REGISTER_ZONESERVERREPLY) {
+	Emu_RegisterZoneServerReply_Packet() : EmuPacket(EmuOpcode_t::EMUOP_REGISTER_ZONESERVERREPLY) {
 		RegisterElements();
 	}
 	~Emu_RegisterZoneServerReply_Packet() = default;

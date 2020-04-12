@@ -26,6 +26,7 @@ RegisterZoneSubstruct(Substruct_SpellEffects, 1, 843, 1193);
 RegisterZoneSubstruct(Substruct_PassiveEffects, 1, 1193);
 RegisterZoneSubstruct(Substruct_MaintainedEffects, 1, 1193, 57048);
 RegisterZoneSubstruct(Substruct_GroupMember, 1, 1188, 57048, 61532);
+RegisterZoneSubstruct(Substruct_GroupSheet, 1);
 RegisterZoneSubstruct(UpdateCharacterSheetMsgData, 1, 60114);
 RegisterZoneSubstruct(Substruct_SpawnInfoUpdate, 1);
 RegisterZoneSubstruct(Substruct_SpawnPosUpdate, 1, 1188);

@@ -13,7 +13,7 @@ EmuStream::~EmuStream() {
 }
 
 void EmuStream::Process(const unsigned char* data, unsigned int length) {
-	EmuPacket* p = EmuOpcode::GetPacketForOpcode(data[0]);
+	EmuPacket* p = EmuOpcode::GetPacketForOpcode(static_cast<EmuOpcode_t>(data[0]));
 	if (!p) {
 		return;
 	}

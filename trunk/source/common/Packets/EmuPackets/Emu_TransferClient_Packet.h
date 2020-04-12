@@ -6,7 +6,7 @@
 
 class Emu_TransferClient_Packet : public EmuPacket {
 public:
-	Emu_TransferClient_Packet() : EmuPacket(EMUOP_TRANSFER_CLIENT) {
+	Emu_TransferClient_Packet() : EmuPacket(EmuOpcode_t::EMUOP_TRANSFER_CLIENT) {
 		RegisterElements();
 
 		account_id = 0;
