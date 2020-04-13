@@ -251,7 +251,9 @@ std::deque<xml_node<>*> XmlStructDumper::PacketStructToXml(xml_document<>& doc, 
 
 	{
 		OpcodeManager* opman = OpcodeManager::GetGlobal();
-		auto itr = opman->allocators.find(name);
+		std::string opName = name;
+		opName.replace(0, 3, "OP_");
+		auto itr = opman->allocators.find(opName);
 		assert(itr != opman->allocators.end());
 		pa = itr->second;
 		versions = opman->struct_versions[name];

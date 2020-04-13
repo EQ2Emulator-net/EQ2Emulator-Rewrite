@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 	LoggingSystem::LogSetPrefix("EQ2Emu-WorldServer");
 	bool logging = true;
 	std::thread logging_thread(&LoggingSystem::LogWritingThread, &logging);
-	LogInfo(LOG_INIT, 0, "Starting %s v%d.%d %s", EQ2_NAME, EQ2_VERSION_MAJOR, EQ2_VERSION_MINOR, EVE_VERSION_PHASE);
+	LogInfo(LOG_INIT, 0, "Starting %s v%d.%d %s", EQ2_NAME, EQ2_VERSION_MAJOR, EQ2_VERSION_MINOR, EQ2_VERSION_PHASE);
 
 	ConfigReader cr(&s, &database, &zoneTalk);
 	success = cr.ReadConfig("world-config.xml");
@@ -58,8 +58,10 @@ int main(int argc, char **argv)
 		success = zoneTalk.Open();
 
 	{
+		//TODO: Add a rule in for whether to generate this file, or just a console command
 		XmlStructDumper StructDump;
 		StructDump.DumpStructsFile("LoginStructs.xml");
+		StructDump.DumpStructsFile("CommonStructs.xml");
 	}
 
 	while (success && looping) {

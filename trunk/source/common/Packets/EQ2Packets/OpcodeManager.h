@@ -67,6 +67,9 @@ public:
 		if (strcmp(outfile, "LoginStructs.xml") == 0) {
 			struct_prefix = "LS_";
 		}
+		else if (strcmp(outfile, "CommonStructs.xml") == 0) {
+			struct_prefix = "CS_";
+		}
 
 		std::string struct_name = name;
 		struct_name.replace(0, 3, struct_prefix);
@@ -77,7 +80,7 @@ public:
 		//but you must use a new type if writing the packet for FindOpcode
 		assert(allocators.count(struct_name) == 0/* && type_map.count(t) == 0*/);
 
-		allocators[struct_name] = allocator;
+		allocators[name] = allocator;
 		type_map[t] = allocator;
 		outfiles[outfile].push_back(struct_name);
 	}

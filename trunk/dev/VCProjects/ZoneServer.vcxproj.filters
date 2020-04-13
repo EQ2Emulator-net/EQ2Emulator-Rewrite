@@ -204,6 +204,9 @@
     <ClCompile Include="..\..\source\ZoneServer\Packets\ZoneServerSubstructs.cpp">
       <Filter>source\Packets</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\common\Packets\EQ2Packets\CommonSubstructs.cpp">
+      <Filter>common\Packets\EQ2Packets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h">

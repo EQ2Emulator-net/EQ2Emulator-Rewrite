@@ -52,6 +52,7 @@ int main() {
 		success = talk.Open();
 
 	{
+		//TODO: Add a rule in for whether to generate this file
 		XmlStructDumper structDump;
 		structDump.DumpStructsFile("ZoneStructs.xml");
 	}
