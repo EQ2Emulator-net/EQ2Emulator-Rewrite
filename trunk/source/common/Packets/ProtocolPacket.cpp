@@ -26,6 +26,17 @@ ProtocolPacket::ProtocolPacket(uint8_t op, const unsigned char* buf, uint32_t le
 	opcode = op;
 }
 
+ProtocolPacket::ProtocolPacket(ProtocolPacket&& rhs) {
+	buffer = rhs.buffer;
+	Size = rhs.Size;
+	rhs.buffer = nullptr;
+	rhs.Size = 0;
+	opcode = rhs.opcode;
+	version = rhs.version;
+	HasCRC = rhs.HasCRC;
+	SentTime = rhs.SentTime;
+}
+
 uint32_t ProtocolPacket::Write(unsigned char*& writeBuffer) {
 	uint32_t size = 0;
 	for (size_t i = 0; i < elements.size(); i++) {
@@ -52,6 +63,10 @@ uint32_t ProtocolPacket::Write(unsigned char*& writeBuffer) {
 	writeBuffer = buffer;
 
 	return size;
+}
+
+ProtocolPacket* ProtocolPacket::MoveCopy() {
+	return new ProtocolPacket(std::move(*this));
 }
 
 ProtocolPacket* ProtocolPacket::GetProtocolPacket(const unsigned char* in_buff, uint32_t len, bool bTrimCRC) {
@@ -88,6 +103,10 @@ ProtocolPacket* ProtocolPacket::GetProtocolPacket(const unsigned char* in_buff, 
 	}
 	case OP_Ack: {
 		ret = new OP_Ack_Packet();
+		break;
+	}
+	case OP_OutOfOrderAck: {
+		ret = new OP_OutOfOrderAck_Packet;
 		break;
 	}
 	default: {

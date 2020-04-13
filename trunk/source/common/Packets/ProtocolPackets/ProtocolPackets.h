@@ -7,5 +7,6 @@
 #include "OP_ClientSessionUpdate_Packet.h"	// 0x07
 #include "OP_ServerSessionUpdate_Packet.h"	// 0x08
 #include "OP_Packet_Packet.h"				// 0x09
+#include "OP_OutOfOrderAck_Packet.h"        // 0x11
 #include "OP_Ack_Packet.h"					// 0x15
 #include "OP_AppCombined_Packet.h"			// 0x19

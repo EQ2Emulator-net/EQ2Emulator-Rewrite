@@ -135,6 +135,7 @@
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_AppCombined_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_ClientSessionUpdate_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_KeepAlive_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_OutOfOrderAck_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_Packet_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_ServerSessionUpdate_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_SessionDisconnect_Packet.h" />

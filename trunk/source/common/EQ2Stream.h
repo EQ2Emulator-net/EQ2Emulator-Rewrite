@@ -7,6 +7,7 @@
 #include "Crypto.h"
 #include "Packets/EQ2Packet.h"
 #include "Mutex.h"
+#include <map>
 
 class ProtocolPacket;
 
@@ -28,6 +29,7 @@ public:
 	~EQ2Stream();
 
 	void Process(const unsigned char* data, unsigned int length) override;
+	void ProcessFuturePacketQueue();
 
 	void EQ2QueuePacket(EQ2Packet* app, bool attempted_combine = false, bool bDelete = true);
 
@@ -58,8 +60,12 @@ protected:
 	uint32_t Key;
 	uint32_t Session;
 	uint32_t MaxLength;
-	uint16_t NextInSeq;
-	uint16_t NextOutSeq;
+	//NextInSeq is the next expected sequenced incoming packet
+	int32_t NextInSeq;
+	//NextOutSeq is the next sequenced packet in the queue we will be sending
+	int32_t NextOutSeq;
+	//NextAddSeq is the next sequence we want to queue
+	int32_t NextAddSeq;
 	int32_t MaxAckReceived;
 	int32_t NextAckToSend;
 	int32_t LastAckSent;
@@ -85,11 +91,11 @@ private:
 	void NonSequencedPush(ProtocolPacket* p);
 	void WritePacket(ProtocolPacket* p);
 	uint8_t EQ2_Compress(EQ2Packet* app, uint8_t offset = 3);
-	void SetMaxAckReceived(uint32_t seq);
+	void SetMaxAckReceived(int32_t seq);
 	void SetLastAckSent(int32_t seq);
 	void AdjustRates(uint32_t average_delta);
 	int8_t CompareSequence(uint16_t expected_seq, uint16_t seq);
-	void SetNextAckToSend(uint32_t seq);
+	void SetNextAckToSend(int32_t seq);
 	uint16_t processRSAKey(ProtocolPacket *p);
 	bool HandleEmbeddedPacket(ProtocolPacket* p, uint16_t offset = 2, uint16_t length = 0);
 	EQ2Packet* ProcessEncryptedData(unsigned char* data, uint32_t size, uint16_t opcode);
@@ -123,4 +129,10 @@ private:
 	Mutex inboundQueueLock;
 	Mutex seqQueueLock;
 	Mutex nonSeqQueueLock;
+	Mutex resendQueueLock;
+
+	//This lock is to prevent a race condition where the NextOutSeq variable is unexpectedly changed while we are resending packets
+	Mutex NextOutSeqLock;
+	//This map is only used regularly by the reader thread so it is fine without a mutex
+	map<uint16_t, unique_ptr<ProtocolPacket> > FuturePackets;
 };

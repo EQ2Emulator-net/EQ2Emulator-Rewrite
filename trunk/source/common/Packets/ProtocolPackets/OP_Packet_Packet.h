@@ -34,6 +34,10 @@ public:
 		HasCRC = true;
 	}
 
+	OP_Packet_Packet(OP_Packet_Packet&& rhs) : ProtocolPacket(std::move(rhs)) {
+
+	}
+
 	uint32_t Write(unsigned char*& writeBuffer) {
 		uint16_t op = htons(opcode);
 		memcpy(buffer, &op, 2);
@@ -54,6 +58,10 @@ public:
 		buffer = new unsigned char[Size];
 		offset = 2;
 		memcpy(buffer + offset, p->buffer, p->Size);
+	}
+
+	OP_Packet_Packet* MoveCopy() {
+		return new OP_Packet_Packet(std::move(*this));
 	}
 
 private:

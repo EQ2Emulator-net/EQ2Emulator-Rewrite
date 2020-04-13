@@ -16,6 +16,7 @@ EQ2Stream::EQ2Stream(unsigned int ip, unsigned short port) : Stream(ip, port) {
 	MaxLength = 0;
 	NextInSeq = 0;
 	NextOutSeq = 0;
+	NextAddSeq = 0;
 	MaxAckReceived = -1;
 	NextAckToSend = -1;
 	LastAckSent = -1;
@@ -76,6 +77,23 @@ void EQ2Stream::Process(const unsigned char* data, unsigned int length) {
 	if (p) {
 		ProcessPacket(p);
 		delete p;
+		ProcessFuturePacketQueue();
+	}
+}
+
+void EQ2Stream::ProcessFuturePacketQueue() {
+	if (FuturePackets.empty()) {
+		return;
+	}
+
+	for (;;) {
+		auto itr = FuturePackets.find(NextInSeq);
+		if (itr == FuturePackets.end()) {
+			break;
+		}
+
+		ProcessPacket(itr->second.get());
+		FuturePackets.erase(itr);
 	}
 }
 
@@ -130,10 +148,14 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 		if (check > 0) {
 			// Future
 			LogDebug(LOG_PACKET, 0, "Future packet");
+
+			FuturePackets[seq].reset(pp->MoveCopy());
 		}
 		else if (check < 0) {
 			// Past
 			LogDebug(LOG_PACKET, 0, "Past packet");
+
+			NonSequencedPush(new OP_OutOfOrderAck_Packet(seq));
 		}
 		else {
 			SetNextAckToSend(seq);
@@ -161,10 +183,14 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 		if (check > 0) {
 			// Future
 			LogDebug(LOG_PACKET, 0, "Future packet");
+
+			FuturePackets[seq].reset(p->MoveCopy());
 		}
 		else if (check < 0) {
 			// Past
 			LogDebug(LOG_PACKET, 0, "Past packet");
+
+			NonSequencedPush(new OP_OutOfOrderAck_Packet(seq));
 		}
 		else {
 			SetNextAckToSend(seq);
@@ -278,6 +304,15 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 
 			processed += offset + subpacket_length;
 		}
+	}
+	case OP_OutOfOrderAck: {
+		auto oop = static_cast<OP_OutOfOrderAck_Packet*>(p);
+		uint16_t seq = oop->Sequence;
+		WriteLocker lock(NextOutSeqLock);
+		if (seq > MaxAckReceived && seq < NextOutSeq) {
+			NextOutSeq = seq;
+		}
+		break;
 	}
 	default:
 		break;
@@ -465,11 +500,10 @@ void EQ2Stream::SendPacket(EQ2Packet* p, bool bDelete) {
 
 void EQ2Stream::SequencedPush(ProtocolPacket *p) {
 	p->SetVersion(ClientVersion);
-	WriteLocker lock(seqQueueLock);
-	*(uint16_t *)(p->buffer) = htons(NextOutSeq);
-	p->SetSequence(NextOutSeq);
+	WriteLocker lock(seqQueueLock);	
+	*(uint16_t *)(p->buffer) = htons(NextAddSeq);
+	p->SetSequence(NextAddSeq++);
 	SequencedQueue.push_back(p);
-	NextOutSeq++;
 }
 
 void EQ2Stream::NonSequencedPush(ProtocolPacket *p) {
@@ -592,34 +626,41 @@ void EQ2Stream::Write() {
 		ReadyToSend.pop_front();
 	}
 
+	WriteLocker l(NextOutSeqLock);
+	if (NextOutSeq < LastSeqSent) {
+		WriteLocker lock(resendQueueLock);
+		for (auto& itr : ResendQueue) {
+			WritePacket(itr);
+		}
+	}
+
 	while (SeqReadyToSend.size()) {
 		WritePacket(SeqReadyToSend.front());
+		++NextOutSeq;
+		++LastSeqSent;
 		SeqReadyToSend.pop_front();
 	}
 }
 
-void EQ2Stream::SetMaxAckReceived(uint32_t seq) {
+void EQ2Stream::SetMaxAckReceived(int32_t seq) {
 	deque<ProtocolPacket *>::iterator itr;
 
-	//MAcks.lock();
 	MaxAckReceived = seq;
-	//MAcks.unlock();
-	//MOutboundQueue.lock();
-	if (long(seq) > LastSeqSent)
+
+	if (seq > LastSeqSent)
 		LastSeqSent = seq;
-	//MResendQue.lock();
-	ProtocolPacket* packet = 0;
-	for (itr = ResendQueue.begin(); itr != ResendQueue.end(); itr++) {
-		packet = *itr;
-		if (packet && packet->GetSequence() <= seq) {
-			delete packet;
+	
+	WriteLocker lock(resendQueueLock);
+	for (auto itr = ResendQueue.begin(); itr != ResendQueue.end();) {
+		ProtocolPacket* p = *itr;
+		if (p->GetSequence() <= seq) {
+			delete p;
 			itr = ResendQueue.erase(itr);
-			if (itr == ResendQueue.end())
-				break;
+		}
+		else {
+			break;
 		}
 	}
-	//MResendQue.unlock();
-	//MOutboundQueue.unlock();
 }
 
 void EQ2Stream::SetLastAckSent(int32_t seq) {
@@ -652,7 +693,7 @@ int8_t EQ2Stream::CompareSequence(uint16_t expected_seq, uint16_t seq) {
 	}
 }
 
-void EQ2Stream::SetNextAckToSend(uint32_t seq) {
+void EQ2Stream::SetNextAckToSend(int32_t seq) {
 	//MAcks.lock();
 	NextAckToSend = seq;
 	//MAcks.unlock();

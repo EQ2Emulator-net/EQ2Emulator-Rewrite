@@ -602,5 +602,8 @@
     <ClInclude Include="..\..\source\common\CommonDatabase.h">
       <Filter>common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_OutOfOrderAck_Packet.h">
+      <Filter>common\Packets\ProtocolPackets</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
