@@ -73,4 +73,10 @@ private:
 		RegisterUInt32(Exponent_len);
 		RegisterUInt8(Exponent);
 	}
+
+	void FindOpcode() override {
+		//This packet is sent before we have a version so we won't be able to find an opcode
+		opcode = 2;
+		bOpcodeError = false;
+	}
 };

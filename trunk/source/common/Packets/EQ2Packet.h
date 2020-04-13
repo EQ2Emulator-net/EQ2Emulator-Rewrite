@@ -18,7 +18,7 @@ public:
 	uint8_t PreparePacket(uint16_t MaxLen);
 	uint32_t serialize(unsigned char *dest) const;
 
-	void FindOpcode();
+	virtual void FindOpcode();
 
 	virtual void HandlePacket(std::shared_ptr<Client> client);
 
