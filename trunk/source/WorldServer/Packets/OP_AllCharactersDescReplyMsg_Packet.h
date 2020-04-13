@@ -4,6 +4,20 @@
 #include "../../common/Packets/EQ2Packets/OpcodeManager.h"
 #include "../../common/Packets/PacketElements/PacketElements.h"
 
+//26 bytes
+struct SpawnMorphSliders {
+	int8_t skull[3];
+	int8_t eyes[3];
+	int8_t ears[3];
+	int8_t eyebrow[3];
+	int8_t cheeks[3];
+	int8_t mouth[3];
+	int8_t chin[3];
+	int8_t nose[3];
+	uint8_t bodyscale;
+	uint8_t bumpscale;
+};
+
 
 class OP_AllCharactersDescReplyMsg_Packet : public EQ2Packet {
 public:
@@ -74,31 +88,21 @@ public:
 		uint16_t legs_type;
 		EQ2Color pants_color;
 		EQ2Color unknown_legs_color;
-		EQ2Color unknown9;
-		int8_t eye_type[3]; // Size = "3"
-		int8_t ear_type[3]; // " Type = "sint8" Size = "3" / >
-		int8_t eye_brow_type[3]; // " Type = "sint8" Size = "3" / >
-		int8_t cheek_type[3]; // " Type = "sint8" Size = "3" / >
-		int8_t lip_type[3]; // " Type = "sint8" Size = "3" / >
-		int8_t chin_type[3]; // " Type = "sint8" Size = "3" / >
-		int8_t nose_type[3]; // " Type = "sint8" Size = "3" / >
-		int8_t body_size;
-		uint8_t unknown10[9]; // " Type = "int8" Size = "9" / >
+		union {
+			SpawnMorphSliders sliders;
+			int8_t sliderBytes[26];
+		};
+		uint8_t unknown10[8]; // " Type = "int8" Size = "9" / >
 		EQ2Color hair_color1;
 		EQ2Color hair_color2;
 		uint8_t unknown11[13]; // " Type = "int8" Size = "13" / >
 		uint16_t soga_race_type;
 		EQ2Color soga_skin_color;
 		EQ2Color soga_eye_color;
-		uint8_t Unknown12[3]; // " Type = "int8" Size = "3" / >
-		int8_t soga_eye_type[3]; // " Type = "sint8" Size = "3" / >
-		int8_t soga_ear_type[3]; // " Type = "sint8" Size = "3" / >
-		int8_t soga_eye_brow_type[3]; // " Type = "sint8" Size = "3" / >
-		int8_t soga_cheek_type[3]; // " Type = "sint8" Size = "3" / >
-		int8_t soga_lip_type[3]; // " Type = "sint8" Size = "3" / >
-		int8_t soga_chin_type[3]; // " Type = "sint8" Size = "3" / >
-		int8_t soga_nose_type[3]; // " Type = "sint8" Size = "3" / >
-		uint16_t unknown13;
+		union {
+			SpawnMorphSliders sogaSliders;
+			int8_t sogaSliderBytes[26];
+		};
 		EQ2Color soga_hair_color1;
 		EQ2Color soga_hair_color2;
 		EQ2Color unknown14;
@@ -156,28 +160,8 @@ public:
 			wing_type = 0;
 			chest_type = 0;
 			legs_type = 0;
-			eye_type[0] = 0;
-			eye_type[1] = 0;
-			eye_type[2] = 0;
-			ear_type[0] = 0;
-			ear_type[1] = 0;
-			ear_type[2] = 0;
-			eye_brow_type[0] = 0;
-			eye_brow_type[1] = 0;
-			eye_brow_type[2] = 0;
-			cheek_type[0] = 0;
-			cheek_type[1] = 0;
-			cheek_type[2] = 0;
-			lip_type[0] = 0;
-			lip_type[1] = 0;
-			lip_type[2] = 0;
-			chin_type[0] = 0;
-			chin_type[1] = 0;
-			chin_type[2] = 0;
-			nose_type[0] = 0;
-			nose_type[1] = 0;
-			nose_type[2] = 0;
-			body_size = 0;
+			memset(sliderBytes, 0, 26);
+			memset(sogaSliderBytes, 0, 26);
 			unknown10[0] = 0;
 			unknown10[1] = 0;
 			unknown10[2] = 0;
@@ -186,38 +170,12 @@ public:
 			unknown10[5] = 0;
 			unknown10[6] = 0;
 			unknown10[7] = 0;
-			unknown10[8] = 0;
 			
 			unsigned char tmp[] = { 0xFF, 0xFF, 0xFF, 0x61, 0x00, 0x2C, 0x04, 0xA5, 0x09, 0x02, 0x0F, 0x00, 0x00 };
 			for (uint32_t y = 0; y < sizeof(tmp); y++)
 				unknown11[y] = tmp[y];
 
 			soga_race_type = 0;
-			Unknown12[0] = 0;
-			Unknown12[1] = 0;
-			Unknown12[2] = 0;
-			soga_eye_type[0] = 0;
-			soga_eye_type[1] = 0;
-			soga_eye_type[2] = 0;
-			soga_ear_type[0] = 0;
-			soga_ear_type[1] = 0;
-			soga_ear_type[2] = 0;
-			soga_eye_brow_type[0] = 0;
-			soga_eye_brow_type[1] = 0;
-			soga_eye_brow_type[2] = 0;
-			soga_cheek_type[0] = 0;
-			soga_cheek_type[1] = 0;
-			soga_cheek_type[2] = 0;
-			soga_lip_type[0] = 0;
-			soga_lip_type[1] = 0;
-			soga_lip_type[2] = 0;
-			soga_chin_type[0] = 0;
-			soga_chin_type[1] = 0;
-			soga_chin_type[2] = 0;
-			soga_nose_type[0] = 0;
-			soga_nose_type[1] = 0;
-			soga_nose_type[2] = 0;
-			unknown13 = 212;
 			soga_hair_type = 0;
 			soga_hair_face_type = 0;
 			unknown15[0] = 0;
@@ -281,10 +239,8 @@ public:
 			RegisterEQ2EquipmentItem(Equip)->SetCount(25);
 
 			if (GetVersion() <= 283) {
-				//Temporary until these are configured properly
-				static uint8_t sliders_tmp[26] = { 0 };
-				uint8_t& sliders = sliders_tmp[0];
-				RegisterUInt8(sliders)->SetCount(26);
+				RescopeArrayElement(sliderBytes);
+				RegisterInt8(sliderBytes)->SetCount(26);
 
 				RegisterUInt16(mountType);
 				RegisterEQ2Color(mountColor1);
@@ -315,35 +271,11 @@ public:
 			RegisterUInt16(legs_type);
 			RegisterEQ2Color(pants_color);
 			RegisterEQ2Color(unknown_legs_color);
+			RescopeArrayElement(sliderBytes);
+			RegisterInt8(sliderBytes)->SetCount(26);
 
-			int32_t featureSize = 1;
-
-			if (GetVersion() > 283) {
-				RegisterEQ2Color(unknown9);
-				featureSize = 3;
-			}
-
-			{
-				//In the classic client these are only 1 byte each
-				int8_t& Eye_Type = eye_type[0]; // Size = "3"
-				RegisterInt8(Eye_Type)->SetCount(featureSize);
-				int8_t& Ear_Type = ear_type[0]; // " Type = "sint8" Size = "3" / >
-				RegisterInt8(Ear_Type)->SetCount(featureSize);
-				int8_t& Eye_Brow_Type = eye_brow_type[0]; // " Type = "sint8" Size = "3" / >
-				RegisterInt8(Eye_Brow_Type)->SetCount(featureSize);
-				int8_t& Cheek_Type = cheek_type[0]; // " Type = "sint8" Size = "3" / >
-				RegisterInt8(Cheek_Type)->SetCount(featureSize);
-				int8_t& Lip_Type = lip_type[0]; // " Type = "sint8" Size = "3" / >
-				RegisterInt8(Lip_Type)->SetCount(featureSize);
-				int8_t& Chin_Type = chin_type[0]; // " Type = "sint8" Size = "3" / >
-				RegisterInt8(Chin_Type)->SetCount(featureSize);
-				int8_t& Nose_Type = nose_type[0]; // " Type = "sint8" Size = "3" / >
-				RegisterInt8(Nose_Type)->SetCount(featureSize);
-			}
-
-			RegisterInt8(body_size);
 			uint8_t& Unknown10 = unknown10[0];
-			RegisterUInt8(Unknown10)->SetCount(GetVersion() > 283 ? 9 : 1); // " Type = "int8" Size = "9" / >
+			RegisterUInt8(Unknown10)->SetCount(GetVersion() > 283 ? 8 : 1); // " Type = "int8" Size = "8" / >
 
 			if (GetVersion() <= 283) {
 				return;
@@ -356,23 +288,8 @@ public:
 			RegisterUInt16(soga_race_type);
 			RegisterEQ2Color(soga_skin_color);
 			RegisterEQ2Color(soga_eye_color);
-			uint8_t& unknown12 = Unknown12[0]; // " Type = "int8" Size = "3" / >
-			RegisterUInt8(unknown12)->SetCount(3);
-			int8_t& Soga_Eye_Type = soga_eye_type[0]; // " Type = "sint8" Size = "3" / >
-			RegisterInt8(Soga_Eye_Type)->SetCount(3);
-			int8_t& Soga_Ear_Type = soga_ear_type[0]; // " Type = "sint8" Size = "3" / >
-			RegisterInt8(Soga_Ear_Type)->SetCount(3);
-			int8_t& Soga_Eye_Brow_Type = soga_eye_brow_type[0]; // " Type = "sint8" Size = "3" / >
-			RegisterInt8(Soga_Eye_Brow_Type)->SetCount(3);
-			int8_t& Soga_Cheek_Type = soga_cheek_type[0]; // " Type = "sint8" Size = "3" / >
-			RegisterInt8(Soga_Cheek_Type)->SetCount(3);
-			int8_t& Soga_Lip_Type = soga_lip_type[0]; // " Type = "sint8" Size = "3" / >
-			RegisterInt8(Soga_Lip_Type)->SetCount(3);
-			int8_t& Soga_Chin_Type = soga_chin_type[0]; // " Type = "sint8" Size = "3" / >
-			RegisterInt8(Soga_Chin_Type)->SetCount(3);
-			int8_t& Soga_Nose_Type = soga_nose_type[0]; // " Type = "sint8" Size = "3" / >
-			RegisterInt8(Soga_Nose_Type)->SetCount(3);
-			RegisterUInt16(unknown13);
+			RescopeArrayElement(sogaSliderBytes);
+			RegisterInt8(sogaSliderBytes)->SetCount(26);
 			RegisterEQ2Color(soga_hair_color1);
 			RegisterEQ2Color(soga_hair_color2);
 			RegisterEQ2Color(unknown14);

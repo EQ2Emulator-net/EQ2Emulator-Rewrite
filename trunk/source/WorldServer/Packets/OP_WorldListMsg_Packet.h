@@ -51,6 +51,7 @@ private:
 
 	void RegisterElements() {
 		RegisterUInt8(NumWorlds);
+		//begin array
 		RegisterUInt32(ID);
 		Register16String(Name);
 		if (GetVersion() > 283) {
@@ -78,6 +79,7 @@ private:
 		else
 			RegisterUInt8(FeatureSet);
 		RegisterUInt32(AllowedRaces);
+		//end array
 		if (GetVersion() > 60100)
 			RegisterUInt8(Unknown2);
 	}

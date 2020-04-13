@@ -15,6 +15,7 @@ CommandProcess::CommandProcess() {
 void CommandProcess::RegisterCommands() {
 	RegisterCommandHandler(214, CommandSpeed);
 	RegisterCommandHandler(206, CommandMove);
+	RegisterCommandHandler(247, CommandTest);
 }
 
 void CommandProcess::RegisterCommandHandler(uint32_t handler_id, CommandHandler_t handler) {
@@ -157,4 +158,8 @@ void CommandProcess::CommandMove(const std::shared_ptr<Client>& client, Separato
 	packet.y = y;
 	packet.z = z;
 	client->QueuePacket(packet);
+}
+
+void CommandProcess::CommandTest(const std::shared_ptr<Client>& client, Separator& sep) {
+
 }

@@ -129,7 +129,7 @@ bool WorldDatabase::LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMs
 		c._class = result.GetUInt8(4);
 		c.gender = result.GetUInt8(5);
 		//c.deity = result.GetUInt8(6);
-		c.body_size = result.GetUInt8(7);
+		c.sliders.bodyscale = result.GetUInt8(7);
 		//c.body_age = result.GetUInt8(8);
 		uint32_t zone_id = result.GetUInt32(9);
 		ret = Select(&result2, "SELECT name, description FROM zones WHERE id = %u", zone_id);
@@ -256,47 +256,47 @@ bool WorldDatabase::LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMs
 				c.unknown_legs_color.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "unknown9") {
-				c.unknown9.Red = result2.GetUInt8(1);
-				c.unknown9.Green = result2.GetUInt8(2);
-				c.unknown9.Blue = result2.GetUInt8(3);
+				c.sliders.skull[0] = result2.GetUInt8(1);
+				c.sliders.skull[1] = result2.GetUInt8(2);
+				c.sliders.skull[2] = result2.GetUInt8(3);
 			}
 			else if (type == "eye_type") {
-				c.eye_type[0] = result2.GetInt8(1);
-				c.eye_type[1] = result2.GetInt8(2);
-				c.eye_type[2] = result2.GetInt8(3);
+				c.sliders.eyes[0] = result2.GetUInt8(1);
+				c.sliders.eyes[1] = result2.GetUInt8(2);
+				c.sliders.eyes[2] = result2.GetUInt8(3);
 			}
 			else if (type == "ear_type") {
-				c.ear_type[0] = result2.GetInt8(1);
-				c.ear_type[1] = result2.GetInt8(2);
-				c.ear_type[2] = result2.GetInt8(3);
+				c.sliders.ears[0] = result2.GetUInt8(1);
+				c.sliders.ears[1] = result2.GetUInt8(2);
+				c.sliders.ears[2] = result2.GetUInt8(3);
 			}
 			else if (type == "eye_brow_type") {
-				c.eye_brow_type[0] = result2.GetInt8(1);
-				c.eye_brow_type[1] = result2.GetInt8(2);
-				c.eye_brow_type[2] = result2.GetInt8(3);
+				c.sliders.eyebrow[0] = result2.GetUInt8(1);
+				c.sliders.eyebrow[1] = result2.GetUInt8(2);
+				c.sliders.eyebrow[2] = result2.GetUInt8(3);
 			}
 			else if (type == "cheek_type") {
-				c.cheek_type[0] = result2.GetInt8(1);
-				c.cheek_type[1] = result2.GetInt8(2);
-				c.cheek_type[2] = result2.GetInt8(3);
+				c.sliders.cheeks[0] = result2.GetUInt8(1);
+				c.sliders.cheeks[1] = result2.GetUInt8(2);
+				c.sliders.cheeks[2] = result2.GetUInt8(3);
 			}
 			else if (type == "lip_type") {
-				c.lip_type[0] = result2.GetInt8(1);
-				c.lip_type[1] = result2.GetInt8(2);
-				c.lip_type[2] = result2.GetInt8(3);
+				c.sliders.mouth[0] = result2.GetUInt8(1);
+				c.sliders.mouth[1] = result2.GetUInt8(2);
+				c.sliders.mouth[2] = result2.GetUInt8(3);
 			}
 			else if (type == "chin_type") {
-				c.chin_type[0] = result2.GetInt8(1);
-				c.chin_type[1] = result2.GetInt8(2);
-				c.chin_type[2] = result2.GetInt8(3);
+				c.sliders.chin[0] = result2.GetUInt8(1);
+				c.sliders.chin[1] = result2.GetUInt8(2);
+				c.sliders.chin[2] = result2.GetUInt8(3);
 			}
 			else if (type == "nose_type") {
-				c.nose_type[0] = result2.GetInt8(1);
-				c.nose_type[1] = result2.GetInt8(2);
-				c.nose_type[2] = result2.GetInt8(3);
+				c.sliders.nose[0] = result2.GetUInt8(1);
+				c.sliders.nose[1] = result2.GetUInt8(2);
+				c.sliders.nose[2] = result2.GetUInt8(3);
 			}
 			else if (type == "body_size") {
-				c.body_size = result2.GetInt8(1);
+				c.sliders.bodyscale = result2.GetInt8(1);
 			}
 			else if (type == "soga_skin_color") {
 				c.soga_skin_color.Red = result2.GetUInt8(1);
@@ -379,45 +379,44 @@ bool WorldDatabase::LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMs
 				//c.soga_unknown_legs_color.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "soga_unknown13") {
-				// ??? - not in the struct?
-				//c.soga_unknown13.Red = result2.GetUInt8(1);
-				//c.soga_unknown13.Green = result2.GetUInt8(2);
-				//c.soga_unknown13.Blue = result2.GetUInt8(3);
+				c.sogaSliders.skull[0] = result2.GetUInt8(1);
+				c.sogaSliders.skull[1] = result2.GetUInt8(2);
+				c.sogaSliders.skull[2] = result2.GetUInt8(3);
 			}
 			else if (type == "soga_eye_type") {
-				c.soga_eye_type[0] = result2.GetInt8(1);
-				c.soga_eye_type[1] = result2.GetInt8(2);
-				c.soga_eye_type[2] = result2.GetInt8(3);
+				c.sogaSliders.eyes[0] = result2.GetUInt8(1);
+				c.sogaSliders.eyes[1] = result2.GetUInt8(2);
+				c.sogaSliders.eyes[2] = result2.GetUInt8(3);
 			}
 			else if (type == "soga_ear_type") {
-				c.soga_ear_type[0] = result2.GetInt8(1);
-				c.soga_ear_type[1] = result2.GetInt8(2);
-				c.soga_ear_type[2] = result2.GetInt8(3);
+				c.sogaSliders.ears[0] = result2.GetUInt8(1);
+				c.sogaSliders.ears[1] = result2.GetUInt8(2);
+				c.sogaSliders.ears[2] = result2.GetUInt8(3);
 			}
 			else if (type == "soga_eye_brow_type") {
-				c.soga_eye_brow_type[0] = result2.GetInt8(1);
-				c.soga_eye_brow_type[1] = result2.GetInt8(2);
-				c.soga_eye_brow_type[2] = result2.GetInt8(3);
+				c.sogaSliders.eyebrow[0] = result2.GetUInt8(1);
+				c.sogaSliders.eyebrow[1] = result2.GetUInt8(2);
+				c.sogaSliders.eyebrow[2] = result2.GetUInt8(3);
 			}
 			else if (type == "soga_cheek_type") {
-				c.soga_cheek_type[0] = result2.GetInt8(1);
-				c.soga_cheek_type[1] = result2.GetInt8(2);
-				c.soga_cheek_type[2] = result2.GetInt8(3);
+				c.sogaSliders.cheeks[0] = result2.GetUInt8(1);
+				c.sogaSliders.cheeks[1] = result2.GetUInt8(2);
+				c.sogaSliders.cheeks[2] = result2.GetUInt8(3);
 			}
 			else if (type == "soga_lip_type") {
-				c.soga_lip_type[0] = result2.GetInt8(1);
-				c.soga_lip_type[1] = result2.GetInt8(2);
-				c.soga_lip_type[2] = result2.GetInt8(3);
+				c.sogaSliders.mouth[0] = result2.GetUInt8(1);
+				c.sogaSliders.mouth[1] = result2.GetUInt8(2);
+				c.sogaSliders.mouth[2] = result2.GetUInt8(3);
 			}
 			else if (type == "soga_chin_type") {
-				c.soga_chin_type[0] = result2.GetInt8(1);
-				c.soga_chin_type[1] = result2.GetInt8(2);
-				c.soga_chin_type[2] = result2.GetInt8(3);
+				c.sogaSliders.chin[0] = result2.GetUInt8(1);
+				c.sogaSliders.chin[1] = result2.GetUInt8(2);
+				c.sogaSliders.chin[2] = result2.GetUInt8(3);
 			}
 			else if (type == "soga_nose_type") {
-				c.soga_nose_type[0] = result2.GetInt8(1);
-				c.soga_nose_type[1] = result2.GetInt8(2);
-				c.soga_nose_type[2] = result2.GetInt8(3);
+				c.sogaSliders.nose[0] = result2.GetUInt8(1);
+				c.sogaSliders.nose[1] = result2.GetUInt8(2);
+				c.sogaSliders.nose[2] = result2.GetUInt8(3);
 			}
 		}
 

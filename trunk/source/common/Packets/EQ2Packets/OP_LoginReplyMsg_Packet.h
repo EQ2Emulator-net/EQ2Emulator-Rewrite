@@ -193,9 +193,9 @@ private:
 		else
 			RegisterUInt8(Unknown9);
 
-		RegisterUInt8(Unknown10);
-		// If Unknown10 is set include the following
+		auto u10 = RegisterUInt8(Unknown10);
 		PacketUInt8* asize = RegisterUInt8(NumClassItems);
+		asize->SetIsVariableSet(u10);
 		asize->SetMyArray(RegisterArray(ClassItems, ClassItem));
 		// end of if var set
 
@@ -211,14 +211,14 @@ private:
 			Register16String(Service); // service
 
 		if (GetVersion() >= 60100) {
-			RegisterUInt8(Unknown12);
-			// if Unknown12 is set
+			auto u12 = RegisterUInt8(Unknown12);
 			asize = RegisterUInt8(LVL90NumClassItems);
+			asize->SetIsVariableSet(u12);
 			asize->SetMyArray(RegisterArray(LVL90ClassItems, ClassItem));
 
-			RegisterUInt8(Unknown13);
-			// if Unknown13 is set
+			auto u13 = RegisterUInt8(Unknown13);
 			asize = RegisterUInt8(TimeLockedNumClassItems);
+			asize->SetIsVariableSet(u13);
 			asize->SetMyArray(RegisterArray(TimeLockedClassItems, ClassItem));
 
 			RescopeArrayElement(Unknown14);

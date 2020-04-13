@@ -19,7 +19,7 @@
 // Server -> Client
 RegisterLoginStruct("OP_AllCharactersDescReplyMsg", OP_AllCharactersDescReplyMsg_Packet, 1, 1096);
 RegisterLoginStruct("OP_AllWSDescRequestMsg", OP_AllWSDescRequestMsg_Packet, 1);
-RegisterLoginStruct("OP_WorldListMsg", OP_WorldListMsg_Packet, 1, 60101);
+RegisterLoginStruct("OP_WorldListMsg", OP_WorldListMsg_Packet, 1, 60100);
 RegisterLoginStruct("OP_DeleteCharacterReplyMsg", OP_DeleteCharacterReplyMsg_Packet, 283, 284);
 RegisterLoginStruct("OP_PlayCharacterReplyMsg", OP_PlayCharacterReplyMsg_Packet, 1, 1096, 60099);
 RegisterLoginStruct("OP_CreateCharacterReplyMsg", OP_CreateCharacterReplyMsg_Packet, 1);

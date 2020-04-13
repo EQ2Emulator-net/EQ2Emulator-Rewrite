@@ -376,7 +376,6 @@ bool RuleManager::SetRuleValue(uint32_t ruleset_id, ERuleCategory cat, ERuleType
 			rule->second->SetValue(value);
 		}
 	}
-
 	return ret;
 }
 

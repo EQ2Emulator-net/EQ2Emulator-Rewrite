@@ -226,13 +226,10 @@ bool ZoneDatabase::LoadCharacter(uint32_t char_id, uint32_t account_id, std::sha
 				*/
 			}
 			else if (type == "unknown9") {
-				/*
-				Not in struct
-				EQ2Color c;
-				c.unknown9.Red = result2.GetUInt8(1);
-				c.unknown9.Green = result2.GetUInt8(2);
-				c.unknown9.Blue = result2.GetUInt8(3);
-				*/
+				//guessing since this is right before eye type this is skull?
+				entity->SetSkullType(result2.GetInt8(1), 0, false);
+				entity->SetSkullType(result2.GetInt8(2), 1, false);
+				entity->SetSkullType(result2.GetInt8(3), 2, false);
 			}
 			else if (type == "eye_type") {
 				entity->SetEyeType(result2.GetInt8(1), 0, false);
@@ -390,13 +387,9 @@ bool ZoneDatabase::LoadCharacter(uint32_t char_id, uint32_t account_id, std::sha
 				*/
 			}
 			else if (type == "soga_unknown13") {
-				/*
-				Not in struct
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				*/
+				entity->SetSogaSkullType(result2.GetInt8(1), 0, false);
+				entity->SetSogaSkullType(result2.GetInt8(2), 1, false);
+				entity->SetSogaSkullType(result2.GetInt8(3), 2, false);
 			}
 			else if (type == "soga_eye_type") {
 				entity->SetSogaEyeType(result2.GetInt8(1), 0, false);

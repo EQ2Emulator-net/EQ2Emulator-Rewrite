@@ -7,6 +7,21 @@
 #include "Widget.h"
 #include "Sign.h"
 
+//EntityFlagValues
+const uint32_t EntityFlagAttackable = 1; //in combat maybe?
+const uint32_t EntityFlagStaticObject = 1 << 2;
+const uint32_t EntityFlagAfk = 1 << 16; // Check if afk added in 1188 or if it was in icon previously
+const uint32_t EntityFlagRoleplaying = 1 << 17;
+const uint32_t EntityFlagAnonymous = 1 << 18;
+const uint32_t EntityFlagLinkdead = 1 << 19;
+const uint32_t EntityFlagCamping = 1 << 20;
+const uint32_t EntityFlagLFG = 1 << 21;
+const uint32_t EntityFlagLFW = 1 << 22;
+const uint32_t EntityFlagSolid = 1 << 23;
+const uint32_t EntityFlagMentoring = 1 << 24;
+const uint32_t EntityFlagImmunityGained = 1 << 25;
+const uint32_t EntityFlagImmunityRemaining = 1 << 26;
+
 class ZoneServer;
 
 class Spawn : std::enable_shared_from_this<Spawn> {
@@ -263,53 +278,59 @@ public:
 	void SetSogaSkinColor(EQ2Color value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.soga_skin_color, value, updateFlags);
 	}
+	void SetSkullType(int8_t value, uint8_t index, bool updateFlags = true) {
+		SetInfo(&m_infoStruct.sliders.skull[index], value, updateFlags);
+	}
 	void SetEyeType(int8_t value, uint8_t index, bool updateFlags = true) {
-		SetInfo(&m_infoStruct.eye_type[index], value, updateFlags);
+		SetInfo(&m_infoStruct.sliders.eyes[index], value, updateFlags);
 	}
 	void SetEarType(uint8_t value, uint8_t index, bool updateFlags = true) {
-		SetInfo(&m_infoStruct.ear_type[index], value, updateFlags);
+		SetInfo(&m_infoStruct.sliders.ears[index], value, updateFlags);
 	}
 	void SetEyeBrowType(int8_t value, uint8_t index, bool updateFlags = true) {
-		SetInfo(&m_infoStruct.eye_brow_type[index], value, updateFlags);
+		SetInfo(&m_infoStruct.sliders.eyebrow[index], value, updateFlags);
 	}
 	void SetCheekType(int8_t value, uint8_t index, bool updateFlags = true) {
-		SetInfo(&m_infoStruct.cheek_type[index], value, updateFlags);
+		SetInfo(&m_infoStruct.sliders.cheeks[index], value, updateFlags);
 	}
 	void SetLipType(int8_t value, uint8_t index, bool updateFlags = true) {
-		SetInfo(&m_infoStruct.lip_type[index], value, updateFlags);
+		SetInfo(&m_infoStruct.sliders.mouth[index], value, updateFlags);
 	}
 	void SetChinType(int8_t value, uint8_t index, bool updateFlags = true) {
-		SetInfo(&m_infoStruct.chin_type[index], value, updateFlags);
+		SetInfo(&m_infoStruct.sliders.chin[index], value, updateFlags);
 	}
 	void SetNoseType(int8_t value, uint8_t index, bool updateFlags = true) {
-		SetInfo(&m_infoStruct.nose_type[index], value, updateFlags);
+		SetInfo(&m_infoStruct.sliders.nose[index], value, updateFlags);
 	}
 	void SetBodySize(int8_t value, bool updateFlags = true) {
-		SetInfo(&m_infoStruct.body_size, value, updateFlags);
+		SetInfo(&m_infoStruct.sliders.bodyscale, value, updateFlags);
 	}
 	void SetBodySizeUnknown(int8_t value, bool updateFlags = true) {
-		SetInfo(&m_infoStruct.body_size_unknown, value, updateFlags);
+		SetInfo(&m_infoStruct.sliders.bumpscale, value, updateFlags);
+	}
+	void SetSogaSkullType(int8_t value, uint8_t index, bool updateFlags = true) {
+		SetInfo(&m_infoStruct.sogaSliders.skull[index], value, updateFlags);
 	}
 	void SetSogaEyeType(int8_t value, uint8_t index, bool updateFlags = true) {
-		SetInfo(&m_infoStruct.soga_eye_type[index], value, updateFlags);
+		SetInfo(&m_infoStruct.sogaSliders.eyes[index], value, updateFlags);
 	}
 	void SetSogaEarType(uint8_t value, uint8_t index, bool updateFlags = true) {
-		SetInfo(&m_infoStruct.soga_ear_type[index], value, updateFlags);
+		SetInfo(&m_infoStruct.sogaSliders.ears[index], value, updateFlags);
 	}
 	void SetSogaEyeBrowType(int8_t value, uint8_t index, bool updateFlags = true) {
-		SetInfo(&m_infoStruct.soga_eye_brow_type[index], value, updateFlags);
+		SetInfo(&m_infoStruct.sogaSliders.eyebrow[index], value, updateFlags);
 	}
 	void SetSogaCheekType(int8_t value, uint8_t index, bool updateFlags = true) {
-		SetInfo(&m_infoStruct.soga_cheek_type[index], value, updateFlags);
+		SetInfo(&m_infoStruct.sogaSliders.cheeks[index], value, updateFlags);
 	}
 	void SetSogaLipType(int8_t value, uint8_t index, bool updateFlags = true) {
-		SetInfo(&m_infoStruct.soga_lip_type[index], value, updateFlags);
+		SetInfo(&m_infoStruct.sogaSliders.mouth[index], value, updateFlags);
 	}
 	void SetSogaChinType(int8_t value, uint8_t index, bool updateFlags = true) {
-		SetInfo(&m_infoStruct.soga_chin_type[index], value, updateFlags);
+		SetInfo(&m_infoStruct.sogaSliders.chin[index], value, updateFlags);
 	}
 	void SetSogaNoseType(int8_t value, uint8_t index, bool updateFlags = true) {
-		SetInfo(&m_infoStruct.soga_nose_type[index], value, updateFlags);
+		SetInfo(&m_infoStruct.sogaSliders.nose[index], value, updateFlags);
 	}
 	void SetMountColor(EQ2Color value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.mount_color, value, updateFlags);
@@ -347,14 +368,8 @@ public:
 	void SetEmoteState(uint8_t new_val, bool updateFlags = true){
 		SetInfo(&m_infoStruct.emote_state, new_val, updateFlags);
 	}
-	void SetSpawnType(uint8_t value, bool updateFlags = true) {
-		SetInfo(&m_infoStruct.spawn_type, value, updateFlags);
-	}
-	void SetIcon(uint8_t value, bool updateFlags = true) {
-		SetInfo(&m_infoStruct.icon, value, updateFlags);
-	}
-	void SetActivityStatus(uint16_t state, bool updateFlags = true){
-		SetInfo(&m_infoStruct.activity_status, state, updateFlags);
+	void SetEntityFlags(uint32_t flags, bool updateFlags = true) {
+		SetInfo(&m_infoStruct.entityFlags, updateFlags);
 	}
 	void SetLevel(uint8_t value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.level, value, updateFlags);

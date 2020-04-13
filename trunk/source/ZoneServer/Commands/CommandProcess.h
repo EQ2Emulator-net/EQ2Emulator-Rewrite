@@ -45,4 +45,5 @@ private:
 	//Handlers
 	static void CommandSpeed(const std::shared_ptr<Client>& client, Separator& sep);
 	static void CommandMove(const std::shared_ptr<Client>& client, Separator& sep);
+	static void CommandTest(const std::shared_ptr<Client>& client, Separator& sep);
 };

@@ -405,6 +405,20 @@ public:
 	uint16_t	unknown;
 };
 
+//26 bytes
+struct SpawnMorphSliders {
+	int8_t skull[3];
+	int8_t eyes[3];
+	int8_t ears[3];
+	int8_t eyebrow[3];
+	int8_t cheeks[3];
+	int8_t mouth[3];
+	int8_t chin[3];
+	int8_t nose[3];
+	uint8_t bodyscale;
+	uint8_t bumpscale;
+};
+
 ///<summary>Packet struct containing the spawns general information</summary>
 struct SpawnInfoStruct {
 	uint32_t						model_type;
@@ -428,23 +442,6 @@ struct SpawnInfoStruct {
 	uint8_t							visual_flag;
 	uint8_t							interaction_flag;
 	uint8_t							unknown60055[18];
-	int8_t							eye_type[3];
-	int8_t							ear_type[3];
-	int8_t							eye_brow_type[3];
-	int8_t							cheek_type[3];
-	int8_t							lip_type[3];
-	int8_t							chin_type[3];
-	int8_t							nose_type[3];
-	int8_t							body_size;
-	int8_t							body_size_unknown;
-	int8_t							soga_eye_type[3];
-	int8_t							soga_ear_type[3];
-	int8_t							soga_eye_brow_type[3];
-	int8_t							soga_cheek_type[3];
-	int8_t							soga_lip_type[3];
-	int8_t							soga_chin_type[3];
-	int8_t							soga_nose_type[3];
-	uint8_t							unknown14b[2];
 	uint32_t						action_state;
 	uint32_t						visual_state;
 	uint32_t						mood_state;
@@ -454,20 +451,25 @@ struct SpawnInfoStruct {
 	uint32_t						follow_target;
 	uint32_t						size_unknown;
 	uint8_t							unknown3b[7];
-	uint8_t							spawn_type;
-	uint8_t							icon;
-	uint32_t						activity_status;
-	uint16_t                        unknownpk1;
+	//uint8_t						spawn_type;
+	//uint8_t						icon;
+	//uint32_t						activity_status;
+	//The first 4 bytes above were merged into EntityFlags, last 2 bytes of activityStatus into unknownpk1
+	uint32_t                        entityFlags;
+	uint16_t                        unknownpkShort;
+	uint32_t                        unknownpk1;
 	uint8_t							unknown600554[10];
 	uint32_t						hp_remaining;
 	uint32_t						power_percent;
-	uint8_t							unknown600553[9];
-	uint8_t							unknown600553b[3];
+	float							unknown600553;
+	uint8_t							unknown600553b;
+	uint8_t							unknown600553c;
 	uint8_t							unknown4;
 	uint8_t							level;
 	uint8_t							unknown5;
-	uint8_t							heroic_flag;
-	float    						unknown7;
+	uint16_t						heroic_flag;
+	uint16_t    					unknown7;
+	uint8_t                         unknown7_b;
 	uint8_t							race;
 	uint8_t							gender;
 	uint8_t							adv_class;
@@ -491,11 +493,20 @@ struct SpawnInfoStruct {
 	uint8_t                         unknown13b;
 	uint8_t                         unknown14a[18];
 	uint8_t                         body_age;
-	uint8_t                         size_mod;
-	uint8_t                         size_type;
+	uint32_t                        size_mod;
 	uint8_t                         unknown67633[3];
 	uint8_t                         unknown67633b;
+	union {
+		SpawnMorphSliders               sliders;
+		int8_t                         sliderBytes[26];
+	};
 
+	union {
+		SpawnMorphSliders               sogaSliders;
+		int8_t                         sogaSliderBytes[26];
+	};
+
+	//The above data is zeroed out
 	EQ2Color						equipment_colors[25];
 	EQ2Color						hair_type_color;
 	EQ2Color						hair_face_color;
@@ -518,7 +529,6 @@ struct SpawnInfoStruct {
 	EQ2Color						soga_skin_color;
 	EQ2Color						kunark_unknown_color1;
 	EQ2Color						kunark_unknown_color2;
-	EQ2Color						unknown12;
 	EQ2Color						mount_color;
 	EQ2Color						mount_saddle_color;
 	EQ2Color						hair_color1;
@@ -609,6 +619,7 @@ public:
 					RescopeArrayElement(unknown3b);
 					RegisterUInt8(unknown3b)->SetCount(version >= 1198 ? 8 : 7);
 					if (version < 1198) {
+						RescopeToReference(heroic_flag, uint8_t);
 						RegisterUInt8(heroic_flag);
 					}
 				}
@@ -620,11 +631,11 @@ public:
 				RegisterUInt8(level);
 				RegisterUInt8(difficulty);
 				RegisterUInt8(unknown5);
+				RescopeToReference(heroic_flag, uint8_t);
 				RegisterUInt8(heroic_flag);
 			}
-			RegisterUInt8(spawn_type);
-			RegisterUInt8(icon);
-			RegisterUInt32(activity_status);
+			RegisterUInt32(entityFlags);
+			RegisterUInt16(unknownpkShort);
 			if (version >= 57080) {
 				RegisterUInt16(unknownz5);
 			}
@@ -644,11 +655,12 @@ public:
 				RegisterUInt8(unknown5);
 				if (version < 1096 || version >= 1188) {
 					//Thinking this got moved by accident at some point then moved to the correct location again
-					RegisterUInt8(heroic_flag);
+					RegisterUInt16(heroic_flag);
 				}
 				RegisterUInt32(activity_timer);
 			}
-			RegisterFloat(unknown7);
+			RegisterUInt8(unknown7_b);
+			RegisterUInt16(unknown7);
 		}
 		if (version < 57080) {
 			uint16_t& model_type = reinterpret_cast<uint16_t&>(this->model_type);
@@ -800,76 +812,25 @@ public:
 			}
 		}
 
-		RegisterEQ2Color(unknown12);
-		RescopeArrayElement(eye_type);
-		RegisterInt8(eye_type)->SetCount(3);
-		RescopeArrayElement(ear_type);
-		RegisterInt8(ear_type)->SetCount(3);
-		RescopeArrayElement(eye_brow_type);
-		RegisterInt8(eye_brow_type)->SetCount(3);
-		RescopeArrayElement(cheek_type);
-		RegisterInt8(cheek_type)->SetCount(3);
-		RescopeArrayElement(lip_type);
-		RegisterInt8(lip_type)->SetCount(3);
-		RescopeArrayElement(chin_type);
-		RegisterInt8(chin_type)->SetCount(3);
-		RescopeArrayElement(nose_type);
-		RegisterInt8(nose_type)->SetCount(3);
-		RegisterInt8(body_size);
-
-		if (version >= 60055) {
-			RegisterInt8(body_size_unknown);
-			RescopeArrayElement(unknown14a);
-			RegisterUInt8(unknown14a)->SetCount(3);
-		}
-
-		if (version < 1188) {
-			RegisterUInt32(unknown13);
-		}
-		else if (version >= 1198 && version < 57080) {
-			RegisterUInt8(body_age);
-		}
+		RescopeArrayElement(sliderBytes);
+		RegisterInt8(sliderBytes)->SetCount(26);
 		
 		if (version > 283) {
-			RescopeArrayElement(soga_eye_type);
-			RegisterInt8(soga_eye_type)->SetCount(3);
-			RescopeArrayElement(soga_ear_type);
-			RegisterInt8(soga_ear_type)->SetCount(3);
-			RescopeArrayElement(soga_eye_brow_type);
-			RegisterInt8(soga_eye_brow_type)->SetCount(3);
-			RescopeArrayElement(soga_cheek_type);
-			RegisterInt8(soga_cheek_type)->SetCount(3);
-			RescopeArrayElement(soga_lip_type);
-			RegisterInt8(soga_lip_type)->SetCount(3);
-			RescopeArrayElement(soga_chin_type);
-			RegisterInt8(soga_chin_type)->SetCount(3);
-			RescopeArrayElement(soga_nose_type);
-			RegisterInt8(soga_nose_type)->SetCount(3);
+			RescopeArrayElement(sogaSliderBytes);
+			RegisterInt8(sogaSliderBytes)->SetCount(26);
 		}
 
 		if (version < 1188) {
-			RegisterUInt16(unknown14);
-			RescopeArrayElement(unknown15);
-			RegisterUInt16(unknown15)->SetCount(4);
 			uint16_t& mount_type = reinterpret_cast<uint16_t&>(this->mount_type);
 			RegisterUInt16(mount_type);
 			RegisterEQ2Color(mount_color);
 			RegisterEQ2Color(mount_saddle_color);
 		}
 		else {
-			if (version < 1198 || (version >= 57080 && version < 60055)) {
-				RegisterInt8(body_size_unknown);
-			}
-			if (version < 60055) {
-				RegisterUInt8(unknown13b);
-			}
-			else {
-				RescopeArrayElement(unknown14b);
-				RegisterUInt8(unknown14b)->SetCount(2);
-				RegisterEQ2Color(mount_color);
-				RegisterEQ2Color(mount_saddle_color);
-			}
+			RegisterEQ2Color(mount_color);
+			RegisterEQ2Color(mount_saddle_color);
 		}
+
 		RegisterEQ2Color(hair_color1);
 		RegisterEQ2Color(hair_color2);
 		RegisterEQ2Color(hair_highlight);
@@ -961,21 +922,16 @@ public:
 			RegisterUInt32(size_unknown);
 			RescopeArrayElement(unknown3b);
 			RegisterUInt8(unknown3b)->SetCount(4);
-			RegisterUInt8(spawn_type);
-			RegisterUInt8(icon);
-			RegisterUInt32(activity_status);
-			RegisterUInt16(unknownpk1);
+			RegisterUInt32(entityFlags);
+			RegisterUInt32(unknownpk1);
 			RegisterUInt32(activity_timer);
 			RescopeArrayElement(unknown600554);
 			RegisterUInt8(unknown600554)->SetCount(4);
 			RegisterUInt32(hp_remaining);
 			RegisterUInt32(power_percent);
-			RescopeArrayElement(unknown600553);
-			RegisterUInt8(unknown600553)->SetCount(4);
-			RegisterUInt8(size_mod);
-			RegisterUInt8(size_type);
-			RescopeArrayElement(unknown600553b);
-			RegisterUInt8(unknown600553b)->SetCount(3);
+			RegisterFloat(unknown600553);
+			RegisterUInt32(size_mod);
+			RegisterUInt8(unknown600553b);
 			RegisterUInt8(unknown4);
 			if (version >= 67633) {
 				RescopeArrayElement(unknown67633);
@@ -984,8 +940,9 @@ public:
 			}
 			RegisterUInt8(level);
 			RegisterUInt8(unknown5);
-			RegisterUInt8(heroic_flag);
-			RegisterFloat(unknown7);
+			RegisterUInt16(heroic_flag);
+			RegisterUInt8(unknown7_b);
+			RegisterUInt16(unknown7);
 		}
 
 		RegisterUInt8(race);
