@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\common\Classes.cpp" />
+    <ClCompile Include="..\..\source\common\CommonDatabase.cpp" />
     <ClCompile Include="..\..\source\common\ConfigReader.cpp" />
     <ClCompile Include="..\..\source\common\CRC16.cpp" />
     <ClCompile Include="..\..\source\common\Crypto.cpp" />
@@ -41,6 +42,7 @@
     <ClCompile Include="..\..\source\common\Packets\ProtocolPacket.cpp" />
     <ClCompile Include="..\..\source\common\Packets\XmlStructDumper.cpp" />
     <ClCompile Include="..\..\source\common\RC4.cpp" />
+    <ClCompile Include="..\..\source\common\Rules.cpp" />
     <ClCompile Include="..\..\source\common\Separator.cpp" />
     <ClCompile Include="..\..\source\common\Server.cpp" />
     <ClCompile Include="..\..\source\common\stdio.cpp" />
@@ -78,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\common\Classes.h" />
+    <ClInclude Include="..\..\source\common\CommonDatabase.h" />
     <ClInclude Include="..\..\source\common\ConfigReader.h" />
     <ClInclude Include="..\..\source\common\CRC16.h" />
     <ClInclude Include="..\..\source\common\Crypto.h" />
@@ -140,6 +143,7 @@
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\ProtocolPackets.h" />
     <ClInclude Include="..\..\source\common\Packets\XmlStructDumper.h" />
     <ClInclude Include="..\..\source\common\RC4.h" />
+    <ClInclude Include="..\..\source\common\Rules.h" />
     <ClInclude Include="..\..\source\common\Separator.h" />
     <ClInclude Include="..\..\source\common\Server.h" />
     <ClInclude Include="..\..\source\common\stdio.h" />

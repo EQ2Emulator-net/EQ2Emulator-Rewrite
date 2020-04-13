@@ -10,11 +10,13 @@
 #include "ZoneServer/ZoneOperator.h"
 #include "Commands/CommandProcess.h"
 #include "../common/Packets/XmlStructDumper.h"
+#include "../common/Rules.h"
 
 ZoneDatabase database;
 Classes classes;
 ZoneOperator z;
 CommandProcess g_commandProcess;
+RuleManager g_ruleManager;
 
 int main() {
 	bool looping = true;
@@ -38,6 +40,11 @@ int main() {
 	if (success) {
 		LogDebug(LOG_DATABASE, 0, "Loading opcodes...");
 		success = database.LoadOpcodes();
+	}
+
+	if (success) {
+		LogDebug(LOG_DATABASE, 0, "Loading rules...");
+		database.LoadRules(g_ruleManager);
 	}
 
 	if (success) {

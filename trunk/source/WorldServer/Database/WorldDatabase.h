@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../common/database.h"
+#include "../../common/CommonDatabase.h"
 #include "../WorldServer/Client.h"
 
 class OP_AllCharactersDescReplyMsg_Packet;
@@ -8,14 +8,12 @@ class OP_CreateCharacterRequestMsg_Packet;
 class WorldServer;
 struct EQ2ColorFloat;
 
-class WorldDatabase : public Database {
+class WorldDatabase : public CommonDatabase {
 public:
 	WorldDatabase();
 	~WorldDatabase();
 
 	bool Start();
-
-	bool LoadOpcodes();
 
 	bool GetAccount(Client* client, std::string user, std::string pass);
 	bool UpdateAccountIPAddress(uint32_t account, uint32_t address);

@@ -16,11 +16,14 @@
 #include "../common/Classes.h"
 #include "ZoneTalk/ZoneTalk.h"
 #include "../common/Packets/XmlStructDumper.h"
+#include "../common/Rules.h"
 
 WorldServer s;
 WorldDatabase database;
 Classes classes;
 ZoneTalk zoneTalk;
+RuleManager g_ruleManager;
+
 
 int main(int argc, char **argv)
 {
@@ -44,6 +47,11 @@ int main(int argc, char **argv)
 	if (success) {
 		LogDebug(LOG_DATABASE, 0, "Loading opcodes...");
 		success = database.LoadOpcodes();
+	}
+
+	if (success) {
+		LogDebug(LOG_DATABASE, 0, "Loading rules...");
+		database.LoadRules(g_ruleManager);
 	}
 
 	if (success) {
