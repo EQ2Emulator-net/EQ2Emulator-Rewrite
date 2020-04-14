@@ -16,7 +16,6 @@ EQ2Stream::EQ2Stream(unsigned int ip, unsigned short port) : Stream(ip, port) {
 	MaxLength = 0;
 	NextInSeq = 0;
 	NextOutSeq = 0;
-	NextAddSeq = 0;
 	MaxAckReceived = -1;
 	NextAckToSend = -1;
 	LastAckSent = -1;
@@ -24,7 +23,6 @@ EQ2Stream::EQ2Stream(unsigned int ip, unsigned short port) : Stream(ip, port) {
 	Compressed = false;
 	Encoded = false;
 	bNeedNewClient = false;
-	CombinedAppPacket = nullptr;
 	ClientVersion = 0;
 
 	RateThreshold = RATEBASE / 250;
@@ -45,23 +43,11 @@ EQ2Stream::EQ2Stream(unsigned int ip, unsigned short port) : Stream(ip, port) {
 }
 
 EQ2Stream::~EQ2Stream() {
-
-	if (CombinedAppPacket)
-		delete CombinedAppPacket;
-
-	while (NonSequencedQueue.size()) {
-		delete NonSequencedQueue.front();
-		NonSequencedQueue.pop_front();
+	for (auto& itr : NonSequencedQueue) {
+		delete itr;
 	}
-
-	while (SequencedQueue.size()) {
-		delete SequencedQueue.front();
-		SequencedQueue.pop_front();
-	}
-	
-	while (ResendQueue.size()) {
-		delete ResendQueue.front();
-		ResendQueue.pop_front();
+	for (auto& itr : SequencedQueue) {
+		delete itr;
 	}
 
 	InboundQueueClear();
@@ -117,7 +103,7 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 		MaxLength = ntohl(request->MaxLength);
 		NextInSeq = 0;
 		Key = 0x33624702;
-		LogDebug(LOG_NET, 0, "OP_SessionRequest unknowna: %u, Session: %u, MaxLength: %u", request->UnknownA, request->Session, request->MaxLength);
+		LogDebug(LOG_NET, 0, "OP_SessionRequest Protocol Version: %u, Session: %u, MaxLength: %u", request->ProtocolVersion, request->Session, request->MaxLength);
 
 		SendSessionResponse();
 		SetState(EQStreamState::ESTABLISHED);
@@ -184,16 +170,15 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 
 		LogDebug(LOG_PACKET, 0, "seq = %u, NextInSeq = %u, check = %i", seq, NextInSeq, check);
 		if (check > 0) {
-			// Future
+			// Future, let the client know we have this packet but save it for later
 			LogDebug(LOG_PACKET, 0, "Future packet");
 
 			FuturePackets[seq].reset(p->MoveCopy());
+			NonSequencedPush(new OP_OutOfOrderAck_Packet(seq));
 		}
 		else if (check < 0) {
-			// Past
+			// Past, we've already processed this packet so we don't need to do anything with it
 			LogDebug(LOG_PACKET, 0, "Past packet");
-			
-			NonSequencedPush(new OP_OutOfOrderAck_Packet(seq));
 		}
 		else {
 			SetNextAckToSend(seq);
@@ -211,14 +196,14 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 					}
 					else {
 						if (crypto.isEncrypted() && p && p->Size > 2) {
-							EQ2Packet* p2 = ProcessEncryptedData(oversize_buffer, oversize_offset, p->GetOpcode());
+							EQ2Packet* p2 = ProcessEncryptedData(oversize_buffer, oversize_offset);
 							if (p2) {
 								InboundQueuePush(p2);
 							}
 						}
 					}
 					delete[] oversize_buffer;
-					oversize_buffer = NULL;
+					oversize_buffer = nullptr;
 					oversize_offset = 0;
 				}
 			}
@@ -262,7 +247,7 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 					return;
 				}
 				if (!HandleEmbeddedPacket(p, processed + offset, subpacket_length)) {
-					newpacket = ProcessEncryptedData(p->buffer + processed + offset, subpacket_length, 0x19);// (uint16_t)OP_AppCombined);
+					newpacket = ProcessEncryptedData(p->buffer + processed + offset, subpacket_length);
 					if (newpacket) {
 						InboundQueuePush(newpacket);
 					}
@@ -296,30 +281,42 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 				break;
 			}
 
-			ProtocolPacket* subPacket = ProtocolPacket::GetProtocolPacket(p->buffer + processed + offset, subpacket_length, false);
+			uint32_t dataOffset = processed + offset;
+			unsigned char* dataPtr = p->buffer + dataOffset;
+			ProtocolPacket* subPacket = ProtocolPacket::GetProtocolPacket(dataPtr, subpacket_length, false);
 
 			if (subPacket) {
-				//I've seen some garbage packets get sent with wrong protocol opcodes but the rest of the combine is still correct
-				//So don't break if GetProtocolPacket fails
 				ProcessPacket(subPacket);
 				delete subPacket;
 			}
-			else if (ntohs(*reinterpret_cast<uint16_t*>(p->buffer + processed + offset)) > 0x1e) {
-				//Garbage packet?
-				crypto.RC4Decrypt(p->buffer + processed + offset, subpacket_length);
-				LogError(LOG_PACKET, 0, "Garbage packet?!:");
-				DumpBytes(p->buffer + processed + offset, subpacket_length);
+			//Randomly the client sends an EQ2Packet without a protocol opcode after logging into a zone
+			//Attempt to handle it or else our encryption will desync
+			else if (ntohs(*reinterpret_cast<uint16_t*>(dataPtr)) > 0x1e) {
+				//Possible garbage packet? Try to decrypt it
+				LogWarn(LOG_PACKET, 0, "Received an out of protocol packet in a combine, trying to process it.");
+				if (!HandleEmbeddedPacket(p, dataOffset, subpacket_length)) {
+					EQ2Packet* newpacket = ProcessEncryptedData(dataPtr, subpacket_length);
+					if (newpacket) {
+						InboundQueuePush(newpacket);
+					}
+				}
 			}
 
 			processed += offset + subpacket_length;
 		}
 	}
+	//This is an ack for a single packet rather than a range of packets
 	case OP_OutOfOrderAck: {
 		auto oop = static_cast<OP_OutOfOrderAck_Packet*>(p);
 		uint16_t seq = oop->Sequence;
-		WriteLocker lock(NextOutSeqLock);
-		if (seq > MaxAckReceived && seq < NextOutSeq) {
-			NextOutSeq = seq;
+		WriteLocker lock(resendQueueLock);
+		for (auto itr = ResendQueue.begin(); itr != ResendQueue.end(); ++itr) {
+			ProtocolPacket* p = *itr;
+			if (p->GetSequence() == seq) {
+				ResendQueue.erase(itr);
+				delete p;
+				break;
+			}
 		}
 		break;
 	}
@@ -382,10 +379,6 @@ void EQ2Stream::EQ2QueuePacket(EQ2Packet* app, bool attempted_combine, bool bDel
 		//}
 		//else {
 			PreparePacket(app);
-#ifdef LE_DEBUG
-			LogWrite(PACKET__DEBUG, 0, "Packet", "After B in %s, line %i:", __FUNCTION__, __LINE__);
-			DumpPacket(app);
-#endif
 			SendPacket(app, bDelete);
 		//}
 	}
@@ -398,20 +391,10 @@ void EQ2Stream::PreparePacket(EQ2Packet* app, uint8_t offset) {
 	app->SetVersion(ClientVersion);
 	CompressedOffset = 0;
 
-#ifdef LE_DEBUG
-	LogWrite(PACKET__DEBUG, 0, "Packet", "Before A in %s, line %i:", __FUNCTION__, __LINE__);
-	DumpPacket(app);
-#endif
-
 	if (!app->PacketPrepared) {
 		if (app->PreparePacket(MaxLength) == 255) //invalid version
 			return;
 	}
-
-#ifdef LE_DEBUG
-	LogWrite(PACKET__DEBUG, 0, "Packet", "After Prepare in %s, line %i:", __FUNCTION__, __LINE__);
-	DumpPacket(app);
-#endif
 
 	if (!app->EQ2Compressed && app->Size >= 0x80) {
 		CompressedOffset = EQ2_Compress(app);
@@ -428,12 +411,6 @@ void EQ2Stream::PreparePacket(EQ2Packet* app, uint8_t offset) {
 			app->Size++;
 		}
 	}
-
-#ifdef LE_DEBUG
-	LogWrite(PACKET__DEBUG, 0, "Packet", "After A in %s, line %i:", __FUNCTION__, __LINE__);
-	DumpPacket(app);
-#endif
-
 }
 
 uint8_t EQ2Stream::EQ2_Compress(EQ2Packet* app, uint8_t offset) {
@@ -480,7 +457,7 @@ void EQ2Stream::SendPacket(EQ2Packet* p, bool bDelete) {
 		unsigned char* tmpbuff = p->buffer;
 		uint32_t length = p->Size - 2;
 
-		OP_Packet_Packet *out = new OP_Packet_Packet(OP_Fragment, NULL, MaxLength);
+		OP_Packet_Packet *out = new OP_Packet_Packet(OP_Fragment, nullptr, MaxLength);
 		*(uint32_t *)(out->buffer + 4) = htonl(length);
 		memcpy(out->buffer + 8, tmpbuff + 2, MaxLength - 10); // 10 = op(2) + seq(2) + size(4) + crc(2)?? 
 
@@ -490,7 +467,7 @@ void EQ2Stream::SendPacket(EQ2Packet* p, bool bDelete) {
 
 		while (used < length) {
 			chunksize = min(length - used, MaxLength - 6);
-			out = new OP_Packet_Packet(OP_Fragment, NULL, chunksize + 6);
+			out = new OP_Packet_Packet(OP_Fragment, nullptr , chunksize + 6);
 			memcpy(out->buffer + 4, tmpbuff + used + 2, chunksize);
 			SequencedPush(out);
 			used += chunksize;
@@ -510,8 +487,8 @@ void EQ2Stream::SendPacket(EQ2Packet* p, bool bDelete) {
 void EQ2Stream::SequencedPush(ProtocolPacket *p) {
 	p->SetVersion(ClientVersion);
 	WriteLocker lock(seqQueueLock);	
-	*(uint16_t *)(p->buffer) = htons(NextAddSeq);
-	p->SetSequence(NextAddSeq++);
+	*(uint16_t *)(p->buffer) = htons(NextOutSeq);
+	p->SetSequence(NextOutSeq++);
 	SequencedQueue.push_back(p);
 }
 
@@ -522,48 +499,52 @@ void EQ2Stream::NonSequencedPush(ProtocolPacket *p) {
 }
 
 void EQ2Stream::Write() {
-	deque<ProtocolPacket*> ReadyToSend;
-	deque<ProtocolPacket*> SeqReadyToSend;
-	long maxack;
-	map<uint16_t, ProtocolPacket *>::iterator sitr;
+	vector<std::unique_ptr<ProtocolPacket> > ReadyToSend;
+	vector<ProtocolPacket*> SeqReadyToSend;
+	int32_t maxack;
+	//This reference automatically updates
+	static const uint32_t& currentTime = Timer::GetCurrentTime2();
 
 	// Check our rate to make sure we can send more
-	//MRate.lock();
 	int32_t threshold = RateThreshold;
-	//MRate.unlock();
 	if (BytesWritten > threshold) {
-		//cout << "Over threshold: " << BytesWritten << " > " << threshold << endl;
 		return;
 	}
 
-	//MCombinedAppPacket.lock();
-	EQ2Packet *CombPack = CombinedAppPacket;
-	CombinedAppPacket = nullptr;
-	//MCombinedAppPacket.unlock();
-
-	if (CombPack) {
-		SendPacket(CombPack);
-	}
-
 	// If we got more packets to we need to ack, send an ack on the highest one
-	//MAcks.lock();
 	maxack = MaxAckReceived;
 	// Added from peaks findings
 	if (NextAckToSend > LastAckSent || LastAckSent == 0x0000ffff)
 		SendAck(NextAckToSend);
-	//MAcks.unlock();
-
-	// Lock the outbound queues while we process
-	//MOutboundQueue.lock();
 
 	// Adjust where we start sending in case we get a late ack
 	if (maxack > LastSeqSent)
 		LastSeqSent = maxack;
 
 	// Place to hold the base packet t combine into
-	ProtocolPacket *p = NULL;
+	ProtocolPacket *p = nullptr;
 
-	// Loop until both are empty or MaxSends is reached
+	// List of packets we will be combining
+	//ProtocolPacket* packetsToCombine[16];
+	//uint16_t numCombinePackets = 0;
+	////Start off our packet size at 4 (protocol opcode + crc)
+	//uint16_t combinePacketSize = 4;
+
+	//auto CheckCombinePackets = [&packetsToCombine, &numCombinePackets, &combinePacketSize](ProtocolPacket* p) -> bool {
+	//	//Strip the crc bytes off the packet we are checking
+	//	uint32_t effectiveSize = p->Size - 2;
+	//	if (effectiveSize >= 255) {
+	//		effectiveSize += 3;
+	//	}
+	//	else {
+	//		++effectiveSize;
+	//	}
+
+	//	//if (effectiveSize + combinePacketSize >= MaxPacketSize)
+	//};
+
+	//auto DoPacketCombine = [&packetsToCombine, &numCombinePackets, &combinePacketSize]() -> ProtocolPacket* {
+	//};
 
 	// See if there are more non-sequenced packets left
 	WriteLocker lock1(nonSeqQueueLock);
@@ -577,11 +558,11 @@ void EQ2Stream::Write() {
 		//Check if we have a packet to combine p with...
 		if (NonSequencedQueue.size()) {
 			if (/*!p->combine(NonSequencedQueue.front())*/ true) {
-				// Tryint to combine this packet with the base didn't work (too big maybe)
+				// Trying to combine this packet with the base didn't work (too big maybe)
 				// So just send the base packet (we'll try this packet again later)
-				ReadyToSend.push_back(p);
+				ReadyToSend.emplace_back(p);
 				BytesWritten += p->Size;
-				p = NULL;
+				p = nullptr;
 			}
 			else {
 				// Combine worked, so just remove this packet and it's spot in the queue
@@ -591,9 +572,9 @@ void EQ2Stream::Write() {
 		}
 		else {
 			//We have no packets to combine p with so just send it...
-			ReadyToSend.push_back(p);
+			ReadyToSend.emplace_back(p);
 			BytesWritten += p->Size;
-			p = NULL;
+			p = nullptr;
 		}
 		if (BytesWritten > threshold) {
 			// Sent enough this round, lets stop to be fair
@@ -604,7 +585,7 @@ void EQ2Stream::Write() {
 
 	//The non-seq loop must have broke before we sent this packet, send it now
 	if (p) {
-		ReadyToSend.push_back(p);
+		ReadyToSend.emplace_back(p);
 		BytesWritten += p->Size;
 	}
 
@@ -614,7 +595,7 @@ void EQ2Stream::Write() {
 			p = SequencedQueue.front();
 			BytesWritten += p->Size;
 			SeqReadyToSend.push_back(p);
-			p->SetSentTime(Timer::GetCurrentTime2());
+			p->SetSentTime(currentTime);
 			ResendQueue.push_back(p);
 			SequencedQueue.pop_front();
 			LastSeqSent = p->GetSequence();
@@ -625,29 +606,25 @@ void EQ2Stream::Write() {
 	}
 	lock2.Unlock();
 
-	// Unlock the queue
-	//MOutboundQueue.unlock();
-
 	// Send all the packets we "made"
-	while (ReadyToSend.size()) {
-		WritePacket(ReadyToSend.front());
-		delete ReadyToSend.front();
-		ReadyToSend.pop_front();
+	for (auto& packet : ReadyToSend) {
+		WritePacket(packet.get());
 	}
 
-	WriteLocker l(NextOutSeqLock);
-	if (NextOutSeq < LastSeqSent) {
-		WriteLocker lock(resendQueueLock);
-		for (auto& itr : ResendQueue) {
-			WritePacket(itr);
+	const uint32_t ResendMSDelta = 250;
+	WriteLocker lock(resendQueueLock);
+	for (auto& packet : ResendQueue) {
+		//Resend this packet periodically until it has been acked
+		if (currentTime - packet->GetSentTime() >= ResendMSDelta) {
+			WritePacket(packet);
+			packet->SetSentTime(currentTime);
 		}
 	}
+	lock.Unlock();
 
-	while (SeqReadyToSend.size()) {
-		WritePacket(SeqReadyToSend.front());
-		++NextOutSeq;
+	for (auto& packet : SeqReadyToSend) {
+		WritePacket(packet);
 		++LastSeqSent;
-		SeqReadyToSend.pop_front();
 	}
 }
 
@@ -704,9 +681,7 @@ int8_t EQ2Stream::CompareSequence(uint16_t expected_seq, uint16_t seq) {
 }
 
 void EQ2Stream::SetNextAckToSend(int32_t seq) {
-	//MAcks.lock();
 	NextAckToSend = seq;
-	//MAcks.unlock();
 }
 
 uint16_t EQ2Stream::processRSAKey(ProtocolPacket *p) {
@@ -744,7 +719,7 @@ bool EQ2Stream::HandleEmbeddedPacket(ProtocolPacket* p, uint16_t offset, uint16_
 			LogWrite(PACKET__DEBUG, 0, "Packet", "Creating Opcode 0 Packet!");
 			DumpPacket(p->pBuffer + 1 + offset, length);
 #endif
-			EQ2Packet* newpacket = ProcessEncryptedData(p->buffer + 1 + offset, length, OP_Packet);
+			EQ2Packet* newpacket = ProcessEncryptedData(p->buffer + 1 + offset, length);
 			if (newpacket) {
 				LogInfo(LOG_PACKET, 0, "Decrypted packet");
 				DumpBytes(newpacket->buffer, newpacket->Size);
@@ -758,7 +733,8 @@ bool EQ2Stream::HandleEmbeddedPacket(ProtocolPacket* p, uint16_t offset, uint16_
 	return false;
 }
 
-EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size, uint16_t opcode) {
+EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size) {
+	uint16_t opcode;
 	LogDebug(LOG_PACKET, 0, "Decrypt Before: ");
 	DumpBytes(data, size);
 	crypto.RC4Decrypt(data, size);
@@ -811,9 +787,9 @@ EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size, u
 EQ2Packet* EQ2Stream::ProcessEncryptedPacket(ProtocolPacket *p) {
 	EQ2Packet* ret = NULL;
 	if (p->GetOpcode() == OP_Packet && p->Size > 2)
-		ret = ProcessEncryptedData(p->buffer + 2, p->Size - 2, p->GetOpcode());
+		ret = ProcessEncryptedData(p->buffer + 2, p->Size - 2);
 	else
-		ret = ProcessEncryptedData(p->buffer, p->Size, p->GetOpcode());
+		ret = ProcessEncryptedData(p->buffer, p->Size);
 	return ret;
 }
 
@@ -839,10 +815,10 @@ EQ2Packet* EQ2Stream::PopPacket() {
 
 void EQ2Stream::InboundQueueClear() {
 	WriteLocker lock(inboundQueueLock);
-	while (InboundQueue.size()) {
-		delete InboundQueue.front();
-		InboundQueue.pop_front();
+	for (auto& itr : InboundQueue) {
+		delete itr;
 	}
+	InboundQueue.clear();
 }
 
 void EQ2Stream::QueuePacket(EQ2Packet* p, bool bDelete) {

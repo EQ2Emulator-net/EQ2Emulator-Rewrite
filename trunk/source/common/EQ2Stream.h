@@ -64,8 +64,6 @@ protected:
 	uint16_t NextInSeq;
 	//NextOutSeq is the next sequenced packet in the queue we will be sending
 	uint16_t NextOutSeq;
-	//NextAddSeq is the next sequence we want to queue
-	int32_t NextAddSeq;
 	uint16_t MaxAckReceived;
 	int32_t NextAckToSend;
 	uint16_t LastAckSent;
@@ -73,8 +71,6 @@ protected:
 	int32_t RateThreshold;
 	int32_t DecayRate;
 	int32_t BytesWritten;
-
-	EQ2Packet* CombinedAppPacket;
 	EQStreamState State;
 
 	uint32_t ClientVersion; // public in old code
@@ -98,7 +94,7 @@ private:
 	void SetNextAckToSend(int32_t seq);
 	uint16_t processRSAKey(ProtocolPacket *p);
 	bool HandleEmbeddedPacket(ProtocolPacket* p, uint16_t offset = 2, uint16_t length = 0);
-	EQ2Packet* ProcessEncryptedData(unsigned char* data, uint32_t size, uint16_t opcode);
+	EQ2Packet* ProcessEncryptedData(unsigned char* data, uint32_t size);
 	EQ2Packet* ProcessEncryptedPacket(ProtocolPacket *p);
 	void InboundQueuePush(EQ2Packet* p);
 	void InboundQueueClear();
@@ -123,6 +119,7 @@ private:
 
 	deque<ProtocolPacket*> NonSequencedQueue;
 	deque<ProtocolPacket*> SequencedQueue;
+	//pair<resendTime, packet>
 	deque<ProtocolPacket*> ResendQueue;
 	// Packes waiting to be processed
 	deque<EQ2Packet *> InboundQueue;
@@ -131,8 +128,6 @@ private:
 	Mutex nonSeqQueueLock;
 	Mutex resendQueueLock;
 
-	//This lock is to prevent a race condition where the NextOutSeq variable is unexpectedly changed while we are resending packets
-	Mutex NextOutSeqLock;
 	//This map is only used regularly by the reader thread so it is fine without a mutex
 	map<uint16_t, unique_ptr<ProtocolPacket> > FuturePackets;
 };

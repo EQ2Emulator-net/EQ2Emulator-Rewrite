@@ -3,6 +3,7 @@
 #include "../ProtocolPacket.h"
 #include "../PacketElements/PacketElements.h"
 
+//The "OutOfOrderAck" really just means a single packet is being acked rather than all packets up to the seq like the normal ack packet
 class OP_OutOfOrderAck_Packet : public ProtocolPacket {
 public:
 	OP_OutOfOrderAck_Packet()

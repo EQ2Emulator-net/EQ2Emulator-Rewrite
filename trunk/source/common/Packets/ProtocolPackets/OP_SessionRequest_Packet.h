@@ -12,13 +12,13 @@ public:
 		opcode = OP_SessionRequest;
 	}
 
-	uint32_t UnknownA;
+	uint32_t ProtocolVersion;
 	uint32_t Session;
 	uint32_t MaxLength;
 
 private:
 	void RegisterElements() {
-		elements.push_back(new PacketUInt32(UnknownA));
+		elements.push_back(new PacketUInt32(ProtocolVersion));
 		elements.push_back(new PacketUInt32(Session));
 		elements.push_back(new PacketUInt32(MaxLength));
 	}
