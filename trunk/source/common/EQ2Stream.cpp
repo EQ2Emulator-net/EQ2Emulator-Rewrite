@@ -650,20 +650,25 @@ void EQ2Stream::Write() {
 	}
 }
 
-void EQ2Stream::SetMaxAckReceived(int32_t seq) {
+void EQ2Stream::SetMaxAckReceived(uint16_t seq) {
 	deque<ProtocolPacket *>::iterator itr;
 
-	MaxAckReceived = seq;
-
-	if (seq > LastSeqSent)
-		LastSeqSent = seq;
+	if (seq > MaxAckReceived || MaxAckReceived == 0xFFFF) {
+		//16bit overflow
+		MaxAckReceived = seq;
+	}
 	
 	WriteLocker lock(resendQueueLock);
 	for (auto itr = ResendQueue.begin(); itr != ResendQueue.end();) {
 		ProtocolPacket* p = *itr;
-		if (p->GetSequence() <= seq) {
+		uint16_t psec = p->GetSequence();
+		if (psec <= seq) {
 			delete p;
 			itr = ResendQueue.erase(itr);
+			if (psec == 0xFFFF) {
+				//16bit overflow, break the loop so we don't delete some packets on the other side
+				break;
+			}
 		}
 		else {
 			break;
@@ -671,18 +676,14 @@ void EQ2Stream::SetMaxAckReceived(int32_t seq) {
 	}
 }
 
-void EQ2Stream::SetLastAckSent(int32_t seq) {
-	//MAcks.lock();
+void EQ2Stream::SetLastAckSent(uint16_t seq) {
 	LastAckSent = seq;
-	//MAcks.unlock();
 }
 
 void EQ2Stream::AdjustRates(uint32_t average_delta) {
 	if (average_delta) {
-		//MRate.lock();
 		RateThreshold = RATEBASE / average_delta;
 		DecayRate = DECAYBASE / average_delta;
-		//MRate.unlock();
 	}
 }
 

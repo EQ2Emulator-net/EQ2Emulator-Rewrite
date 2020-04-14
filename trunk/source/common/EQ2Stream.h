@@ -61,15 +61,15 @@ protected:
 	uint32_t Session;
 	uint32_t MaxLength;
 	//NextInSeq is the next expected sequenced incoming packet
-	int32_t NextInSeq;
+	uint16_t NextInSeq;
 	//NextOutSeq is the next sequenced packet in the queue we will be sending
-	int32_t NextOutSeq;
+	uint16_t NextOutSeq;
 	//NextAddSeq is the next sequence we want to queue
 	int32_t NextAddSeq;
-	int32_t MaxAckReceived;
+	uint16_t MaxAckReceived;
 	int32_t NextAckToSend;
-	int32_t LastAckSent;
-	int32_t LastSeqSent;
+	uint16_t LastAckSent;
+	uint16_t LastSeqSent;
 	int32_t RateThreshold;
 	int32_t DecayRate;
 	int32_t BytesWritten;
@@ -91,8 +91,8 @@ private:
 	void NonSequencedPush(ProtocolPacket* p);
 	void WritePacket(ProtocolPacket* p);
 	uint8_t EQ2_Compress(EQ2Packet* app, uint8_t offset = 3);
-	void SetMaxAckReceived(int32_t seq);
-	void SetLastAckSent(int32_t seq);
+	void SetMaxAckReceived(uint16_t seq);
+	void SetLastAckSent(uint16_t seq);
 	void AdjustRates(uint32_t average_delta);
 	int8_t CompareSequence(uint16_t expected_seq, uint16_t seq);
 	void SetNextAckToSend(int32_t seq);
