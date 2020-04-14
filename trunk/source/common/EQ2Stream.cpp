@@ -154,12 +154,11 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 			LogDebug(LOG_PACKET, 0, "Future packet");
 
 			FuturePackets[seq].reset(pp->MoveCopy());
+			NonSequencedPush(new OP_OutOfOrderAck_Packet(seq));
 		}
 		else if (check < 0) {
 			// Past
 			LogDebug(LOG_PACKET, 0, "Past packet");
-
-			NonSequencedPush(new OP_OutOfOrderAck_Packet(seq));
 		}
 		else {
 			SetNextAckToSend(seq);
@@ -193,7 +192,7 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 		else if (check < 0) {
 			// Past
 			LogDebug(LOG_PACKET, 0, "Past packet");
-
+			
 			NonSequencedPush(new OP_OutOfOrderAck_Packet(seq));
 		}
 		else {
@@ -223,7 +222,7 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 					oversize_offset = 0;
 				}
 			}
-			else if (!oversize_buffer) {
+			else {
 				oversize_length = ntohl(*(uint32_t *)(p->buffer + 2));
 				oversize_buffer = new unsigned char[oversize_length];
 				memcpy(oversize_buffer, p->buffer + 6, p->Size - 6);
@@ -243,7 +242,7 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 		EQ2Packet* newpacket = 0;
 		uint32_t offset = 0;
 		int count = 0;
-
+		
 		while (processed < p->Size) {
 			count++;
 			if ((subpacket_length = (unsigned char)*(p->buffer + processed)) == 0xff) {
@@ -299,12 +298,18 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 
 			ProtocolPacket* subPacket = ProtocolPacket::GetProtocolPacket(p->buffer + processed + offset, subpacket_length, false);
 
-			if (!subPacket) {
-				break;
+			if (subPacket) {
+				//I've seen some garbage packets get sent with wrong protocol opcodes but the rest of the combine is still correct
+				//So don't break if GetProtocolPacket fails
+				ProcessPacket(subPacket);
+				delete subPacket;
 			}
-
-			ProcessPacket(subPacket);
-			delete subPacket;
+			else if (ntohs(*reinterpret_cast<uint16_t*>(p->buffer + processed + offset)) > 0x1e) {
+				//Garbage packet?
+				crypto.RC4Decrypt(p->buffer + processed + offset, subpacket_length);
+				LogError(LOG_PACKET, 0, "Garbage packet?!:");
+				DumpBytes(p->buffer + processed + offset, subpacket_length);
+			}
 
 			processed += offset + subpacket_length;
 		}
@@ -754,7 +759,11 @@ bool EQ2Stream::HandleEmbeddedPacket(ProtocolPacket* p, uint16_t offset, uint16_
 }
 
 EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size, uint16_t opcode) {
+	LogDebug(LOG_PACKET, 0, "Decrypt Before: ");
+	DumpBytes(data, size);
 	crypto.RC4Decrypt(data, size);
+	LogDebug(LOG_PACKET, 0, "Decrypt After: ");
+	DumpBytes(data, size);
 	uint32_t offset = 0;
 	if (data[0] == 0xFF && size > 2) {
 		offset = 3;
