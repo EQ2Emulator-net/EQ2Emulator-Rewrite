@@ -433,32 +433,28 @@ void EQ2Stream::PreparePacket(EQ2Packet* app, uint8_t offset) {
 
 uint8_t EQ2Stream::EQ2_Compress(EQ2Packet* app, uint8_t offset) {
 	unsigned char* pDataPtr = app->buffer + offset;
-	Bytef deflate_buff[4096];
 	stream.next_in = pDataPtr;
 	stream.avail_in = app->Size - offset;
 
-	int32_t total_bytes_written = 0;
+	uint32_t outBufSize = app->Size * 2 + offset;
+	unsigned char* pDataOut = new unsigned char[outBufSize];
+	memcpy(pDataOut, app->buffer, offset);
+	stream.next_out = pDataOut + offset;
+	stream.avail_out = outBufSize - offset;
 
-	for (;;) {
-		stream.next_out = deflate_buff;
-		stream.avail_out = sizeof(deflate_buff);
-		if (deflate(&stream, Z_SYNC_FLUSH) != Z_OK) {
-			break;
-		}
 
-		int32_t bytes_written = sizeof(deflate_buff) - stream.avail_out;
-		memcpy(pDataPtr, deflate_buff, bytes_written);
-		pDataPtr += bytes_written;
-		total_bytes_written += bytes_written;
-
-		unsigned int bytes_remaining = 0;
-		if (stream.avail_in == 0 && (deflatePending(&stream, &bytes_remaining, Z_NULL), bytes_remaining == 0)) {
-			break;
-		}
+	uint32_t bytes_written = 0;
+	if (deflate(&stream, Z_SYNC_FLUSH) != Z_OK) {
+		LogError(LOG_NET, 0, "Could not deflate packet?");
+		return offset - 1;
 	}
 
-	app->Size = total_bytes_written + offset;
-	app->buffer[offset - 1] = 1;
+	bytes_written = outBufSize - offset - stream.avail_out;
+
+	app->Size = bytes_written + offset;
+	pDataOut[offset - 1] = 1;
+	delete[] app->buffer;
+	app->buffer = pDataOut;
 
 	return offset - 1;
 }
