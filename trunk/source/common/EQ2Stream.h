@@ -84,7 +84,7 @@ protected:
 
 private:
 	void ProcessPacket(ProtocolPacket* p);
-	bool ValidateCRC(unsigned char* buffer, uint16_t length, uint32_t key);
+	bool ValidateCRC(const unsigned char* buffer, uint16_t length, uint32_t key);
 	void EncryptPacket(EQ2Packet* app, uint8_t compress_offset, uint8_t offset);
 	void SendPacket(EQ2Packet* p, bool bDelete = true);
 	void SequencedPush(ProtocolPacket* p);

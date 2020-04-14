@@ -14,8 +14,8 @@ struct SpawnMorphSliders {
 	int8_t mouth[3];
 	int8_t chin[3];
 	int8_t nose[3];
-	uint8_t bodyscale;
-	uint8_t bumpscale;
+	int8_t bodyscale;
+	int8_t bumpscale;
 };
 
 

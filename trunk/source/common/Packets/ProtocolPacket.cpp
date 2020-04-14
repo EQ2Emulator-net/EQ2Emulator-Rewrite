@@ -109,6 +109,10 @@ ProtocolPacket* ProtocolPacket::GetProtocolPacket(const unsigned char* in_buff, 
 		ret = new OP_OutOfOrderAck_Packet;
 		break;
 	}
+	case OP_OutOfSession: {
+		ret = new OP_OutOfSession_Packet;
+		break;
+	}
 	default: {
 		LogError(LOG_PACKET, 0, "Unknown protocol packet opcode %u", opcode);
 		break;

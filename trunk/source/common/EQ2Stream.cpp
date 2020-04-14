@@ -71,7 +71,11 @@ EQ2Stream::~EQ2Stream() {
 
 void EQ2Stream::Process(const unsigned char* data, unsigned int length) {
 	Stream::Process(data, length);
-	// TODO: Validate crc and decompress or decode
+	
+	if (!ValidateCRC(data, length, Key)) {
+		LogError(LOG_NET, 0, "Packet CRC check failed. Client %s", ToString().c_str());
+		return;
+	}
 
 	ProtocolPacket* p = ProtocolPacket::GetProtocolPacket(data, length, true);
 	if (p) {
@@ -314,12 +318,16 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 		}
 		break;
 	}
+	case OP_OutOfSession: {
+		LogError(LOG_NET, 0, "OutOfSession packet");
+		break;
+	}
 	default:
 		break;
 	}
 }
 
-bool EQ2Stream::ValidateCRC(unsigned char* buffer, uint16_t length, uint32_t key) {
+bool EQ2Stream::ValidateCRC(const unsigned char* buffer, uint16_t length, uint32_t key) {
 	bool valid = false;
 	if (buffer[0] == 0x00 && (buffer[1] == OP_SessionRequest || buffer[1] == OP_SessionResponse || buffer[1] == OP_OutOfSession))
 		valid = true;

@@ -605,5 +605,8 @@
     <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_OutOfOrderAck_Packet.h">
       <Filter>common\Packets\ProtocolPackets</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\ProtocolPackets\OP_OutOfSession_Packet.h">
+      <Filter>common\Packets\ProtocolPackets</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
