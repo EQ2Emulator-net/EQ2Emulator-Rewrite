@@ -67,15 +67,22 @@ void EQ2Stream::Process(const unsigned char* data, unsigned int length) {
 		int32_t preProcessInSeq = NextInSeq.load();
 		ProcessPacket(p);
 		delete p;
-		if (preProcessInSeq != NextInSeq.load()) {
-			ProcessFuturePacketQueue();
+		int32_t nextSeq = NextInSeq.load();
+		if (preProcessInSeq != nextSeq) {
+			ProcessFuturePacketQueue(preProcessInSeq, nextSeq);
 		}
 	}
 }
 
-void EQ2Stream::ProcessFuturePacketQueue() {
+void EQ2Stream::ProcessFuturePacketQueue(int32_t oldSeq, int32_t nextSeq) {
 	if (FuturePackets.empty()) {
 		return;
+	}
+
+	//For the most part FuturePackets will be cleared without this but it is possible for one to linger if a future packet is embedded in a combine with more than one sequenced packet
+	//Get rid of it to prevent an issue after sequence overflow and prevent a soft memory leak
+	while (oldSeq < nextSeq) {
+		FuturePackets.erase(oldSeq++);
 	}
 
 	for (;;) {
@@ -89,24 +96,29 @@ void EQ2Stream::ProcessFuturePacketQueue() {
 	}
 }
 
+//Return value is true if packet is in sequence
 bool EQ2Stream::CheckSequencedPacket(ProtocolPacket* p) {
 	uint16_t seq = ntohs(*reinterpret_cast<uint16_t*>(p->buffer));
 	uint16_t expected = NextInSeq.load();
-	int8_t check = CompareSequence(expected, seq);
 	bool ret = false;
 
-	LogDebug(LOG_PACKET, 0, "seq = %u, NextInSeq = %u, check = %i", seq, expected, check);
-	if (check > 0) {
+	LogDebug(LOG_PACKET, 0, "seq = %u, NextInSeq = %u", seq, expected);
+	if (seq > expected) {
 		// Future
 		LogDebug(LOG_PACKET, 0, "Future packet");
 
 		FuturePackets[seq].reset(p->MoveCopy());
 		NonSequencedPush(new OP_OutOfOrderAck_Packet(seq));
 	}
-	else if (check < 0) {
+	
+	else if (seq < expected) {
 		// Past
 		LogDebug(LOG_PACKET, 0, "Past packet");
-		NonSequencedPush(new OP_OutOfOrderAck_Packet(seq));
+		//20 is arbitrary but there to prevent acking a future packet after a sequence overflow without storing it
+		//Extremely rare/unlikely case
+		if (seq > 20) {
+			NonSequencedPush(new OP_OutOfOrderAck_Packet(seq));
+		}
 	}
 	else {
 		NextAckToSend.fetch_add(1);
@@ -122,7 +134,7 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 
 	switch (p->GetOpcode()) {
 	case OP_SessionRequest: {
-		OP_SessionRequest_Packet* request = (OP_SessionRequest_Packet*)p;
+		auto request = static_cast<OP_SessionRequest_Packet*>(p);
 
 		if (Session != 0) {
 			bNeedNewClient = true;
@@ -140,7 +152,7 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 		break;
 	}
 	case OP_SessionDisconnect: {
-		OP_SessionDisconnect_Packet* disconnect = (OP_SessionDisconnect_Packet*)p;
+		auto disconnect = static_cast<OP_SessionDisconnect_Packet*>(p);
 		SendDisconnect(disconnect->Reason);
 		break;
 	}
@@ -149,7 +161,7 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 		break;
 	}
 	case OP_ClientSessionUpdate: {
-		OP_ClientSessionUpdate_Packet* update = (OP_ClientSessionUpdate_Packet*)p;
+		auto update = static_cast<OP_ClientSessionUpdate_Packet*>(p);
 		AdjustRates(ntohl(update->AverageDelta));
 		SendServerSessionUpdate(update->RequestID);
 		if (!crypto.isEncrypted())
@@ -159,7 +171,7 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 	}
 	case OP_Packet: {
 		LogDebug(LOG_PACKET, 0, "OP_Packet_Packet Dump");
-		OP_Packet_Packet* pp = static_cast<OP_Packet_Packet*>(p);
+		auto pp = static_cast<OP_Packet_Packet*>(p);
 		DumpBytes(pp->buffer, pp->Size);
 		if (CheckSequencedPacket(p)) {
 			if (HandleEmbeddedPacket(p)) {
@@ -213,7 +225,7 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 		break;
 	}
 	case OP_Ack: {
-		OP_Ack_Packet* ack = (OP_Ack_Packet*)p;
+		auto ack = static_cast<OP_Ack_Packet*>(p);
 		SetMaxAckReceived(ack->Sequence);
 		break;
 	}
@@ -301,7 +313,7 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 			processed += offset + subpacket_length;
 		}
 	}
-					//This is an ack for a single packet rather than a range of packets
+	//This is an ack for a single packet rather than a range of packets
 	case OP_OutOfOrderAck: {
 		auto oop = static_cast<OP_OutOfOrderAck_Packet*>(p);
 		uint16_t seq = oop->Sequence;
@@ -453,7 +465,7 @@ void EQ2Stream::SendPacket(EQ2Packet* p) {
 		uint32_t length = p->Size - 2;
 
 		OP_Packet_Packet* out = new OP_Packet_Packet(OP_Fragment, nullptr, MaxLength);
-		*(uint32_t*)(out->buffer + 4) = htonl(length);
+		*reinterpret_cast<uint32_t*>(out->buffer + 4) = htonl(length);
 		memcpy(out->buffer + 8, tmpbuff + 2, MaxLength - 10); // 10 = op(2) + seq(2) + size(4) + crc(2)?? 
 
 		uint32_t used = MaxLength - 10;
@@ -507,10 +519,13 @@ void EQ2Stream::Write() {
 		return;
 	}
 
-	// Added from peaks findings
 	const int32_t ack = NextAckToSend.load();
-	if (ack > LastAckSent || LastAckSent == 0x0000ffff)
+	if (ack > LastAckSent || LastAckSent == 0x0000FFFF) {
 		SendAck(ack);
+		if (ack > 0xFFFF) {
+			NextAckToSend.fetch_sub(0xFFFF);
+		}
+	}
 
 	// List of packets we will be combining
 	ProtocolPacket* packetsToCombine[16];
@@ -684,21 +699,6 @@ void EQ2Stream::AdjustRates(uint32_t average_delta) {
 	if (average_delta) {
 		RateThreshold = RATEBASE / average_delta;
 		DecayRate = DECAYBASE / average_delta;
-	}
-}
-
-int8_t EQ2Stream::CompareSequence(uint16_t expected_seq, uint16_t seq) {
-	if (expected_seq == seq) {
-		// Curent
-		return 0;
-	}
-	else if ((seq > expected_seq/* && (uint32_t)seq < ((uint32_t)expected_seq + EQ2Stream::MaxWindowSize)) || seq < (expected_seq - EQ2Stream::MaxWindowSize*/)) { // No clue what this MaxWindowSize is for, set to 2048 in old code
-		// Future
-		return 1;
-	}
-	else {
-		// Past
-		return -1;
 	}
 }
 

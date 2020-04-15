@@ -30,7 +30,7 @@ public:
 	~EQ2Stream();
 
 	void Process(const unsigned char* data, unsigned int length) override;
-	void ProcessFuturePacketQueue();
+	void ProcessFuturePacketQueue(int32_t oldSeq, int32_t nextSeq);
 
 	void EQ2QueuePacket(EQ2Packet* app, bool attempted_combine = false, bool bDelete = true);
 
@@ -89,7 +89,6 @@ private:
 	void SetMaxAckReceived(uint16_t seq);
 	void SetLastAckSent(int32_t seq);
 	void AdjustRates(uint32_t average_delta);
-	int8_t CompareSequence(uint16_t expected_seq, uint16_t seq);
 	uint16_t processRSAKey(ProtocolPacket *p);
 	bool HandleEmbeddedPacket(ProtocolPacket* p, uint16_t offset = 2, uint16_t length = 0);
 	EQ2Packet* ProcessEncryptedData(unsigned char* data, uint32_t size);
