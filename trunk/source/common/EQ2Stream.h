@@ -8,6 +8,7 @@
 #include "Packets/EQ2Packet.h"
 #include "Mutex.h"
 #include <map>
+#include <atomic>
 
 class ProtocolPacket;
 
@@ -51,8 +52,6 @@ public:
 
 	bool RequestNewClient() override { return bNeedNewClient; }
 
-	std::deque<EQ2Packet*> combine_queue; // public in old code?
-
 protected:
 	EQ2Packet* PopPacket(); // InboundQueuePop
 	virtual void ReadVersionPacket(const unsigned char* data, uint32_t size, uint32_t offset, uint16_t opcode) = 0;
@@ -61,13 +60,13 @@ protected:
 	uint32_t Session;
 	uint32_t MaxLength;
 	//NextInSeq is the next expected sequenced incoming packet
-	uint16_t NextInSeq;
+	std::atomic<uint16_t> NextInSeq;
 	//NextOutSeq is the next sequenced packet in the queue we will be sending
 	uint16_t NextOutSeq;
-	uint16_t MaxAckReceived;
-	int32_t NextAckToSend;
-	uint16_t LastAckSent;
-	uint16_t LastSeqSent;
+	int32_t MaxAckReceived;
+	//NextAckToSend is read/written to by both threads often so making it atomic
+	std::atomic<int32_t> NextAckToSend;
+	int32_t LastAckSent;
 	int32_t RateThreshold;
 	int32_t DecayRate;
 	int32_t BytesWritten;
@@ -82,22 +81,22 @@ private:
 	void ProcessPacket(ProtocolPacket* p);
 	bool ValidateCRC(const unsigned char* buffer, uint16_t length, uint32_t key);
 	void EncryptPacket(EQ2Packet* app, uint8_t compress_offset, uint8_t offset);
-	void SendPacket(EQ2Packet* p, bool bDelete = true);
+	void SendPacket(EQ2Packet* p);
 	void SequencedPush(ProtocolPacket* p);
 	void NonSequencedPush(ProtocolPacket* p);
 	void WritePacket(ProtocolPacket* p);
 	uint8_t EQ2_Compress(EQ2Packet* app, uint8_t offset = 3);
 	void SetMaxAckReceived(uint16_t seq);
-	void SetLastAckSent(uint16_t seq);
+	void SetLastAckSent(int32_t seq);
 	void AdjustRates(uint32_t average_delta);
 	int8_t CompareSequence(uint16_t expected_seq, uint16_t seq);
-	void SetNextAckToSend(int32_t seq);
 	uint16_t processRSAKey(ProtocolPacket *p);
 	bool HandleEmbeddedPacket(ProtocolPacket* p, uint16_t offset = 2, uint16_t length = 0);
 	EQ2Packet* ProcessEncryptedData(unsigned char* data, uint32_t size);
 	EQ2Packet* ProcessEncryptedPacket(ProtocolPacket *p);
 	void InboundQueuePush(EQ2Packet* p);
 	void InboundQueueClear();
+	bool CheckSequencedPacket(ProtocolPacket* p);
 
 	// Send functions
 	void SendAck(uint16_t seq);
@@ -119,7 +118,6 @@ private:
 
 	deque<ProtocolPacket*> NonSequencedQueue;
 	deque<ProtocolPacket*> SequencedQueue;
-	//pair<resendTime, packet>
 	deque<ProtocolPacket*> ResendQueue;
 	// Packes waiting to be processed
 	deque<EQ2Packet *> InboundQueue;
@@ -127,6 +125,7 @@ private:
 	Mutex seqQueueLock;
 	Mutex nonSeqQueueLock;
 	Mutex resendQueueLock;
+
 
 	//This map is only used regularly by the reader thread so it is fine without a mutex
 	map<uint16_t, unique_ptr<ProtocolPacket> > FuturePackets;

@@ -17,6 +17,8 @@ public:
 
 private:
 	void RegisterElements() {
-		elements.push_back(new PacketUInt16(Sequence));
+		auto e = new PacketUInt16(Sequence);
+		e->SetIsNetOrder(true);
+		elements.push_back(e);
 	}
 };

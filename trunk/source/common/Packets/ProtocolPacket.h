@@ -35,7 +35,7 @@ public:
 	void SetSentTime(uint32_t time) { SentTime = time; }
 	//bool Combine(const ProtocolPacket *rhs);
 
-	ProtocolPacket* MoveCopy();
+	virtual ProtocolPacket* MoveCopy();
 
 	static ProtocolPacket* GetProtocolPacket(const unsigned char* in_buff, uint32_t len, bool bTrimCRC);
 	static uint32_t Compress(const unsigned char *buffer, const uint32_t length, unsigned char *newbuf, uint32_t newbufsize);
@@ -43,11 +43,12 @@ public:
 	static void ChatEncode(unsigned char *buffer, int size, int EncodeKey);
 	EQ2Packet *MakeApplicationPacket(uint8_t opcode_size = 0) const;
 
+	bool bBufferSet;
 protected:
+	bool HasCRC;
 	uint16_t opcode;
 	uint16_t sequence;
 	uint32_t version;
-	bool HasCRC;
 	uint32_t SentTime;
 
 private:

@@ -48,7 +48,7 @@ public:
 			if (IsNetOrder()) {
 				uint16_t* pe = reinterpret_cast<uint16_t*>(outbuf + offset);
 				for (int i = 0; i < count; i++) {
-					pe[i] = htons(pe[i]);
+					pe[i] = htons(element[i]);
 				}
 			}
 			else {

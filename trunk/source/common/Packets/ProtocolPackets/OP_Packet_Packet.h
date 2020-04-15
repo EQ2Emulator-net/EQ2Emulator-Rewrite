@@ -60,7 +60,7 @@ public:
 		memcpy(buffer + offset, p->buffer, p->Size);
 	}
 
-	OP_Packet_Packet* MoveCopy() {
+	ProtocolPacket* MoveCopy() override {
 		return new OP_Packet_Packet(std::move(*this));
 	}
 

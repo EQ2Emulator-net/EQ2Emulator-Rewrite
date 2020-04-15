@@ -7,6 +7,7 @@
 
 ProtocolPacket::ProtocolPacket() {
 	HasCRC = false;
+	bBufferSet = false;
 }
 
 ProtocolPacket::ProtocolPacket(const unsigned char* buf, uint32_t len) {
@@ -20,6 +21,7 @@ ProtocolPacket::ProtocolPacket(const unsigned char* buf, uint32_t len) {
 			memset(buffer, 0, Size);
 		}
 	}
+	bBufferSet = false;
 }
 
 ProtocolPacket::ProtocolPacket(uint8_t op, const unsigned char* buf, uint32_t len) : ProtocolPacket(buf, len) {
@@ -38,20 +40,20 @@ ProtocolPacket::ProtocolPacket(ProtocolPacket&& rhs) {
 }
 
 uint32_t ProtocolPacket::Write(unsigned char*& writeBuffer) {
-	uint32_t size = 0;
+	Size = 0;
 	for (size_t i = 0; i < elements.size(); i++) {
-		size += elements[i]->GetSize();
+		Size += elements[i]->GetSize();
 	}
 
-	size += 2; // opcode
+	Size += 2; // opcode
 	
 	if (HasCRC)
-		size +=2;
+		Size +=2;
 
 	if (buffer)
 		delete[] buffer;
 
-	buffer = new unsigned char[size];
+	buffer = new unsigned char[Size];
 
 	uint16_t op = htons(opcode);
 	memcpy(buffer, &op, 2);
@@ -61,8 +63,7 @@ uint32_t ProtocolPacket::Write(unsigned char*& writeBuffer) {
 	}
 
 	writeBuffer = buffer;
-
-	return size;
+	return Size;
 }
 
 ProtocolPacket* ProtocolPacket::MoveCopy() {
