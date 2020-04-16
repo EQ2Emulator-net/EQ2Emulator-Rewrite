@@ -23,7 +23,9 @@ EQ2Packet* OpcodeManager::GetPacketForVersion(uint32_t version, uint16_t opcode)
 		if (range.first <= version && range.second >= version) {
 			auto op = itr.second.find(opcode);
 			if (op != itr.second.end()) {
-				LogDebug(LOG_PACKET, 0, "Found opcode: %s", op->second->opName);
+				if (NetDebugEnabled()) {
+					LogDebug(LOG_PACKET, 0, "Found opcode: %s", op->second->opName);
+				}
 				ret = op->second->Create(version);
 				ret->opcode = opcode;
 			}
@@ -56,7 +58,9 @@ bool OpcodeManager::SetOpcodeForPacket(EQ2Packet* packet) {
 						}
 					}
 #endif
-					LogDebug(LOG_PACKET, 0, "Found opcode: %s", allocator->opName);
+					if (NetDebugEnabled()) {
+						LogDebug(LOG_PACKET, 0, "Found opcode: %s", allocator->opName);
+					}
 					packet->opcode = op.first;
 					return true;
 				}

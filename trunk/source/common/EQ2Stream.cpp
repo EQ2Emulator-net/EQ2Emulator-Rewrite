@@ -105,10 +105,14 @@ bool EQ2Stream::CheckSequencedPacket(ProtocolPacket* p) {
 	uint16_t expected = NextInSeq.load();
 	bool ret = false;
 
-	LogDebug(LOG_PACKET, 0, "seq = %u, NextInSeq = %u", seq, expected);
+	if (NetDebugEnabled()) {
+		LogDebug(LOG_PACKET, 0, "seq = %u, NextInSeq = %u", seq, expected);
+	}
 	if (seq > expected) {
 		// Future
-		LogDebug(LOG_PACKET, 0, "Future packet");
+		if (NetDebugEnabled()) {
+			LogDebug(LOG_PACKET, 0, "Future packet");
+		}
 
 		FuturePackets[seq].reset(p->MoveCopy());
 		NonSequencedPush(new OP_OutOfOrderAck_Packet(seq));
@@ -116,7 +120,9 @@ bool EQ2Stream::CheckSequencedPacket(ProtocolPacket* p) {
 	
 	else if (seq < expected) {
 		// Past
-		LogDebug(LOG_PACKET, 0, "Past packet");
+		if (NetDebugEnabled()) {
+			LogDebug(LOG_PACKET, 0, "Past packet");
+		}
 		//20 is arbitrary but there to prevent acking a future packet after a sequence overflow without storing it
 		//Extremely rare/unlikely case
 		if (seq > 20) {
@@ -133,7 +139,9 @@ bool EQ2Stream::CheckSequencedPacket(ProtocolPacket* p) {
 }
 
 void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
-	LogDebug(LOG_NET, 0, "ProtocolPacket Received, opcode: %u", p->GetOpcode());
+	if (NetDebugEnabled()) {
+		LogDebug(LOG_NET, 0, "ProtocolPacket Received, opcode: %u", p->GetOpcode());
+	}
 
 	switch (p->GetOpcode()) {
 	case OP_SessionRequest: {
@@ -148,7 +156,7 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 		MaxLength = ntohl(request->MaxLength);
 		NextInSeq = 0;
 		Key = 0x33624702;
-		LogDebug(LOG_NET, 0, "OP_SessionRequest Protocol Version: %u, Session: %u, MaxLength: %u", ntohl(request->ProtocolVersion), Session, MaxLength);
+		LogDebug(LOG_NET, 3, "OP_SessionRequest Protocol Version: %u, Session: %u, MaxLength: %u", ntohl(request->ProtocolVersion), Session, MaxLength);
 
 		SendSessionResponse();
 		SetState(EQStreamState::ESTABLISHED);
@@ -173,9 +181,10 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 		break;
 	}
 	case OP_Packet: {
-		LogDebug(LOG_PACKET, 0, "OP_Packet_Packet Dump");
-		auto pp = static_cast<OP_Packet_Packet*>(p);
-		DumpBytes(pp->buffer, pp->Size);
+		if (NetDebugEnabled()) {
+			LogDebug(LOG_PACKET, 0, "OP_Packet_Packet Dump");
+			DumpBytes(p->buffer, p->Size);
+		}
 		if (CheckSequencedPacket(p)) {
 			if (HandleEmbeddedPacket(p->buffer + 2, p->Size - 2)) {
 				break;
@@ -357,8 +366,9 @@ void EQ2Stream::WritePacket(ProtocolPacket* p) {
 		*reinterpret_cast<uint16_t*>(buffer + size - 2) = htons(static_cast<uint16_t>(CRC16(buffer, size - 2, Key)));
 	}
 
-	// The dump is for debugging, remove when this all works
-	DumpBytes(buffer, size);
+	if (NetDebugEnabled()) {
+		DumpBytes(buffer, size);
+	}
 	Stream::WritePacket(server->GetSocket(), buffer, size);
 }
 
@@ -581,8 +591,10 @@ void EQ2Stream::Write() {
 		ret->buffer = pbuf;
 		ret->Size = combinePacketSize;
 		ret->bBufferSet = true;
-		LogDebug(LOG_PACKET, 0, "Combined Packet!");
-		DumpBytes(ret->buffer, ret->Size);
+		if (NetDebugEnabled()) {
+			LogDebug(LOG_PACKET, 0, "Combined Packet!");
+			DumpBytes(ret->buffer, ret->Size);
+		}
 		numCombinePackets = 0;
 		return ret;
 	};
@@ -788,8 +800,10 @@ bool EQ2Stream::HandleEmbeddedPacket(unsigned char* buffer, uint32_t length) {
 
 	if (buffer[0] == 0 && buffer[1] == OP_AppCombined) {
 		ProtocolPacket* subp = new OP_AppCombined_Packet(buffer + 2, length - 2);
-		LogDebug(LOG_PACKET, 0, "OP_AppCombine_Packet");
-		DumpBytes(subp->buffer, subp->Size);
+		if (NetDebugEnabled()) {
+			LogDebug(LOG_PACKET, 0, "OP_AppCombine_Packet");
+			DumpBytes(subp->buffer, subp->Size);
+		}
 		ProcessPacket(subp);
 		delete subp;
 		return true;
@@ -797,8 +811,10 @@ bool EQ2Stream::HandleEmbeddedPacket(unsigned char* buffer, uint32_t length) {
 	else if (buffer[0] == 0 && buffer[1] == 0) {
 		EQ2Packet* newpacket = ProcessEncryptedData(buffer + 1, length - 1);
 		if (newpacket) {
-			LogInfo(LOG_PACKET, 0, "Decrypted packet");
-			DumpBytes(newpacket->buffer, newpacket->Size);
+			if (NetDebugEnabled()) {
+				LogInfo(LOG_PACKET, 0, "Decrypted packet");
+				DumpBytes(newpacket->buffer, newpacket->Size);
+			}
 			InboundQueuePush(newpacket);
 		}
 		else
@@ -811,11 +827,15 @@ bool EQ2Stream::HandleEmbeddedPacket(unsigned char* buffer, uint32_t length) {
 
 EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size) {
 	uint16_t opcode;
-	LogDebug(LOG_PACKET, 0, "Decrypt Before: ");
-	DumpBytes(data, size);
+	if (NetDebugEnabled()) {
+		LogDebug(LOG_PACKET, 0, "Decrypt Before: ");
+		DumpBytes(data, size);
+	}
 	crypto.RC4Decrypt(data, size);
-	LogDebug(LOG_PACKET, 0, "Decrypt After: ");
-	DumpBytes(data, size);
+	if (NetDebugEnabled()) {
+		LogDebug(LOG_PACKET, 0, "Decrypt After: ");
+		DumpBytes(data, size);
+	}
 	uint32_t offset = 0;
 	if (data[0] == 0xFF && size > 2) {
 		offset = 3;
@@ -834,8 +854,10 @@ EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size) {
 	std::unique_ptr<EQ2Packet> ret(OpcodeManager::GetGlobal()->GetPacketForVersion(ClientVersion, opcode));
 	if (ret) {
 		if (!ret->Read(data, offset, size)) {
-			DumpBytes(data + offset, size - offset);
-			LogWarn(LOG_PACKET, 0, "BLAH!!!");
+			if (NetDebugEnabled()) {
+				DumpBytes(data + offset, size - offset);
+				LogWarn(LOG_PACKET, 0, "BLAH!!!");
+			}
 		}
 
 		//Check if there is a sub packet - used for packets that change structs based on the value of an element
@@ -847,8 +869,10 @@ EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size) {
 			}
 			ret = std::move(p);
 			if (!ret->Read(data, offset, size)) {
-				DumpBytes(data + offset, size - offset);
-				LogWarn(LOG_PACKET, 0, "BLAH!!!");
+				if (NetDebugEnabled()) {
+					DumpBytes(data + offset, size - offset);
+					LogWarn(LOG_PACKET, 0, "BLAH!!!");
+				}
 			}
 		}
 	}
@@ -906,7 +930,9 @@ void EQ2Stream::QueuePacket(EQ2Packet* p, bool bDelete) {
 			delete p;
 	}
 	else {
-		DumpBytes(buf, p->Size);
+		if (NetDebugEnabled()) {
+			DumpBytes(buf, p->Size);
+		}
 		EQ2QueuePacket(p, bDelete);
 	}
 }

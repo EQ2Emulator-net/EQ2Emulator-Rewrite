@@ -15,8 +15,10 @@ Client::Client(unsigned int ip, unsigned short port) : EQ2Stream(ip, port), m_ne
 
 void Client::Process() {
 	while (EQ2Packet* p = PopPacket()) {
-		/*LogError(LOG_PACKET, 0, "ZoneServer client packet dump");
-		DumpBytes(p->buffer, p->Size);*/
+		if (NetDebugEnabled()) {
+			LogError(LOG_PACKET, 0, "ZoneServer client packet dump");
+			DumpBytes(p->buffer, p->Size);
+		}
 		p->HandlePacket(std::static_pointer_cast<Client>(shared_from_this()));
 		delete p;
 	}

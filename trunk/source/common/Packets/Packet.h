@@ -4,6 +4,8 @@
 #include <vector>
 #include "../log.h"
 
+constexpr bool NetDebugEnabled() { return false; }
+
 class Packet {
 public:
 	virtual ~Packet() {

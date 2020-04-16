@@ -6,10 +6,12 @@
 #include "log.h"
 #include <sstream>
 #include "NetUtil.h"
+#include "Packets/Packet.h"
 
 Stream::Stream(unsigned int ip, unsigned short port) {
 	RemoteIP = ip;
 	RemotePort = port;
+	server = nullptr;
 
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = RemoteIP;
@@ -24,7 +26,9 @@ Stream::Stream(unsigned int ip, unsigned short port) {
 void Stream::Process(const unsigned char* buffer, unsigned int length) {
 	ReceivedPackets++;
 
-	DumpBytes(buffer, length);
+	if (NetDebugEnabled()) {
+		DumpBytes(buffer, length);
+	}
 }
 
 void Stream::WritePacket(SOCKET socket, const unsigned char* buffer, int length) {

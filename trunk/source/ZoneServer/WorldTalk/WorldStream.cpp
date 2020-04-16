@@ -17,8 +17,10 @@ void WorldStream::Process() {
 	auto incoming = PopIncoming();
 
 	for (auto& itr : incoming) {
-		LogDebug(LOG_PACKET, 0, "WorldStream::incoming dump");
-		DumpBytes(itr->buffer, itr->Size);
+		if (NetDebugEnabled()) {
+			LogDebug(LOG_PACKET, 0, "WorldStream::incoming dump");
+			DumpBytes(itr->buffer, itr->Size);
+		}
 		itr->HandlePacket(shared_from_this());
 	}
 

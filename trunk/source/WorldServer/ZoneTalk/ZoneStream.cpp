@@ -13,9 +13,12 @@ void ZoneStream::Process() {
 	auto incoming = PopIncoming();
 
 	for (auto& itr : incoming) {
-		LogDebug(LOG_PACKET, 0, "ZoneStream::incoming dump");
-		DumpBytes(itr->buffer, itr->Size);
+		if (NetDebugEnabled()) {
+			LogDebug(LOG_PACKET, 0, "ZoneStream::incoming dump");
+			DumpBytes(itr->buffer, itr->Size);
+		}
 		itr->HandlePacket(shared_from_this());
+
 	}
 
 	auto outgoing = PopOutgoing();

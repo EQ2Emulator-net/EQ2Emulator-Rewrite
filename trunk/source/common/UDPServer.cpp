@@ -6,6 +6,7 @@
 #include "thread.h"
 #include "NetUtil.h"
 #include "timer.h"
+#include "Packets/Packet.h"
 
 UDPServer::~UDPServer() {
 	if (bLooping) {
@@ -127,13 +128,17 @@ void UDPServer::ReaderThread() {
 				return false;*/
 			}
 			else {
-				LogError(LOG_NET, 0, "received %i", length);
+				if (NetDebugEnabled()) {
+					LogError(LOG_NET, 0, "received %i", length);
+				}
 				uint64_t clientKey = static_cast<uint32_t>(from.sin_addr.s_addr);
 				clientKey <<= 16;
 				clientKey |= static_cast<uint16_t>(from.sin_port);
 				WriteLocker lock(streamLock);
 				if ((stream_itr = Streams.find(clientKey)) == Streams.end()) {
-					LogError(LOG_NET, 0, "new stream");
+					if (NetDebugEnabled()) {
+						LogError(LOG_NET, 0, "new stream");
+					}
 					std::shared_ptr<Stream> s = GetNewStream(from.sin_addr.s_addr, from.sin_port);
 					s->SetServer(this);
 					AddStream(s, clientKey);
@@ -141,7 +146,9 @@ void UDPServer::ReaderThread() {
 					s->UpdateHeartbeat(currentTime);
 				}
 				else {
-					LogError(LOG_NET, 0, "found stream");
+					if (NetDebugEnabled()) {
+						LogError(LOG_NET, 0, "found stream");
+					}
 					std::shared_ptr<Stream> currentStream = stream_itr->second;
 
 					currentStream->Process(buffer, length);

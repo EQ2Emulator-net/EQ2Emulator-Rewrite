@@ -132,8 +132,10 @@ bool EQ2Packet::TryCombine(EQ2Packet* rhs, uint32_t MaxLength) {
 	//Copy the new packet's data
 	memcpy(combBuf + offset, rhs->buffer + 2, addSize);
 
-	LogError(LOG_PACKET, 0, "Combined app packet");
-	DumpBytes(combBuf, newSize);
+	if (NetDebugEnabled()) {
+		LogError(LOG_PACKET, 0, "Combined app packet");
+		DumpBytes(combBuf, newSize);
+	}
 
 	//Cleanup our old buffer
 	delete[] buffer;
