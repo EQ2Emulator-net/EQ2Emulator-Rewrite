@@ -30,7 +30,6 @@ public:
 	~EQ2Stream();
 
 	void Process(const unsigned char* data, unsigned int length) override;
-	void ProcessFuturePacketQueue(int32_t oldSeq, int32_t nextSeq);
 
 	void EQ2QueuePacket(EQ2Packet* app, bool attempted_combine = false, bool bDelete = true);
 
@@ -79,6 +78,7 @@ protected:
 
 private:
 	void ProcessPacket(ProtocolPacket* p);
+	void ProcessFuturePacketQueue(int32_t oldSeq, int32_t nextSeq);
 	bool ValidateCRC(const unsigned char* buffer, uint16_t length, uint32_t key);
 	void EncryptPacket(EQ2Packet* app, uint8_t compress_offset, uint8_t offset);
 	void SendPacket(EQ2Packet* p);
@@ -89,13 +89,14 @@ private:
 	void SetMaxAckReceived(uint16_t seq);
 	void SetLastAckSent(int32_t seq);
 	void AdjustRates(uint32_t average_delta);
-	uint16_t processRSAKey(ProtocolPacket *p);
-	bool HandleEmbeddedPacket(ProtocolPacket* p, uint16_t offset = 2, uint16_t length = 0);
+	uint16_t processRSAKey(ProtocolPacket* p);
+	bool HandleEmbeddedPacket(unsigned char* p, uint32_t length);
 	EQ2Packet* ProcessEncryptedData(unsigned char* data, uint32_t size);
 	EQ2Packet* ProcessEncryptedPacket(ProtocolPacket *p);
 	void InboundQueuePush(EQ2Packet* p);
 	void InboundQueueClear();
 	bool CheckSequencedPacket(ProtocolPacket* p);
+	void ProcessFragmentedData(ProtocolPacket* p);
 
 	// Send functions
 	void SendAck(uint16_t seq);
