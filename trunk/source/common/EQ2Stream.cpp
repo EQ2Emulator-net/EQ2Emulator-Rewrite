@@ -362,7 +362,7 @@ void EQ2Stream::WritePacket(ProtocolPacket* p) {
 	Stream::WritePacket(server->GetSocket(), buffer, size);
 }
 
-void EQ2Stream::EQ2QueuePacket(EQ2Packet* app, bool attempted_combine, bool bDelete) {
+void EQ2Stream::EQ2QueuePacket(EQ2Packet* app, bool bDelete) {
 	if (CheckActive()) {
 		PreparePacket(app);
 		SequencedPush(app);
