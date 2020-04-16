@@ -48,6 +48,9 @@ EQ2Stream::~EQ2Stream() {
 	for (auto& itr : SequencedQueue) {
 		delete itr;
 	}
+	for (auto& itr : fragmentedQueue) {
+		delete itr;
+	}
 
 	InboundQueueClear();
 
@@ -362,7 +365,7 @@ void EQ2Stream::WritePacket(ProtocolPacket* p) {
 void EQ2Stream::EQ2QueuePacket(EQ2Packet* app, bool attempted_combine, bool bDelete) {
 	if (CheckActive()) {
 		PreparePacket(app);
-		SendPacket(app);
+		SequencedPush(app);
 	}
 	if (bDelete) {
 		delete app;
@@ -434,38 +437,77 @@ void EQ2Stream::EncryptPacket(EQ2Packet* app, uint8_t compress_offset, uint8_t o
 	}
 }
 
-void EQ2Stream::SendPacket(EQ2Packet* p) {
-	if (p->Size > (MaxLength - 6)) { // proto-op(2), seq(2) ... data ... crc(2)
+void EQ2Stream::SequencedPush(EQ2Packet* p) {
+	p->SetVersion(ClientVersion);
+	//Copy the basic data from the eq2 packet (buffer etc not the packet elements)
+	EQ2Packet* pushCpy = p->CopyRaw();
+
+	WriteLocker lock(seqQueueLock);
+	SequencedQueue.push_back(pushCpy);
+}
+
+ProtocolPacket* EQ2Stream::SequencedPop() {
+	//Check if we have any fragmented packets in the queue before trying to combine anything
+	if (!fragmentedQueue.empty()) {
+		ProtocolPacket* ret = fragmentedQueue.front();
+		fragmentedQueue.pop_front();
+		return ret;
+	}
+
+	WriteLocker lock(seqQueueLock);
+	if (SequencedQueue.empty()) {
+		return nullptr;
+	}
+
+	EQ2Packet* p = SequencedQueue.front();
+	SequencedQueue.pop_front();
+
+	//Try to combine this packet with other packets in the queue
+	while (!SequencedQueue.empty()) {
+		EQ2Packet* next = SequencedQueue.front();
+		if (p->TryCombine(next, MaxLength - 6)) {
+			delete next;
+			SequencedQueue.pop_front();
+		}
+		else {
+			break;
+		}
+	}
+	lock.Unlock();
+
+	ProtocolPacket* ret = nullptr;
+
+	if (p->Size > MaxLength - 6) { // proto-op(2), seq(2) ... data ... crc(2)
 		unsigned char* tmpbuff = p->buffer;
 		uint32_t length = p->Size - 2;
 
 		OP_Packet_Packet* out = new OP_Packet_Packet(OP_Fragment, nullptr, MaxLength);
+		out->SetSequence(NextOutSeq++);
 		*reinterpret_cast<uint32_t*>(out->buffer + 4) = htonl(length);
 		memcpy(out->buffer + 8, tmpbuff + 2, MaxLength - 10); // 10 = op(2) + seq(2) + size(4) + crc(2)?? 
 
 		uint32_t used = MaxLength - 10;
 		uint32_t chunksize = 0;
-		SequencedPush(out);
+		//We'll return this fragment now, queue the others
+		ret = out;
 
 		while (used < length) {
-			chunksize = min(length - used, MaxLength - 6);
+			chunksize = min<>(length - used, MaxLength - 6);
 			out = new OP_Packet_Packet(OP_Fragment, nullptr, chunksize + 6);
+			out->SetSequence(NextOutSeq++);
 			memcpy(out->buffer + 4, tmpbuff + used + 2, chunksize);
-			SequencedPush(out);
+			fragmentedQueue.push_back(out);
 			used += chunksize;
 		}
 	}
 	else {
 		OP_Packet_Packet* out = new OP_Packet_Packet();
+		out->SetSequence(NextOutSeq++);
 		out->Write(p);
-		SequencedPush(out);
+		ret = out;
 	}
-}
 
-void EQ2Stream::SequencedPush(ProtocolPacket* p) {
-	p->SetVersion(ClientVersion);
-	WriteLocker lock(seqQueueLock);
-	SequencedQueue.push_back(p);
+	return ret;
 }
 
 void EQ2Stream::NonSequencedPush(ProtocolPacket* p) {
@@ -529,7 +571,7 @@ void EQ2Stream::Write() {
 			}
 
 			//Now copy the packet data
-			memcpy(pbuf + offset, p->buffer, size - 2);
+			memcpy(pbuf + offset, p->buffer, size);
 			offset += size;
 			delete p;
 		}
@@ -560,11 +602,6 @@ void EQ2Stream::Write() {
 		}
 		else {
 			++effectiveSize;
-		}
-
-		if (effectiveSize > 450) {
-			//Not going to bother combining this
-			return p;
 		}
 
 		if (effectiveSize + combinePacketSize > MaxLength || numCombinePackets == 16) {
@@ -601,6 +638,77 @@ void EQ2Stream::Write() {
 	}
 	lock1.Unlock();
 
+	while (BytesWritten < threshold) {
+		ProtocolPacket* p = SequencedPop();
+
+		if (!p) break;
+
+		p->SetSentTime(currentTime);
+
+		if (numCombinePackets == 0) {
+			SeqReadyToSend.push_back(p);
+			BytesWritten += p->Size;
+			WriteLocker rl(resendQueueLock);
+			ResendQueue.push_back(p);
+			continue;
+		}
+
+		//See if we can combine this packet with our nonseq combine packet, run a quick check here instead of using the sub function
+		//The sub function is allowed to delete it so we need to make a copy first if going that route
+
+		//Factor out crc
+		uint32_t effectiveSize = p->Size - 2;
+		//Add the size bytes
+		if (effectiveSize >= 255) {
+			effectiveSize += 3;
+		}
+		else {
+			effectiveSize++;
+		}
+
+		//Check if this is combinable
+		if (combinePacketSize + effectiveSize > MaxLength || numCombinePackets == 16) {
+			//We cannot combine it, we need to pop the combined packet to send first
+			if (numCombinePackets == 1) {
+				//Send as is
+				ReadyToSend.emplace_back(packetsToCombine[0]);
+				BytesWritten += ReadyToSend.back()->Size;
+				numCombinePackets = 0;
+			}
+			else {
+				//Pop the combine
+				ReadyToSend.emplace_back(DoPacketCombine());
+				BytesWritten += ReadyToSend.back()->Size;
+			}
+
+			//Send this packet as is
+			SeqReadyToSend.push_back(p);
+			BytesWritten += p->Size;
+
+			WriteLocker rl(resendQueueLock);
+			ResendQueue.push_back(p);
+		}
+		else {
+			//We can combine this packet
+			//Create a copy for our resend queue and add this to our combine packet list
+
+			//Write the opcode/sequence first
+			unsigned char* tmp = nullptr;
+			p->Write(tmp);
+
+			//Now copy
+			ProtocolPacket* resendCopy = p->Copy();
+			resendQueueLock.WriteLock();
+			ResendQueue.push_back(resendCopy);
+			resendQueueLock.WriteUnlock();
+
+			//Finally, add this to our combine packet list
+			packetsToCombine[numCombinePackets++] = p;
+			combinePacketSize += effectiveSize;
+		}
+	}
+
+	//Check for any combine packets that need to be dealt with
 	if (numCombinePackets == 1) {
 		//We don't have another packet to combine with so just send this packet as is
 		ReadyToSend.emplace_back(packetsToCombine[0]);
@@ -612,17 +720,6 @@ void EQ2Stream::Write() {
 		BytesWritten += ReadyToSend.back()->Size;
 
 	}
-
-	WriteLocker lock2(seqQueueLock);
-	while (!SequencedQueue.empty() && BytesWritten < threshold) {
-		ProtocolPacket* p = SequencedQueue.front();
-		BytesWritten += p->Size;
-		p->SetSequence(NextOutSeq++);
-		SeqReadyToSend.push_back(p);
-		p->SetSentTime(currentTime);
-		SequencedQueue.pop_front();
-	}
-	lock2.Unlock();
 
 	// Send all the packets we "made"
 	for (auto& packet : ReadyToSend) {
@@ -638,7 +735,6 @@ void EQ2Stream::Write() {
 			packet->SetSentTime(currentTime);
 		}
 	}
-	ResendQueue.insert(ResendQueue.end(), SeqReadyToSend.begin(), SeqReadyToSend.end());
 	lock.Unlock();
 
 	for (auto& packet : SeqReadyToSend) {
@@ -811,7 +907,7 @@ void EQ2Stream::QueuePacket(EQ2Packet* p, bool bDelete) {
 	}
 	else {
 		DumpBytes(buf, p->Size);
-		EQ2QueuePacket(p, true, bDelete);
+		EQ2QueuePacket(p, bDelete);
 	}
 }
 
@@ -885,7 +981,7 @@ void EQ2Stream::SendKeyRequest() {
 	OP_KeyRequest_Packet* req = new OP_KeyRequest_Packet(ClientVersion);
 	unsigned char* buf = nullptr;
 	req->Write(buf);
-	EQ2QueuePacket(req, true);
+	EQ2QueuePacket(req);
 }
 
 void EQ2Stream::ProcessFragmentedData(ProtocolPacket* p) {

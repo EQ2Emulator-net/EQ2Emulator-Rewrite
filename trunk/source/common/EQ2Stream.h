@@ -31,7 +31,7 @@ public:
 
 	void Process(const unsigned char* data, unsigned int length) override;
 
-	void EQ2QueuePacket(EQ2Packet* app, bool attempted_combine = false, bool bDelete = true);
+	void EQ2QueuePacket(EQ2Packet* app, bool bDelete = true);
 
 	inline EQStreamState GetState() { return State; }
 	inline void SetState(EQStreamState state) { State = state; }
@@ -81,8 +81,8 @@ private:
 	void ProcessFuturePacketQueue(int32_t oldSeq, int32_t nextSeq);
 	bool ValidateCRC(const unsigned char* buffer, uint16_t length, uint32_t key);
 	void EncryptPacket(EQ2Packet* app, uint8_t compress_offset, uint8_t offset);
-	void SendPacket(EQ2Packet* p);
-	void SequencedPush(ProtocolPacket* p);
+	void SequencedPush(EQ2Packet* p);
+	ProtocolPacket* SequencedPop();
 	void NonSequencedPush(ProtocolPacket* p);
 	void WritePacket(ProtocolPacket* p);
 	uint8_t EQ2_Compress(EQ2Packet* app, uint8_t offset = 3);
@@ -117,7 +117,7 @@ private:
 	unsigned char *oversize_buffer;
 
 	deque<ProtocolPacket*> NonSequencedQueue;
-	deque<ProtocolPacket*> SequencedQueue;
+	deque<EQ2Packet*> SequencedQueue;
 	deque<ProtocolPacket*> ResendQueue;
 	// Packes waiting to be processed
 	deque<EQ2Packet *> InboundQueue;
@@ -129,4 +129,5 @@ private:
 
 	//This map is only used regularly by the reader thread so it is fine without a mutex
 	map<uint16_t, unique_ptr<ProtocolPacket> > FuturePackets;
+	deque<ProtocolPacket*> fragmentedQueue;
 };

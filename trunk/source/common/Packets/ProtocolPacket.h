@@ -36,6 +36,7 @@ public:
 	//bool Combine(const ProtocolPacket *rhs);
 
 	virtual ProtocolPacket* MoveCopy();
+	ProtocolPacket* Copy();
 
 	static ProtocolPacket* GetProtocolPacket(const unsigned char* in_buff, uint32_t len, bool bTrimCRC);
 	static uint32_t Compress(const unsigned char *buffer, const uint32_t length, unsigned char *newbuf, uint32_t newbufsize);

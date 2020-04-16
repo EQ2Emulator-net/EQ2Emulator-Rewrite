@@ -36,10 +36,16 @@ public:
 		return Packet::Write(buffer);
 	}
 
+	bool TryCombine(EQ2Packet* rhs, uint32_t MaxLength);
+	//This copy function only copies the following bools and buffer data, not elements etc
+	EQ2Packet* CopyRaw();
+
 	bool PacketPrepared;
 	bool PacketEncrypted;
 	bool EQ2Compressed;
 	bool bOpcodeError;
+	bool bCombined;
+
 protected:
 	EQ2Packet(uint32_t version);
 

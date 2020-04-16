@@ -70,6 +70,14 @@ ProtocolPacket* ProtocolPacket::MoveCopy() {
 	return new ProtocolPacket(std::move(*this));
 }
 
+ProtocolPacket* ProtocolPacket::Copy() {
+	auto ret = new ProtocolPacket(static_cast<uint8_t>(opcode), buffer, Size);
+	ret->bBufferSet = bBufferSet;
+	ret->sequence = sequence;
+	ret->SentTime = SentTime;
+	return ret;
+}
+
 ProtocolPacket* ProtocolPacket::GetProtocolPacket(const unsigned char* in_buff, uint32_t len, bool bTrimCRC) {
 	ProtocolPacket* ret = nullptr;
 	uint16_t opcode = ntohs(*(uint16_t*)in_buff);
