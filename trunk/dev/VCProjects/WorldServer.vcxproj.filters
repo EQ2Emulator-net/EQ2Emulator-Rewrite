@@ -470,5 +470,8 @@
     <ClInclude Include="..\..\source\common\Rules.h">
       <Filter>common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EQ2Packets\OP_UIEvent_Packet.h">
+      <Filter>common\Packets\EQ2Packets</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
