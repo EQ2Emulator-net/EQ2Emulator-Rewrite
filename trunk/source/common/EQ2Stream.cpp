@@ -255,28 +255,21 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 	case OP_Combined: {
 		uint32_t processed = 0;
 		uint32_t subpacket_length;
-		uint32_t offset;
 
 		while (processed < p->Size) {
-			if ((subpacket_length = *(p->buffer + processed)) == 0xFF) {
-				subpacket_length = ntohs(*reinterpret_cast<uint16_t*>(p->buffer + processed + 1));
-				offset = 3;
-			}
-			else {
-				offset = 1;
-			}
+			subpacket_length = p->buffer[processed++];
 
 			if (subpacket_length == 0) {
 				LogError(LOG_PACKET, 0, "Received a bad combine packet from a client! (size == 0)");
 				break;
 			}
 
-			if (subpacket_length + processed + offset > p->Size) {
+			if (subpacket_length + processed > p->Size) {
 				LogError(LOG_PACKET, 0, "Received a bad combine packet from a client! (size > remaining_bytes)");
 				break;
 			}
 
-			uint32_t dataOffset = processed + offset;
+			uint32_t dataOffset = processed;
 			unsigned char* dataPtr = p->buffer + dataOffset;
 			ProtocolPacket* subPacket = ProtocolPacket::GetProtocolPacket(dataPtr, subpacket_length, false);
 
@@ -297,7 +290,7 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 				}
 			}
 
-			processed += offset + subpacket_length;
+			processed += subpacket_length;
 		}
 	}
 	//This is an ack for a single packet rather than a range of packets
@@ -571,14 +564,7 @@ void EQ2Stream::Write() {
 			ProtocolPacket* p = packetsToCombine[i];
 			//First add the size
 			uint16_t size = p->Size - 2;
-			if (size >= 255) {
-				pbuf[offset++] = 0xFF;
-				*reinterpret_cast<uint16_t*>(pbuf + offset) = htons(size);
-				offset += 2;
-			}
-			else {
-				pbuf[offset++] = static_cast<uint8_t>(size);
-			}
+			pbuf[offset++] = static_cast<uint8_t>(size);
 
 			//Now copy the packet data
 			memcpy(pbuf + offset, p->buffer, size);
@@ -608,15 +594,9 @@ void EQ2Stream::Write() {
 		}
 
 		//Strip the crc bytes off the packet we are checking
-		uint32_t effectiveSize = p->Size - 2;
-		if (effectiveSize >= 255) {
-			effectiveSize += 3;
-		}
-		else {
-			++effectiveSize;
-		}
+		uint32_t effectiveSize = p->Size - 2 + 1;
 
-		if (effectiveSize + combinePacketSize > MaxLength || numCombinePackets == 16) {
+		if (effectiveSize > 255 || effectiveSize + combinePacketSize > MaxLength || numCombinePackets == 16) {
 			ret = DoPacketCombine();
 			combinePacketSize = 4;
 		}
@@ -668,18 +648,11 @@ void EQ2Stream::Write() {
 		//See if we can combine this packet with our nonseq combine packet, run a quick check here instead of using the sub function
 		//The sub function is allowed to delete it so we need to make a copy first if going that route
 
-		//Factor out crc
-		uint32_t effectiveSize = p->Size - 2;
-		//Add the size bytes
-		if (effectiveSize >= 255) {
-			effectiveSize += 3;
-		}
-		else {
-			effectiveSize++;
-		}
+		//Factor out crc, add the size byte
+		uint32_t effectiveSize = p->Size - 2 + 1;
 
 		//Check if this is combinable
-		if (combinePacketSize + effectiveSize > MaxLength || numCombinePackets == 16) {
+		if (effectiveSize > 255 || combinePacketSize + effectiveSize > MaxLength || numCombinePackets == 16) {
 			//We cannot combine it, we need to pop the combined packet to send first
 			if (numCombinePackets == 1) {
 				//Send as is

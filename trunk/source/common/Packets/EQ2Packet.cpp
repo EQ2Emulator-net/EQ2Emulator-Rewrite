@@ -155,5 +155,6 @@ EQ2Packet* EQ2Packet::CopyRaw() {
 	ret->PacketEncrypted = PacketEncrypted;
 	ret->PacketPrepared = PacketPrepared;
 	ret->Version = Version;
+	ret->opcode = opcode;
 	return ret;
 }
