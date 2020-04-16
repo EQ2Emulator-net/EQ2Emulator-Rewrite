@@ -480,7 +480,7 @@ ProtocolPacket* EQ2Stream::SequencedPop() {
 
 	ProtocolPacket* ret = nullptr;
 
-	if (p->Size > MaxLength - 6) { // proto-op(2), seq(2) ... data ... crc(2)
+	if (p->Size - 2 > MaxLength - 6) { // proto-op(2), seq(2) ... data ... crc(2)
 		unsigned char* tmpbuff = p->buffer;
 		uint32_t length = p->Size - 2;
 
