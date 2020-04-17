@@ -104,3 +104,4 @@ private:
 
 #define RegisterXmlSubstruct(pt, f, ...) uint32_t zUNIQUENAMEVERz ## pt [] = { __VA_ARGS__ };\
 SubstructRegistrar<pt> zUNIQUENAMEz ## pt (#pt, f, zUNIQUENAMEVERz ## pt, sizeof(zUNIQUENAMEVERz ## pt) / sizeof(uint32_t))
+

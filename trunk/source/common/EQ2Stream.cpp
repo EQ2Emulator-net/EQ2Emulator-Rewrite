@@ -174,7 +174,7 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 		break;
 	}
 	case OP_ClientSessionUpdate: {
-		LogDebug(LOG_NET, 0, "Key request");
+		LogDebug(LOG_NET, 0, "Key request received");
 		auto update = static_cast<OP_ClientSessionUpdate_Packet*>(p);
 		AdjustRates(ntohl(update->AverageDelta));
 		SendServerSessionUpdate(update->RequestID);

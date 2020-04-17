@@ -71,7 +71,7 @@ uint32_t EQ2Packet::serialize(unsigned char *dest) const {
 }
 
 void EQ2Packet::FindOpcode() {
-	bool bOpcodeError = !OpcodeManager::GetGlobal()->SetOpcodeForPacket(this);
+	bOpcodeError = !OpcodeManager::GetGlobal()->SetOpcodeForPacket(this);
 }
 
 void EQ2Packet::HandlePacket(std::shared_ptr<Client> client) {

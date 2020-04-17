@@ -118,7 +118,7 @@ QueryResult Database::QueryWithFetchedResult(uint32_t result_flags, const char* 
 	count = vsnprintf(buf, sizeof(buf), fmt, ap);
 
 	const char* query = buf;
-	if (count > sizeof(buf) - 1) {
+	if (count > static_cast<int>(sizeof(buf) - 1)) {
 		oversizedBuf.reset(new char[count + 1]);
 		vsprintf(oversizedBuf.get(), fmt, ap);
 		query = oversizedBuf.get();
@@ -169,7 +169,7 @@ bool Database::Query(const char* fmt, ...) {
 	count = vsnprintf(buf, sizeof(buf), fmt, ap);
 
 	const char* query = buf;
-	if (count > sizeof(buf) - 1) {
+	if (count > static_cast<int>(sizeof(buf) - 1)) {
 		oversizedBuf.reset(new char[count + 1]);
 		vsprintf(oversizedBuf.get(), fmt, ap);
 		query = oversizedBuf.get();
@@ -217,7 +217,7 @@ bool Database::Select(DatabaseResult* result, const char* fmt, ...) {
 	count = vsnprintf(buf, sizeof(buf), fmt, ap);
 
 	const char* query = buf;
-	if (count > sizeof(buf) - 1) {
+	if (count > static_cast<int>(sizeof(buf) - 1)) {
 		oversizedBuf.reset(new char[count + 1]);
 		vsprintf(oversizedBuf.get(), fmt, ap);
 		query = oversizedBuf.get();
