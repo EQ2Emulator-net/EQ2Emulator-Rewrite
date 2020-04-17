@@ -115,6 +115,10 @@ public:
 		return ret;
 	}
 
+	bool VariableIsSet() override {
+		return element[0] != 0;
+	}
+
 	bool bSigned;
 private:
 	uint16_t* element;

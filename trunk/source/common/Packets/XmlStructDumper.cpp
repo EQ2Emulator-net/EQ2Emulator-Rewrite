@@ -124,23 +124,7 @@ void XmlStructDumper::ElementToXml(PacketElement* e, xml_document<>& doc, xml_no
 	xml_node<>* dataNode = doc.allocate_node(node_element, "Data");
 	if (auto pe = dynamic_cast<PacketPackedData*>(e)) {
 		dataNode->append_attribute(doc.allocate_attribute("Type", "PackedData"));
-		if (pe->bOversizedByte) {
-			dataNode->append_attribute(doc.allocate_attribute("SizeType", "int16"));
-			dataNode->append_attribute(doc.allocate_attribute("OversizedValue", "255"));
-		}
-		else {
-			const char* packedSizeType = "int32";
-			if (pe->nSizeBytes == 2) {
-				packedSizeType = "int16";
-			}
-			else if (pe->nSizeBytes == 1) {
-				packedSizeType = "int8";
-			}
-			else if (pe->nSizeBytes == 8) {
-				packedSizeType = "int64";
-			}
-			dataNode->append_attribute(doc.allocate_attribute("SizeType", packedSizeType));
-		}
+		dataNode->append_attribute(doc.allocate_attribute("IncludeSize", pe->bIncludeSize ? "true" : "false"));
 		for (auto& itr : static_cast<PacketSubstruct*>(e)->elements) {
 			ElementToXml(itr, doc, *dataNode);
 		}

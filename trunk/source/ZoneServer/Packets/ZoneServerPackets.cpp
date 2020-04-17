@@ -36,7 +36,7 @@ RegisterZoneStruct("OP_DefaultGroupOptionsMsg", OP_DefaultGroupOptionsMsg_Packet
 RegisterZoneStruct("OP_MoveableObjectPlacementCriteri", OP_MoveableObjectPlacementCriteri_Packet, 1);
 RegisterZoneStruct("OP_GameWorldTimeMsg", OP_GameWorldTimeMsg_Packet, 1, 1193);
 RegisterZoneStruct("OP_SetRemoteCmdsMsg", OP_SetRemoteCmdsMsg_Packet, 1);
-RegisterZoneStruct("OP_EqUpdateGhostCmdMsg", OP_UpdateGhostCmdMsg_Packet, 1);
+RegisterZoneStruct("OP_EqUpdateGhostCmd", OP_UpdateGhostCmdMsg_Packet, 1);
 RegisterZoneStruct("OP_TeleportWithinZoneNoReloadMsg", OP_TeleportWithinZoneNoReloadMsg_Packet, 1, 869);
 
 // Client to Server

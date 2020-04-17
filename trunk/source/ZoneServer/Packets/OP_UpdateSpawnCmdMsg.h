@@ -8,8 +8,9 @@
 
 class Substruct_SpawnPosUpdate : public PacketSubstruct {
 public:
-	Substruct_SpawnPosUpdate(uint32_t version) : PacketSubstruct(version), data(version), spawnIndex(0), isPlayer(false), coeTimestamp(0) {
-
+	Substruct_SpawnPosUpdate(uint32_t version) : PacketSubstruct(version), 
+		packedPos(version <= 283, false), data(version), spawnIndex(0), isPlayer(false), coeTimestamp(0) {
+		packedPos.LinkSubstruct(data, "packedPos");
 	}
 
 	~Substruct_SpawnPosUpdate() = default;
@@ -17,16 +18,16 @@ public:
 	void RegisterElements() {
 		PacketElement* e = RegisterOversizedByte(spawnIndex);
 		e->SetIsVariableSet(e);
-		RegisterSubstruct(data)->SetIsVariableSet(e);
-
 		if (GetVersion() >= 1188) {
 			PacketElement* bplayer = RegisterBool(isPlayer);
 			bplayer->SetIsVariableSet(e);
 			RegisterUInt32(coeTimestamp)->SetIsVariableSet(bplayer);
 		}
+		RegisterSubstruct(packedPos)->SetIsVariableSet(e);
 	}
 
 	Substruct_SpawnPosition data;
+	PacketPackedData packedPos;
 	uint16_t spawnIndex;
 	bool isPlayer;
 	uint32_t coeTimestamp;
@@ -34,8 +35,8 @@ public:
 
 class Substruct_SpawnInfoUpdate : public PacketSubstruct {
 public:
-	Substruct_SpawnInfoUpdate(uint32_t version) : PacketSubstruct(version), data(version), spawnIndex(0) {
-
+	Substruct_SpawnInfoUpdate(uint32_t version) : PacketSubstruct(version), data(version), spawnIndex(0), packedInfo(version <= 283, false) {
+		packedInfo.LinkSubstruct(data, "packedInfo");
 	}
 
 	~Substruct_SpawnInfoUpdate() = default;
@@ -43,18 +44,19 @@ public:
 	void RegisterElements() {
 		PacketElement* e = RegisterOversizedByte(spawnIndex);
 		e->SetIsVariableSet(e);
-		RegisterSubstruct(data)->SetIsVariableSet(e);
+		RegisterSubstruct(packedInfo)->SetIsVariableSet(e);
 	}
 
 	Substruct_SpawnInfo data;
+	PacketPackedData packedInfo;
 	uint16_t spawnIndex;
 	
 };
 
 class Substruct_SpawnVisUpdate : public PacketSubstruct {
 public:
-	Substruct_SpawnVisUpdate(uint32_t version) : PacketSubstruct(version), data(version), spawnIndex(0) {
-
+	Substruct_SpawnVisUpdate(uint32_t version) : PacketSubstruct(version), data(version), spawnIndex(0), packedVis(version <= 283, false) {
+		packedVis.LinkSubstruct(data, "packedVis");
 	}
 
 	~Substruct_SpawnVisUpdate() = default;
@@ -62,22 +64,19 @@ public:
 	void RegisterElements() {
 		PacketElement* e = RegisterOversizedByte(spawnIndex);
 		e->SetIsVariableSet(e);
-		RegisterSubstruct(data)->SetIsVariableSet(e);
+		RegisterSubstruct(packedVis)->SetIsVariableSet(e);
 	}
 
 	Substruct_SpawnVisualization data;
+	PacketPackedData packedVis;
 	uint16_t spawnIndex;
 };
 
 class OP_UpdateGhostCmdMsg_Packet : public OP_ClientCmdMsg_Packet {
 public:
 	OP_UpdateGhostCmdMsg_Packet(uint32_t version) : OP_ClientCmdMsg_Packet(version), 
-		info(version), pos(version), vis(version),
-		packedInfo(version > 283, true), packedPos(version > 283, true), packedVis(version > 283, true)
+		info(version), pos(version), vis(version), infoSize(0), visSize(0), posSize(0)
 	{
-		packedInfo.LinkSubstruct(info, "info");
-		packedPos.LinkSubstruct(pos, "pos");
-		packedVis.LinkSubstruct(vis, "vis");
 		RegisterElements();
 	}
 
@@ -85,9 +84,19 @@ public:
 
 	void RegisterElements() {
 		RegisterUInt32(timestamp);
-		RegisterSubstruct(packedInfo);
-		RegisterSubstruct(packedPos);
-		RegisterSubstruct(packedVis);
+		PacketElement* e = RegisterOversizedByte(infoSize);
+		RegisterSubstruct(info)->SetIsVariableSet(e);
+		e = RegisterOversizedByte(posSize);
+		RegisterSubstruct(pos)->SetIsVariableSet(e);
+		e = RegisterOversizedByte(visSize);
+		RegisterSubstruct(vis)->SetIsVariableSet(e);
+	}
+
+	uint32_t Write(unsigned char*& writeBuffer) override {
+		infoSize = static_cast<uint16_t>(info.GetSize());
+		posSize = static_cast<uint16_t>(pos.GetSize());
+		visSize = static_cast<uint16_t>(vis.GetSize());
+		return OP_ClientCmdMsg_Packet::Write(writeBuffer);
 	}
 
 	void SetEncodedBuffers(const std::shared_ptr<Client>& client, uint16_t spawnIndex) {
@@ -98,9 +107,11 @@ public:
 
 	uint32_t timestamp;
 	Substruct_SpawnInfoUpdate info;
-	PacketPackedData packedInfo;
 	Substruct_SpawnPosUpdate pos;
-	PacketPackedData packedPos;
 	Substruct_SpawnVisUpdate vis;
-	PacketPackedData packedVis;
+
+private:
+	uint16_t infoSize;
+	uint16_t posSize;
+	uint16_t visSize;
 };

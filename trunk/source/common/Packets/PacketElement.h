@@ -37,8 +37,14 @@ public:
 	}
 
 	bool MeetsCriteria() {
-		if (ifVariableSet && (!ifVariableSet->MeetsCriteria() || !ifVariableSet->VariableIsSet())) {
-			return false;
+		if (ifVariableSet) {
+			if (ifVariableSet == this) {
+				return VariableIsSet() && CheckVariableEquality();
+			}
+
+			if (!ifVariableSet->MeetsCriteria() || !ifVariableSet->VariableIsSet()) {
+				return false;
+			}
 		}
 
 		if (!CheckVariableEquality()) {

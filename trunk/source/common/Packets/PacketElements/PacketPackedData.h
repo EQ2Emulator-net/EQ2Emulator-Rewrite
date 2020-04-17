@@ -8,8 +8,8 @@
 class PacketPackedData : public PacketSubstruct {
 	friend class XmlStructDumper;
 public:
-	PacketPackedData(bool bClassicClient, bool bOversized = false, uint32_t p_nSizeBytes = 4) : PacketSubstruct(0, true),
-		lastPackedSize(0), nSizeBytes(p_nSizeBytes), bBufInitialized(false), bClassic(bClassicClient), bOversizedByte(bOversized) {}
+	PacketPackedData(bool bClassicClient, bool _bIncludeSize = true) : PacketSubstruct(0, true),
+		lastPackedSize(0), bIncludeSize(_bIncludeSize), bBufInitialized(false), bClassic(bClassicClient) {}
 
 	~PacketPackedData() = default;
 
@@ -20,19 +20,12 @@ public:
 
 		lastPackedSize = 0;
 
-		if (bOversizedByte) {
-			lastPackedSize = srcbuf[offset++];
-			if (lastPackedSize == 255) {
-				memcpy(&lastPackedSize, srcbuf + offset, 2);
-				offset += 2;
-			}
-		}
-		else if (offset + nSizeBytes > bufsize) {
+		if (offset + (bIncludeSize ? 4 : 0) > bufsize) {
 			return false;
 		}
-		else {
-			memcpy(&lastPackedSize, srcbuf + offset, nSizeBytes);
-			offset += nSizeBytes;
+		else if (bIncludeSize) {
+			memcpy(&lastPackedSize, srcbuf + offset, 4);
+			offset += 4;
 		}
 
 		if (lastPackedSize == 0) {
@@ -94,6 +87,10 @@ public:
 	uint32_t GetSize() override {
 		CheckElementsInitialized();
 
+		if (bBufInitialized) {
+			return buf.size();
+		}
+
 		uint32_t unpackedSize = 0;
 		for (auto& e : elements) {
 			if (!e->MeetsCriteria()) {
@@ -102,6 +99,8 @@ public:
 
 			unpackedSize += e->GetSize();
 		}
+
+		uint32_t nSizeBytes = (bIncludeSize ? 4 : 0);
 
 		std::vector<unsigned char> tmp;
 		tmp.resize(unpackedSize + nSizeBytes);
@@ -130,18 +129,7 @@ public:
 		}
 
 		uint32_t effectiveSize = nSizeBytes;
-		if (bOversizedByte) {
-			if (packedSize >= 255) {
-				effectiveSize = 3;
-				*tmp.data() = 0xFF;
-				memcpy(tmp.data() + 1, &packedSize, 2);
-			}
-			else {
-				effectiveSize = 1;
-				*tmp.data() = static_cast<uint8_t>(packedSize);
-			}
-		}
-		else {
+		if (bIncludeSize) {
 			memcpy(tmp.data(), &packedSize, nSizeBytes);
 		}
 		tmp.resize(packedSize + effectiveSize);
@@ -437,6 +425,5 @@ private:
 	std::vector<unsigned char> buf;
 	bool bBufInitialized;
 	bool bClassic;
-	bool bOversizedByte;
-	uint32_t nSizeBytes;
+	bool bIncludeSize;
 };
