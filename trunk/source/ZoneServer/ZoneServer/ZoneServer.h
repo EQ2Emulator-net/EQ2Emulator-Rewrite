@@ -7,6 +7,7 @@
 #include <memory>
 
 class Client;
+class Spawn;
 class Entity;
 
 // This will be where every thing happens
@@ -23,6 +24,9 @@ public:
 
 
 	void SendCharacterInfo(std::shared_ptr<Client> client);
+	void AddPlayer(std::shared_ptr<Entity> player);
+	void SendPlayersToNewClient(std::shared_ptr<Client> client);
+	void SendSpawnToClient(std::shared_ptr<Spawn> spawn, std::shared_ptr<Client> client);
 
 private:
 

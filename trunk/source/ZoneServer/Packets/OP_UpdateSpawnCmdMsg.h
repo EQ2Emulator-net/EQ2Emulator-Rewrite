@@ -99,6 +99,23 @@ public:
 		return OP_ClientCmdMsg_Packet::Write(writeBuffer);
 	}
 
+	void InsertSpawnInfoData(const SpawnInfoStruct& spawn_info, uint16_t index) {
+		info.spawnIndex = index;
+		static_cast<SpawnInfoStruct&>(info.data) = spawn_info;
+	}
+
+	void InsertSpawnPosData(const SpawnPositionStruct& spawn_pos, uint16_t index, bool isPlayer, uint32_t timestamp) {
+		pos.spawnIndex = index;
+		pos.isPlayer = isPlayer;
+		pos.coeTimestamp = timestamp;
+		static_cast<SpawnPositionStruct&>(pos.data) = spawn_pos;
+	}
+
+	void InsertSpawnVisData(const SpawnVisualizationStruct& spawn_vis, uint16_t index) {
+		vis.spawnIndex = index;
+		static_cast<SpawnVisualizationStruct&>(vis.data) = spawn_vis;
+	}
+
 	void SetEncodedBuffers(const std::shared_ptr<Client>& client, uint16_t spawnIndex) {
 		pos.data.SetEncodedBuffer(client->encoded_packets.GetBuffer(EEncoded_UpdateSpawnPos, spawnIndex));
 		info.data.SetEncodedBuffer(client->encoded_packets.GetBuffer(EEncoded_UpdateSpawnInfo, spawnIndex));

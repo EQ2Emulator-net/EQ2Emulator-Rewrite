@@ -23,8 +23,9 @@ const uint32_t EntityFlagImmunityGained = 1 << 25;
 const uint32_t EntityFlagImmunityRemaining = 1 << 26;
 
 class ZoneServer;
+class Client;
 
-class Spawn : std::enable_shared_from_this<Spawn> {
+class Spawn : public std::enable_shared_from_this<Spawn> {
 public:
 	Spawn();
 	~Spawn();
@@ -52,6 +53,8 @@ public:
 
 	UpdateFlags PopUpdateFlags();
 
+	void Process();
+	void AddClient(std::weak_ptr<Client> client);
 private:
 	static uint32_t GetNextID();
 
@@ -70,6 +73,8 @@ private:
 	std::unique_ptr<Sign> signData;
 	std::unique_ptr<Widget> widgetData;
 	uint32_t m_spawnID;
+
+	std::vector<std::weak_ptr<Client> > m_clients;
 
 public:
 	/* I put the template functions down here so they aren't cluttering up the rest of the class */

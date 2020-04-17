@@ -43,5 +43,6 @@ public:
 
 	bool WasSentSpawn(const std::shared_ptr<Spawn>& spawn);
 	uint16_t AddSpawnToIndexMap(const std::shared_ptr<Spawn>& spawn);
+	uint16_t GetIndexForSpawn(std::shared_ptr<Spawn> spawn);
 	std::shared_ptr<PlayerController> GetController();
 };

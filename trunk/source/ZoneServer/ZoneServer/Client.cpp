@@ -84,6 +84,16 @@ uint16_t Client::AddSpawnToIndexMap(const std::shared_ptr<Spawn>& spawn) {
 	return index;
 }
 
+uint16_t Client::GetIndexForSpawn(std::shared_ptr<Spawn> spawn) {
+	uint16_t index = 0;
+
+	std::map<std::weak_ptr<Spawn>, uint16_t>::iterator itr = m_spawnIndexMap.find(spawn);
+	if (itr != m_spawnIndexMap.end())
+		index = itr->second;
+
+	return index;
+}
+
 std::shared_ptr<PlayerController> Client::GetController() {
 	return m_controller;
 }

@@ -97,6 +97,10 @@ void ZoneServer::Process() {
 			}
 		}
 
+		for (std::shared_ptr<Entity> player : players) {
+			player->Process();
+		}
+
 		std::this_thread::sleep_for(std::chrono::milliseconds(50)); // Probably play with this value
 	}
 }
@@ -157,12 +161,40 @@ void ZoneServer::SendCharacterInfo(std::shared_ptr<Client> client) {
 	entity->SetVisFlags(55, false);
 	entity->SetInteractionFlag(12, false);
 
-	players.push_back(entity);
-
-	OP_CreateGhostCmd_Packet* ghost = new OP_CreateGhostCmd_Packet(client->GetVersion());
-	ghost->InsertSpawnData(entity, client->AddSpawnToIndexMap(entity));
-	ghost->SetEncodedBuffers(client, ghost->header.index);
 	std::shared_ptr<PlayerController> controller = client->GetController();
 	controller->SetControlled(entity);
+	SendSpawnToClient(entity, client);
+
+	AddPlayer(entity);
+
+	SendPlayersToNewClient(client);	
+}
+
+void ZoneServer::AddPlayer(std::shared_ptr<Entity> player) {
+	players.push_back(player);
+
+	for (std::pair<uint32_t, std::weak_ptr<Client> > c : Clients) {
+		std::shared_ptr<Client> client = c.second.lock();
+		if (client) {
+			SendSpawnToClient(player, client);
+		}
+	}
+}
+
+void ZoneServer::SendPlayersToNewClient(std::shared_ptr<Client> client) {
+	for (std::shared_ptr<Entity> spawn : players) {
+		SendSpawnToClient(spawn, client);
+	}
+}
+
+void ZoneServer::SendSpawnToClient(std::shared_ptr<Spawn> spawn, std::shared_ptr<Client> client) {
+	if (client->WasSentSpawn(spawn))
+		return;
+
+	OP_CreateGhostCmd_Packet* ghost = new OP_CreateGhostCmd_Packet(client->GetVersion());
+	ghost->InsertSpawnData(spawn, client->AddSpawnToIndexMap(spawn));
+	ghost->SetEncodedBuffers(client, ghost->header.index);
 	client->QueuePacket(ghost);
+
+	spawn->AddClient(client);
 }

@@ -1,6 +1,13 @@
 #include "stdafx.h"
 
 #include "Spawn.h"
+#include "../ZoneServer/Client.h"
+#include "../Controllers/BaseController.h"
+#include "../Controllers/PlayerController.h"
+#include "../../common/timer.h"
+
+// Packets
+#include "../Packets/OP_UpdateSpawnCmdMsg.h"
 
 Spawn::Spawn() : m_updateFlagsByte(0), m_zone(nullptr) {
 	memset(&m_infoStruct, 0, sizeof(m_infoStruct));
@@ -10,6 +17,46 @@ Spawn::Spawn() : m_updateFlagsByte(0), m_zone(nullptr) {
 
 Spawn::~Spawn() {
 
+}
+
+void Spawn::Process() {
+	// m_controller->Process();
+
+	if (m_updateFlagsByte > 0) {
+		UpdateFlags update = PopUpdateFlags();
+		for (std::weak_ptr<Client> c : m_clients) {
+			std::shared_ptr<Client> client = c.lock();
+			if (client) {
+				// Don't send updates to yourself
+				if (client->GetController()->GetControlled() == shared_from_this())
+					continue;
+
+				OP_UpdateGhostCmdMsg_Packet* packet = new OP_UpdateGhostCmdMsg_Packet(client->GetVersion());
+				uint16_t index = client->GetIndexForSpawn(shared_from_this());
+				packet->timestamp = Timer::GetCurrentTime2();
+
+				uint32_t char_id = client->GetCharacterID();
+
+				LogError(LOG_CLIENT, 0, "Sending update to character %u, index = %u", char_id, index);
+
+				if (update.m_infoChanged)
+					packet->InsertSpawnInfoData(*GetInfoStruct(), index);
+
+				if (update.m_posChanged)
+					packet->InsertSpawnPosData(*GetPosStruct(), index, true, Timer::GetCurrentTime2());
+
+				if (update.m_visChanged)
+					packet->InsertSpawnVisData(*GetVisStruct(), index);
+
+				packet->SetEncodedBuffers(client, index);
+				client->QueuePacket(packet);
+			}
+		}
+	}
+}
+
+void Spawn::AddClient(std::weak_ptr<Client> client) {
+	m_clients.push_back(client);
 }
 
 Spawn::UpdateFlags Spawn::PopUpdateFlags() {
