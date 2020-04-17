@@ -88,7 +88,7 @@ public:
 		CheckElementsInitialized();
 
 		if (bBufInitialized) {
-			return buf.size();
+			return static_cast<uint32_t>(buf.size());
 		}
 
 		uint32_t unpackedSize = 0;

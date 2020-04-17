@@ -193,12 +193,6 @@ public:
 	void SetEquipType(uint32_t value, uint8_t index, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.equipment_types[index], value, updateFlags);
 	}
-	void SetUnknown7A(uint16_t value, uint8_t index, bool updateFlags = true) {
-		SetInfo(&m_infoStruct.unknown7a[index], value, updateFlags);
-	}
-	void SetUnknown7AA(uint16_t value, uint8_t index, bool updateFlags = true) {
-		SetInfo(&m_infoStruct.unknown7aa[index], value, updateFlags);
-	}
 	void SetHairType(uint16_t value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.hair_type_id, value, updateFlags);
 	}
@@ -211,8 +205,20 @@ public:
 	void SetChestType(uint16_t value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.chest_type_id, value, updateFlags);
 	}
+	void SetChestColor(EQ2Color value, bool updateFlags = true) {
+		SetInfo(&m_infoStruct.chest_type_color, value, updateFlags);
+	}
+	void SetChestHighlightColor(EQ2Color value, bool updateFlags = true) {
+		SetInfo(&m_infoStruct.chest_type_highlight, value, updateFlags);
+	}
 	void SetLegsType(uint16_t value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.legs_type_id, value, updateFlags);
+	}
+	void SetLegsColor(EQ2Color value, bool updateFlags = true) {
+		SetInfo(&m_infoStruct.legs_type_color, value, updateFlags);
+	}
+	void SetLegsHighlightColor(EQ2Color value, bool updateFlags = true) {
+		SetInfo(&m_infoStruct.legs_type_highlight, value, updateFlags);
 	}
 	void SetSogaHairType(uint16_t value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.soga_hair_type_id, value, updateFlags);
@@ -246,6 +252,12 @@ public:
 	}
 	void SetWingColor(EQ2Color value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.wing_color1, value, updateFlags);
+	}
+	void SetSogaWingColor(EQ2Color value, bool updateFlags = true) {
+		SetInfo(&m_infoStruct.soga_wing_color1, value, updateFlags);
+	}
+	void SetSogaWingHighlightColor(EQ2Color value, bool updateFlags = true) {
+		SetInfo(&m_infoStruct.wing_color2, value, updateFlags);
 	}
 	void SetEquipHighlightColor(EQ2Color value, uint8_t index, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.equipment_highlights[index], value, updateFlags);

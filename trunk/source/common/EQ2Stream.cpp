@@ -39,6 +39,7 @@ EQ2Stream::EQ2Stream(unsigned int ip, unsigned short port) : Stream(ip, port) {
 	oversize_offset = 0;
 	CompressedOffset = 0;
 	State = EQStreamState::CLOSED;
+	bSentKeyRequest = false;
 }
 
 EQ2Stream::~EQ2Stream() {
@@ -164,6 +165,7 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 	}
 	case OP_SessionDisconnect: {
 		auto disconnect = static_cast<OP_SessionDisconnect_Packet*>(p);
+		LogDebug(LOG_NET, 0, "Client from %s is disconnecting with reason: %s", ToString().c_str(), GetDisconnectReasonString(disconnect->Reason));
 		SendDisconnect(disconnect->Reason);
 		break;
 	}
@@ -172,12 +174,14 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 		break;
 	}
 	case OP_ClientSessionUpdate: {
+		LogDebug(LOG_NET, 0, "Key request");
 		auto update = static_cast<OP_ClientSessionUpdate_Packet*>(p);
 		AdjustRates(ntohl(update->AverageDelta));
 		SendServerSessionUpdate(update->RequestID);
-		if (!crypto.isEncrypted())
+		if (!crypto.isEncrypted() && !bSentKeyRequest) {
 			SendKeyRequest();
-
+			bSentKeyRequest = true;
+		}
 		break;
 	}
 	case OP_Packet: {
@@ -1013,4 +1017,76 @@ void EQ2Stream::ProcessFragmentedData(ProtocolPacket* p) {
 	oversize_buffer = new unsigned char[oversize_length];
 	memcpy(oversize_buffer, p->buffer + 6, p->Size - 6);
 	oversize_offset = p->Size - 6;
+}
+
+const char* EQ2Stream::GetDisconnectReasonString(uint16_t reason){
+	const char* result;
+
+	switch (reason)
+	{
+	case 0:
+		result = "DisconnectReasonNone";
+		break;
+	case 1:
+		result = "DisconnectReasonConnectionRefused";
+		break;
+	case 2:
+		result = "DisconnectReasonTooManyConnections";
+		break;
+	case 3:
+		result = "DisconnectReasonApplication";
+		break;
+	case 4:
+		result = "DisconnectReasonTimeout";
+		break;
+	case 5:
+		result = "DisconnectReasonApplicationReleased";
+		break;
+	case 6:
+		result = "DisconnectReasonSocketError";
+		break;
+	case 8:
+		result = "DisconnectReasonOtherSideTerminated";
+		break;
+	case 9:
+		result = "DisconnectReasonManagerDeleted";
+		break;
+	case 11:
+		result = "DisconnectReasonConnectFail";
+		break;
+	case 10:
+		result = "DisconnectReasonConnectError";
+		break;
+	case 7:
+		result = "DisconnectReasonSocketErrorDuringNegotiation";
+		break;
+	case 12:
+		result = "DisconnectReasonLogicalPacketTooShort";
+		break;
+	case 13:
+		result = "DisconnectReasonLogicalPacketTooLong";
+		break;
+	case 14:
+		result = "DisconnectReasonConnectTimeout";
+		break;
+	case 15:
+		result = "DisconnectReasonConnectionReset";
+		break;
+	case 16:
+		result = "DisconnectReasonConnectionAborted";
+		break;
+	case 17:
+		result = "DisconnectReasonDnsFailure";
+		break;
+	case 18:
+		result = "DisconnectReasonUnableToCreateSocket";
+		break;
+	case 19:
+		result = "DisconnectReasonUnableToConfigureSocket";
+		break;
+	default:
+		result = "UnknownReason";
+		break;
+	}
+	return result;
 }

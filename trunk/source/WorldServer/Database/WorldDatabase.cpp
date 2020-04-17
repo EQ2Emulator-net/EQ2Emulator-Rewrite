@@ -476,8 +476,8 @@ uint32_t WorldDatabase::CreateCharacter(uint32_t account_id, OP_CreateCharacterR
 		packet->_class,
 		packet->gender,
 		packet->deity,
-		packet->body_size,
-		packet->body_age,
+		packet->floatSliders.bodyscale,
+		packet->floatSliders.bumpscale,
 		GetAppearanceID(packet->soga_wing_file),
 		GetAppearanceID(packet->soga_chest_file),
 		GetAppearanceID(packet->soga_legs_file),
@@ -527,15 +527,15 @@ uint32_t WorldDatabase::CreateCharacter(uint32_t account_id, OP_CreateCharacterR
 	SaveCharacterColors(char_id, "unknown_chest_color", packet->unknown_chest_color);
 	SaveCharacterColors(char_id, "pants_color", packet->pants_color);
 	SaveCharacterColors(char_id, "unknown_legs_color", packet->unknown_legs_color);
-	SaveCharacterColors(char_id, "unknown9", packet->unknown9);
-	SaveCharacterFloats(char_id, "eye_type", packet->eyes2[0], packet->eyes2[1], packet->eyes2[2]);
-	SaveCharacterFloats(char_id, "ear_type", packet->ears[0], packet->ears[1], packet->ears[2]);
-	SaveCharacterFloats(char_id, "eye_brow_type", packet->eye_brows[0], packet->eye_brows[1], packet->eye_brows[2]);
-	SaveCharacterFloats(char_id, "cheek_type", packet->cheeks[0], packet->cheeks[1], packet->cheeks[2]);
-	SaveCharacterFloats(char_id, "lip_type", packet->lips[0], packet->lips[1], packet->lips[2]);
-	SaveCharacterFloats(char_id, "chin_type", packet->chin[0], packet->chin[1], packet->chin[2]);
-	SaveCharacterFloats(char_id, "nose_type", packet->nose[0], packet->nose[1], packet->nose[2]);
-	SaveCharacterFloats(char_id, "body_size", packet->body_size, 0, 0);
+	SaveCharacterColors(char_id, "unknown9", packet->sliders.skull);
+	SaveCharacterColors(char_id, "eye_type", packet->sliders.eyes);
+	SaveCharacterColors(char_id, "ear_type", packet->sliders.ears);
+	SaveCharacterColors(char_id, "eye_brow_type", packet->sliders.eyebrow);
+	SaveCharacterColors(char_id, "cheek_type", packet->sliders.cheeks);
+	SaveCharacterColors(char_id, "lip_type", packet->sliders.mouth);
+	SaveCharacterColors(char_id, "chin_type", packet->sliders.chin);
+	SaveCharacterColors(char_id, "nose_type", packet->sliders.nose);
+	SaveCharacterFloats(char_id, "body_size", packet->sliders.bodyscale, 0, 0);
 
 	SaveCharacterColors(char_id, "soga_skin_color", packet->soga_skin_color);
 	SaveCharacterColors(char_id, "soga_eye_color", packet->soga_eye_color);
@@ -552,14 +552,14 @@ uint32_t WorldDatabase::CreateCharacter(uint32_t account_id, OP_CreateCharacterR
 	SaveCharacterColors(char_id, "soga_unknown_chest_color", packet->soga_unknown_chest_color);
 	SaveCharacterColors(char_id, "soga_pants_color", packet->soga_pants_color);
 	SaveCharacterColors(char_id, "soga_unknown_legs_color", packet->soga_unknown_legs_color);
-	//SaveCharacterColors(char_id, "soga_unknown13", packet->soga_unknown13);
-	SaveCharacterFloats(char_id, "soga_eye_type", packet->soga_eyes2[0], packet->soga_eyes2[1], packet->soga_eyes2[2]);
-	SaveCharacterFloats(char_id, "soga_ear_type", packet->soga_ears[0], packet->soga_ears[1], packet->soga_ears[2]);
-	SaveCharacterFloats(char_id, "soga_eye_brow_type", packet->soga_eye_brows[0], packet->soga_eye_brows[1], packet->soga_eye_brows[2]);
-	SaveCharacterFloats(char_id, "soga_cheek_type", packet->soga_cheeks[0], packet->soga_cheeks[1], packet->soga_cheeks[2]);
-	SaveCharacterFloats(char_id, "soga_lip_type", packet->soga_lips[0], packet->soga_lips[1], packet->soga_lips[2]);
-	SaveCharacterFloats(char_id, "soga_chin_type", packet->soga_chin[0], packet->soga_chin[1], packet->soga_chin[2]);
-	SaveCharacterFloats(char_id, "soga_nose_type", packet->soga_nose[0], packet->soga_nose[1], packet->soga_nose[2]);
+	SaveCharacterColors(char_id, "soga_unknown13", packet->sogaSliders.skull);
+	SaveCharacterColors(char_id, "soga_eye_type", packet->sogaSliders.eyes);
+	SaveCharacterColors(char_id, "soga_ear_type", packet->sogaSliders.ears);
+	SaveCharacterColors(char_id, "soga_eye_brow_type", packet->sogaSliders.eyebrow);
+	SaveCharacterColors(char_id, "soga_cheek_type", packet->sogaSliders.cheeks);
+	SaveCharacterColors(char_id, "soga_lip_type", packet->sogaSliders.mouth);
+	SaveCharacterColors(char_id, "soga_chin_type", packet->sogaSliders.chin);
+	SaveCharacterColors(char_id, "soga_nose_type", packet->sogaSliders.nose);
 
 	return char_id;
 }
@@ -650,6 +650,12 @@ void WorldDatabase::SaveCharacterColors(uint32_t char_id, const char* type, EQ2C
 	uint8_t green = (uint8_t)(color.Green * 255);
 	uint8_t blue = (uint8_t)(color.Blue * 255);
 	if (!Query("INSERT INTO char_colors (char_id, type, red, green, blue) VALUES (%u, '%s', %u, %u, %u)", char_id, type, red, green, blue)) {
+		//LogWrite(WORLD__ERROR, 0, "World", "Error in SaveCharacterColors query: %s", GetError());
+	}
+}
+
+void WorldDatabase::SaveCharacterColors(uint32_t char_id, const char* type, int8_t* color) {
+	if (!Query("INSERT INTO char_colors (char_id, signed_value, type, red, green, blue) VALUES (%u, %u, '%s', %i, %i, %i)", char_id, 1, type, color[0], color[1], color[2])) {
 		//LogWrite(WORLD__ERROR, 0, "World", "Error in SaveCharacterColors query: %s", GetError());
 	}
 }

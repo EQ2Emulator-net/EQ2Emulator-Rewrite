@@ -35,6 +35,7 @@ public:
 	void UpdateStartingTitles(uint32_t char_id, uint8_t class_id, uint8_t race_id, uint8_t gender_id);
 	bool InsertCharacterStats(uint32_t character_id, uint8_t class_id, uint8_t race_id);
 	void SaveCharacterColors(uint32_t char_id, const char* type, EQ2ColorFloat color);
+	void SaveCharacterColors(uint32_t char_id, const char* type, int8_t* color);
 	void SaveCharacterFloats(uint32_t char_id, const char* type, float float1, float float2, float float3);
 	uint8_t CheckNameFilter(const char* name);
 

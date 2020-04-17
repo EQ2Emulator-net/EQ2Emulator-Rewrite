@@ -19,6 +19,8 @@ public:
 private:
 	void RegisterElements() {
 		elements.push_back(new PacketUInt32(Session));
-		elements.push_back(new PacketUInt16(Reason));
+		auto e = new PacketUInt16(Reason);
+		e->SetIsNetOrder(true);
+		elements.push_back(e);
 	}
 };

@@ -52,12 +52,15 @@ public:
 	uint16_t unknown10; // version = 57080
 	std::string race_file; // Type = "EQ2_16Bit_String" / >
 	EQ2ColorFloat skin_color;
-	EQ2ColorFloat skin_color2;// not in 57080
+	EQ2ColorFloat skin_color2;
 	EQ2ColorFloat eye_color;
 	EQ2ColorFloat hair_color1;
 	EQ2ColorFloat hair_color2;
 	EQ2ColorFloat hair_highlight; // version = 869
-	uint8_t unknown8[26]; // Size = "26" / >
+	union {
+		SpawnMorphSliders sliders;
+		int8_t sliderBytes[26];
+	};
 	std::string hair_file; // " Type = "EQ2_16Bit_String" / >
 	EQ2ColorFloat hair_type_color;
 	EQ2ColorFloat hair_type_highlight_color;
@@ -73,16 +76,10 @@ public:
 	std::string legs_file;
 	EQ2ColorFloat pants_color;
 	EQ2ColorFloat unknown_legs_color;
-	EQ2ColorFloat unknown9;
-	float eyes2[3]; // Size = "3" / >
-	float ears[3]; // Size = "3" / >
-	float eye_brows[3]; // Size = "3" / >
-	float cheeks[3]; // Size = "3" / >
-	float lips[3]; // Size = "3" / >
-	float chin[3]; // Size = "3" / >
-	float nose[3]; // Size = "3" / >
-	float body_size;
-	float body_age;
+	union {
+		SpawnFloatMorphSliders floatSliders;
+		float sliderFloats[26];
+	};
 	uint8_t soga_version;
 	std::string soga_race_file; // Type = "EQ2_16Bit_String" / >
 	EQ2ColorFloat soga_skin_color;
@@ -91,7 +88,10 @@ public:
 	EQ2ColorFloat soga_hair_color2;
 	EQ2ColorFloat soga_hair_highlight;
 	EQ2ColorFloat soga_unknown_color; //869
-	uint8_t soga_unknown11[26]; // Size = "26" / >
+	union {
+		SpawnMorphSliders sogaSliders;
+		int8_t sogaSliderBytes[26];
+	};
 	std::string soga_hair_file; // Type = "EQ2_16Bit_String" / >
 	EQ2ColorFloat soga_hair_type_color;
 	EQ2ColorFloat soga_hair_type_highlight_color;
@@ -107,16 +107,10 @@ public:
 	std::string soga_legs_file;
 	EQ2ColorFloat soga_pants_color;
 	EQ2ColorFloat soga_unknown_legs_color;
-	EQ2ColorFloat soga_unknown12;
-	float soga_eyes2[3]; // Size = "3" / >
-	float soga_ears[3]; // Size = "3" / >
-	float soga_eye_brows[3]; // Size = "3" / >
-	float soga_cheeks[3]; // Size = "3" / >
-	float soga_lips[3]; // Size = "3" / >
-	float soga_chin[3]; // Size = "3" / >
-	float soga_nose[3]; // Size = "3" / >
-	float soga_body_size;
-	float soga_body_age;
+	union {
+		SpawnFloatMorphSliders sogaFloatSliders;
+		float sogaSliderFloats[26];
+	};
 
 private:
 	void RegisterElements() {
@@ -147,15 +141,17 @@ private:
 			RegisterUInt16(unknown10);
 		Register16String(race_file);
 		RegisterEQ2ColorFloat(skin_color);
-		if (GetVersion() < 57080)
-			RegisterEQ2ColorFloat(skin_color2);// not in 57080
+		if (GetVersion() < 57080) //moved in 57080
+			RegisterEQ2ColorFloat(skin_color2);
 		RegisterEQ2ColorFloat(eye_color);
+		if (GetVersion() >= 57080) //moved in 57080
+			RegisterEQ2ColorFloat(skin_color2);
 		RegisterEQ2ColorFloat(hair_color1);
 		RegisterEQ2ColorFloat(hair_color2);
 		if (GetVersion() >= 869)
 			RegisterEQ2ColorFloat(hair_highlight);
-		uint8_t& Unknown8 = unknown8[0]; // Size = "26" / >
-		RegisterUInt8(Unknown8)->SetCount(26);
+		RescopeArrayElement(sliderBytes);
+		RegisterInt8(sliderBytes)->SetCount(26);
 		Register16String(hair_file);
 		RegisterEQ2ColorFloat(hair_type_color);
 		RegisterEQ2ColorFloat(hair_type_highlight_color);
@@ -173,23 +169,8 @@ private:
 		Register16String(legs_file);
 		RegisterEQ2ColorFloat(pants_color);
 		RegisterEQ2ColorFloat(unknown_legs_color);
-		RegisterEQ2ColorFloat(unknown9);
-		float& Eyes2 = eyes2[0];
-		RegisterFloat(Eyes2)->SetCount(3);
-		float& Ears = ears[0];
-		RegisterFloat(Ears)->SetCount(3);
-		float& Eye_brow = eye_brows[0];
-		RegisterFloat(Eye_brow)->SetCount(3);
-		float& Cheeks = cheeks[0];
-		RegisterFloat(Cheeks)->SetCount(3);
-		float& Lips = lips[0];
-		RegisterFloat(Lips)->SetCount(3);
-		float& Chin = chin[0];
-		RegisterFloat(Chin)->SetCount(3);
-		float& Nose = nose[0];
-		RegisterFloat(Nose)->SetCount(3);
-		RegisterFloat(body_size);
-		RegisterFloat(body_age);
+		RescopeArrayElement(sliderFloats);
+		RegisterFloat(sliderFloats)->SetCount(26);
 
 		if (GetVersion() <= 283) {
 			return;
@@ -204,8 +185,8 @@ private:
 		RegisterEQ2ColorFloat(soga_hair_highlight);
 		if (GetVersion() >= 869)
 			RegisterEQ2ColorFloat(soga_unknown_color);
-		uint8_t& Soga_unknown11 = soga_unknown11[0]; // Size = "26" / >
-		RegisterUInt8(Soga_unknown11)->SetCount(26);
+		RescopeArrayElement(sogaSliderBytes);
+		RegisterInt8(sogaSliderBytes)->SetCount(26);
 		Register16String(soga_hair_file);
 		RegisterEQ2ColorFloat(soga_hair_type_color);
 		RegisterEQ2ColorFloat(soga_hair_type_highlight_color);
@@ -221,23 +202,8 @@ private:
 		Register16String(soga_legs_file);
 		RegisterEQ2ColorFloat(soga_pants_color);
 		RegisterEQ2ColorFloat(soga_unknown_legs_color);
-		RegisterEQ2ColorFloat(soga_unknown12);
-		float& Soga_eyes2 = soga_eyes2[0];
-		RegisterFloat(Soga_eyes2)->SetCount(3);
-		float& Soga_ears = soga_ears[0];
-		RegisterFloat(Soga_ears)->SetCount(3);
-		float& Soga_eye_brows = soga_eye_brows[0];
-		RegisterFloat(Soga_eye_brows)->SetCount(3);
-		float& Soga_cheeks = soga_cheeks[0];
-		RegisterFloat(Soga_cheeks)->SetCount(3);
-		float& Soga_lips = soga_lips[0];
-		RegisterFloat(Soga_lips)->SetCount(3);
-		float& Soga_chin = soga_chin[0];
-		RegisterFloat(Soga_chin)->SetCount(3);
-		float& Soga_nose = soga_nose[0];
-		RegisterFloat(Soga_nose)->SetCount(3);
-		RegisterFloat(soga_body_size);
-		RegisterFloat(soga_body_age);
+		RescopeArrayElement(sogaSliderFloats);
+		RegisterFloat(sogaSliderFloats)->SetCount(26);
 	}
 
 };

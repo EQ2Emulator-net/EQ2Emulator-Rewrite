@@ -424,8 +424,8 @@ struct SpawnInfoStruct {
 	uint32_t						model_type;
 	uint32_t						soga_model_type;
 	uint32_t						equipment_types[25];
-	uint16_t						unknown7a[2];
-	uint16_t						unknown7aa[2];
+	uint32_t						unknownType26;
+	uint32_t						unknownType27;
 	uint32_t						hair_type_id;
 	uint32_t						facial_hair_type_id;
 	uint32_t						wing_type_id;
@@ -510,15 +510,24 @@ struct SpawnInfoStruct {
 	EQ2Color						equipment_colors[25];
 	EQ2Color						hair_type_color;
 	EQ2Color						hair_face_color;
-	EQ2Color						unknown7b[2];
+	EQ2Color						unknownType26Color;
+	EQ2Color                        unknownType27Color;
 	EQ2Color						wing_color1;
+	EQ2Color                        soga_wing_color1;
+	EQ2Color                        chest_type_color;
+	EQ2Color                        legs_type_color;
+	EQ2Color                        unknown_new_type_color;
 	EQ2Color						unknown10[3];
 	EQ2Color						equipment_highlights[25];
-	EQ2Color						unknown7c[2];
+	EQ2Color						unknownType26Highlight;
+	EQ2Color                        unknownType27Highlight;
 	EQ2Color						hair_type_highlight_color;
 	EQ2Color						hair_face_highlight_color;
 	EQ2Color						wing_color2;
-	EQ2Color						unknown11[3];
+	EQ2Color                        soga_wing_color2;
+	EQ2Color						chest_type_highlight;
+	EQ2Color                        legs_type_highlight;
+	EQ2Color                        unknown_new_type_highlight;
 	EQ2Color						soga_hair_type_color;
 	EQ2Color						soga_hair_type_highlight_color;
 	EQ2Color						soga_hair_face_color;
@@ -695,11 +704,9 @@ public:
 			RegisterUInt32(equipment_types)->SetCount(25);
 		}
 		if (version >= 1188) {
-			RescopeArrayElement(unknown7a);
-			RegisterUInt16(unknown7a)->SetCount(2);
+			RegisterUInt32(unknownType26);
 			if (version >= 57080) {
-				RescopeArrayElement(unknown7aa);
-				RegisterUInt16(unknown7aa)->SetCount(2);
+				RegisterUInt32(unknownType27);
 			}
 		}
 
@@ -733,7 +740,6 @@ public:
 			}
 			else {
 				RegisterUInt32(unknown_new_type_id);
-				//RegisterUInt32(unknown_new_type_id2);
 			}
 		}
 
@@ -764,37 +770,35 @@ public:
 		RescopeArrayElement(equipment_colors);
 		RegisterEQ2Color(equipment_colors)->SetCount(colorCount);
 		if (version >= 1188) {
-			RescopeArrayElement(unknown7b);
-			RegisterEQ2Color(unknown7b)->SetCount(2);
+			RegisterEQ2Color(unknownType26Color);
+			RegisterEQ2Color(unknownType27Color);
 		}
 		RegisterEQ2Color(hair_type_color);
 		RegisterEQ2Color(hair_face_color);
 		if (version > 283) {
 			RegisterEQ2Color(wing_color1);
 		}
-		RescopeArrayElement(unknown10);
-		if (version < 996) {
-			RegisterEQ2Color(unknown10)->SetCount(2);
+
+		RegisterEQ2Color(chest_type_color);
+		RegisterEQ2Color(legs_type_color);
+		
+		if (version >= 996) {
+			RegisterEQ2Color(unknown_new_type_color);
 		}
-		else {
-			RegisterEQ2Color(unknown10)->SetCount(3);
-		}
+
 		RescopeArrayElement(equipment_highlights);
 		RegisterEQ2Color(equipment_highlights)->SetCount(25);
 		if (version >= 1188) {
-			RescopeArrayElement(unknown7c);
-			RegisterEQ2Color(unknown7c)->SetCount(2);
+			RegisterEQ2Color(unknownType26Highlight);
+			RegisterEQ2Color(unknownType27Highlight);
 		}
 		RegisterEQ2Color(hair_type_highlight_color);
 		RegisterEQ2Color(hair_face_highlight_color);
 		RegisterEQ2Color(wing_color2);
-		RescopeArrayElement(unknown11);
-		if (version < 996) {
-			RegisterEQ2Color(unknown11)->SetCount(2);
-		}
-		else {
-			RegisterEQ2Color(unknown11)->SetCount(3);
-		}
+
+		RegisterEQ2Color(chest_type_highlight);
+		RegisterEQ2Color(legs_type_highlight);
+		RegisterEQ2Color(unknown_new_type_highlight);
 
 		if (version > 283) {
 			RegisterEQ2Color(soga_hair_type_color);
@@ -805,9 +809,9 @@ public:
 			if (version >= 60055) {
 				RegisterEQ2Color(skin_color);
 				RegisterEQ2Color(eye_color);
+				RegisterEQ2Color(kunark_unknown_color1);
 				RegisterEQ2Color(soga_eye_color);
 				RegisterEQ2Color(soga_skin_color);
-				RegisterEQ2Color(kunark_unknown_color1);
 				RegisterEQ2Color(kunark_unknown_color2);
 			}
 		}

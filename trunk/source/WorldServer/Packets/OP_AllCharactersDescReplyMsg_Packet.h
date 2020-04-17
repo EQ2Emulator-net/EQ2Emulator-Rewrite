@@ -18,6 +18,19 @@ struct SpawnMorphSliders {
 	int8_t bumpscale;
 };
 
+struct SpawnFloatMorphSliders {
+	EQ2ColorFloat skull;
+	EQ2ColorFloat eyes;
+	EQ2ColorFloat ears;
+	EQ2ColorFloat eyebrow;
+	EQ2ColorFloat cheeks;
+	EQ2ColorFloat mouth;
+	EQ2ColorFloat chin;
+	EQ2ColorFloat nose;
+	float bodyscale;
+	float bumpscale;
+};
+
 
 class OP_AllCharactersDescReplyMsg_Packet : public EQ2Packet {
 public:
@@ -92,7 +105,6 @@ public:
 			SpawnMorphSliders sliders;
 			int8_t sliderBytes[26];
 		};
-		uint8_t unknown10[8]; // " Type = "int8" Size = "9" / >
 		EQ2Color hair_color1;
 		EQ2Color hair_color2;
 		uint8_t unknown11[13]; // " Type = "int8" Size = "13" / >
@@ -162,14 +174,6 @@ public:
 			legs_type = 0;
 			memset(sliderBytes, 0, 26);
 			memset(sogaSliderBytes, 0, 26);
-			unknown10[0] = 0;
-			unknown10[1] = 0;
-			unknown10[2] = 0;
-			unknown10[3] = 0;
-			unknown10[4] = 0;
-			unknown10[5] = 0;
-			unknown10[6] = 0;
-			unknown10[7] = 0;
 			
 			unsigned char tmp[] = { 0xFF, 0xFF, 0xFF, 0x61, 0x00, 0x2C, 0x04, 0xA5, 0x09, 0x02, 0x0F, 0x00, 0x00 };
 			for (uint32_t y = 0; y < sizeof(tmp); y++)
@@ -273,14 +277,9 @@ public:
 			RegisterEQ2Color(unknown_legs_color);
 			RescopeArrayElement(sliderBytes);
 			RegisterInt8(sliderBytes)->SetCount(26);
-
-			uint8_t& Unknown10 = unknown10[0];
-			RegisterUInt8(Unknown10)->SetCount(GetVersion() > 283 ? 8 : 1); // " Type = "int8" Size = "8" / >
-
-			if (GetVersion() <= 283) {
-				return;
-			}
-
+			RegisterUInt16(mountType);
+			RegisterEQ2Color(mountColor1);
+			RegisterEQ2Color(mountColor2);
 			RegisterEQ2Color(hair_color1);
 			RegisterEQ2Color(hair_color2);
 			uint8_t& Unknown11 = unknown11[0]; // " Type = "int8" Size = "13" / >

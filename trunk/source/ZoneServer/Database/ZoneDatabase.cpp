@@ -124,7 +124,7 @@ bool ZoneDatabase::LoadCharacter(uint32_t char_id, uint32_t account_id, std::sha
 				c.Red = result2.GetUInt8(1);
 				c.Green = result2.GetUInt8(2);
 				c.Blue = result2.GetUInt8(3);
-				entity->SetSkinColor(c, false);
+				entity->SetEyeColor(c, false);
 			}
 			else if (type == "hair_color1") {
 				EQ2Color c;
@@ -190,40 +190,32 @@ bool ZoneDatabase::LoadCharacter(uint32_t char_id, uint32_t account_id, std::sha
 				entity->SetWingHighlightColor(c, false);
 			}
 			else if (type == "shirt_color") {
-				/*
-				Not in struct?
 				EQ2Color c;
 				c.Red = result2.GetUInt8(1);
 				c.Green = result2.GetUInt8(2);
 				c.Blue = result2.GetUInt8(3);
-				*/
+				entity->SetChestColor(c, false);
 			}
 			else if (type == "unknown_chest_color") {
-				/*
-				Not in struct
 				EQ2Color c;
 				c.Red = result2.GetUInt8(1);
 				c.Green = result2.GetUInt8(2);
 				c.Blue = result2.GetUInt8(3);
-				*/
+				entity->SetChestHighlightColor(c, false);
 			}
 			else if (type == "pants_color") {
-				/*
-				Not in struct
 				EQ2Color c;
 				c.Red = result2.GetUInt8(1);
 				c.Green = result2.GetUInt8(2);
 				c.Blue = result2.GetUInt8(3);
-				*/
+				entity->SetLegsColor(c, false);
 			}
 			else if (type == "unknown_legs_color") {
-				/*
-				Not in struct
 				EQ2Color c;
 				c.Red = result2.GetUInt8(1);
 				c.Green = result2.GetUInt8(2);
 				c.Blue = result2.GetUInt8(3);
-				*/
+				entity->SetLegsHighlightColor(c, false);
 			}
 			else if (type == "unknown9") {
 				//guessing since this is right before eye type this is skull?

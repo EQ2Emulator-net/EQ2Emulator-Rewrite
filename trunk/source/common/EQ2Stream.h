@@ -106,11 +106,12 @@ private:
 	void SendServerSessionUpdate(uint16_t requestID);
 	void SendKeyRequest();
 
-	
+	static const char* GetDisconnectReasonString(uint16_t reason);
 
 	Crypto crypto;
 	bool Compressed;
 	bool Encoded;
+	bool bSentKeyRequest;
 	z_stream stream;
 	uint32_t oversize_offset;
 	uint32_t oversize_length;
