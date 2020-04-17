@@ -28,9 +28,6 @@ public:
 			return data;
 		}
 
-		LogError(LOG_PACKET, 0, "Pre-Encode");
-		DumpBytes(data, n);
-
 		//Align the buf to 4 bytes for quicker XORing
 		uint32_t notAligned = (n % 4);
 		if (notAligned) {
@@ -70,9 +67,6 @@ public:
 			//XOR with just the relevant values
 			encoded[count] ^= (input[count] & mask);
 		}
-
-		LogError(LOG_PACKET, 0, "Post encode");
-		DumpBytes(buffer.data(), n);
 
 		return buffer.data();
 	}
