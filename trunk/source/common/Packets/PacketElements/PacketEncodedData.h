@@ -61,7 +61,7 @@ public:
 
 		uint32_t tmp = 0;
 		WriteLocker lock = xorBuf->GetBufLock();
-		const uint8_t* p = xorBuf->Encode(buf.data(), static_cast<uint32_t>(buf.size()));
+		const uint8_t* p = xorBuf->Decode(buf.data(), static_cast<uint32_t>(buf.size()));
 		return PacketSubstruct::ReadElement(p, tmp, static_cast<uint32_t>(buf.size()));
 	}
 

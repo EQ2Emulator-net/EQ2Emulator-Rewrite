@@ -125,6 +125,9 @@ void XmlStructDumper::ElementToXml(PacketElement* e, xml_document<>& doc, xml_no
 	if (auto pe = dynamic_cast<PacketPackedData*>(e)) {
 		dataNode->append_attribute(doc.allocate_attribute("Type", "PackedData"));
 		dataNode->append_attribute(doc.allocate_attribute("IncludeSize", pe->bIncludeSize ? "true" : "false"));
+		if (e->ifVariableSet) {
+			dataNode->append_attribute(doc.allocate_attribute("IfVariableSet", doc.allocate_string(e->ifVariableSet->name)));
+		}
 		for (auto& itr : static_cast<PacketSubstruct*>(e)->elements) {
 			ElementToXml(itr, doc, *dataNode);
 		}
