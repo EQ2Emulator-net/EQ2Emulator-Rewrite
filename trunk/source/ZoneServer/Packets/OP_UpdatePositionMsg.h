@@ -88,8 +88,6 @@ public:
 			return;
 		}
 
-		LogDebug(LOG_PLAYER, 0, "Player prediction timestamps: %u", deltaMS);
-
 		auto controller = client->GetController();
 
 		//If the crc has not changed since our last update don't bother decoding the data
@@ -103,20 +101,20 @@ public:
 			return;
 		}
 		
-		controller->ApplyPredictionUpdate(deltaMS, static_cast<const SpawnPositionStruct&>(movement));
+		controller->ApplyPredictionUpdate(timestamp, static_cast<const SpawnPositionStruct&>(movement));
 	}
 
 	PacketPackedData packedData;
 	Substruct_MovementData movement;
 
-	uint32_t deltaMS;
+	uint32_t timestamp;
 	uint32_t crc;
 	uint16_t spawn_index;
 
 private:
 	void RegisterElements() {
 		RegisterOversizedByte(spawn_index);
-		RegisterUInt32(deltaMS);
+		RegisterUInt32(timestamp);
 		RegisterUInt32(crc);
 		RegisterSubstruct(packedData);
 	}
