@@ -239,8 +239,10 @@ public:
 			RegisterUInt16(race_type);
 			RegisterEQ2Color(skin_color);
 			RegisterEQ2Color(eye_color);
-			EQ2EquipmentItem& Equip = equip[0]; // " Type = "EQ2_EquipmentItem" Size = "25" / >
-			RegisterEQ2EquipmentItem(Equip)->SetCount(25);
+			EQ2EquipmentItem& Equip = equip[0];
+			//NOTE: if we ever send a higher net appearance version we will need to check that when determining
+			//Whether to use the short or int type id
+			RegisterEQ2EquipmentItem(Equip, true)->SetCount(25);
 
 			if (GetVersion() <= 283) {
 				RescopeArrayElement(sliderBytes);

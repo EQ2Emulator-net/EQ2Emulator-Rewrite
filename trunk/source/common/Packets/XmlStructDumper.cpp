@@ -191,6 +191,9 @@ void XmlStructDumper::ElementToXml(PacketElement* e, xml_document<>& doc, xml_no
 		if (e->ifVariableSet) {
 			dataNode->append_attribute(doc.allocate_attribute("IfVariableSet", doc.allocate_string(e->ifVariableSet->name)));
 		}
+		if (auto ei = dynamic_cast<PacketEQ2EquipmentItem*>(e)) {
+			dataNode->append_attribute(doc.allocate_attribute("bShortType", ei->bShortType ? "true" : "false"));
+		}
 	}
 	parent.append_node(dataNode);
 }

@@ -7,6 +7,8 @@
 #include "../Packets/OP_EqSetControlGhostCmd_Packet.h"
 #include "../Packets/OP_SetRemoteCmdsMsg_Packet.h"
 #include "../Packets/OP_TeleportWithinZoneNoReloadMsg_Packet.h"
+#include "../Controllers/PlayerController.h"
+#include "../Spawns/Spawn.h"
 
 CommandProcess::CommandProcess() {
 	RegisterCommands();
@@ -161,5 +163,17 @@ void CommandProcess::CommandMove(const std::shared_ptr<Client>& client, Separato
 }
 
 void CommandProcess::CommandTest(const std::shared_ptr<Client>& client, Separator& sep) {
+	if (!sep.IsNumber(0)) {
+		return;
+	}
 
+	auto controller = client->GetController();
+	auto target = controller->GetTarget();
+	if (!target) {
+		return;
+	}
+
+	uint32_t shift = sep.GetUInt32(0);
+
+	target->ToggleEntityFlags(1 << shift);
 }

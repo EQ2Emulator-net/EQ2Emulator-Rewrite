@@ -5,14 +5,15 @@
 
 struct EQ2EquipmentItem {
 	EQ2EquipmentItem() : type(0) {}
-	uint16_t type;
+	uint32_t type;
 	EQ2Color color;
 	EQ2Color highlight;
 };
 
 class PacketEQ2EquipmentItem : public PacketElement {
+	friend class XmlStructDumper;
 public:
-	PacketEQ2EquipmentItem(EQ2EquipmentItem& in_int) : element(&in_int) {
+	PacketEQ2EquipmentItem(EQ2EquipmentItem& in_int, bool _bShortType) : element(&in_int), bShortType(_bShortType) {
 
 	}
 
@@ -23,22 +24,52 @@ public:
 			return false;
 		}
 
-		memcpy(element, srcbuf + offset, GetSize());
-		offset += GetSize();
+		if (bShortType) {
+			for (int i = 0; i < count; i++) {
+				EQ2EquipmentItem& e = element[i];
+				e.type = *reinterpret_cast<const uint16_t*>(srcbuf + offset);
+				offset += 2;
+				memcpy(&e.color, srcbuf + offset, 6);
+				offset += 6;
+			}
+		}
+		else {
+			uint32_t readSize = GetSize();
+			memcpy(element, srcbuf + offset, readSize);
+			offset += readSize;
+		}
 
 		return true;
 	}
 
 	void WriteElement(unsigned char* outbuf, uint32_t& offset) {
-		memcpy(outbuf + offset, element, GetSize());
-		offset += GetSize();
+		if (bShortType) {
+			for (int i = 0; i < count; i++) {
+				const EQ2EquipmentItem& e = element[i];
+				*reinterpret_cast<uint16_t*>(outbuf + offset) = static_cast<uint16_t>(e.type);
+				offset += 2;
+				memcpy(outbuf + offset, &e.color, 6);
+				offset += 6;
+			}
+		}
+		else {
+			uint32_t writeSize = GetSize();
+			memcpy(outbuf + offset, element, writeSize);
+			offset += writeSize;
+		}
+		
 	}
 
 	uint32_t GetSize() {
+		if (bShortType) {
+			//Type was changed from a 2 byte value to a 4 byte value in later clients
+			return 8 * count;
+		}
+
 		return sizeof(EQ2EquipmentItem) * count;
 	}
 
 private:
 	EQ2EquipmentItem* element;
-
+	bool bShortType;
 };

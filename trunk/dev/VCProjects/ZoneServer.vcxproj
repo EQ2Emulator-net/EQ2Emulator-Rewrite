@@ -56,6 +56,7 @@
     <ClCompile Include="..\..\source\common\util.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Commands\CommandProcess.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Controllers\BaseController.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Controllers\PlayerController.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Database\ZoneDatabase.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\main.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>

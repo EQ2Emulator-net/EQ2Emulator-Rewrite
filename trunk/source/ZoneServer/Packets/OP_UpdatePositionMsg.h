@@ -88,30 +88,36 @@ public:
 			return;
 		}
 
+		LogDebug(LOG_PLAYER, 0, "Player prediction timestamps: %u", deltaMS);
+
+		auto controller = client->GetController();
+
+		//If the crc has not changed since our last update don't bother decoding the data
+		if (!controller->CheckPredictionCrc(crc)) {
+			return;
+		}
+
 		auto xorBuf = client->encoded_packets.GetBuffer(EEncoded_UpdatePosition);
 		if (!movement.DecodeData(xorBuf)) {
 			LogDebug(LOG_PACKET, 0, "Could not Decode an UpdatePositionMsg?");
 			return;
 		}
-
-		auto controller = client->GetController();
-		auto entity = controller->GetControlled();
-
-		if (entity) {
-			entity->SetSpawnPositionData(static_cast<const SpawnPositionStruct&>(movement));
-		}
+		
+		controller->ApplyPredictionUpdate(deltaMS, static_cast<const SpawnPositionStruct&>(movement));
 	}
 
 	PacketPackedData packedData;
 	Substruct_MovementData movement;
 
-	uint64_t timestamp;
+	uint32_t deltaMS;
+	uint32_t crc;
 	uint16_t spawn_index;
 
 private:
 	void RegisterElements() {
 		RegisterOversizedByte(spawn_index);
-		RegisterUInt64(timestamp);
+		RegisterUInt32(deltaMS);
+		RegisterUInt32(crc);
 		RegisterSubstruct(packedData);
 	}
 };

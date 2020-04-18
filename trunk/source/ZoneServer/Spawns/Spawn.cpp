@@ -13,6 +13,7 @@ Spawn::Spawn() : m_updateFlagsByte(0), m_zone(nullptr) {
 	memset(&m_infoStruct, 0, sizeof(m_infoStruct));
 	memset(&m_visStruct, 0, sizeof(m_visStruct));
 	m_spawnID = GetNextID();
+	movementTimestamp = Timer::GetCurrentTime2();
 }
 
 Spawn::~Spawn() {
@@ -28,7 +29,7 @@ void Spawn::Process() {
 			std::shared_ptr<Client> client = c.lock();
 			if (client) {
 				// Don't send updates to yourself
-				if (client->GetController()->GetControlled() == shared_from_this())
+				if (client->GetController()->GetControlled().get() == this)
 					continue;
 
 				OP_UpdateGhostCmdMsg_Packet* packet = new OP_UpdateGhostCmdMsg_Packet(client->GetVersion());
@@ -43,7 +44,7 @@ void Spawn::Process() {
 					packet->InsertSpawnInfoData(*GetInfoStruct(), index);
 
 				if (update.m_posChanged)
-					packet->InsertSpawnPosData(*GetPosStruct(), index, true, Timer::GetCurrentTime2());
+					packet->InsertSpawnPosData(*GetPosStruct(), index, true, movementTimestamp);
 
 				if (update.m_visChanged)
 					packet->InsertSpawnVisData(*GetVisStruct(), index);

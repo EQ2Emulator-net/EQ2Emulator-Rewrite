@@ -216,6 +216,9 @@
     <ClCompile Include="..\..\source\ZoneServer\Controllers\BaseController.cpp">
       <Filter>source\Controllers</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Controllers\PlayerController.cpp">
+      <Filter>source\Controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h">

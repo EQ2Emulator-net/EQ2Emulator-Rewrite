@@ -1013,7 +1013,7 @@ void EQ2Stream::SendServerSessionUpdate(uint16_t requestID) {
 	uint32_t received = ntohl(ReceivedPackets);
 
 	update->RequestID = requestID;
-	update->CurrentTime = Timer::GetCurrentTime2();
+	update->CurrentTime = ntohl(Timer::GetCurrentTime2());
 	update->SentPackets = sent;
 	update->SentPackets2 = sent;
 	update->ReceivedPackets = received;

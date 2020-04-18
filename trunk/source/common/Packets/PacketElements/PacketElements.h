@@ -52,7 +52,7 @@
 #define RegisterArray(e, t) (static_cast<PacketArray<t>*>(PushElementForRegistration(new PacketArray<t>(e), #e, PacketArrayBase))->SetVersion(GetVersion()), static_cast<PacketArrayBase*>(elements.back()))
 #define RegisterEQ2Color(e) PushElementForRegistration(new PacketEQ2Color(e), #e, PacketEQ2Color)
 #define RegisterEQ2ColorFloat(e) PushElementForRegistration(new PacketEQ2ColorFloat(e), #e, PacketEQ2ColorFloat)
-#define RegisterEQ2EquipmentItem(e) PushElementForRegistration(new PacketEQ2EquipmentItem(e), #e, PacketEQ2EquipmentItem)
+#define RegisterEQ2EquipmentItem(e, bShortType) PushElementForRegistration(new PacketEQ2EquipmentItem(e, (bShortType)), #e, PacketEQ2EquipmentItem)
 #define RegisterOversizedByte(e) PushElementForRegistration(new PacketOversizedByte(e), #e, PacketOversizedByte)
 #define RegisterFloat(e) PushElementForRegistration(new PacketFloat(e), #e, PacketFloat)
 #define RegisterBool(e) PushElementForRegistration(new PacketBool(e), #e, PacketBool);

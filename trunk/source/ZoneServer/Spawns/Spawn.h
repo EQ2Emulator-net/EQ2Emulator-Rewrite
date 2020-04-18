@@ -8,7 +8,7 @@
 #include "Sign.h"
 
 //EntityFlagValues
-const uint32_t EntityFlagAttackable = 1; //in combat maybe?
+const uint32_t EntityFlagAlive = 1;
 const uint32_t EntityFlagStaticObject = 1 << 2;
 const uint32_t EntityFlagAfk = 1 << 16; // Check if afk added in 1188 or if it was in icon previously
 const uint32_t EntityFlagRoleplaying = 1 << 17;
@@ -75,88 +75,64 @@ private:
 	uint32_t m_spawnID;
 
 	std::vector<std::weak_ptr<Client> > m_clients;
+	uint32_t movementTimestamp;
 
 public:
 	/* I put the template functions down here so they aren't cluttering up the rest of the class */
-	template <class Field, class Value>
-	void Set(Field* field, Value value) {
+	template <typename Field, typename Value>
+	bool Set(Field* field, const Value& value, bool checkChanged) {
+		if (checkChanged) {
+			Field oldVal = *field;
+			*field = static_cast<Field>(value);
+			return memcmp(&oldVal, field, sizeof(Field)) != 0;
+		}
+
 		*field = static_cast<Field>(value);
+		return false;
 	}
 
-	template <class Field>
-	void Set(Field* field, const char* value) {
-		strcpy(field, value);
+	template<typename Value>
+	bool Set(std::string* field, const Value& value, bool checkChanged) {
+		if (checkChanged) {
+			bool bChanged = *field != value;
+			if (bChanged) {
+				*field = value;
+			}
+			return bChanged;
+		}
+
+		*field = value;
+		return false;
 	}
 
-	template <class Field, class Value>
-	void SetPos(Field* field, Value value, bool setUpdateFlags = true) {
-		Set(field, value);
-
-		if (setUpdateFlags)
+	template <typename Field, typename Value>
+	void SetPos(Field* field, const Value& value, bool setUpdateFlags = true) {
+		if (Set(field, value, setUpdateFlags))
 			m_updateFlags.m_posChanged = true;
 	}
 
-	template <class Field, class Value>
-	void SetVis(Field* field, Value value, bool setUpdateFlags = true) {
-		Set(field, value);
-
-		if (setUpdateFlags)
+	template <typename Field, typename Value>
+	void SetVis(Field* field, const Value& value, bool setUpdateFlags = true) {
+		if (Set(field, value, setUpdateFlags))
 			m_updateFlags.m_visChanged = true;
 	}
 
-	template <class Field, class Value>
-	void SetInfo(Field* field, Value value, bool setUpdateFlags = true) {
-		Set(field, value);
-
-		if (setUpdateFlags)
+	template <typename Field, typename Value>
+	void SetInfo(Field* field, const Value& value, bool setUpdateFlags = true) {
+		if (Set(field, value, setUpdateFlags))
 			m_updateFlags.m_infoChanged = true;
 	}
 
-	template <class Field, class Value>
-	void SetTitle(Field* field, Value value, bool setUpdateFlags = true) {
-		Set(field, value);
-
-		if (setUpdateFlags)
+	template <typename Field, typename Value>
+	void SetTitle(Field* field, const Value& value, bool setUpdateFlags = true) {
+		if (Set(field, value, setUpdateFlags))
 			m_updateFlags.m_titleChanged = true;
 	}
-
-	template <class Field>
-	void SetPos(Field* field, char* value, bool setUpdateFlags = true) {
-		Set(field, value);
-
-		if (setUpdateFlags)
-			m_updateFlags.m_posChanged = true;
-	}
-
-	template <class Field>
-	void SetVis(Field* field, char* value, bool setUpdateFlags = true) {
-		Set(field, value);
-
-		if (setUpdateFlags)
-			m_updateFlags.m_visChanged = true;
-	}
-
-	template <class Field>
-	void SetInfo(Field* field, char* value, bool setUpdateFlags = true) {
-		Set(field, value);
-
-		if (setUpdateFlags)
-			m_updateFlags.m_infoChanged = true;
-	}
-
-	template <class Field>
-	void SetTitle(Field* field, char* value, bool setUpdateFlags = true) {
-		Set(field, value);
-
-		if (setUpdateFlags)
-			m_updateFlags.m_titleChanged = true;
-	}
-
 
 	void SetVisUnknown(uint32_t value, bool updateFlags = true) {
 		SetVis(&m_visStruct.unknown, value, updateFlags);
 	}
-	void SetLockedNoLoot(uint8_t new_val, bool updateFlags = true){
+	void SetLockedNoLoot(uint8_t new_val, bool updateFlags = true) {
 		SetVis(&m_visStruct.locked_no_loot, new_val, updateFlags);
 	}
 	void SetMercIcon(uint8_t value, bool updateFlags = true) {
@@ -174,7 +150,7 @@ public:
 	void SetVisUnknownB(uint8_t value, uint8_t index, bool updateFlags = true) {
 		SetVis(&m_visStruct.unknownb[index], value, updateFlags);
 	}
-	void SetHandFlag(uint8_t new_val, bool updateFlags = true){
+	void SetHandFlag(uint8_t new_val, bool updateFlags = true) {
 		SetVis(&m_visStruct.hand_flag, new_val, updateFlags);
 	}
 	/*void SetVisUnknown2(uint8_t value, uint8_t index, bool updateFlags = true) {
@@ -373,20 +349,32 @@ public:
 	void SetSogaHairHighlight(EQ2Color value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.soga_hair_highlight, value, updateFlags);
 	}
-	void SetActionState(uint16_t state, bool updateFlags = true){
+	void SetActionState(uint16_t state, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.action_state, state, updateFlags);
 	}
-	void SetVisualState(uint16_t state, bool updateFlags = true){
+	void SetVisualState(uint16_t state, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.visual_state, state, updateFlags);
 	}
-	void SetMoodState(uint16_t state, bool updateFlags = true){
+	void SetMoodState(uint16_t state, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.mood_state, state, updateFlags);
 	}
-	void SetEmoteState(uint8_t new_val, bool updateFlags = true){
+	void SetEmoteState(uint8_t new_val, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.emote_state, new_val, updateFlags);
 	}
 	void SetEntityFlags(uint32_t flags, bool updateFlags = true) {
-		SetInfo(&m_infoStruct.entityFlags, updateFlags);
+		SetInfo(&m_infoStruct.entityFlags, flags, updateFlags);
+	}
+	void ToggleEntityFlags(uint32_t toggle, bool bupdateFlags = true) {
+		uint32_t flags = m_infoStruct.entityFlags;
+		SetEntityFlags(flags ^ toggle, bupdateFlags);
+	}
+	void EnableEntityFlags(uint32_t flags, bool bUpdateFlags = true) {
+		uint32_t current = m_infoStruct.entityFlags;
+		SetEntityFlags(current | flags, bUpdateFlags);
+	}
+	void DisableEntityFlags(uint32_t flags, bool bUpdateFlags = true) {
+		uint32_t current = m_infoStruct.entityFlags;
+		SetEntityFlags(current & (~flags), bUpdateFlags);
 	}
 	void SetLevel(uint8_t value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.level, value, updateFlags);
@@ -410,13 +398,13 @@ public:
 	void SetGridID(uint32_t grid, bool updateFlags = true) {
 		SetPos(&m_posStruct.grid_id, grid, updateFlags);
 	}
-	void SetX(float x, bool updateFlags = true){
+	void SetX(float x, bool updateFlags = true) {
 		SetPos(&m_posStruct.x, x, updateFlags);
 	}
-	void SetY(float y, bool updateFlags = true){
+	void SetY(float y, bool updateFlags = true) {
 		SetPos(&m_posStruct.y, y, updateFlags);
 	}
-	void SetZ(float z, bool updateFlags = true){
+	void SetZ(float z, bool updateFlags = true) {
 		SetPos(&m_posStruct.z, z, updateFlags);
 	}
 	void SetLocation(float x, float y, float z, bool updateFlags = true) {
@@ -424,7 +412,7 @@ public:
 		SetY(y, false);
 		SetZ(z, updateFlags);
 	}
-	void SetHeading(float heading, bool updateFlags = true){
+	void SetHeading(float heading, bool updateFlags = true) {
 		m_posStruct.heading = heading;
 		SetPos(&m_posStruct.desiredHeading, heading, updateFlags);
 	}
@@ -455,11 +443,11 @@ public:
 	void SetMovementMode(uint8_t value, bool updateFlags = true) {
 		SetPos(&m_posStruct.movementMode, value, updateFlags);
 	}
-	void SetPitch(float pitch, bool updateFlags = true){
+	void SetPitch(float pitch, bool updateFlags = true) {
 		m_posStruct.pitch = pitch;
 		SetPos(&m_posStruct.desiredPitch, pitch, updateFlags);
 	}
-	void SetCollisionRadius(uint32_t radius, bool updateFlags = true){
+	void SetCollisionRadius(uint32_t radius, bool updateFlags = true) {
 		SetPos(&m_posStruct.collisionRadius, radius, updateFlags);
 	}
 	void SetSize(float new_size, bool updateFlags = true) {
@@ -471,7 +459,7 @@ public:
 	void SetSizeMultiplierRatio(float value, bool updateFlags = true) {
 		SetPos(&m_posStruct.sizeMultiplierRatio, value, updateFlags);
 	}
-	void SetRoll(float roll, bool updateFlags = true){
+	void SetRoll(float roll, bool updateFlags = true) {
 		m_posStruct.roll = roll;
 		SetPos(&m_posStruct.desiredRoll, roll, updateFlags);
 	}
@@ -500,7 +488,8 @@ public:
 	void SetGuild(std::string value, bool updateFlags = true) {
 		SetTitle(&m_titleStruct.guild, value, updateFlags);
 	}
-	void SetSpawnPositionData(const SpawnPositionStruct& pos) {
+	void SetSpawnPositionData(const SpawnPositionStruct& pos, uint32_t timestamp) {
+		movementTimestamp = timestamp;
 		static_cast<SpawnPositionStruct&>(m_posStruct) = pos;
 		m_updateFlags.m_posChanged = true;
 	}
