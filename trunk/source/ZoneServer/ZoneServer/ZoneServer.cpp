@@ -116,9 +116,9 @@ bool ZoneServer::AddClient(std::shared_ptr<Client> c) {
 	zone->zone2 = name;
 	zone->zone_desc = description;
 	zone->char_name = "Foof";
-	zone->x = 242.55f;
-	zone->y = 12.21f;
-	zone->z = -978.47f;
+	zone->x = safeX;
+	zone->y = safeY;
+	zone->z = safeZ;
 	zone->year = 3956;
 	zone->month = 5;
 	zone->day = 5;
