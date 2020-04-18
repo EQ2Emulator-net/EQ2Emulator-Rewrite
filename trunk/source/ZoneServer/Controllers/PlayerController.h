@@ -11,6 +11,5 @@ public:
 	void UnPossess() override {};
 
 private:
-
-
+	
 };

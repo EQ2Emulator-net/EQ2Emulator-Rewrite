@@ -54,6 +54,7 @@ typedef enum {
 	LOG_CLIENT,
 	LOG_MUTEX,
 	LOG_ZONE,
+	LOG_PLAYER,
 	LOG_INVALID
 } LogCategory;
 

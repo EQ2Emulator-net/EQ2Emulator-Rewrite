@@ -29,6 +29,7 @@ private:
 
 	std::weak_ptr<ZoneServer> m_zone;
 	std::map<std::weak_ptr<Spawn>, uint16_t, std::owner_less<std::weak_ptr<Spawn>> > m_spawnIndexMap;
+	std::map<uint16_t, std::weak_ptr<Spawn>> m_spawnLookupMap;
 	std::shared_ptr<PlayerController> m_controller;
 
 public:
@@ -44,5 +45,6 @@ public:
 	bool WasSentSpawn(const std::shared_ptr<Spawn>& spawn);
 	uint16_t AddSpawnToIndexMap(const std::shared_ptr<Spawn>& spawn);
 	uint16_t GetIndexForSpawn(std::shared_ptr<Spawn> spawn);
+	std::shared_ptr<Spawn> GetSpawnByIndex(uint16_t spawn_index);
 	std::shared_ptr<PlayerController> GetController();
 };

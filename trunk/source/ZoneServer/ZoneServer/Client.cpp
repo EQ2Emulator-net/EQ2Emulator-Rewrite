@@ -6,6 +6,7 @@
 
 #include "../../common/Packets/EQ2Packets/OP_LoginReplyMsg_Packet.h"
 #include "../Controllers/PlayerController.h"
+#include "../Spawns/Spawn.h"
 
 Client::Client(unsigned int ip, unsigned short port) : EQ2Stream(ip, port), m_nextSpawnIndex(1) {
 	account_id = 0;
@@ -81,6 +82,7 @@ bool Client::WasSentSpawn(const std::shared_ptr<Spawn>& spawn) {
 uint16_t Client::AddSpawnToIndexMap(const std::shared_ptr<Spawn>& spawn) {
 	uint16_t index = m_nextSpawnIndex.fetch_add(1);
 	m_spawnIndexMap[spawn] = index;
+	m_spawnLookupMap[index] = spawn;
 	return index;
 }
 
@@ -92,6 +94,15 @@ uint16_t Client::GetIndexForSpawn(std::shared_ptr<Spawn> spawn) {
 		index = itr->second;
 
 	return index;
+}
+
+std::shared_ptr<Spawn> Client::GetSpawnByIndex(uint16_t spawn_index) {
+	auto itr = m_spawnLookupMap.find(spawn_index);
+	if (itr != m_spawnLookupMap.end()) {
+		return itr->second.lock();
+	}
+
+	return std::shared_ptr<Spawn>();
 }
 
 std::shared_ptr<PlayerController> Client::GetController() {

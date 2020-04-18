@@ -213,6 +213,9 @@
     <ClCompile Include="..\..\source\common\CommonDatabase.cpp">
       <Filter>common</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Controllers\BaseController.cpp">
+      <Filter>source\Controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h">
@@ -610,6 +613,12 @@
     </ClInclude>
     <ClInclude Include="..\..\source\common\Packets\EQ2Packets\OP_UIEvent_Packet.h">
       <Filter>common\Packets\EQ2Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_PaperdollImage_Packet.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_UpdateTargetMsg.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

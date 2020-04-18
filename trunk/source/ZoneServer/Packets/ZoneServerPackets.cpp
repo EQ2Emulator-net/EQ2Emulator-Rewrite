@@ -21,6 +21,8 @@
 #include "OP_CreateWidgetCmd_Packet.h"
 #include "OP_UpdateSpawnCmdMsg.h"
 #include "OP_TeleportWithinZoneNoReloadMsg_Packet.h"
+#include "OP_PaperdollImage_Packet.h"
+#include "OP_UpdateTargetMsg.h"
 
 // Server to Client
 RegisterZoneStruct("OP_ZoneInfoMsg", OP_ZoneInfoMsg_Packet, 283, 284, 942, 957, 959, 1067, 1096, 1142, 1193, 63119, 63182);
@@ -46,6 +48,8 @@ RegisterZoneStruct("OP_DoneLoadingEntityResourcesMsg", OP_DoneLoadingEntityResou
 RegisterZoneStruct("OP_DefaultGroupOptionsRequestMsg", OP_DefaultGroupOptionsRequestMsg_Packet, 1);
 RegisterZoneStruct("OP_UpdatePositionMsg", OP_UpdatePositionMsg, 1);
 RegisterZoneStruct("OP_RemoteCmdMsg", OP_RemoteCmdMsg_Packet, 1);
+RegisterZoneStruct("OP_PaperdollImage", OP_PaperdollImage_Packet, 1, 60000);
+RegisterZoneStruct("OP_UpdateTargetMsg", OP_UpdateTargetMsg_Packet, 1);
 
 
 //Bidirectional
