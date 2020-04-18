@@ -1,16 +1,4 @@
 #pragma once
-/**
-* @file IO.h
-*
-* @brief I/O specific functions
-*
-* @details I/O specific functions
-*
-* @author Scatman
-* @date 09/01/13 (originally for VGOEmulator.net)
-*
-* @section License
-*/
 
 #include <stdio.h>
 

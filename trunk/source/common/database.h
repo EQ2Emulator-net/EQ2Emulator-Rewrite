@@ -1,35 +1,4 @@
-/**
- * @file Database.h
- *
- * @brief Core Database functions
- *
- * @details Core Database functions
- *
- * @author Scatman
- * @date 09/03/13
- *
- * @section License
- * VGOEmulator:  Vanguard: Saga of Heroes Server Emulator
- * Copyright (C) 2014  VGOEmulator Development Team (http://vgoemulator.net)
- *
- * This file is part of VGOEmulator.
- *
- * VGOEmulator is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * VGOEmulator is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with VGOEmulator.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-#ifndef COMMON_DATABASE_H_
-#define COMMON_DATABASE_H_
+#pragma once
 
 #include "database-result.h"
 #include "Mutex.h"
@@ -141,5 +110,3 @@ private:
 	DatabaseConnection* conn;
 	Database& db;
 };
-
-#endif
