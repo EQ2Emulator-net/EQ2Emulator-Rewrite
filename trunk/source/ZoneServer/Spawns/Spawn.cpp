@@ -38,7 +38,7 @@ void Spawn::Process() {
 
 				uint32_t char_id = client->GetCharacterID();
 
-				LogError(LOG_CLIENT, 0, "Sending update to character %u, index = %u", char_id, index);
+				//LogError(LOG_CLIENT, 0, "Sending update to character %u, index = %u", char_id, index);
 
 				if (update.m_infoChanged)
 					packet->InsertSpawnInfoData(*GetInfoStruct(), index);

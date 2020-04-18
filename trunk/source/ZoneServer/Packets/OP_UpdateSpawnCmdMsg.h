@@ -82,6 +82,16 @@ public:
 
 	~OP_UpdateGhostCmdMsg_Packet() = default;
 
+	void ResetVersion(uint32_t version) {
+		SetVersion(version);
+		ClearElements();
+		OP_ClientCmdMsg_Packet::RegisterElements();
+		RegisterElements();
+		info.ResetVersion(version);
+		pos.ResetVersion(version);
+		vis.ResetVersion(version);
+	}
+
 	void RegisterElements() {
 		RegisterUInt32(timestamp);
 		PacketElement* e = RegisterOversizedByte(infoSize);

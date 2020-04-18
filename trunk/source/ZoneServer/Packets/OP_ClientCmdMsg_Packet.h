@@ -8,14 +8,7 @@ class OP_ClientCmdMsg_Packet : public EQ2Packet {
 public:
 	OP_ClientCmdMsg_Packet(uint32_t version) : EQ2Packet(version), subOpcode(0xFFFF) {
 		clientCmdSize = 0;
-		if (version > 283) {
-			RegisterUInt32(clientCmdSize)->SetIsHidden(true);
-		}
-		else {
-			uint16_t& clientCmdSize = reinterpret_cast<uint16_t&>(this->clientCmdSize);
-			RegisterOversizedByte(clientCmdSize)->SetIsHidden(true);
-		}
-		RegisterOversizedByte(subOpcode)->SetIsHidden(true);
+		RegisterElements();
 	}
 	~OP_ClientCmdMsg_Packet() = default;
 
@@ -43,6 +36,17 @@ public:
 			clientCmdSize = size - elements[0]->GetSize();
 		}
 		return Packet::Write(writeBuffer, size);
+	}
+
+	void RegisterElements() {
+		if (GetVersion() > 283) {
+			RegisterUInt32(clientCmdSize)->SetIsHidden(true);
+		}
+		else {
+			uint16_t& clientCmdSize = reinterpret_cast<uint16_t&>(this->clientCmdSize);
+			RegisterOversizedByte(clientCmdSize)->SetIsHidden(true);
+		}
+		RegisterOversizedByte(subOpcode)->SetIsHidden(true);
 	}
 
 private:

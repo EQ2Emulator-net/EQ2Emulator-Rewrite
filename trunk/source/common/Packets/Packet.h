@@ -77,4 +77,11 @@ protected:
 		}
 		return size;
 	}
+
+	void ClearElements() {
+		for (auto& e : elements) {
+			delete e;
+		}
+		elements.clear();
+	}
 };

@@ -9,7 +9,10 @@
 
 //EntityFlagValues
 const uint32_t EntityFlagAlive = 1;
+const uint32_t EntityIsNpc = 1 << 1;
 const uint32_t EntityFlagStaticObject = 1 << 2;
+const uint32_t EntityFlagShowLevel = 1 << 9; // This also hides/shows the health bar
+const uint32_t EntityFlagInCombat = 1 << 15;
 const uint32_t EntityFlagAfk = 1 << 16; // Check if afk added in 1188 or if it was in icon previously
 const uint32_t EntityFlagRoleplaying = 1 << 17;
 const uint32_t EntityFlagAnonymous = 1 << 18;
@@ -18,9 +21,10 @@ const uint32_t EntityFlagCamping = 1 << 20;
 const uint32_t EntityFlagLFG = 1 << 21;
 const uint32_t EntityFlagLFW = 1 << 22;
 const uint32_t EntityFlagSolid = 1 << 23;
-const uint32_t EntityFlagMentoring = 1 << 24;
 const uint32_t EntityFlagImmunityGained = 1 << 25;
 const uint32_t EntityFlagImmunityRemaining = 1 << 26;
+const uint32_t EntityFlagMentoring = 1 << 28;
+const uint32_t EntityFlagWeaponsEquipped = 1 << 29;
 
 class ZoneServer;
 class Client;

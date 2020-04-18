@@ -82,6 +82,7 @@ public:
 		}
 		memcpy(outbuf + offset, buf.data(), buf.size());
 		offset += static_cast<uint32_t>(buf.size());
+		bBufInitialized = false;
 	}
 
 	uint32_t GetSize() override {

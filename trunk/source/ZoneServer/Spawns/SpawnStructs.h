@@ -571,7 +571,7 @@ public:
 
 	//We need to syncronize the data for equipment types pre int32 versions since this is a special case
 	bool ReadElement(const unsigned char* srcbuf, uint32_t& offset, uint32_t bufsize) override {
-		bool ret = PacketSubstruct::ReadElement(srcbuf, offset, bufsize);
+		bool ret = PacketEncodedData::ReadElement(srcbuf, offset, bufsize);
 
 		if (version < 57080) {
 			for (int i = 0; i < 25; i++) {
@@ -589,7 +589,7 @@ public:
 			}
 		}
 
-		return PacketSubstruct::WriteElement(outbuf, offset);
+		return PacketEncodedData::WriteElement(outbuf, offset);
 	}
 
 	void RegisterElements() {
