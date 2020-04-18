@@ -51,6 +51,8 @@ public:
 
 	bool RequestNewClient() override { return bNeedNewClient; }
 
+	void SendDisconnect(uint16_t reason);
+
 protected:
 	EQ2Packet* PopPacket(); // InboundQueuePop
 	virtual void ReadVersionPacket(const unsigned char* data, uint32_t size, uint32_t offset, uint16_t opcode) = 0;
@@ -101,7 +103,6 @@ private:
 	// Send functions
 	void SendAck(uint16_t seq);
 	void SendSessionResponse();
-	void SendDisconnect(uint16_t reason);
 	void SendKeepAlive();
 	void SendServerSessionUpdate(uint16_t requestID);
 	void SendKeyRequest();

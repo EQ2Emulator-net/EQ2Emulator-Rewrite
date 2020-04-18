@@ -9,6 +9,10 @@
 #include "../Packets/OP_TeleportWithinZoneNoReloadMsg_Packet.h"
 #include "../Controllers/PlayerController.h"
 #include "../Spawns/Spawn.h"
+#include "../Packets/OP_ChangeZoneMsg_Packet.h"
+#include "../ZoneServer/ZoneOperator.h"
+
+extern ZoneOperator z;
 
 CommandProcess::CommandProcess() {
 	RegisterCommands();
@@ -18,6 +22,7 @@ void CommandProcess::RegisterCommands() {
 	RegisterCommandHandler(214, CommandSpeed);
 	RegisterCommandHandler(206, CommandMove);
 	RegisterCommandHandler(247, CommandTest);
+	RegisterCommandHandler(205, CommandZone);
 }
 
 void CommandProcess::RegisterCommandHandler(uint32_t handler_id, CommandHandler_t handler) {
@@ -103,7 +108,7 @@ void CommandProcess::ProcessCommand(const std::shared_ptr<Client>& client, uint3
 	}
 
 	if (!cmd->handler) {
-		LogDebug(LOG_COMMAND, 0, "Player tried to use a command with an undefined handler : %s", fullCommand.str().c_str());
+		LogDebug(LOG_COMMAND, 0, "Player tried to use a command with an undefined handler : %s, args:\n%s", fullCommand.str().c_str(), args.c_str());
 		return;
 	}
 
@@ -176,4 +181,42 @@ void CommandProcess::CommandTest(const std::shared_ptr<Client>& client, Separato
 	uint32_t shift = sep.GetUInt32(0);
 
 	target->ToggleEntityFlags(1 << shift);
+}
+
+void CommandProcess::CommandZone(const std::shared_ptr<Client>& client, Separator& sep) {
+	//Add more checks/syntax for this, like zone names/instance ids
+	if (!sep.IsNumber(0)) {
+		return;
+	}
+
+	uint32_t zone_id = sep.GetUInt32(0);
+
+	auto zone = z.AddNewZone(zone_id, 0);
+
+	if (!zone) {
+		//invalid zone id;
+		LogError(LOG_COMMAND, 0, "Command \"zone\" invalid invalid zone id %u", zone_id);
+		return;
+	}
+
+	if (zone == client->GetZone()) {
+		LogError(LOG_COMMAND, 0, "Command \"zone\" player tried change to a zone they were already in.");
+		return;
+	}
+
+	PendingClient pc;
+	pc.access_code = MakeRandomNumber();
+	pc.character_id = client->GetCharacterID();
+	pc.instance_id = 0;
+	pc.zone_id = zone_id;
+
+	z.AddPendingClient(client->GetAccountID(), pc);
+
+	//Most of this logic will probably be moved to the zoneserver and/or zoneoperator, just a test to see if we can load more zones
+	OP_ChangeZoneMsg_Packet p(client->GetVersion());
+	p.ip_address = z.GetHostString();
+	p.port = z.GetPort();
+	p.account_id = client->GetAccountID();
+	p.key = pc.access_code;
+	client->QueuePacket(p);
 }

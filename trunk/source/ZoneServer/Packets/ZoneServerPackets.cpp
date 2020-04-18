@@ -23,6 +23,8 @@
 #include "OP_TeleportWithinZoneNoReloadMsg_Packet.h"
 #include "OP_PaperdollImage_Packet.h"
 #include "OP_UpdateTargetMsg.h"
+#include "OP_ChangeZoneMsg_Packet.h"
+#include "OP_ReadyToZoneMsg_Packet.h"
 
 // Server to Client
 RegisterZoneStruct("OP_ZoneInfoMsg", OP_ZoneInfoMsg_Packet, 283, 284, 942, 957, 959, 1067, 1096, 1142, 1193, 63119, 63182);
@@ -40,6 +42,7 @@ RegisterZoneStruct("OP_GameWorldTimeMsg", OP_GameWorldTimeMsg_Packet, 1, 1193);
 RegisterZoneStruct("OP_SetRemoteCmdsMsg", OP_SetRemoteCmdsMsg_Packet, 1);
 RegisterZoneStruct("OP_EqUpdateGhostCmd", OP_UpdateGhostCmdMsg_Packet, 1);
 RegisterZoneStruct("OP_TeleportWithinZoneNoReloadMsg", OP_TeleportWithinZoneNoReloadMsg_Packet, 1, 869);
+RegisterZoneStruct("OP_ChangeZoneMsg", OP_ChangeZoneMsg_Packet, 1);
 
 // Client to Server
 RegisterZoneStruct("OP_LoginByNumRequestMsg", OP_LoginByNumRequestMsg_Packet, 1, 1212);
@@ -50,6 +53,7 @@ RegisterZoneStruct("OP_UpdatePositionMsg", OP_UpdatePositionMsg, 1);
 RegisterZoneStruct("OP_RemoteCmdMsg", OP_RemoteCmdMsg_Packet, 1);
 RegisterZoneStruct("OP_PaperdollImage", OP_PaperdollImage_Packet, 1, 60000);
 RegisterZoneStruct("OP_UpdateTargetMsg", OP_UpdateTargetMsg_Packet, 1);
+RegisterZoneStruct("OP_ReadyToZoneMsg", OP_ReadyToZoneMsg_Packet, 1);
 
 
 //Bidirectional

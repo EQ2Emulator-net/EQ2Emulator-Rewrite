@@ -40,3 +40,4 @@ bool alpha_check(unsigned char val);
 
 float MakeRandom(float low, float high);
 int32_t MakeRandomInt(int32_t low, int32_t high);
+uint32_t MakeRandomNumber();

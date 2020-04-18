@@ -165,6 +165,10 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 		LogDebug(LOG_NET, 0, "ProtocolPacket Received, opcode: %u", p->GetOpcode());
 	}
 
+	if (GetState() == EQStreamState::CLOSED && p->GetOpcode() != OP_SessionRequest) {
+		return;
+	}
+
 	switch (p->GetOpcode()) {
 	case OP_SessionRequest: {
 		auto request = static_cast<OP_SessionRequest_Packet*>(p);
@@ -993,7 +997,9 @@ void EQ2Stream::SendSessionResponse() {
 void EQ2Stream::SendDisconnect(uint16_t reason) {
 	OP_SessionDisconnect_Packet disconnect;
 	disconnect.Session = htonl(Session);
-	disconnect.Reason = reason;
+	disconnect.Reason = htons(reason);
+
+	SetState(EQStreamState::CLOSED);
 
 	// Send this now and kill the client.
 	WritePacket(&disconnect);

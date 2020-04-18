@@ -10,8 +10,15 @@
 //EntityFlagValues
 const uint32_t EntityFlagAlive = 1;
 const uint32_t EntityIsNpc = 1 << 1;
-const uint32_t EntityFlagStaticObject = 1 << 2;
+const uint32_t EntityIsMercenary = 1 << 2;
+const uint32_t EntityFlagStaticObject = 1 << 3;
+const uint32_t EntityFlagMerchant = 1 << 4;
 const uint32_t EntityFlagShowLevel = 1 << 9; // This also hides/shows the health bar
+const uint32_t EntityFlagInteractable = 1 << 10; //shows the hand icon
+const uint32_t EntityFlagTargetable = 1 << 11;
+const uint32_t EntityFlagIsTransport = 1 << 12; //guess
+const uint32_t EntityFlagShowSpecialIcon = 1 << 13; //Shows various icons depending on the spawn's entity commands
+const uint32_t EntityFlagLootable = 1 << 14;
 const uint32_t EntityFlagInCombat = 1 << 15;
 const uint32_t EntityFlagAfk = 1 << 16; // Check if afk added in 1188 or if it was in icon previously
 const uint32_t EntityFlagRoleplaying = 1 << 17;
@@ -21,10 +28,10 @@ const uint32_t EntityFlagCamping = 1 << 20;
 const uint32_t EntityFlagLFG = 1 << 21;
 const uint32_t EntityFlagLFW = 1 << 22;
 const uint32_t EntityFlagSolid = 1 << 23;
-const uint32_t EntityFlagImmunityGained = 1 << 25;
-const uint32_t EntityFlagImmunityRemaining = 1 << 26;
 const uint32_t EntityFlagMentoring = 1 << 28;
 const uint32_t EntityFlagWeaponsEquipped = 1 << 29;
+const uint32_t EntityFlagImmunityGained = 1 << 30;
+const uint32_t EntityFlagImmunityRemaining = 1 << 31;
 
 class ZoneServer;
 class Client;

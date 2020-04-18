@@ -297,3 +297,9 @@ int32_t MakeRandomInt(int32_t low, int32_t high) {
 
 	return dist(GetRandMT());
 }
+
+uint32_t MakeRandomNumber() {
+	std::uniform_int_distribution<uint32_t> dist(0, 0xFFFFFFFF);
+
+	return dist(GetRandMT());
+}
