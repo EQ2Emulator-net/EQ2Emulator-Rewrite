@@ -19,6 +19,13 @@ public:
 	}
 
 	void HandlePacket(std::shared_ptr<Client> client) override {
+		if (spawn_index == 0xFFFF) {
+			//Clear our target
+			std::shared_ptr<PlayerController> controller = client->GetController();
+			controller->ClearTarget(false);
+			return;
+		}
+
 		std::shared_ptr<Spawn> spawn = client->GetSpawnByIndex(spawn_index);
 
 		if (!spawn) {
