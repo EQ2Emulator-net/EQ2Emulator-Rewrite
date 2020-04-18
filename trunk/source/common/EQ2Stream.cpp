@@ -61,6 +61,11 @@ EQ2Stream::~EQ2Stream() {
 void EQ2Stream::Process(const unsigned char* data, unsigned int length) {
 	Stream::Process(data, length);
 
+	if (length < 2) {
+		LogError(LOG_NET, 0, "Received a packet which is too short to process.");
+		return;
+	}
+
 	if (!ValidateCRC(data, length, Key)) {
 		LogError(LOG_NET, 0, "Packet CRC check failed. Client %s", ToString().c_str());
 		return;
@@ -75,6 +80,22 @@ void EQ2Stream::Process(const unsigned char* data, unsigned int length) {
 		if (preProcessInSeq != nextSeq) {
 			ProcessFuturePacketQueue(preProcessInSeq, nextSeq);
 		}
+	}
+	//Randomly the client sends an EQ2Packet without a protocol opcode after logging into a zone
+	//Attempt to handle it or else our encryption will desync
+	else if (ntohs(*reinterpret_cast<const uint16_t*>(data)) > 0x1e) {
+		//Possible garbage packet? Try to decrypt it
+		LogWarn(LOG_PACKET, 0, "Received an out of protocol packet, trying to process it.");
+		uint32_t pSize = length - 2;
+		unsigned char* pData = new unsigned char[pSize];
+		memcpy(pData, data, pSize);
+		if (!HandleEmbeddedPacket(pData, pSize)) {
+			EQ2Packet* newpacket = ProcessEncryptedData(pData, pSize);
+			if (newpacket) {
+				InboundQueuePush(newpacket);
+			}
+		}
+		delete[] pData;
 	}
 }
 
@@ -174,7 +195,6 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 		break;
 	}
 	case OP_ClientSessionUpdate: {
-		LogDebug(LOG_NET, 0, "Key request received");
 		auto update = static_cast<OP_ClientSessionUpdate_Packet*>(p);
 		AdjustRates(ntohl(update->AverageDelta));
 		SendServerSessionUpdate(update->RequestID);
@@ -411,7 +431,18 @@ uint8_t EQ2Stream::EQ2_Compress(EQ2Packet* app, uint8_t offset) {
 	stream.avail_in = app->Size - offset;
 
 	uint32_t outBufSize = app->Size * 2 + offset;
-	unsigned char* pDataOut = new unsigned char[outBufSize];
+	unsigned char* pDataOut;
+	unsigned char stackBuf[4096];
+	std::unique_ptr<unsigned char[]> dynamicBuf;
+
+	if (outBufSize <= sizeof(stackBuf)) {
+		pDataOut = stackBuf;
+	}
+	else {
+		dynamicBuf.reset(new unsigned char[outBufSize]);
+		pDataOut = dynamicBuf.get();
+	}
+
 	memcpy(pDataOut, app->buffer, offset);
 	stream.next_out = pDataOut + offset;
 	stream.avail_out = outBufSize - offset;
@@ -424,11 +455,23 @@ uint8_t EQ2Stream::EQ2_Compress(EQ2Packet* app, uint8_t offset) {
 	}
 
 	bytes_written = outBufSize - offset - stream.avail_out;
-
-	app->Size = bytes_written + offset;
 	pDataOut[offset - 1] = 1;
-	delete[] app->buffer;
-	app->buffer = pDataOut;
+
+	uint32_t newSize = bytes_written + offset;
+
+	if (dynamicBuf) {	
+		delete[] app->buffer;
+		app->buffer = dynamicBuf.release();
+	}
+	else if (app->Size >= newSize) {
+		memcpy(app->buffer, pDataOut, newSize);
+	}
+	else {
+		delete[] app->buffer;
+		app->buffer = new unsigned char[newSize];
+		memcpy(app->buffer, pDataOut, newSize);
+	}
+	app->Size = newSize;
 
 	return offset - 1;
 }
