@@ -390,7 +390,7 @@ void EQ2Stream::WritePacket(ProtocolPacket* p) {
 	if (NetDebugEnabled()) {
 		DumpBytes(buffer, size);
 	}
-	Stream::WritePacket(server->GetSocket(), buffer, size);
+	Stream::WritePacket(Sock, buffer, size);
 }
 
 void EQ2Stream::EQ2QueuePacket(EQ2Packet* app, bool bDelete) {

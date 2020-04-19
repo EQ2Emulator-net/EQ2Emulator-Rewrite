@@ -141,6 +141,7 @@ void UDPServer::ReaderThread() {
 					}
 					std::shared_ptr<Stream> s = GetNewStream(from.sin_addr.s_addr, from.sin_port);
 					s->SetServer(this);
+					s->SetSocket(Sock);
 					AddStream(s, clientKey);
 					s->Process(buffer, length);
 					s->UpdateHeartbeat(currentTime);
@@ -157,6 +158,7 @@ void UDPServer::ReaderThread() {
 						//We received a new session request for an old client, generate a new client for this key to reset our client state
 						std::shared_ptr<Stream> s = GetNewStream(from.sin_addr.s_addr, from.sin_port);
 						s->SetServer(this);
+						s->SetSocket(Sock);
 						AddStream(s, clientKey);
 						s->Process(buffer, length);
 						s->UpdateHeartbeat(currentTime);
