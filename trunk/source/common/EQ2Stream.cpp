@@ -169,7 +169,7 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 	case OP_SessionRequest: {
 		auto request = static_cast<OP_SessionRequest_Packet*>(p);
 
-		if (Session != 0 && request->Session != Session) {
+		if (Session != 0 && ntohl(request->Session) != Session) {
 			bNeedNewClient = true;
 			return;
 		}
