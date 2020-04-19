@@ -72,7 +72,7 @@ public:
 	}
 
 	WriteLocker GetBufLock() {
-		return std::move(WriteLocker(bufLock));
+		return WriteLocker(bufLock);
 	}
 
 private:

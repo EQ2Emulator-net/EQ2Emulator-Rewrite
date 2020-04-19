@@ -38,12 +38,12 @@ std::deque<std::unique_ptr<EmuPacket> > EmuStream::PopOutgoing() {
 	decltype(outgoing) ret;
 	SpinLocker lock(m_outgoing);
 	std::swap(ret, outgoing);
-	return std::move(ret);
+	return ret;
 }
 
 std::deque<std::unique_ptr<EmuPacket> > EmuStream::PopIncoming() {
 	decltype(incoming) ret;
 	SpinLocker lock(m_incoming);
 	std::swap(ret, incoming);
-	return std::move(ret);
+	return ret;
 }
