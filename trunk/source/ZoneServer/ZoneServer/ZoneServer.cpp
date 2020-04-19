@@ -75,6 +75,8 @@ bool ZoneServer::Init() {
 		return ret;
 	}
 
+	m_SpawnUpdateTimer.Start(200);
+
 	LogDebug(LOG_ZONE, 0, "Zone %u (%s) started", id, description.c_str());
 
 	process_thread = ThreadManager::ThreadStart("ZoneServer::Process", std::bind(&ZoneServer::Process, this));
@@ -97,8 +99,10 @@ void ZoneServer::Process() {
 			}
 		}
 
-		for (std::shared_ptr<Entity> player : players) {
-			player->Process();
+		if (m_SpawnUpdateTimer.Check()) {
+			for (std::shared_ptr<Entity> player : players) {
+				player->Process();
+			}
 		}
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(50)); // Probably play with this value

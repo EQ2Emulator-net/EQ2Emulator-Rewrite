@@ -5,6 +5,7 @@
 #include <string>
 #include <thread>
 #include <memory>
+#include "../../common/timer.h"
 
 class Client;
 class Spawn;
@@ -36,6 +37,8 @@ private:
 	std::map<uint32_t, std::weak_ptr<Client> > Clients;
 	std::thread process_thread;
 	bool isRunning;
+
+	Timer m_SpawnUpdateTimer;
 
 
 	// following is info from `zones` table in the DB
