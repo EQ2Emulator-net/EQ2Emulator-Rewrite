@@ -661,6 +661,11 @@ void EQ2Stream::Write() {
 		ProtocolPacket* nonseq = NonSequencedQueue.front();
 		NonSequencedQueue.pop_front();
 
+		if (nonseq->GetOpcode() == OP_SessionDisconnect) {
+			SetState(EQStreamState::CLOSING);
+			server->StreamDisconnected(shared_from_this());
+		}
+
 		//We do not want to start combining packets until our session has been established
 		if (!crypto.isEncrypted()) {
 			ReadyToSend.emplace_back(nonseq);
@@ -978,6 +983,8 @@ void EQ2Stream::SendSessionResponse() {
 	Response->MaxLength = htonl(MaxLength);
 	Response->UnknownA = 2;
 	Response->Format = 0;
+	Response->UnknownB = 0;
+	Response->UnknownD = 0;
 
 	if (Compressed)
 		Response->Format |= FLAG_COMPRESSED;
@@ -991,15 +998,11 @@ void EQ2Stream::SendSessionResponse() {
 }
 
 void EQ2Stream::SendDisconnect(uint16_t reason) {
-	OP_SessionDisconnect_Packet disconnect;
-	disconnect.Session = htonl(Session);
-	disconnect.Reason = htons(reason);
+	auto disconnect = new OP_SessionDisconnect_Packet;
+	disconnect->Session = htonl(Session);
+	disconnect->Reason = htons(reason);
 
-	SetState(EQStreamState::CLOSED);
-
-	// Send this now and kill the client.
-	WritePacket(&disconnect);
-	server->StreamDisconnected(shared_from_this()); // this deletes the stream (client)
+	NonSequencedPush(disconnect);
 }
 
 void EQ2Stream::SendKeepAlive() {
