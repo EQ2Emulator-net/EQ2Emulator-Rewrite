@@ -2,7 +2,7 @@
 
 #if defined(EQ2_DEBUG)
 #include "log.h"
-#include "Util.h"
+#include "util.h"
 #include "string.h"
 #endif
 
