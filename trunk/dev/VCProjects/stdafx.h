@@ -54,5 +54,5 @@
 #define SOCKET int
 #define INVALID_SOCKET -1
 #define SOCKET_CLOSE(s) do { shutdown((s), SHUT_RDWR); close(s); } while (0)
-#define SOCKET_ERROR SO_ERROR
+#define SOCKET_ERROR -1
 #endif
