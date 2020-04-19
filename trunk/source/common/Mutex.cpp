@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
 #if defined(EQ2_DEBUG)
-#include "Log.h"
+#include "log.h"
 #include "Util.h"
 #include "string.h"
 #endif

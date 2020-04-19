@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
 #include "thread.h"
-#include "Log.h"
+#include "log.h"
 
 using namespace std;
 
