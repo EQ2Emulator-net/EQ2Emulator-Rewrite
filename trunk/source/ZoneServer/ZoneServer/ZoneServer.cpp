@@ -13,6 +13,7 @@
 #include "../Packets/OP_ZoneInfoMsg_Packet.h"
 #include "../Packets/OP_SetRemoteCmdsMsg_Packet.h"
 #include "../Packets/OP_CreateGhostCmd_Packet.h"
+#include "../Packets/OP_EqDestroyGhostCmd_Packet.h"
 
 // Spawns
 #include "../Spawns/Spawn.h"
@@ -201,4 +202,28 @@ void ZoneServer::SendSpawnToClient(std::shared_ptr<Spawn> spawn, std::shared_ptr
 	client->QueuePacket(ghost);
 
 	spawn->AddClient(client);
+}
+
+void ZoneServer::RemoveSpawnFromAllClients(std::shared_ptr<Spawn> spawn) {
+	for (std::pair<uint32_t, std::weak_ptr<Client> > c : Clients) {
+		std::shared_ptr<Client> client = c.second.lock();
+		if (client) {
+			SendDestroyGhost(client, spawn);
+		}
+	}
+}
+
+void ZoneServer::SendDestroyGhost(std::shared_ptr<Client> client, std::shared_ptr<Spawn> spawn) {
+	OP_EqDestroyGhostCmd_Packet* p = new OP_EqDestroyGhostCmd_Packet(client->GetVersion());
+	p->spawn_index = client->GetIndexForSpawn(spawn);
+	p->bDelete = 1;
+	client->QueuePacket(p);
+}
+
+void ZoneServer::RemovePlayer(std::shared_ptr<Entity> player) {
+	std::vector<std::shared_ptr<Entity> >::iterator itr = std::find(players.begin(), players.end(), player);
+	if (itr != players.end()) {
+		RemoveSpawnFromAllClients(*itr);
+		players.erase(itr);
+	}
 }

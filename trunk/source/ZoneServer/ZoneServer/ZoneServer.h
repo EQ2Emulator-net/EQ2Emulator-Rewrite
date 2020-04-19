@@ -28,6 +28,11 @@ public:
 	void AddPlayer(std::shared_ptr<Entity> player);
 	void SendPlayersToNewClient(std::shared_ptr<Client> client);
 	void SendSpawnToClient(std::shared_ptr<Spawn> spawn, std::shared_ptr<Client> client);
+	
+	void RemoveSpawnFromAllClients(std::shared_ptr<Spawn> spawn);
+	void SendDestroyGhost(std::shared_ptr<Client> client, std::shared_ptr<Spawn> spawn);
+
+	void RemovePlayer(std::shared_ptr<Entity> player);
 
 private:
 
