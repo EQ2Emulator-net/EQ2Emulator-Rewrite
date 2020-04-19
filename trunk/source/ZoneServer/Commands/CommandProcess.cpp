@@ -11,6 +11,7 @@
 #include "../Spawns/Spawn.h"
 #include "../Packets/OP_ChangeZoneMsg_Packet.h"
 #include "../ZoneServer/ZoneOperator.h"
+#include "../Packets/OP_ChangeServerControlFlagMsg.h"
 
 extern ZoneOperator z;
 
@@ -23,6 +24,7 @@ void CommandProcess::RegisterCommands() {
 	RegisterCommandHandler(206, CommandMove);
 	RegisterCommandHandler(247, CommandTest);
 	RegisterCommandHandler(205, CommandZone);
+	RegisterCommandHandler(228, CommandFlymode);
 }
 
 void CommandProcess::RegisterCommandHandler(uint32_t handler_id, CommandHandler_t handler) {
@@ -218,5 +220,16 @@ void CommandProcess::CommandZone(const std::shared_ptr<Client>& client, Separato
 	p.port = z.GetPort();
 	p.account_id = client->GetAccountID();
 	p.key = pc.access_code;
+	client->QueuePacket(p);
+}
+
+void CommandProcess::CommandFlymode(const std::shared_ptr<Client>& client, Separator& sep) {
+	if (!sep.IsNumber(0)) {
+		return;
+	}
+
+	OP_ChangeServerControlFlagMsg_Packet p(client->GetVersion());
+	p.parameter5 = 32;
+	p.value = sep.GetUInt32(0) != 0;
 	client->QueuePacket(p);
 }

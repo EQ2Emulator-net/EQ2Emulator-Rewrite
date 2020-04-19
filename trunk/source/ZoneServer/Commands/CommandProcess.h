@@ -47,4 +47,5 @@ private:
 	static void CommandMove(const std::shared_ptr<Client>& client, Separator& sep);
 	static void CommandTest(const std::shared_ptr<Client>& client, Separator& sep);
 	static void CommandZone(const std::shared_ptr<Client>& client, Separator& sep);
+	static void CommandFlymode(const std::shared_ptr<Client>& client, Separator& sep);
 };
