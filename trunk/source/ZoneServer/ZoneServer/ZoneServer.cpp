@@ -165,6 +165,9 @@ void ZoneServer::SendCharacterInfo(std::shared_ptr<Client> client) {
 	entity->SetSizeMultiplierRatio(1.0f, false);
 	entity->SetVisFlags(55, false);
 	entity->SetInteractionFlag(12, false);
+	entity->SetX(GetSafeX(), false);
+	entity->SetY(GetSafeY(), false);
+	entity->SetZ(GetSafeZ(), false);
 
 	std::shared_ptr<PlayerController> controller = client->GetController();
 	controller->SetControlled(entity);

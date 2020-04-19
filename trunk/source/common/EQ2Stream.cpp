@@ -316,6 +316,7 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 
 			processed += subpacket_length;
 		}
+		break;
 	}
 	//This is an ack for a single packet rather than a range of packets
 	case OP_OutOfOrderAck: {
