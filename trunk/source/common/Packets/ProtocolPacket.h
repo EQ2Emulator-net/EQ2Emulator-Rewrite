@@ -44,10 +44,10 @@ public:
 	static void ChatEncode(unsigned char *buffer, int size, int EncodeKey);
 	EQ2Packet *MakeApplicationPacket(uint8_t opcode_size = 0) const;
 
+	uint16_t opcode;
 	bool bBufferSet;
 protected:
 	bool HasCRC;
-	uint16_t opcode;
 	uint16_t sequence;
 	uint32_t version;
 	uint32_t SentTime;

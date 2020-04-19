@@ -176,7 +176,8 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 
 		Session = ntohl(request->Session);
 		MaxLength = ntohl(request->MaxLength);
-		NextInSeq = 0;
+		//Setting the sequence to 0 may be a bad idea in case we get multiple of these packets
+		//NextInSeq = 0;
 		Key = 0x33624702;
 		LogDebug(LOG_NET, 3, "OP_SessionRequest Protocol Version: %u, Session: %u, MaxLength: %u", ntohl(request->ProtocolVersion), Session, MaxLength);
 
@@ -625,6 +626,7 @@ void EQ2Stream::Write() {
 		ret->buffer = pbuf;
 		ret->Size = combinePacketSize;
 		ret->bBufferSet = true;
+		ret->opcode = OP_Combined;
 		if (NetDebugEnabled()) {
 			LogDebug(LOG_PACKET, 0, "Combined Packet!");
 			DumpBytes(ret->buffer, ret->Size);
