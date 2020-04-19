@@ -165,10 +165,6 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 		LogDebug(LOG_NET, 0, "ProtocolPacket Received, opcode: %u", p->GetOpcode());
 	}
 
-	if (GetState() == EQStreamState::CLOSED && p->GetOpcode() != OP_SessionRequest) {
-		return;
-	}
-
 	switch (p->GetOpcode()) {
 	case OP_SessionRequest: {
 		auto request = static_cast<OP_SessionRequest_Packet*>(p);
