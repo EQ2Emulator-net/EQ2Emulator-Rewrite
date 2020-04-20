@@ -45,7 +45,7 @@ bool WorldDatabase::GetAccount(Client* client, std::string user, std::string pas
 	string esc_user = Escape(user.c_str());
 	string esc_pass = Escape(pass.c_str());
 
-	success = Select(&result, "SELECT * FROM `account` WHERE `name` = '%s' AND passwd = md5('%s')", esc_user.c_str(), esc_pass.c_str());
+	success = Select(&result, "SELECT * FROM `account` WHERE `name` = '%s' AND passwd = SHA2('%s', 256)", esc_user.c_str(), esc_pass.c_str());
 	if (success) {
 		success = result.Next();
 		if (success) {
@@ -76,10 +76,12 @@ bool WorldDatabase::GetAccount(Client* client, std::string user, std::string pas
 					in_addr ip_addr;
 					ip_addr.s_addr = client->GetIP();
 					QueryResult result = QueryWithFetchedResult(QUERY_RESULT_FLAG_LAST_INSERT_ID, 
-						"INSERT INTO account(`name`, `passwd`, `ip_address`, `last_client_version`) VALUES ('%s', md5('%s'), '%s', %u)",
+						"INSERT INTO account(`name`, `passwd`, `ip_address`, `last_client_version`) VALUES ('%s', SHA2('%s', 256), '%s', %u)",
 						esc_user.c_str(), esc_pass.c_str(), inet_ntoa(ip_addr), client->GetVersion());
-					if (result) 
+					if (result) {
 						client->SetAccount(static_cast<uint32_t>(result.last_insert_id));
+						success = true;
+					}
 				}
 					
 			}
