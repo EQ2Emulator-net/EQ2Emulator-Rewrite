@@ -188,7 +188,7 @@ void ZoneServer::SendCharacterInfo(std::shared_ptr<Client> client) {
 	entity->SetCollisionRadius(28, false);
 	entity->SetSizeRatio(1.0f, false);
 	entity->SetSizeMultiplierRatio(1.0f, false);
-	//entity->SetVisFlags(55, false);
+	entity->SetVisFlags(55, false);
 	entity->SetInteractionFlag(12, false);
 	entity->SetX(GetSafeX(), false);
 	entity->SetY(GetSafeY(), false);
