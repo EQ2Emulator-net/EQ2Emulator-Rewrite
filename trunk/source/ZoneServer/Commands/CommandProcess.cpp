@@ -256,4 +256,9 @@ void CommandProcess::CommandFlymode(const std::shared_ptr<Client>& client, Separ
 	p.parameter5 = 32;
 	p.value = sep.GetUInt32(0) != 0;
 	client->QueuePacket(p);
+
+	OP_ChangeServerControlFlagMsg_Packet p2(client->GetVersion());
+	p2.parameter1 = 1;
+	p2.value = sep.GetUInt32(0) != 0;
+	client->QueuePacket(p2);
 }
