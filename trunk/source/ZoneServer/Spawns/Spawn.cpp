@@ -29,21 +29,17 @@ void Spawn::Process() {
 			std::shared_ptr<Client> client = c.lock();
 			if (client) {
 				// Don't send updates to yourself
-				if (client->GetController()->GetControlled().get() == this)
+				if (client->GetController()->GetControlled().get() == this && !update.m_infoChanged && !update.m_visChanged)
 					continue;
 
 				OP_UpdateGhostCmdMsg_Packet* packet = new OP_UpdateGhostCmdMsg_Packet(client->GetVersion());
 				uint16_t index = client->GetIndexForSpawn(shared_from_this());
 				packet->timestamp = Timer::GetCurrentTime2();
 
-				uint32_t char_id = client->GetCharacterID();
-
-				//LogError(LOG_CLIENT, 0, "Sending update to character %u, index = %u", char_id, index);
-
 				if (update.m_infoChanged)
 					packet->InsertSpawnInfoData(*GetInfoStruct(), index);
 
-				if (update.m_posChanged)
+				if (update.m_posChanged && client->GetController()->GetControlled().get() != this)
 					packet->InsertSpawnPosData(*GetPosStruct(), index, true, movementTimestamp);
 
 				if (update.m_visChanged)

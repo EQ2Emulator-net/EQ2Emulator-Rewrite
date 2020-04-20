@@ -163,7 +163,7 @@ void ZoneServer::SendCharacterInfo(std::shared_ptr<Client> client) {
 	entity->SetCollisionRadius(28, false);
 	entity->SetSizeRatio(1.0f, false);
 	entity->SetSizeMultiplierRatio(1.0f, false);
-	entity->SetVisFlags(55, false);
+	//entity->SetVisFlags(55, false);
 	entity->SetInteractionFlag(12, false);
 	entity->SetX(GetSafeX(), false);
 	entity->SetY(GetSafeY(), false);
@@ -217,6 +217,9 @@ void ZoneServer::RemoveSpawnFromAllClients(std::shared_ptr<Spawn> spawn) {
 }
 
 void ZoneServer::SendDestroyGhost(std::shared_ptr<Client> client, std::shared_ptr<Spawn> spawn) {
+	if (!client->WasSentSpawn(spawn))
+		return;
+
 	OP_EqDestroyGhostCmd_Packet* p = new OP_EqDestroyGhostCmd_Packet(client->GetVersion());
 	p->spawn_index = client->GetIndexForSpawn(spawn);
 	p->bDelete = 1;

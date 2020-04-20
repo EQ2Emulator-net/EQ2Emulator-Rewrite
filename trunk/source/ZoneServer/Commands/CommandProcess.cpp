@@ -174,7 +174,7 @@ void CommandProcess::CommandTest(const std::shared_ptr<Client>& client, Separato
 		return;
 	}
 
-	auto controller = client->GetController();
+	/*auto controller = client->GetController();
 	auto target = controller->GetTarget();
 	if (!target) {
 		return;
@@ -182,7 +182,31 @@ void CommandProcess::CommandTest(const std::shared_ptr<Client>& client, Separato
 
 	uint32_t shift = sep.GetUInt32(0);
 
-	target->ToggleEntityFlags(1 << shift);
+	target->ToggleEntityFlags(1 << shift);*/
+
+	std::shared_ptr<Spawn> player = client->GetController()->GetControlled();
+	if (player) {
+		uint32_t mountID = sep.GetUInt32(0);
+		//LogDebug(LOG_PLAYER, 0, "Setting players mount to %u", mountID);
+		player->SetMountType(mountID);
+		EQ2Color color;
+		if (mountID > 0) {
+			color.Red = 255;
+			color.Green = 255;
+			color.Blue = 255;
+			player->SetInfoVisualFlags(4);
+		}
+		else {
+			color.Red = 0;
+			color.Green = 0;
+			color.Blue = 0;
+			player->SetInfoVisualFlags(0);
+		}
+		player->SetMountColor(color);
+		player->SetMountSaddleColor(color);
+
+		//player->SetVisualState(mountID);
+	}
 }
 
 void CommandProcess::CommandZone(const std::shared_ptr<Client>& client, Separator& sep) {
