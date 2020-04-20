@@ -133,10 +133,9 @@ public:
 		desiredPitch_compressed = CompressFloat(desiredPitch, 64);
 		desiredPitchVelocity_compressed = CompressFloat(desiredPitchVelocity, 32);
 		desiredHeadingVelocity_compressed = CompressFloat(desiredHeadingVelocity, 32);
-		desiredRollVelocity_compressed = CompressFloat(desiredPitchVelocity, 32);
 		collisionRadius_compressed = CompressFloat(collisionRadius, 32);
 		speedModifier_compressed = CompressFloat(speedModifier, 32);
-		swimmingSpeedModifier_compressed = CompressFloat(speedModifier, 32);
+		swimmingSpeedModifier_compressed = CompressFloat(swimmingSpeedModifier, 32);
 		unkSpeed3_compressed = CompressFloat(unkSpeed3, 32);
 		desiredVertSpeed_compressed = CompressFloat(desiredVertSpeed, 32);
 		desiredStrafeSpeed_compressed = CompressFloat(desiredStrafeSpeed, 32);
