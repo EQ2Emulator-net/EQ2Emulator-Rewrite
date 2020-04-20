@@ -31,8 +31,8 @@ public:
 	
 	void RemoveSpawnFromAllClients(std::shared_ptr<Spawn> spawn);
 	void SendDestroyGhost(std::shared_ptr<Client> client, std::shared_ptr<Spawn> spawn);
-
 	void RemovePlayer(std::shared_ptr<Entity> player);
+	void RemoveClient(std::shared_ptr<Client> client);
 
 private:
 

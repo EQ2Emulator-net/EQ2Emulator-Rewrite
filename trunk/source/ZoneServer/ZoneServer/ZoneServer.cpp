@@ -230,3 +230,10 @@ void ZoneServer::RemovePlayer(std::shared_ptr<Entity> player) {
 		players.erase(itr);
 	}
 }
+
+void ZoneServer::RemoveClient(std::shared_ptr<Client> client) {
+	Clients.erase(client->GetAccountID());
+	std::shared_ptr<Entity> player = std::static_pointer_cast<Entity>(client->GetController()->GetControlled());
+	if (player)
+		RemovePlayer(player);
+}

@@ -1006,6 +1006,8 @@ void EQ2Stream::SendDisconnect(uint16_t reason) {
 	disconnect->Reason = htons(reason);
 
 	NonSequencedPush(disconnect);
+
+	Disconnected();
 }
 
 void EQ2Stream::SendKeepAlive() {

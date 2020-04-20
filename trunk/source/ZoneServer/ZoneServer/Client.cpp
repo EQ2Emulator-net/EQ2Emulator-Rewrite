@@ -7,6 +7,7 @@
 #include "../../common/Packets/EQ2Packets/OP_LoginReplyMsg_Packet.h"
 #include "../Controllers/PlayerController.h"
 #include "../Spawns/Spawn.h"
+#include "../ZoneServer/ZoneServer.h"
 
 Client::Client(unsigned int ip, unsigned short port) : EQ2Stream(ip, port), m_nextSpawnIndex(1) {
 	account_id = 0;
@@ -73,6 +74,13 @@ void Client::SendLoginReply(uint8_t reply) {
 		r->ParentalControlTimer = 0xFFFFFFFF;
 	}*/
 	QueuePacket(r);
+}
+
+void Client::Disconnected() {
+	std::shared_ptr<ZoneServer> zone = m_zone.lock();
+	if (zone) {
+		zone->RemoveClient(std::dynamic_pointer_cast<Client>(shared_from_this()));
+	}
 }
 
 bool Client::WasSentSpawn(const std::shared_ptr<Spawn>& spawn) {

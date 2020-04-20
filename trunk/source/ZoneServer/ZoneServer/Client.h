@@ -17,6 +17,7 @@ public:
 	void SendLoginReply(uint8_t reply);
 
 	EncodedPackets encoded_packets;
+	void Disconnected() override;
 
 protected:
 	void ReadVersionPacket(const unsigned char* data, uint32_t size, uint32_t offset, uint16_t opcode) override;

@@ -52,6 +52,7 @@ public:
 	bool RequestNewClient() override { return bNeedNewClient; }
 
 	void SendDisconnect(uint16_t reason);
+	virtual void Disconnected() { }
 
 protected:
 	EQ2Packet* PopPacket(); // InboundQueuePop
