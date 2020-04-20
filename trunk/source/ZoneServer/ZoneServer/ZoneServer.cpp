@@ -100,6 +100,7 @@ void ZoneServer::Process() {
 					Clients.erase(itr);
 				}
 			}
+			pendingClientRemoval.clear();
 		}
 		{
 			//Check if we need to add any clients
