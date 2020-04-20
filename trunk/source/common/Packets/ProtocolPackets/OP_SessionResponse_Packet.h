@@ -14,7 +14,7 @@ public:
 
 	uint32_t Session;
 	uint32_t Key;
-	uint8_t UnknownA;
+	uint8_t CrcLength;
 	uint8_t Format;
 	uint8_t UnknownB;
 	uint32_t MaxLength;
@@ -24,7 +24,7 @@ private:
 	void RegisterElements() {
 		elements.push_back(new PacketUInt32(Session));
 		elements.push_back(new PacketUInt32(Key));
-		elements.push_back(new PacketUInt8(UnknownA));
+		elements.push_back(new PacketUInt8(CrcLength));
 		elements.push_back(new PacketUInt8(Format));
 		elements.push_back(new PacketUInt8(UnknownB));
 		elements.push_back(new PacketUInt32(MaxLength));

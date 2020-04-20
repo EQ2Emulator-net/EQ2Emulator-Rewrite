@@ -6,6 +6,7 @@
 #include <thread>
 #include <memory>
 #include "../../common/timer.h"
+#include "../../common/Mutex.h"
 
 class Client;
 class Spawn;
@@ -40,6 +41,10 @@ private:
 
 
 	std::map<uint32_t, std::weak_ptr<Client> > Clients;
+
+	std::vector<std::shared_ptr<Client> > pendingClientAdd;
+	Mutex pendingClientAdd_lock;
+
 	std::thread process_thread;
 	bool isRunning;
 

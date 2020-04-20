@@ -984,7 +984,7 @@ void EQ2Stream::SendSessionResponse() {
 	OP_SessionResponse_Packet* Response = new OP_SessionResponse_Packet();
 	Response->Session = htonl(Session);
 	Response->MaxLength = htonl(MaxLength);
-	Response->UnknownA = 2;
+	Response->CrcLength = 2;
 	Response->Format = 0;
 	Response->UnknownB = 0;
 	Response->UnknownD = 0;

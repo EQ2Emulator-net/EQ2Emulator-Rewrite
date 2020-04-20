@@ -59,6 +59,7 @@ ZoneServer::ZoneServer(uint32_t zone_id) {
 	//zoneMOTD = "";
 	rulesetID = 0;
 	isRunning = true;
+	pendingClientAdd_lock.SetName("ZoneServer::pendingClientAdd");
 }
 
 ZoneServer::~ZoneServer() {
@@ -88,6 +89,15 @@ bool ZoneServer::Init() {
 void ZoneServer::Process() {
 
 	while (isRunning) {
+		{
+			//Check if we need to add any clients
+			WriteLocker lock(pendingClientAdd_lock);
+			for (auto& itr : pendingClientAdd) {
+				Clients[itr->GetAccountID()] = itr;
+			}
+			pendingClientAdd.clear();
+		}
+
 		std::map<uint32_t, std::weak_ptr<Client> >::iterator itr;
 		for (itr = Clients.begin(); itr != Clients.end(); ) {
  			std::shared_ptr<Client> client = itr->second.lock();
@@ -112,7 +122,10 @@ void ZoneServer::Process() {
 
 bool ZoneServer::AddClient(std::shared_ptr<Client> c) {
 	c->SetZone(shared_from_this());
-	Clients[c->GetAccountID()] = c;
+	
+	WriteLocker lock(pendingClientAdd_lock);
+	pendingClientAdd.push_back(c);
+	lock.Unlock();
 
 	OP_ZoneInfoMsg_Packet* zone = new OP_ZoneInfoMsg_Packet(c->GetVersion());
 	zone->server1 = "Test";
