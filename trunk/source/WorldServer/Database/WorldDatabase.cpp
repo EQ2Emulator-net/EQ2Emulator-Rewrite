@@ -844,8 +844,8 @@ uint8_t WorldDatabase::CheckNameFilter(const char* name) {
 	DatabaseResult result;
 	bool success;
 
-	//LogWrite(WORLD__DEBUG, 0, "World", "Name check on: %s", name);
-	success = Select(&result, "SELECT count(*) FROM characters WHERE name='%s'", name);
+	LogDebug(LOG_WORLD, 0, "Name check on: %s", name);
+	success = Select(&result, "SELECT count(*) FROM characters WHERE name='%s' AND deleted = 0", name);
 	if (success && result.Next()) {
 		if (result.GetUInt32(0) > 0)
 			return NAMETAKEN_REPLY;
@@ -854,7 +854,7 @@ uint8_t WorldDatabase::CheckNameFilter(const char* name) {
 		//LogWrite(WORLD__ERROR, 0, "World", "Error in CheckNameFilter (name exist check) (Name query '%s': %s", query.GetQuery(), query.GetError());
 	}
 
-	//LogWrite(WORLD__DEBUG, 0, "World", "Name check on: %s (Bots table)", name);
+	LogDebug(LOG_WORLD, 0, "Name check on: %s (Bots table)", name);
 	success = Select(&result, "SELECT count(*) FROM bots WHERE name='%s'", name);
 	if (success && result.Next()) {
 		if (result.GetUInt32(0) > 0)
