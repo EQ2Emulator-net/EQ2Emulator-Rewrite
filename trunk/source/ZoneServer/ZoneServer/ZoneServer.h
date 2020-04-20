@@ -45,6 +45,9 @@ private:
 	std::vector<std::shared_ptr<Client> > pendingClientAdd;
 	Mutex pendingClientAdd_lock;
 
+	std::vector<std::shared_ptr<Client> > pendingClientRemoval;
+	Mutex pendingClientRemoval_lock;
+
 	std::thread process_thread;
 	bool isRunning;
 
@@ -83,6 +86,8 @@ private:
 	uint32_t shutdownTimer;
 	std::string zoneMOTD;
 	uint32_t rulesetID;
+
+	void OnClientRemoval(const std::shared_ptr<Client>& client);
 
 public:
 	//void SetID(uint32_t val) { id = val; }

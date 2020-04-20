@@ -41,3 +41,6 @@ bool alpha_check(unsigned char val);
 float MakeRandom(float low, float high);
 int32_t MakeRandomInt(int32_t low, int32_t high);
 uint32_t MakeRandomNumber();
+
+//This will compare a weak_ptr to either a shared_ptr or weak_ptr
+#define EmuWeakCmp(lhs, rhs) (!(lhs.owner_before(rhs) || rhs.owner_before(lhs)))

@@ -60,6 +60,7 @@ ZoneServer::ZoneServer(uint32_t zone_id) {
 	rulesetID = 0;
 	isRunning = true;
 	pendingClientAdd_lock.SetName("ZoneServer::pendingClientAdd");
+	pendingClientRemoval_lock.SetName("ZoneServer::pendingClientRemoval");
 }
 
 ZoneServer::~ZoneServer() {
@@ -89,6 +90,17 @@ bool ZoneServer::Init() {
 void ZoneServer::Process() {
 
 	while (isRunning) {
+		{
+			//Check if we should remove any clients
+			WriteLocker lock(pendingClientRemoval_lock);
+			for (auto& client : pendingClientRemoval) {
+				OnClientRemoval(client);
+				auto itr = Clients.find(client->GetAccountID());
+				if (itr != Clients.end() && EmuWeakCmp(client, itr->second)) {
+					Clients.erase(itr);
+				}
+			}
+		}
 		{
 			//Check if we need to add any clients
 			WriteLocker lock(pendingClientAdd_lock);
@@ -248,7 +260,11 @@ void ZoneServer::RemovePlayer(std::shared_ptr<Entity> player) {
 }
 
 void ZoneServer::RemoveClient(std::shared_ptr<Client> client) {
-	Clients.erase(client->GetAccountID());
+	WriteLocker lock(pendingClientRemoval_lock);
+	pendingClientRemoval.push_back(client);
+}
+
+void ZoneServer::OnClientRemoval(const std::shared_ptr<Client>& client) {
 	std::shared_ptr<Entity> player = std::static_pointer_cast<Entity>(client->GetController()->GetControlled());
 	if (player)
 		RemovePlayer(player);
