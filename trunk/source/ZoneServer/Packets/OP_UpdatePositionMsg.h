@@ -17,7 +17,7 @@ struct Substruct_MovementData : public PacketEncodedData, public SpawnPositionSt
 	void RegisterElements() override {
 		RegisterUInt32(positionState);
 		if (GetVersion() > 283) {
-			RegisterFloat(unknown20);
+			RegisterUInt32(positionState2);
 		}
 		RegisterFloat(desiredHeading);
 		RegisterFloat(desiredPitch);
@@ -100,6 +100,8 @@ public:
 			LogDebug(LOG_PACKET, 0, "Could not Decode an UpdatePositionMsg?");
 			return;
 		}
+
+		LogDebug(LOG_PLAYER, 0, "pos flags %u", movement.positionState);
 		
 		controller->ApplyPredictionUpdate(timestamp, static_cast<const SpawnPositionStruct&>(movement));
 	}

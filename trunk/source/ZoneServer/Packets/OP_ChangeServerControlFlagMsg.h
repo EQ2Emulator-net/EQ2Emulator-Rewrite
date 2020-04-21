@@ -4,30 +4,46 @@
 #include "../../common/Packets/EQ2Packets/OpcodeManager.h"
 #include "../../common/Packets/PacketElements/PacketElements.h"
 
+//LIST OF STATES, these map to the same bitflags in the position and player movement structs
+
+//PositionState1
+// 1<<0 flymode
+// 1<<1 nocollision flymode
+// 1<<2 unknown
+// 1<<3 turn movement only
+// 1<<4 no turning
+// 1<<5 glide
+// 1<<6 sit
+// 1<<8 crouch
+// 1<<10 falling
+// 1<<18 float when jumping, no movement
+// 1<<19 high jump, no movement
+// 1<<23 walk underwater
+// 1<<24 moon jump underwater
+// 1<<26 fear
+// 1<<28 moon jump
+// 1<<29 safe fall (float to ground)
+// 1<<30 cannot move
+
+//PositionState2
+// 1<<0 dead?
+// 1<<3 hover (fae)
+// 1<<5 mount flymode
+
 class OP_ChangeServerControlFlagMsg_Packet : public EQ2Packet {
 public:
 	OP_ChangeServerControlFlagMsg_Packet(uint32_t version) : EQ2Packet(version),
-	parameter1(0), parameter2(0), parameter3(0), parameter4(0), parameter5(0), value(false) {
+	positionState(0), positionState2(0), value(false) {
 		RegisterElements();
 	}
 
 	void RegisterElements() {
-		RegisterUInt8(parameter1);
-		RegisterUInt8(parameter2);
-		RegisterUInt8(parameter3);
-		RegisterUInt8(parameter4);
-		RegisterUInt8(parameter5);
-		RescopeArrayElement(unknown);
-		RegisterUInt8(unknown)->SetCount(3);
+		RegisterUInt32(positionState);
+		RegisterUInt32(positionState2);
 		RegisterBool(value);
 	}
 
-	//Pretty clearly just a bitflag, keep it as separate bytes?
-	uint8_t parameter1;
-	uint8_t parameter2;
-	uint8_t parameter3;
-	uint8_t parameter4;
-	uint8_t parameter5;
-	uint8_t unknown[3];
+	uint32_t positionState;
+	uint32_t positionState2;
 	bool value;	
 };

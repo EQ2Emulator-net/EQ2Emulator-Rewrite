@@ -14,6 +14,7 @@ struct SpawnPositionStruct {
 	}
 
 	uint32_t positionState;
+	uint32_t positionState2;
 	float desiredHeading;
 	float desiredHeadingVelocity;
 	float desiredRoll;
@@ -31,7 +32,6 @@ struct SpawnPositionStruct {
 	float heading;
 	float pitch;
 	float roll;
-	float unk20;
 	float destLocX;
 	float destLocY;
 	float destLocZ;
@@ -52,7 +52,6 @@ struct SpawnPositionStruct {
 	float unkSpeed3;
 	float desiredVertSpeed;
 	float desiredStrafeSpeed;
-	float unknown20;
 	float velocityX;
 	float velocityY;
 	float velocityZ;
@@ -212,7 +211,7 @@ public:
 		RegisterInt16(desiredForwardSpeed_compressed);
 		RegisterUInt32(positionState);
 		if (GetVersion() > 283) {
-			RegisterFloat(unk20);
+			RegisterUInt32(positionState2);
 			RegisterFloat(destLocX);
 			RegisterFloat(destLocY);
 			RegisterFloat(destLocZ);

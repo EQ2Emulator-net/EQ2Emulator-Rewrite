@@ -15,8 +15,7 @@ void PacketEncodedData::EncodeData() {
 	uint32_t tmp = 0;
 	PacketSubstruct::WriteElement(buf.data(), tmp);
 	b_write_buf_initialized = true;
-	WriteLocker lock = encodingBuf->GetBufLock();
-	memcpy(buf.data(), encodingBuf->Encode(buf.data(), element_size), element_size);
+	encodingBuf->Encode(buf.data(), element_size);
 }
 
 bool PacketEncodedData::DecodeData(std::shared_ptr<EncodedBuffer>& xorBuf) {
@@ -27,9 +26,8 @@ bool PacketEncodedData::DecodeData(std::shared_ptr<EncodedBuffer>& xorBuf) {
 	b_ready_for_decode = false;
 
 	uint32_t tmp = 0;
-	WriteLocker lock = xorBuf->GetBufLock();
-	const uint8_t* p = xorBuf->Decode(buf.data(), static_cast<uint32_t>(buf.size()));
-	return PacketSubstruct::ReadElement(p, tmp, static_cast<uint32_t>(buf.size()));
+	xorBuf->Decode(buf.data(), static_cast<uint32_t>(buf.size()));
+	return PacketSubstruct::ReadElement(buf.data(), tmp, static_cast<uint32_t>(buf.size()));
 }
 
 bool PacketEncodedData::ReadElement(const unsigned char* srcbuf, uint32_t& offset, uint32_t bufsize) {
