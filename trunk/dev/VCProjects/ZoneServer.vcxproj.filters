@@ -222,6 +222,9 @@
     <ClCompile Include="..\..\source\common\Packets\PacketElements\PacketEncodedData.cpp">
       <Filter>common\Packets\PacketElements</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\ZoneServer\Cell.cpp">
+      <Filter>source\ZoneServer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h">
@@ -637,6 +640,12 @@
     </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_ChangeServerControlFlagMsg.h">
       <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\ZoneServer\Cell.h">
+      <Filter>source\ZoneServer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Spawns\GroundSpawn.h">
+      <Filter>source\Spawns</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

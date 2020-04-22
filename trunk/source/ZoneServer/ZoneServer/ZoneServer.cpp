@@ -8,6 +8,7 @@
 #include "../../common/thread.h"
 #include "../Controllers/PlayerController.h"
 #include "../Commands/CommandProcess.h"
+#include "Cell.h"
 
 // Packets
 #include "../Packets/OP_ZoneInfoMsg_Packet.h"
@@ -21,6 +22,7 @@
 #include "../Spawns/Object.h"
 #include "../Spawns/Widget.h"
 #include "../Spawns/Sign.h"
+#include "../Spawns/GroundSpawn.h"
 
 extern ZoneDatabase database;
 extern ZoneOperator z;
@@ -83,6 +85,7 @@ bool ZoneServer::Init() {
 	LogDebug(LOG_ZONE, 0, "Zone %u (%s) started", id, description.c_str());
 
 	process_thread = ThreadManager::ThreadStart("ZoneServer::Process", std::bind(&ZoneServer::Process, this));
+	m_loadThread = ThreadManager::ThreadStart("ZoneServer::LoadThread", std::bind(&ZoneServer::LoadThread, this));
 
 	return ret;
 }
@@ -269,4 +272,22 @@ void ZoneServer::OnClientRemoval(const std::shared_ptr<Client>& client) {
 	std::shared_ptr<Entity> player = std::static_pointer_cast<Entity>(client->GetController()->GetControlled());
 	if (player)
 		RemovePlayer(player);
+}
+
+void ZoneServer::AddNPCToMasterList(std::shared_ptr<Entity> npc) {
+	m_masterNPCList[npc->GetDatabaseID()]=npc;
+}
+
+std::shared_ptr<Entity> ZoneServer::GetNPCFromMasterList(uint32_t databaseID) {
+	std::map<uint32_t, std::shared_ptr<Entity> >::iterator itr = m_masterNPCList.find(databaseID);
+	if (itr != m_masterNPCList.end())
+		return itr->second;
+
+	return nullptr;
+}
+
+void ZoneServer::LoadThread() {
+	LogInfo(LOG_NPC, 0, "-Loading NPC data...");
+	database.LoadNPCsForZone(this);
+	LogInfo(LOG_NPC, 0, "-Load NPC data complete!");
 }

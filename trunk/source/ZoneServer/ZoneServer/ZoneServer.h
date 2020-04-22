@@ -11,6 +11,9 @@
 class Client;
 class Spawn;
 class Entity;
+class Object;
+class GroundSpawn;
+class Cell;
 
 // This will be where every thing happens
 class ZoneServer : public std::enable_shared_from_this<ZoneServer> {
@@ -35,6 +38,10 @@ public:
 	void RemovePlayer(std::shared_ptr<Entity> player);
 	void RemoveClient(std::shared_ptr<Client> client);
 
+	void AddNPCToMasterList(std::shared_ptr<Entity> npc);
+	std::shared_ptr<Entity> GetNPCFromMasterList(uint32_t databaseID);
+
+	void LoadThread();
 private:
 
 	std::vector<std::shared_ptr<Entity> > players;
@@ -53,6 +60,22 @@ private:
 
 	Timer m_SpawnUpdateTimer;
 
+	std::map<std::pair<int32_t, int32_t>, Cell> m_spGrid;
+	std::vector<std::weak_ptr<Spawn> > m_globalSpawns;
+
+	// Lists of stuff actually in the world
+	std::vector<std::shared_ptr<Entity> > m_entityList;
+	std::vector<std::shared_ptr<Object> > m_objectList;
+	std::vector<std::shared_ptr<GroundSpawn> > m_groundspawnList;
+
+	// Master lists loaded from the database, key = database id
+	std::map<uint32_t, std::shared_ptr<Entity> > m_masterNPCList;
+	std::map<uint32_t, std::shared_ptr<Object> > m_masterObjectList;
+	std::map<uint32_t, std::shared_ptr<GroundSpawn> > m_masterGroundspawnList;
+	std::map<uint32_t, std::shared_ptr<Spawn> > m_masterWidgetList;
+	std::map<uint32_t, std::shared_ptr<Spawn> > m_masterSignList;
+
+	std::thread m_loadThread;
 
 	// following is info from `zones` table in the DB
 	uint32_t id;

@@ -423,3 +423,119 @@ bool ZoneDatabase::LoadCharacter(uint32_t char_id, uint32_t account_id, std::sha
 
 	return ret;
 }
+
+bool ZoneDatabase::LoadNPCsForZone(ZoneServer* z) {
+	DatabaseResult result;
+	bool ret = Select(&result, "SELECT npc.spawn_id, s.name, npc.min_level, npc.max_level, npc.enc_level, s.race, s.model_type, npc.class_, npc.gender, s.command_primary, s.command_secondary, s.show_name, npc.min_group_size, npc.max_group_size, npc.hair_type_id, npc.facial_hair_type_id, npc.wing_type_id, npc.chest_type_id, npc.legs_type_id, npc.soga_hair_type_id, npc.soga_facial_hair_type_id, s.attackable, s.show_level, s.targetable, s.show_command_icon, s.display_hand_icon, s.hp, s.power, s.size, s.collision_radius, npc.action_state, s.visual_state, npc.mood_state, npc.initial_state, npc.activity_status, s.faction_id, s.sub_title, s.merchant_id, s.merchant_type, s.size_offset, npc.attack_type, npc.ai_strategy+0, npc.spell_list_id, npc.secondary_spell_list_id, npc.skill_list_id, npc.secondary_skill_list_id, npc.equipment_list_id, npc.str, npc.sta, npc.wis, npc.intel, npc.agi, npc.heat, npc.cold, npc.magic, npc.mental, npc.divine, npc.disease, npc.poison, npc.aggro_radius, npc.cast_percentage, npc.randomize, npc.soga_model_type, npc.heroic_flag, npc.alignment, npc.elemental, npc.arcane, npc.noxious, s.savagery, s.dissonance, npc.hide_hood, npc.emote_state, s.prefix, s.suffix, s.last_name\n"
+									"FROM spawn s\n"
+									"INNER JOIN spawn_npcs npc\n"
+									"ON s.id = npc.spawn_id\n"
+									"INNER JOIN spawn_location_entry le\n"
+									"ON npc.spawn_id = le.spawn_id\n"
+									"INNER JOIN spawn_location_placement lp\n"
+									"ON le.spawn_location_id = lp.spawn_location_id\n"
+									"WHERE lp.zone_id = %u\n"
+									"GROUP BY s.id", z->GetID());
+	if (!ret)
+		return ret;
+
+	uint32_t count = 0;
+	while (result.Next()) {
+		uint32_t id = result.GetUInt32(0);
+		if (z->GetNPCFromMasterList(id))
+			continue;
+
+		std::shared_ptr<Entity> npc = std::make_shared<Entity>();
+		npc->SetDatabaseID(id);
+		npc->SetName(result.GetString(1));
+		npc->SetLevel(result.GetUInt8(2));
+		// TODO: min/max level
+		//npc->SetMinLevel(result.GetUInt8(2));
+		//npc->SetMaxLevel(result.GetUInt8(3));
+		npc->SetDifficulty(result.GetUInt8(4));
+		npc->SetRace(result.GetUInt8(5));
+		npc->SetModelType(result.GetUInt32(6));
+		npc->SetAdventureClass(result.GetUInt8(7));
+		npc->SetGender(result.GetUInt8(8));
+		// TODO: Load enity_commands table before loading spawns
+		// primary commands - result.GetUint32(9);
+		// secondary commands - result.GetUInt32(10);
+		// Display name (vis flags in vis substruct) - result.GetUInt8(11)
+		// 12 - min_group_size, no clue what this is for
+		// 13 - max_group_size, no clue what this is for
+		npc->SetHairType(result.GetUInt32(14));
+		npc->SetFacialHairType(result.GetUInt32(15));
+		npc->SetWingType(result.GetUInt32(16));
+		npc->SetChestType(result.GetUInt32(17));
+		npc->SetLegsType(result.GetUInt32(18));
+		npc->SetSogaHairType(result.GetUInt32(19));
+		npc->SetSogaFacialHairType(result.GetUInt32(20));
+		// Attackable (vis flags in vis struct) - result.GetUInt8(21)
+		// Show Level (vis flags in vis struct) - result.GetUInt8(22)
+		// Targetable (vis flags in vis struct) - result.GetUInt8(23)
+		// Show Command Icon (vis flags in vis struct) - result.GetUInt8(24)
+		npc->SetHandFlag(result.GetUInt8(25));
+		// Total HP - result.GetUInt32(26)
+		// Total MP - result.GetUInt32(27)
+		npc->SetSize(result.GetFloat(28));
+		npc->SetCollisionRadius(result.GetUInt32(29));
+		npc->SetActionState(result.GetUInt32(30));
+		npc->SetVisualState(result.GetUInt32(31));
+		npc->SetMoodState(result.GetUInt32(32));
+		npc->SetState(result.GetUInt32(33));
+		npc->SetEntityFlags(result.GetUInt32(34));
+		// Faction ID - result.GetUInt32(35);
+		if (!result.IsNull(36))
+			npc->SetGuild(result.GetString(36));
+		// Merchant ID - result.GetUInt32(37)
+		// MerchantType - result.GetUInt8(38)
+		// Size Offset (not used?) - result.GetUInt8(39)
+		// Attack Type - result.GetUInt8(40)
+		// AI Strategy - result.GetUInt8(41)
+		// Primary Spell List - result.GetUInt32(42)
+		// Secondary Spell List - result.GetUInt32(43)
+		// Primary Skill List - result.GetUInt32(44)
+		// Secondary Skill List - result.GetUInt32(45)
+		// Equipment List ID - result.GetUInt32(46)
+		// Base Str  - result.GetFloat(47)
+		// Base Sta - result.GetFloat(48)
+		// Base Wis - result.GetFloat(49)
+		// Base Int - result.GetFloat(50)
+		// Base Agi - result.GetFloat(51)
+		// Base Heat - result.GetUInt32(52)
+		// Base Cold - result.GetUInt32(53)
+		// Base Magic - result.GetUInt32(54)
+		// Base Mental  - result.GetUInt32(55)
+		// Base Divine - result.GetUInt32(56)
+		// Base Disease - result.GetUInt32(57)
+		// Base Poison - result.GetUInt32(58)
+		// Aggro Radius - result.GetFloat(59)
+		// Cast Percentage - result.GetUInt8(60)
+		// randomize - result.GetUint32(61)
+		npc->SetSogaModelType(result.GetUInt32(62));
+		npc->SetHeroicFlag(result.GetUInt8(63));
+		// Alignment - result.GetUInt8(64)
+		// Base Elemental - result.GetUInt32(65)
+		// Base Arcane - result.GetUInt32(66)
+		// Base Noxious - result.GetUInt32(67)
+		// Total Savagery - result.GetUInt32(68)
+		// Total Dissonance - result.GetUInt32(69)
+		// Hide Hood (vis flags in info struct) - result.GetUInt8(70)
+		npc->SetEmoteState(result.GetUInt32(71));
+		if (!result.IsNull(72))
+			npc->SetPrefixTitle(result.GetString(72));
+		if (!result.IsNull(73))
+			npc->SetSuffixTitle(result.GetString(73));
+		if (!result.IsNull(74))
+			npc->SetLastName(result.GetString(74));
+
+		count++;
+
+		z->AddNPCToMasterList(npc);
+		LogDebug(LOG_NPC, 5, "---Loading NPC: '%s' (%u)", npc->GetName().c_str(), id);
+	}
+
+	LogInfo(LOG_NPC, 0, "--Loaded %u NPC(s).", count);
+
+	return ret;
+}

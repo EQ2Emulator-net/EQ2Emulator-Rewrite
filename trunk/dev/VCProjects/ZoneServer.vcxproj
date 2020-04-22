@@ -73,6 +73,7 @@
     <ClCompile Include="..\..\source\ZoneServer\Spawns\Widget.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\WorldTalk\WorldStream.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\ZoneServer\Cell.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\Client.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\ZoneOperator.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\ZoneServer.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_SpawnHeader.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_SpellEffects.h" />
     <ClInclude Include="..\..\source\ZoneServer\Spawns\Entity.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Spawns\GroundSpawn.h" />
     <ClInclude Include="..\..\source\ZoneServer\Spawns\Object.h" />
     <ClInclude Include="..\..\source\ZoneServer\Spawns\Sign.h" />
     <ClInclude Include="..\..\source\ZoneServer\Spawns\Spawn.h" />
@@ -215,6 +217,7 @@
     <ClInclude Include="..\..\source\ZoneServer\Spawns\Widget.h" />
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldStream.h" />
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h" />
+    <ClInclude Include="..\..\source\ZoneServer\ZoneServer\Cell.h" />
     <ClInclude Include="..\..\source\ZoneServer\ZoneServer\Client.h" />
     <ClInclude Include="..\..\source\ZoneServer\ZoneServer\ZoneServer.h" />
     <ClInclude Include="..\..\source\ZoneServer\ZoneServer\ZoneOperator.h" />

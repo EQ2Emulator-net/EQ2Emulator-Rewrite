@@ -45,6 +45,8 @@ public:
 	float GetY() const { return m_posStruct.y; }
 	float GetZ() const { return m_posStruct.z; }
 	uint32_t GetID() const { return m_spawnID; }
+	uint32_t GetDatabaseID() { return m_spawnDatabaseID; }
+	void SetDatabaseID(uint32_t id) { m_spawnDatabaseID = id; }
 	std::string GetName() const { return m_titleStruct.name; }
 
 	ZoneServer* GetZone() const { return m_zone; }
@@ -84,6 +86,7 @@ private:
 	std::unique_ptr<Sign> signData;
 	std::unique_ptr<Widget> widgetData;
 	uint32_t m_spawnID;
+	uint32_t m_spawnDatabaseID;
 
 	std::vector<std::weak_ptr<Client> > m_clients;
 	uint32_t movementTimestamp;
@@ -180,16 +183,16 @@ public:
 	void SetEquipType(uint32_t value, uint8_t index, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.equipment_types[index], value, updateFlags);
 	}
-	void SetHairType(uint16_t value, bool updateFlags = true) {
+	void SetHairType(uint32_t value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.hair_type_id, value, updateFlags);
 	}
-	void SetFacialHairType(uint16_t value, bool updateFlags = true) {
+	void SetFacialHairType(uint32_t value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.facial_hair_type_id, value, updateFlags);
 	}
-	void SetWingType(uint16_t value, bool updateFlags = true) {
+	void SetWingType(uint32_t value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.wing_type_id, value, updateFlags);
 	}
-	void SetChestType(uint16_t value, bool updateFlags = true) {
+	void SetChestType(uint32_t value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.chest_type_id, value, updateFlags);
 	}
 	void SetChestColor(EQ2Color value, bool updateFlags = true) {
@@ -360,16 +363,16 @@ public:
 	void SetSogaHairHighlight(EQ2Color value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.soga_hair_highlight, value, updateFlags);
 	}
-	void SetActionState(uint16_t state, bool updateFlags = true) {
+	void SetActionState(uint32_t state, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.action_state, state, updateFlags);
 	}
-	void SetVisualState(uint16_t state, bool updateFlags = true) {
+	void SetVisualState(uint32_t state, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.visual_state, state, updateFlags);
 	}
-	void SetMoodState(uint16_t state, bool updateFlags = true) {
+	void SetMoodState(uint32_t state, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.mood_state, state, updateFlags);
 	}
-	void SetEmoteState(uint8_t new_val, bool updateFlags = true) {
+	void SetEmoteState(uint32_t new_val, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.emote_state, new_val, updateFlags);
 	}
 	void SetEntityFlags(uint32_t flags, bool updateFlags = true) {
