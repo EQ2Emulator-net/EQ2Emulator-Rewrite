@@ -70,6 +70,7 @@
     <ClCompile Include="..\..\source\ZoneServer\Spawns\Object.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Spawns\Sign.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Spawns\Spawn.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Spawns\SpawnStructs.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Spawns\Widget.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\WorldTalk\WorldStream.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.cpp" />
@@ -177,6 +178,7 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\EncodedPackets.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_ChangeServerControlFlagMsg.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_ChangeZoneMsg_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_ChatFiltersMsg.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_ClientCmdMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_CreateSignWidgetCmd_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_CreateWidgetCmd_Packet.h" />

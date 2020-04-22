@@ -29,6 +29,7 @@
 // 1<<0 dead?
 // 1<<3 hover (fae)
 // 1<<5 mount flymode
+// 1<<6 no-fly zone
 
 class OP_ChangeServerControlFlagMsg_Packet : public EQ2Packet {
 public:

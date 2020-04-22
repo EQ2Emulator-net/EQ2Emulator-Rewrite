@@ -32,7 +32,7 @@ public:
 		SetHeaderData(spawn, index);
 		static_cast<SpawnPositionStruct&>(pos) = *spawn->GetPosStruct();
 		static_cast<SpawnInfoStruct&>(info) = *spawn->GetInfoStruct();
-		static_cast<SpawnVisualizationStruct&>(vis) = *spawn->GetVisStruct();
+		vis.InsertSpawnData(spawn);
 		SetFooterData(spawn);
 	}
 

@@ -155,11 +155,12 @@ public:
 	void SetVisUnknownA(uint8_t value, bool updateFlags = true) {
 		SetVis(&m_visStruct.unknowna, value, updateFlags);
 	}
-	void SetVisUnknownA2(uint8_t value, uint8_t index, bool updateFlags = true) {
-		SetVis(&m_visStruct.unknowna2[index], value, updateFlags);
-	}
-	void SetVisFlags(uint8_t value, bool updateFlags = true) {
+	void SetVisFlags(uint16_t value, bool updateFlags = true) {
 		SetVis(&m_visStruct.vis_flags, value, updateFlags);
+	}
+	void ToggleVisFlags(uint16_t toggle, bool updateFlags = true) {
+		uint16_t flags = m_visStruct.vis_flags ^ toggle;
+		SetVis(&m_visStruct.vis_flags, flags, updateFlags);
 	}
 	void SetVisUnknownB(uint8_t value, uint8_t index, bool updateFlags = true) {
 		SetVis(&m_visStruct.unknownb[index], value, updateFlags);
@@ -389,6 +390,10 @@ public:
 	void DisableEntityFlags(uint32_t flags, bool bUpdateFlags = true) {
 		uint32_t current = m_infoStruct.entityFlags;
 		SetEntityFlags(current & (~flags), bUpdateFlags);
+	}
+	void ToggleInfoVisFlags(uint8_t toggle, bool bUpdateFlags = true) {
+		uint8_t flags = m_infoStruct.visual_flag ^ toggle;
+		SetInfo(&m_infoStruct.visual_flag, flags, bUpdateFlags);
 	}
 	void SetLevel(uint8_t value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.level, value, updateFlags);

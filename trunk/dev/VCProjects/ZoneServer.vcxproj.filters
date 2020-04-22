@@ -225,6 +225,9 @@
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\Cell.cpp">
       <Filter>source\ZoneServer</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Spawns\SpawnStructs.cpp">
+      <Filter>source\Spawns</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h">
@@ -646,6 +649,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\Spawns\GroundSpawn.h">
       <Filter>source\Spawns</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_ChatFiltersMsg.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

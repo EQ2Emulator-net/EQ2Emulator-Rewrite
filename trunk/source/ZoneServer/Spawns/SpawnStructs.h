@@ -301,21 +301,39 @@ struct SpawnVisualizationStruct {
 	uint8_t		npc_hate;
 	uint8_t		unknowna;
 	uint8_t		name_quest_icon;
-	uint8_t		unknowna2[4];
-	uint8_t		vis_flags;
-	uint8_t		npc_aaxp;
-	uint8_t		unknownb[4];
+	uint32_t	unknowna2;
+	uint8_t		unknownb[3];
 	uint8_t		hand_flag;
-	uint8_t		unknown2[8];
-	uint8_t		tag1;
-	uint8_t		tag2;
+	uint32_t    unknown2b;
+	uint32_t    unknown4;
+	uint8_t		unknown2[6];
 	uint8_t		unknown2a[3];
 	uint8_t     pvp_difficulty;
-	uint8_t     unknown3[3];
+	uint8_t     tag1;
+	uint8_t     tag2;
+	uint8_t     unknown3;
+	
+	//These aren't in the packet directly but get converted to vis_flags
+	bool bHideHood;
+	bool bStealth;
+	bool bInvis;
 
 	SpawnVisualizationStruct() {
 		memset(this, 0, sizeof(SpawnVisualizationStruct));
 	}
+
+//protected:
+	uint16_t		vis_flags;
+
+	static const uint16_t VIS_FLAG_UNGROUPED_PLAYER = 1 << 0;
+	static const uint16_t VIS_FLAG_SHOW_COMMAND_ICON = 1 << 1;
+	static const uint16_t VIS_FLAG_TARGETABLE = 1 << 2;
+	static const uint16_t VIS_FLAG_RED_OUTLINE = 1 << 3;
+	static const uint16_t VIS_FLAG_DISPLAY_NAME = 1 << 4;
+	static const uint16_t VIS_FLAG_SHOW_LEVEL = 1 << 5;
+	static const uint16_t VIS_FLAG_ATTACKABLE = 1 << 6;
+	static const uint16_t VIS_FLAG_HAS_AA_EXP = 1 << 8;
+
 };
 
 class Substruct_SpawnVisualization : public SpawnVisualizationStruct, public PacketEncodedData {
@@ -343,41 +361,39 @@ public:
 		}
 		if (version >= 1188) {
 			RegisterUInt8(name_quest_icon);
-			uint8_t& unknowna2 = this->unknowna2[0];
-			RegisterUInt8(unknowna2)->SetCount(4);
+			RegisterUInt32(unknowna2);
 		}
-		RegisterUInt8(vis_flags);
+		RegisterUInt16(vis_flags);
 		uint8_t& unknownb = this->unknownb[0];
 		if (version < 1142) {
-			RegisterUInt8(unknownb)->SetCount(4);
+			RegisterUInt8(unknownb)->SetCount(3);
 		}
 		else {
-			RegisterUInt8(npc_aaxp);
 			RegisterUInt8(unknownb);
 			RegisterUInt8(pvp_difficulty);
 		}
 		RegisterUInt8(hand_flag);
-		uint8_t& unknown2 = this->unknown2[0];
-		if (version >= 60055) {
-			RegisterUInt8(unknown2)->SetCount(2);
-		}
-		else if (version == 936 || version >= 1188) {
-			RegisterUInt8(unknown2)->SetCount(6);
+		RegisterUInt32(unknown4);
+		RescopeArrayElement(unknown2);
+
+		if (version < 60055 && (version == 936 || version >= 1188)) {
+			RegisterUInt8(unknown2)->SetCount(4);
 		}
 		else if (version == 955) {
-			RegisterUInt8(unknown2)->SetCount(5);
+			RegisterUInt8(unknown2)->SetCount(3);
 		}
 		else if (version < 1188) {
-			RegisterUInt8(unknown2)->SetCount(8);
+			RegisterUInt8(unknown2)->SetCount(6);
 		}
 
 		if (version >= 1188) {
 			RegisterUInt8(tag1);
 			RegisterUInt8(tag2);
-			uint8_t& unknown3 = this->unknown3[0];
-			RegisterUInt8(unknown3)->SetCount(3);
+			RegisterUInt8(unknown3);
 		}
 	}
+
+	void InsertSpawnData(const std::shared_ptr<class Spawn>& spawn);
 };
 
 ///<summary>Packet sub struct containing spell information</summary>

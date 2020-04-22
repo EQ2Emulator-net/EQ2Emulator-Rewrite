@@ -470,20 +470,29 @@ bool ZoneDatabase::LoadNPCsForZone(ZoneServer* z) {
 		npc->SetLegsType(result.GetUInt32(18));
 		npc->SetSogaHairType(result.GetUInt32(19));
 		npc->SetSogaFacialHairType(result.GetUInt32(20));
-		// Attackable (vis flags in vis struct) - result.GetUInt8(21)
-		// Show Level (vis flags in vis struct) - result.GetUInt8(22)
-		// Targetable (vis flags in vis struct) - result.GetUInt8(23)
-		// Show Command Icon (vis flags in vis struct) - result.GetUInt8(24)
+		bool attackable = result.GetBool(21);
+		bool show_level = result.GetBool(22);
+		bool targetable = result.GetBool(23);
+		bool show_command_icon = result.GetBool(24);
+		uint32_t addFlags = 0;
+		//For the attack icon
+		if (attackable)
+			addFlags |= EntityFlagShowSpecialIcon;
+		if (targetable)
+			addFlags |= EntityFlagTargetable;
+		if (show_level)
+			addFlags |= EntityFlagShowLevel;
+		npc->EnableEntityFlags(addFlags);
 		npc->SetHandFlag(result.GetUInt8(25));
 		// Total HP - result.GetUInt32(26)
 		// Total MP - result.GetUInt32(27)
 		npc->SetSize(result.GetFloat(28));
-		npc->SetCollisionRadius(result.GetUInt32(29));
+		npc->SetCollisionRadius(result.GetFloat(29));
 		npc->SetActionState(result.GetUInt32(30));
 		npc->SetVisualState(result.GetUInt32(31));
 		npc->SetMoodState(result.GetUInt32(32));
 		npc->SetState(result.GetUInt32(33));
-		npc->SetEntityFlags(result.GetUInt32(34));
+		npc->EnableEntityFlags(result.GetUInt32(34) | EntityIsNpc);
 		// Faction ID - result.GetUInt32(35);
 		if (!result.IsNull(36))
 			npc->SetGuild(result.GetString(36));
@@ -521,6 +530,10 @@ bool ZoneDatabase::LoadNPCsForZone(ZoneServer* z) {
 		// Total Savagery - result.GetUInt32(68)
 		// Total Dissonance - result.GetUInt32(69)
 		// Hide Hood (vis flags in info struct) - result.GetUInt8(70)
+		bool bhideHood = result.GetBool(70);
+
+		//Set vis flags
+		//npc->SetVisFlags()
 		npc->SetEmoteState(result.GetUInt32(71));
 		if (!result.IsNull(72))
 			npc->SetPrefixTitle(result.GetString(72));
