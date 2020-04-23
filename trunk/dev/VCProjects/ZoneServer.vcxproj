@@ -55,6 +55,7 @@
     <ClCompile Include="..\..\source\common\timer.cpp" />
     <ClCompile Include="..\..\source\common\UDPServer.cpp" />
     <ClCompile Include="..\..\source\common\util.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Chat\ClientChatFilters.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Commands\CommandProcess.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Controllers\BaseController.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Controllers\PlayerController.cpp" />
@@ -164,6 +165,7 @@
     <ClInclude Include="..\..\source\common\UDPServer.h" />
     <ClInclude Include="..\..\source\common\util.h" />
     <ClInclude Include="..\..\source\common\version.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Chat\ClientChatFilters.h" />
     <ClInclude Include="..\..\source\ZoneServer\Commands\CommandProcess.h" />
     <ClInclude Include="..\..\source\ZoneServer\Commands\CommandToken.h" />
     <ClInclude Include="..\..\source\ZoneServer\Controllers\BaseController.h" />
@@ -184,6 +186,7 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_CreateWidgetCmd_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DefaultGroupOptionsMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DefaultGroupOptionsRequestMsg_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DisplayTextCmd_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DoneLoadingEntityResourcesMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DoneLoadingZoneResourcesMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DoneSendingInitialEntitiesMsg_Packet.h" />
@@ -192,8 +195,11 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_EqSetPOVGhostCmd_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_CreateGhostCmd_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_GameWorldTimeMsg_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_HearChatCmd_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_LoginByNumRequestMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_MoveableObjectPlacementCriteri_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_OnscreenMsgMsg_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_OpenDialogCmd_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_PaperdollImage_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_PredictionUpdateMsg.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_ReadyToZoneMsg_Packet.h" />

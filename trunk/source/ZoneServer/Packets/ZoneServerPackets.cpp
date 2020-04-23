@@ -28,6 +28,10 @@
 #include "OP_EqDestroyGhostCmd_Packet.h"
 #include "OP_ChangeServerControlFlagMsg.h"
 #include "OP_ChatFiltersMsg.h"
+#include "OP_DisplayTextCmd_Packet.h"
+#include "OP_HearChatCmd_Packet.h"
+#include "OP_OnscreenMsgMsg_Packet.h"
+#include "OP_OpenDialogCmd_Packet.h"
 
 // Server to Client
 RegisterZoneStruct("OP_ZoneInfoMsg", OP_ZoneInfoMsg_Packet, 283, 284, 942, 957, 959, 1067, 1096, 1142, 1193, 63119, 63182);
@@ -48,6 +52,10 @@ RegisterZoneStruct("OP_TeleportWithinZoneNoReloadMsg", OP_TeleportWithinZoneNoRe
 RegisterZoneStruct("OP_ChangeZoneMsg", OP_ChangeZoneMsg_Packet, 1);
 RegisterZoneStruct("OP_EqDestroyGhostCmd", OP_EqDestroyGhostCmd_Packet, 1);
 RegisterZoneStruct("OP_ChangeServerControlFlagMsg", OP_ChangeServerControlFlagMsg_Packet, 1);
+RegisterZoneStruct("OP_EqDisplayTextCmd", OP_DisplayTextCmd_Packet, 1, 284);
+RegisterZoneStruct("OP_EqHearChatCmd", OP_HearChatCmd_Packet, 1, 284, 57080, 67650);
+RegisterZoneStruct("OP_OnscreenMsgMsg", OP_OnscreenMsgMsg_Packet, 1, 284);
+RegisterZoneStruct("OP_EqOpenDialogCmd", OP_OpenDialogCmd_Packet, 1, 1096);
 
 // Client to Server
 RegisterZoneStruct("OP_LoginByNumRequestMsg", OP_LoginByNumRequestMsg_Packet, 1, 1212);

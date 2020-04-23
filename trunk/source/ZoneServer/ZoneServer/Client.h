@@ -2,6 +2,7 @@
 
 #include "../../common/EQ2Stream.h"
 #include "../Packets/EncodedPackets.h"
+#include "../Chat/ClientChatFilters.h"
 #include <map>
 
 class ZoneServer;
@@ -48,4 +49,6 @@ public:
 	uint16_t GetIndexForSpawn(std::shared_ptr<Spawn> spawn);
 	std::shared_ptr<Spawn> GetSpawnByIndex(uint16_t spawn_index);
 	std::shared_ptr<PlayerController> GetController();
+
+	ClientChatFilters chat_filters;
 };

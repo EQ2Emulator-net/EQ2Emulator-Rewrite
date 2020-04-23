@@ -52,6 +52,9 @@
     <Filter Include="source\Controllers">
       <UniqueIdentifier>{776d95f2-7c71-4faa-ad61-02499462b13c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\Chat">
+      <UniqueIdentifier>{a00204e7-55ed-4a9e-b1c6-264cf3f0f087}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\ZoneServer\main.cpp">
@@ -227,6 +230,9 @@
     </ClCompile>
     <ClCompile Include="..\..\source\ZoneServer\Spawns\SpawnStructs.cpp">
       <Filter>source\Spawns</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Chat\ClientChatFilters.cpp">
+      <Filter>source\Chat</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -652,6 +658,21 @@
     </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_ChatFiltersMsg.h">
       <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Chat\ClientChatFilters.h">
+      <Filter>source\Chat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_HearChatCmd_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DisplayTextCmd_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_OnscreenMsgMsg_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_OpenDialogCmd_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
