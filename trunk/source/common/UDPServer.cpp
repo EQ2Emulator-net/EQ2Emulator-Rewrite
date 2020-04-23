@@ -66,8 +66,6 @@ void UDPServer::ReaderThread() {
 	sockaddr_in from;
 	timeval sleep_time;
 	std::map<uint64_t, std::shared_ptr<Stream> >::iterator stream_itr;
-	//This reference automatically updates
-	const uint32_t& currentTime = Timer::GetCurrentTime2();
 
 	//30 seconds heartbeat timeout
 	const uint32_t TIMEOUT_MS = 30000;
@@ -76,6 +74,8 @@ void UDPServer::ReaderThread() {
 	sleep_time.tv_usec = 0;
 
 	while (bLooping) {
+		uint32_t currentTime = Timer::GetServerTime();
+
 		//Check for timeouts
 		{
 			ReadLocker lock(streamLock);

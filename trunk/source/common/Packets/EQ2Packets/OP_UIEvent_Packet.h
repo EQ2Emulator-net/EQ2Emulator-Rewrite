@@ -89,7 +89,9 @@ private:
 		RegisterUInt64(unknown2);
 		RegisterInt16(unknown3);
 		RegisterInt32(unknown4);
-		RegisterUInt8(unknown5);
+		if (GetVersion() > 1208) {
+			RegisterUInt8(unknown5);
+		}
 		Register16String(uiEvent);
 		auto asize = RegisterInt32(byteArraySize);
 		asize->SetMyArray(RegisterArray(byteArray, Substruct_Byte));

@@ -13,7 +13,7 @@ Spawn::Spawn() : m_updateFlagsByte(0), m_zone(nullptr) {
 	memset(&m_infoStruct, 0, sizeof(m_infoStruct));
 	memset(&m_visStruct, 0, sizeof(m_visStruct));
 	m_spawnID = GetNextID();
-	movementTimestamp = Timer::GetCurrentTime2();
+	movementTimestamp = Timer::GetServerTime();
 }
 
 Spawn::~Spawn() {
@@ -34,7 +34,7 @@ void Spawn::Process() {
 
 				OP_UpdateGhostCmdMsg_Packet* packet = new OP_UpdateGhostCmdMsg_Packet(client->GetVersion());
 				uint16_t index = client->GetIndexForSpawn(shared_from_this());
-				packet->timestamp = Timer::GetCurrentTime2();
+				packet->timestamp = Timer::GetServerTime();
 
 				if (update.m_infoChanged)
 					packet->InsertSpawnInfoData(*GetInfoStruct(), index);

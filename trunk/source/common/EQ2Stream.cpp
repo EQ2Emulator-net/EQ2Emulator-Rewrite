@@ -571,8 +571,7 @@ void EQ2Stream::NonSequencedPush(ProtocolPacket* p) {
 void EQ2Stream::Write() {
 	vector<std::unique_ptr<ProtocolPacket> > ReadyToSend;
 	vector<ProtocolPacket*> SeqReadyToSend;
-	//This reference automatically updates
-	static const uint32_t& currentTime = Timer::GetCurrentTime2();
+	uint32_t currentTime = Timer::GetServerTime();
 
 	const int32_t decay = DecayRate;
 	if (BytesWritten < decay) {
@@ -1023,7 +1022,7 @@ void EQ2Stream::SendServerSessionUpdate(uint16_t requestID) {
 	uint32_t received = ntohl(ReceivedPackets);
 
 	update->RequestID = requestID;
-	update->CurrentTime = ntohl(Timer::GetCurrentTime2());
+	update->CurrentTime = ntohl(Timer::GetServerTime());
 	update->SentPackets = sent;
 	update->SentPackets2 = sent;
 	update->ReceivedPackets = received;

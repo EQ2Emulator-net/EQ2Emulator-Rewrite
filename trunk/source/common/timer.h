@@ -45,11 +45,12 @@ public:
 	inline uint32_t GetStartTime() { return(start_time); }
 	inline uint32_t GetDuration() { return(timer_time); }
 
-	static const uint32_t& SetCurrentTime();
-	static const uint32_t& GetCurrentTime2();
+	static void SetCurrentTime();
+	static uint32_t GetServerTime();
 	static uint32_t GetUnixTimeStamp();
 
 private:
+	static std::atomic<uint32_t> current_time;
 	uint32_t	start_time;
 	uint32_t	timer_time;
 	bool	enabled;

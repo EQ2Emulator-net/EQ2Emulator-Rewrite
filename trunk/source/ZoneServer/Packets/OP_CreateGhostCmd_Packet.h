@@ -41,7 +41,7 @@ public:
 		header.spawn_id = spawn->GetID();
 		header.spawn_anim = 0xFFFFFFFF;
 		header.crc = spawn->GetID();
-		header.time_stamp = Timer::GetCurrentTime2();
+		header.time_stamp = Timer::GetServerTime();
 	}
 
 	void SetFooterData(const std::shared_ptr<Spawn>& spawn) {
@@ -49,33 +49,6 @@ public:
 
 		//ADD PROPER WAY TO GET SPAWN TYPE
 		footer.spawn_type = 1;
-	}
-
-	void SetTestData() {
-		header.index = 1;
-		header.spawn_id = 1;
-		header.spawn_anim = 0xFFFFFFFF;
-		header.crc = 1;
-		header.time_stamp = Timer::GetCurrentTime2();
-		pos.grid_id = 1841871875;
-		//pos.X = 242.55f;
-		//pos.Y = 12.21f;
-		//pos.Z = -978.47f;
-		//pos.state = 16512;
-		//pos.size = 0;
-		//pos.collision_radius = 28;
-		//pos.size_ratio = 1.f;
-		//pos.size_multiplier_ratio = 1.0f;
-		vis.vis_flags = 55;
-		info.model_type = 116;
-		info.soga_model_type = 114;
-		info.hp_remaining = 101;
-		//footer.name = "Foof";
-		//footer.spawn_type = 1;
-		//footer.is_player = true;
-
-		info.interaction_flag = 12;
-		info.emote_voice = 1023;
 	}
 
 	void SetEncodedBuffers(const std::shared_ptr<Client>& client, uint32_t spawnIndex) {

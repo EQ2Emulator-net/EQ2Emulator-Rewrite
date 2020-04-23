@@ -101,7 +101,7 @@ public:
 			return;
 		}
 
-		LogDebug(LOG_PLAYER, 0, "pos flags %u", movement.positionState);
+		//LogDebug(LOG_PLAYER, 0, "pos flags %u", movement.positionState);
 		
 		controller->ApplyPredictionUpdate(timestamp, static_cast<const SpawnPositionStruct&>(movement));
 	}

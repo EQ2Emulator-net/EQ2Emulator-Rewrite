@@ -6,4 +6,4 @@
 
 RegisterCommonStruct("OP_LoginRequestMsg", OP_KeyRequest_Packet, 1);
 RegisterCommonStruct("OP_LoginReplyMsg", OP_LoginReplyMsg_Packet, 283, 284, 1096, 1188, 57080, 60100);
-RegisterCommonStruct("OP_UIEvent", OP_UIEvent_Packet, 1);
+RegisterCommonStruct("OP_UIEvent", OP_UIEvent_Packet, 1, 1209);

@@ -27,7 +27,7 @@
 
 #include "timer.h"
 
-uint32_t current_time = 0;
+std::atomic<uint32_t> Timer::current_time(0);
 
 Timer::Timer(){
 	timer_time = 30000; //default to 30 seconds
@@ -165,13 +165,11 @@ void Timer::Trigger()
 	start_time = current_time-timer_time-1;
 }
 
-const uint32_t& Timer::GetCurrentTime2()
-{	
-    return current_time;
+uint32_t Timer::GetServerTime() {	
+    return current_time.load();
 }
 
-const uint32_t& Timer::SetCurrentTime()
-{
+void Timer::SetCurrentTime() {
     struct timeval read_time;	
     uint32_t this_time;
 
@@ -188,12 +186,10 @@ const uint32_t& Timer::SetCurrentTime()
     }
     else
     {
-		current_time += this_time - last_time;
+		current_time.fetch_add(this_time - last_time);
     }
     
 	last_time = this_time;
-
-	return current_time;
 }
 
 uint32_t Timer::GetUnixTimeStamp(){

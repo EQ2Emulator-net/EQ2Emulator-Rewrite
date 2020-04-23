@@ -23,7 +23,7 @@ public:
 				continue;
 			}
 			if (!elements[i]->ReadElement(in_buf, offset, bufsize)) {
-				LogError(LOG_PACKET, 0, "Reading an element went out of bounds");
+ 				LogError(LOG_PACKET, 0, "Reading an element went out of bounds");
 				return false;
 			}
 		}
