@@ -4,8 +4,6 @@
 #include "util.h"
 #include "log.h"
 
-#define SEP_MAX_INIT    10
-
 #define IS_WHITESPACE(c) (*(c) == ' ' || *(c) == '\n' || *(c) == '\t' || *(c) == '\r')
 #define IS_QUOTE(c)      (*(c) == '"')
 #define IS_ESCAPE(c)     (*(c) == '\\')
@@ -14,25 +12,22 @@
 using namespace std;
 
 Separator::Separator() {
-	args = nullptr;
-	max = SEP_MAX_INIT;
 	size = 0;
+	bufUsed = 0;
 }
 
 Separator::Separator(const Separator& other) {
 	size = other.size;
-	max = other.max;
+	bufUsed = other.bufUsed;
 
 	if (size > 0) {
-		args = static_cast<char**>(malloc(size * sizeof(char*)));
+		memcpy(buf, other.buf,bufUsed);
 
 		for (int i = 0; i < size; i++) {
-			args[i] = static_cast<char*>(malloc(strlen(other.args[i]) + 1));
-			strcpy(args[i], other.args[i]);
+			const char* cpyPtr = other.args[i];
+			uint32_t offset = cpyPtr - other.buf;
+			args[i] = buf + offset;
 		}
-	}
-	else {
-		args = nullptr;
 	}
 
 	inputString = other.inputString;
@@ -40,26 +35,28 @@ Separator::Separator(const Separator& other) {
 
 Separator::Separator(Separator&& other) {
 	size = other.size;
-	other.size = 0;
-	args = other.args;
-	other.args = nullptr;
-	max = other.max;
+	bufUsed = other.bufUsed;
+
+	if (size > 0) {
+		memcpy(buf, other.buf, bufUsed);
+
+		for (int i = 0; i < size; i++) {
+			const char* cpyPtr = other.args[i];
+			uint32_t offset = cpyPtr - other.buf;
+			args[i] = buf + offset;
+		}
+	}
+
 	inputString = std::move(other.inputString);
 }
 
 Separator::Separator(const std::string& str) {
-	args = nullptr;
-	this->max = SEP_MAX_INIT;
+	bufUsed = 0;
 	size = 0;
 	SetString(str.c_str());
 }
 
 Separator::~Separator() {
-	if (args != nullptr) {
-		for (int i = 0; i < size; i++)
-			free(args[i]);
-		free(args);
-	}
 }
 
 const char * Separator::GetString(int index) {
@@ -75,7 +72,7 @@ int Separator::GetInt(int index) {
 }
 
 uint32_t Separator::GetUInt32(int index) {
-	return strtoul(GetString(index), NULL, 10);
+	return strtoul(GetString(index), nullptr, 10);
 }
 
 int Separator::GetSize() {
@@ -83,62 +80,29 @@ int Separator::GetSize() {
 }
 
 void Separator::Clear() {
-	int i;
-
-	if (args != nullptr) {
-		for (i = 0; i < size; i++)
-			free(args[i]);
-		free(args);
-
-		args = nullptr;
-		max = SEP_MAX_INIT;
-		size = 0;
-	}
-}
-
-bool Separator::Resize() {
-	char **new_args;
-	int new_max;
-
-	if (max == 0)
-		new_max = SEP_MAX_INIT;
-	else
-		new_max = max * 2;
-
-	if ((new_args = (char **)realloc(args, new_max * sizeof(char *))) == NULL)
-		return false;
-
-	args = new_args;
-	max = new_max;
-
-	return true;
+	size = 0;
+	bufUsed = 0;
 }
 
 bool Separator::AddArg(const char *arg, int len) {
-	int i, pos;
-
-	if (args == NULL || size == max) {
-		if (!Resize())
-			return false;
-	}
-
-	if ((args[size] = (char *)malloc(len + 1)) == NULL)
+	if (size == 16 || bufUsed + len + 1 > sizeof(buf))
 		return false;
 
-	pos = 0;
-	for (i = 0; i < len; i++) {
+	char* nextPtr = buf + bufUsed;
+	args[size++] = nextPtr;
+
+	int pos = 0;
+	for (int i = 0; i < len; i++) {
 		if (arg[i] == '\\' && arg[i + 1] == '"')
 			continue;
 
-		args[size][pos++] = arg[i];
+		nextPtr[pos++] = arg[i];
 	}
 
-	//if we skipped any back slashes, pad the rest of the string with nulls
-	//also make sure the extra byte allocated for the null terminator gets set
-	for (i = pos; i < len + 1; i++)
-		args[size][i] = '\0';
+	//Make sure we null terminate the string
+	nextPtr[pos++] = '\0';
 
-	++size;
+	bufUsed += pos;
 
 	return true;
 }
@@ -245,10 +209,7 @@ void Separator::DropFirstArg() {
 		return;
 	}
 
-	//Free our first arg
-	free(args[0]);
-
-	//Don't worry about reallocating just move our pointers up an index
+	//Move our pointers up an index
 	for (int i = 1; i < size; i++) {
 		args[i - 1] = args[i];
 	}

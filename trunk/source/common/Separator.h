@@ -30,11 +30,11 @@ public:
 	std::string GetInputString();
 
 private:
-	char **args;
-	int max;
 	int size;
+	size_t bufUsed;
 	std::string inputString;
+	char buf[1024];
+	char* args[16];
 
-	bool Resize();
 	bool AddArg(const char *arg, int len);
 };
