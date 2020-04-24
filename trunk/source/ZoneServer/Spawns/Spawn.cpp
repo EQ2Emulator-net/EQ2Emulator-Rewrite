@@ -6,6 +6,7 @@
 #include "../Controllers/PlayerController.h"
 #include "../../common/timer.h"
 #include "Entity.h"
+#include <cmath>
 
 // Packets
 #include "../Packets/OP_UpdateSpawnCmdMsg.h"
@@ -102,7 +103,7 @@ float Spawn::GetDistance(float x1, float y1, float z1, float x2, float y2, float
 		y1 *= y1;
 	}
 
-	return sqrtf(x1 + y1 + z1);
+	return std::sqrt(x1 + y1 + z1);
 }
 
 float Spawn::GetDistance(float x, float y, float z, bool ignore_y) {
