@@ -221,12 +221,12 @@ void CommandProcess::CommandZone(const std::shared_ptr<Client>& client, Separato
 	pc.instance_id = 0;
 	pc.zone_id = zone_id;
 
-	z.AddPendingClient(client->GetAccountID(), pc);
+	g_zoneOperator.AddPendingClient(client->GetAccountID(), pc);
 
 	//Most of this logic will probably be moved to the zoneserver and/or zoneoperator, just a test to see if we can load more zones
 	OP_ChangeZoneMsg_Packet p(client->GetVersion());
-	p.ip_address = z.GetHostString();
-	p.port = z.GetPort();
+	p.ip_address = g_zoneOperator.GetHostString();
+	p.port = g_zoneOperator.GetPort();
 	p.account_id = client->GetAccountID();
 	p.key = pc.access_code;
 	client->QueuePacket(p);
