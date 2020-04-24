@@ -275,7 +275,7 @@ void ZoneServer::OnClientRemoval(const std::shared_ptr<Client>& client) {
 }
 
 void ZoneServer::AddNPCToMasterList(std::shared_ptr<Entity> npc) {
-	m_masterNPCList[npc->GetDatabaseID()]=npc;
+	m_masterNPCList[npc->GetDatabaseID()] = npc;
 }
 
 std::shared_ptr<Entity> ZoneServer::GetNPCFromMasterList(uint32_t databaseID) {
@@ -286,8 +286,60 @@ std::shared_ptr<Entity> ZoneServer::GetNPCFromMasterList(uint32_t databaseID) {
 	return nullptr;
 }
 
+void ZoneServer::AddObjectToMasterList(std::shared_ptr<Object> object) {
+	m_masterObjectList[object->GetDatabaseID()] = object;
+}
+
+std::shared_ptr<Object> ZoneServer::GetObjectFromMasterList(uint32_t databaseID) {
+	std::map<uint32_t, std::shared_ptr<Object> >::iterator itr = m_masterObjectList.find(databaseID);
+	if (itr != m_masterObjectList.end())
+		return itr->second;
+
+	return nullptr;
+}
+
+void ZoneServer::AddSignToMasterList(std::shared_ptr<Spawn> sign) {
+	m_masterSignList[sign->GetDatabaseID()] = sign;
+}
+
+std::shared_ptr<Spawn> ZoneServer::GetSignFromMasterList(uint32_t databaseID) {
+	std::map<uint32_t, std::shared_ptr<Spawn> >::iterator itr = m_masterSignList.find(databaseID);
+	if (itr != m_masterSignList.end())
+		return itr->second;
+
+	return nullptr;
+}
+
+void ZoneServer::AddWidgetToMasterList(std::shared_ptr<Spawn> widget) {
+	m_masterWidgetList[widget->GetDatabaseID()] = widget;
+}
+
+std::shared_ptr<Spawn> ZoneServer::GetWidgetFromMasterList(uint32_t databaseID) {
+	std::map<uint32_t, std::shared_ptr<Spawn> >::iterator itr = m_masterWidgetList.find(databaseID);
+	if (itr != m_masterWidgetList.end())
+		return itr->second;
+
+	return nullptr;
+}
+
+void ZoneServer::AddGroundSpawnToMasterList(std::shared_ptr<GroundSpawn> groundSpawn) {
+	m_masterGroundSpawnList[groundSpawn->GetDatabaseID()] = groundSpawn;
+}
+
+std::shared_ptr<GroundSpawn> ZoneServer::GetGroundSpawnFromMasterList(uint32_t databaseID) {
+	std::map<uint32_t, std::shared_ptr<GroundSpawn> >::iterator itr = m_masterGroundSpawnList.find(databaseID);
+	if (itr != m_masterGroundSpawnList.end())
+		return itr->second;
+
+	return nullptr;
+}
+
 void ZoneServer::LoadThread() {
 	LogInfo(LOG_NPC, 0, "-Loading NPC data...");
 	database.LoadNPCsForZone(this);
 	LogInfo(LOG_NPC, 0, "-Load NPC data complete!");
+
+	LogInfo(LOG_NPC, 0, "-Loading Object data...");
+	database.LoadObjectsForZone(this);
+	LogInfo(LOG_NPC, 0, "-Load Object data complete!");
 }

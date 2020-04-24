@@ -18,6 +18,7 @@ public:
 	bool LoadCharacter(uint32_t char_id, uint32_t account_id, std::shared_ptr<Entity> entity);
 
 	bool LoadNPCsForZone(ZoneServer* z);
+	bool LoadObjectsForZone(ZoneServer* z);
 
 private:
 

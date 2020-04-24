@@ -40,6 +40,14 @@ public:
 
 	void AddNPCToMasterList(std::shared_ptr<Entity> npc);
 	std::shared_ptr<Entity> GetNPCFromMasterList(uint32_t databaseID);
+	void AddObjectToMasterList(std::shared_ptr<Object> object);
+	std::shared_ptr<Object> GetObjectFromMasterList(uint32_t databaseID);
+	void AddSignToMasterList(std::shared_ptr<Spawn> sign);
+	std::shared_ptr<Spawn> GetSignFromMasterList(uint32_t databaseID);
+	void AddWidgetToMasterList(std::shared_ptr<Spawn> widget);
+	std::shared_ptr<Spawn> GetWidgetFromMasterList(uint32_t databaseID);
+	void AddGroundSpawnToMasterList(std::shared_ptr<GroundSpawn> groundSpawn);
+	std::shared_ptr<GroundSpawn> GetGroundSpawnFromMasterList(uint32_t databaseID);
 
 	void LoadThread();
 private:
@@ -71,7 +79,7 @@ private:
 	// Master lists loaded from the database, key = database id
 	std::map<uint32_t, std::shared_ptr<Entity> > m_masterNPCList;
 	std::map<uint32_t, std::shared_ptr<Object> > m_masterObjectList;
-	std::map<uint32_t, std::shared_ptr<GroundSpawn> > m_masterGroundspawnList;
+	std::map<uint32_t, std::shared_ptr<GroundSpawn> > m_masterGroundSpawnList;
 	std::map<uint32_t, std::shared_ptr<Spawn> > m_masterWidgetList;
 	std::map<uint32_t, std::shared_ptr<Spawn> > m_masterSignList;
 

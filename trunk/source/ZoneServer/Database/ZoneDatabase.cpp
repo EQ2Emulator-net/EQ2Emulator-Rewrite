@@ -5,6 +5,8 @@
 #include "../ZoneServer/ZoneServer.h"
 #include "../ZoneServer/ZoneOperator.h"
 #include "../Spawns/Entity.h"
+#include "../Spawns/Object.h"
+#include "../Spawns/GroundSpawn.h"
 
 extern ZoneOperator z;
 
@@ -550,5 +552,84 @@ bool ZoneDatabase::LoadNPCsForZone(ZoneServer* z) {
 
 	LogInfo(LOG_NPC, 0, "--Loaded %u NPC(s).", count);
 
+	return ret;
+}
+
+bool ZoneDatabase::LoadObjectsForZone(ZoneServer* z) {
+	DatabaseResult result;
+	bool ret = Select(&result, "SELECT s.id, s.name, s.sub_title, s.prefix, s.suffix, s.last_name, s.race, s.model_type, s.size, s.size_offset, s.targetable, s.show_name, s.command_primary, s.command_secondary, s.visual_state, s.attackable, s.show_level, s.show_command_icon, s.display_hand_icon, s.faction_id, s.collision_radius, s.hp, s.power, s.savagery, s.dissonance, s.merchant_id, s.transport_id, s.merchant_type,\n"
+									"so.id, so.device_id\n"
+									"FROM spawn s\n"
+									"INNER JOIN spawn_objects so\n"
+									"ON s.id = so.spawn_id\n"
+									"INNER JOIN spawn_location_entry le\n"
+									"ON so.spawn_id = le.spawn_id\n"
+									"INNER JOIN spawn_location_placement lp\n"
+									"ON le.spawn_location_id = lp.spawn_location_id\n"
+									"WHERE lp.zone_id = %u\n"
+									"GROUP BY s.id", z->GetID());
+
+	if (!ret)
+		return ret;
+
+	uint32_t count = 0;
+	uint32_t index = 0;
+	while (result.Next()) {
+		uint32_t id = result.GetUInt32(index++);
+		if (z->GetNPCFromMasterList(id))
+			continue;
+
+		std::shared_ptr<Object> spawn = std::make_shared<Object>();
+
+		// Spawn base info
+		spawn->SetDatabaseID(id);
+		spawn->SetName(result.GetString(index++));
+		spawn->SetGuild(result.GetString(index++));
+		spawn->SetPrefixTitle(result.GetString(index++));
+		spawn->SetSuffixTitle(result.GetString(index++));
+		spawn->SetLastName(result.GetString(index++));
+		spawn->SetRace(result.GetUInt8(index++));
+		spawn->SetModelType(result.GetUInt32(index++));
+		spawn->SetSize(result.GetFloat(index++));
+		spawn->SetSizeOffset(result.GetUInt8(index++));
+		bool targetable = result.GetBool(index++);
+		bool show_name = result.GetBool(index++);
+		spawn->SetPrimaryCommandListID(result.GetUInt32(index++));
+		spawn->SetSecondaryCommandListID(result.GetUInt32(index++));
+		spawn->SetVisualState(index++);
+		bool attackable = result.GetBool(index++);
+		bool show_level = result.GetBool(index++);
+		bool show_command_icon = result.GetBool(index++);
+		bool display_hand_icon = result.GetBool(index++);
+		spawn->SetFactionID(result.GetUInt32(index++));
+		spawn->SetCollisionRadius(result.GetFloat(index++));
+		spawn->SetHP(result.GetUInt32(index++));
+		spawn->SetPower(result.GetUInt32(index++));
+		spawn->SetSavagery(result.GetUInt32(index++));
+		spawn->SetDissonance(result.GetUInt32(index++));
+		spawn->SetMerchantID(result.GetUInt32(index++));
+		spawn->SetMerchantType(result.GetUInt32(index++));
+
+		// Object Info starts here
+		spawn->SetObjectDatabaseID(result.GetUInt32(index++));
+		spawn->SetDeviceID(result.GetUInt8(index++));
+
+		// Entity flags
+		uint32_t addFlags = 0;
+		if (attackable)
+			addFlags |= EntityFlagShowSpecialIcon;
+		if (targetable)
+			addFlags |= EntityFlagTargetable;
+		if (show_level)
+			addFlags |= EntityFlagShowLevel;
+		spawn->EnableEntityFlags(addFlags);
+			
+		count++;
+
+		z->AddObjectToMasterList(spawn);
+		LogDebug(LOG_NPC, 5, "---Loading Object: '%s' (%u)", spawn->GetName().c_str(), id);
+	}
+
+	LogInfo(LOG_NPC, 0, "--Loaded %u Object(s).", count);
 	return ret;
 }

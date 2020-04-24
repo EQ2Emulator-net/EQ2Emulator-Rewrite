@@ -91,6 +91,18 @@ private:
 	std::vector<std::weak_ptr<Client> > m_clients;
 	uint32_t movementTimestamp;
 
+	uint8_t m_sizeOffset;
+	uint32_t m_primaryCommandListID;
+	uint32_t m_secondaryCommandListID;
+	uint32_t m_factionID;
+	// These may need to be changed
+	uint32_t m_hp;
+	uint32_t m_power;
+	uint32_t m_savagery;
+	uint32_t m_dissonance;
+	uint32_t m_merchantID;
+	uint32_t m_merchantType;
+
 public:
 	/* I put the template functions down here so they aren't cluttering up the rest of the class */
 	template <typename Field, typename Value>
@@ -466,7 +478,7 @@ public:
 		m_posStruct.pitch = pitch;
 		SetPos(&m_posStruct.desiredPitch, pitch, updateFlags);
 	}
-	void SetCollisionRadius(uint32_t radius, bool updateFlags = true) {
+	void SetCollisionRadius(float radius, bool updateFlags = true) {
 		SetPos(&m_posStruct.collisionRadius, radius, updateFlags);
 	}
 	void SetSize(float new_size, bool updateFlags = true) {
@@ -512,4 +524,27 @@ public:
 		static_cast<SpawnPositionStruct&>(m_posStruct) = pos;
 		m_updateFlags.m_posChanged = true;
 	}
+
+	void SetSizeOffset(uint8_t offset) { m_sizeOffset = offset; }
+	uint8_t GetSizeOffset() { return m_sizeOffset; }
+	void SetPrimaryCommandListID(uint32_t id) { m_primaryCommandListID = id; }
+	uint32_t GetPrimaryCommandListID() { return m_primaryCommandListID; }
+	void SetSecondaryCommandListID(uint32_t id) { m_secondaryCommandListID = id; }
+	uint32_t GetSecondaryCommandListID() { return m_secondaryCommandListID; }
+	void SetFactionID(uint32_t id) { m_factionID = id; }
+	uint32_t GetFactionID() { return m_factionID; }
+
+	// These may need to be changed
+	void SetHP(uint32_t val) { m_hp = val; }
+	uint32_t GetHP() { return m_hp; }
+	void SetPower(uint32_t val) { m_power = val; }
+	uint32_t GetPower() { return m_power; }
+	void SetSavagery(uint32_t val) { m_savagery = val; }
+	uint32_t GetSavagery() { return m_savagery; }
+	void SetDissonance(uint32_t val) { m_dissonance = val; }
+	uint32_t GetDissonance() { return m_dissonance; }
+	void SetMerchantID(uint32_t val) { m_merchantID = val; }
+	uint32_t GetMerchantID() { return m_merchantID; }
+	void SetMerchantType(uint32_t val) { m_merchantType = val; }
+	uint32_t GetMerchantType() { return m_merchantType; }
 };
