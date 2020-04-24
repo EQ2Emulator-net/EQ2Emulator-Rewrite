@@ -30,7 +30,7 @@ void ChatFilterLookup::ProcessDatabaseResult(DatabaseResult& result) {
 	LogDebug(LOG_CHAT, 0, "Successfully loaded %u chat filters.", count);
 }
 
-uint8_t ChatFilterLookup::GetChatFilterID(const char* name, uint32_t version, const char* alternate) {
+uint8_t ChatFilterLookup::GetChatFilterID(const char* name, uint32_t version) {
 	uint8_t ret = 0xFF;
 	std::unordered_map<std::string, uint8_t>* lookup = nullptr;
 
@@ -52,14 +52,6 @@ uint8_t ChatFilterLookup::GetChatFilterID(const char* name, uint32_t version, co
 	if (itr != lookup->end()) {
 		//We found the channel. return the id
 		ret = itr->second;
-	}
-	
-	if (ret == 0xFF && alternate) {
-		//Maybe a channel isn't available on all clients? Provide something more generic
-		itr = lookup->find(alternate);
-		if (itr != lookup->end()) {
-			ret = itr->second;
-		}
 	}
 
 	return ret;

@@ -9,7 +9,7 @@
 #include "../Spawns/Spawn.h"
 #include "../ZoneServer/ZoneServer.h"
 
-Client::Client(unsigned int ip, unsigned short port) : EQ2Stream(ip, port), m_nextSpawnIndex(1) {
+Client::Client(unsigned int ip, unsigned short port) : EQ2Stream(ip, port), chat(*this), m_nextSpawnIndex(1) {
 	account_id = 0;
 	character_id = 0;
 	m_controller = std::make_shared<PlayerController>();

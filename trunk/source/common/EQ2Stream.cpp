@@ -948,7 +948,7 @@ void EQ2Stream::InboundQueueClear() {
 	InboundQueue.clear();
 }
 
-void EQ2Stream::QueuePacket(EQ2Packet* p, bool bDelete) {
+void EQ2Stream::QueuePacket(EQ2Packet* p, bool bDelete, bool bDump) {
 	unsigned char* buf = nullptr;
 	p->Write(buf);
 	if (p->bOpcodeError) {
@@ -957,15 +957,15 @@ void EQ2Stream::QueuePacket(EQ2Packet* p, bool bDelete) {
 			delete p;
 	}
 	else {
-		if (NetDebugEnabled()) {
+		if (NetDebugEnabled() || bDump) {
 			DumpBytes(buf, p->Size);
 		}
 		EQ2QueuePacket(p, bDelete);
 	}
 }
 
-void EQ2Stream::QueuePacket(EQ2Packet& packet) {
-	QueuePacket(&packet, false);
+void EQ2Stream::QueuePacket(EQ2Packet& packet, bool bDump) {
+	QueuePacket(&packet, false, bDump);
 }
 
 void EQ2Stream::SendAck(uint16_t seq) {

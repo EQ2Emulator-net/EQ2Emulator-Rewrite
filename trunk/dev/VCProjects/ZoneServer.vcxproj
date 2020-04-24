@@ -58,6 +58,7 @@
     <ClCompile Include="..\..\source\ZoneServer\Chat\ChatFilterLookup.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Chat\ClientChat.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Chat\ClientChatFilters.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Chat\ZoneChat.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Commands\CommandProcess.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Controllers\BaseController.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Controllers\PlayerController.cpp" />
@@ -88,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\common\Classes.h" />
+    <ClInclude Include="..\..\source\common\CommonChat.h" />
     <ClInclude Include="..\..\source\common\CommonDatabase.h" />
     <ClInclude Include="..\..\source\common\ConfigReader.h" />
     <ClInclude Include="..\..\source\common\CRC16.h" />
@@ -170,6 +172,7 @@
     <ClInclude Include="..\..\source\ZoneServer\Chat\ChatFilterLookup.h" />
     <ClInclude Include="..\..\source\ZoneServer\Chat\ClientChat.h" />
     <ClInclude Include="..\..\source\ZoneServer\Chat\ClientChatFilters.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Chat\ZoneChat.h" />
     <ClInclude Include="..\..\source\ZoneServer\Commands\CommandProcess.h" />
     <ClInclude Include="..\..\source\ZoneServer\Commands\CommandToken.h" />
     <ClInclude Include="..\..\source\ZoneServer\Controllers\BaseController.h" />

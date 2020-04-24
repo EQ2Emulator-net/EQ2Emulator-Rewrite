@@ -115,6 +115,7 @@ enum class ERuleType {
 	CheckAttackPlayer,
 	CheckAttackNPC,
 	HOTime,
+	HearChatDistance,
 
 	/* ZONE TIMERS */
 	RegenTimer,
@@ -198,9 +199,9 @@ public:
 	bool SetGlobalRuleSet(uint32_t rule_set_id);
 	Rule* GetGlobalRule(ERuleCategory category, ERuleType type);
 
-	bool SetChunkRuleSet(uint32_t chunk_id, uint32_t rule_set_id);
-	Rule* GetChunkRule(uint32_t chunk_id, ERuleCategory category, ERuleType type);
-	void ClearChunkRuleSets();
+	bool SetZoneRuleSet(uint32_t zone_id, uint32_t rule_set_id);
+	Rule* GetZoneRule(uint32_t zone_id, ERuleCategory category, ERuleType type);
+	void ClearZoneRuleSets();
 
 	RuleSet* GetGlobalRuleSet() { return &global_rule_set; }
 	std::map<ERuleCategory, std::map<ERuleType, Rule*> >* GetRules() { return &rules; }
@@ -221,5 +222,5 @@ private:
 	std::map<ERuleCategory, std::map<ERuleType, Rule*> > rules;	/* all of the rules loaded with their defaults (FROM THE CODE). map<category, map<type, rule>> */
 	std::map<uint32_t, RuleSet*> rule_sets;				/* all of the possible rule sets from the database. map<rule set id, rule set> */
 	RuleSet global_rule_set;						/* the global rule set, first fill it the defaults from the code, then over ride from the database */
-	std::map<uint32_t, RuleSet*> chunk_rule_sets;		/* references to a chunk's rule set. map<zone id, rule set> */
+	std::map<uint32_t, RuleSet*> zone_rule_sets;		/* references to a zone's rule set. map<zone id, rule set> */
 };

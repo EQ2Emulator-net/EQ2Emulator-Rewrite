@@ -5,6 +5,7 @@
 #include "../Controllers/BaseController.h"
 #include "../Controllers/PlayerController.h"
 #include "../../common/timer.h"
+#include "Entity.h"
 
 // Packets
 #include "../Packets/OP_UpdateSpawnCmdMsg.h"
@@ -84,4 +85,30 @@ uint32_t Spawn::GetNextID() {
 	//There was a comment in old code about the ID ending in 255 crashing the client, not sure if it's true but doing it anyway
 	while (ret = g_spawnID.fetch_add(1), (ret & 0xFF) == 0xFF);
 	return ret;
+}
+
+float Spawn::GetDistance(float x1, float y1, float z1, float x2, float y2, float z2, bool ignore_y) {
+	x1 -= x2;
+	z1 -= z2;
+
+	x1 *= x1;
+	z1 *= z1;
+
+	if (ignore_y) {
+		y1 = 0.f;
+	}
+	else {
+		y1 -= y2;
+		y1 *= y1;
+	}
+
+	return sqrtf(x1 + y1 + z1);
+}
+
+float Spawn::GetDistance(float x, float y, float z, bool ignore_y) {
+	return GetDistance(x, y, z, GetX(), GetY(), GetZ(), ignore_y);
+}
+
+float Spawn::GetDistance(const std::shared_ptr<Spawn>& spawn, bool ignore_y) {
+	return GetDistance(spawn->GetX(), spawn->GetY(), spawn->GetZ(), ignore_y);
 }

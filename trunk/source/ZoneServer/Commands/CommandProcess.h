@@ -48,4 +48,8 @@ private:
 	static void CommandTest(const std::shared_ptr<Client>& client, Separator& sep);
 	static void CommandZone(const std::shared_ptr<Client>& client, Separator& sep);
 	static void CommandFlymode(const std::shared_ptr<Client>& client, Separator& sep);
+	static void CommandSay(const std::shared_ptr<Client>& client, Separator& sep);
+	static void CommandShout(const std::shared_ptr<Client>& client, Separator& sep);
+	static void CommandEmote(const std::shared_ptr<Client>& client, Separator& sep);
+	static void CommandOOC(const std::shared_ptr<Client>& client, Separator& sep);
 };

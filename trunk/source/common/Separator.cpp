@@ -34,6 +34,8 @@ Separator::Separator(const Separator& other) {
 	else {
 		args = nullptr;
 	}
+
+	inputString = other.inputString;
 }
 
 Separator::Separator(Separator&& other) {
@@ -42,6 +44,7 @@ Separator::Separator(Separator&& other) {
 	args = other.args;
 	other.args = nullptr;
 	max = other.max;
+	inputString = std::move(other.inputString);
 }
 
 Separator::Separator(const std::string& str) {
@@ -145,6 +148,8 @@ bool Separator::SetString(const char *str) {
 	bool on_quote;
 
 	Clear();
+
+	inputString = str;
 
 	while (1) {
 		on_quote = false;
@@ -250,4 +255,8 @@ void Separator::DropFirstArg() {
 
 	//Decrement our new arg count
 	--size;
+}
+
+std::string Separator::GetInputString() {
+	return inputString;
 }

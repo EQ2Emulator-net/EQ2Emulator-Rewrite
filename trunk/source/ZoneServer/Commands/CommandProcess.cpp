@@ -8,11 +8,12 @@
 #include "../Packets/OP_SetRemoteCmdsMsg_Packet.h"
 #include "../Packets/OP_TeleportWithinZoneNoReloadMsg_Packet.h"
 #include "../Controllers/PlayerController.h"
-#include "../Spawns/Spawn.h"
+#include "../Spawns/Entity.h"
 #include "../Packets/OP_ChangeZoneMsg_Packet.h"
 #include "../ZoneServer/ZoneOperator.h"
 #include "../Packets/OP_ChangeServerControlFlagMsg.h"
 #include "../Packets/OP_HearChatCmd_Packet.h"
+#include "../ZoneServer/ZoneServer.h"
 
 extern ZoneOperator g_zoneOperator;
 
@@ -26,6 +27,10 @@ void CommandProcess::RegisterCommands() {
 	RegisterCommandHandler(247, CommandTest);
 	RegisterCommandHandler(205, CommandZone);
 	RegisterCommandHandler(228, CommandFlymode);
+	RegisterCommandHandler(15, CommandSay);
+	RegisterCommandHandler(28, CommandShout);
+	RegisterCommandHandler(14, CommandEmote);
+	RegisterCommandHandler(30, CommandOOC);
 }
 
 void CommandProcess::RegisterCommandHandler(uint32_t handler_id, CommandHandler_t handler) {
@@ -171,27 +176,13 @@ void CommandProcess::CommandMove(const std::shared_ptr<Client>& client, Separato
 }
 
 void CommandProcess::CommandTest(const std::shared_ptr<Client>& client, Separator& sep) {
-	if (!sep.IsNumber(0)) {
+	if (sep.GetSize() < 1) {
 		return;
 	}
 
-	auto target = client->GetController()->GetTarget();
+	const char* filter = sep.GetString(0);
 
-	if (!target) {
-		return;
-	}
-
-	OP_HearChatCmd_Packet p(client->GetVersion());
-
-	p.fromName = "Test";
-	//p.toName = "Foof";
-	p.bUnderstood = 1;
-	p.chatFilterID = sep.GetUInt32(0);
-	//p.toSpawnID = client->GetController()->GetControlled()->GetID();
-	p.fromSpawnID = target->GetID();
-	p.message = "Hello world!";
-	p.bShowBubble = true;
-	client->QueuePacket(p);
+	client->chat.DisplayText(filter, "Hello world!", 16, true, "");
 }
 
 void CommandProcess::CommandZone(const std::shared_ptr<Client>& client, Separator& sep) {
@@ -241,4 +232,87 @@ void CommandProcess::CommandFlymode(const std::shared_ptr<Client>& client, Separ
 	p.positionState2 = 32;
 	p.value = sep.GetUInt32(0) != 0;
 	client->QueuePacket(p);
+}
+
+void CommandProcess::CommandSay(const std::shared_ptr<Client>& client, Separator& sep) {
+	if (sep.GetSize() < 1) {
+		return;
+	}
+
+	auto zone = client->GetZone();
+
+	if (!zone) {
+		return;
+	}
+
+	auto sender = client->GetController()->GetControlled();
+
+	if (!sender) {
+		return;
+	}
+
+	zone->chat.HandleSay(sep.GetInputString().c_str(), sender);
+}
+
+void CommandProcess::CommandShout(const std::shared_ptr<Client>& client, Separator& sep) {
+	if (sep.GetSize() < 1) {
+		return;
+	}
+
+	auto zone = client->GetZone();
+
+	if (!zone) {
+		return;
+	}
+
+	auto sender = client->GetController()->GetControlled();
+
+	if (!sender) {
+		return;
+	}
+
+	zone->chat.HandleShout(sep.GetInputString().c_str(), sender);
+}
+
+void CommandProcess::CommandEmote(const std::shared_ptr<Client>& client, Separator& sep) {
+	if (sep.GetSize() < 1) {
+		return;
+	}
+
+	auto zone = client->GetZone();
+
+	if (!zone) {
+		return;
+	}
+
+	auto controller = client->GetController();
+
+	auto sender = controller->GetControlled();
+
+	if (!sender) {
+		return;
+	}
+	
+	//TODO: need to handle targets etc in this
+	zone->chat.HandleEmoteChat(sep.GetInputString().c_str(), sender);
+}
+
+void CommandProcess::CommandOOC(const std::shared_ptr<Client>& client, Separator& sep) {
+	if (sep.GetSize() < 1) {
+		return;
+	}
+
+	auto zone = client->GetZone();
+
+	if (!zone) {
+		return;
+	}
+
+	auto sender = client->GetController()->GetControlled();
+
+	if (!sender) {
+		return;
+	}
+
+	zone->chat.HandleOutOfCharacter(sep.GetInputString().c_str(), sender);
 }

@@ -240,6 +240,9 @@
     <ClCompile Include="..\..\source\ZoneServer\Chat\ClientChat.cpp">
       <Filter>source\Chat</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Chat\ZoneChat.cpp">
+      <Filter>source\ZoneServer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h">
@@ -684,6 +687,12 @@
       <Filter>source\Chat</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\Chat\ClientChat.h">
+      <Filter>source\Chat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\CommonChat.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Chat\ZoneChat.h">
       <Filter>source\Chat</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
 #include "PlayerController.h"
-#include "../Spawns/Spawn.h"
+#include "../Spawns/Entity.h"
 
 bool PlayerController::CheckPredictionCrc(uint32_t crc) { 
 	bool ret = predictionCRC != crc;

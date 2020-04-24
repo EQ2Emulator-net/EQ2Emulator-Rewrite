@@ -10,7 +10,7 @@ public:
 	~ChatFilterLookup() = default;
 
 	void ProcessDatabaseResult(class DatabaseResult& result);
-	uint8_t GetChatFilterID(const char* name, uint32_t version, const char* alternate);
+	uint8_t GetChatFilterID(const char* name, uint32_t version);
 
 private:
 	//<version, <name, filterID>>

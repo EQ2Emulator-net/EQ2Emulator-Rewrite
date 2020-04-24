@@ -8,14 +8,14 @@ class OP_OnscreenMsgMsg_Packet : public EQ2Packet {
 public:
 	OP_OnscreenMsgMsg_Packet(uint32_t ver) : EQ2Packet(ver) {
 		RegisterElements();
-		chatFilterID = 0;
+		msgType = 9;
 		//5 seconds seems like a good default?
 		durationSecs = 5.f;
 	}
 
 	void RegisterElements() {
 		if (GetVersion() > 283) {
-			RegisterUInt8(chatFilterID);
+			RegisterUInt8(msgType);
 		}
 		Register16String(text);
 		Register16String(sound);
@@ -23,8 +23,10 @@ public:
 		RegisterEQ2Color(color);
 	}
 
-	//educated guess on this being the chat filter
-	uint8_t chatFilterID;
+	//2 is the ding animation
+	//16 is an achievement unlocked message
+	uint8_t msgType;
+
 	std::string text;
 	std::string sound;
 	float durationSecs;

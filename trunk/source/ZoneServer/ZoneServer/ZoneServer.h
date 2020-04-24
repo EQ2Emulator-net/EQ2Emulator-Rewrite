@@ -7,6 +7,7 @@
 #include <memory>
 #include "../../common/timer.h"
 #include "../../common/Mutex.h"
+#include "../Chat/ZoneChat.h"
 
 class Client;
 class Spawn;
@@ -50,6 +51,8 @@ public:
 	std::shared_ptr<GroundSpawn> GetGroundSpawnFromMasterList(uint32_t databaseID);
 
 	void LoadThread();
+
+	ZoneChat chat;
 private:
 
 	std::vector<std::shared_ptr<Entity> > players;

@@ -7,24 +7,23 @@ class OP_DisplayTextCmd_Packet : public OP_ClientCmdMsg_Packet {
 public:
 	OP_DisplayTextCmd_Packet(uint32_t ver) : OP_ClientCmdMsg_Packet(ver) {
 		RegisterElements();
-		unknown = 0xFF;
+		onscreenMsgType = 0xFF;
 		bOnscreen = false;
 	}
 
 	void RegisterElements() {
 		RegisterUInt8(chatFilterID);
 		Register16String(text);
-		RegisterUInt8(unknown);
+		RegisterUInt8(onscreenMsgType);
 		auto e = RegisterBool(bOnscreen);
 		if (GetVersion() >= 284) {
-			Register16String(unkString)->SetIsVariableSet(e);
+			Register16String(onscreenSound)->SetIsVariableSet(e);
 		}
 	}
 
 	uint8_t chatFilterID;
-	//Maybe like a sound?  normally 0xFF
-	uint8_t unknown;
+	uint8_t onscreenMsgType;
 	bool bOnscreen;
 	std::string text;
-	std::string unkString;
+	std::string onscreenSound;
 };

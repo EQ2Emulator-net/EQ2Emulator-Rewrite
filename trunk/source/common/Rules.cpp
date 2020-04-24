@@ -215,6 +215,7 @@ void RuleManager::InitEnumLookups() {
 	RULE_TYPE_INIT(WeatherTimer);
 	RULE_TYPE_INIT(SpawnDeleteTimer);
 	RULE_TYPE_INIT(RuleTypeInvalid);
+	RULE_TYPE_INIT(HearChatDistance);
 #undef RULE_TYPE_INIT
 }
 
@@ -233,6 +234,8 @@ void RuleManager::InitRuleDefaults() {
 	auto RuleInit = [this](ERuleCategory cat, ERuleType rt, const char* value) {
 		rules[cat][rt] = new Rule(cat, rt, value);
 	};
+
+	RuleInit(ERuleCategory::R_Zone, ERuleType::HearChatDistance, "30");
 }
 
 RuleManager::~RuleManager() {
@@ -242,7 +245,7 @@ RuleManager::~RuleManager() {
 	}
 
 	ClearRuleSets();
-	ClearChunkRuleSets();
+	ClearZoneRuleSets();
 }
 
 void RuleManager::LoadCodedDefaultsIntoRuleSet(RuleSet* rule_set) {
@@ -300,7 +303,7 @@ Rule* RuleManager::GetGlobalRule(ERuleCategory category, ERuleType type) {
 	return global_rule_set.GetRule(category, type);
 }
 
-bool RuleManager::SetChunkRuleSet(uint32_t chunk_id, uint32_t rule_set_id) {
+bool RuleManager::SetZoneRuleSet(uint32_t chunk_id, uint32_t rule_set_id) {
 	bool ret = true;
 	RuleSet* rule_set;
 
@@ -311,7 +314,7 @@ bool RuleManager::SetChunkRuleSet(uint32_t chunk_id, uint32_t rule_set_id) {
 	rule_set = rule_sets[rule_set_id];
 	if (ret) {
 		m_chunk_rule_sets.WriteLock();;
-		chunk_rule_sets[chunk_id] = rule_set;
+		zone_rule_sets[chunk_id] = rule_set;
 		m_chunk_rule_sets.WriteUnlock();;
 	}
 	m_rule_sets.ReadUnlock();
@@ -319,7 +322,7 @@ bool RuleManager::SetChunkRuleSet(uint32_t chunk_id, uint32_t rule_set_id) {
 	return ret;
 }
 
-Rule* RuleManager::GetChunkRule(uint32_t chunk_id, ERuleCategory category, ERuleType type) {
+Rule* RuleManager::GetZoneRule(uint32_t chunk_id, ERuleCategory category, ERuleType type) {
 	Rule* ret = 0;
 
 	/* we never want to return null so MAKE SURE the rule exists. if this assertion fails then the server admin must fix the problem */
@@ -328,8 +331,8 @@ Rule* RuleManager::GetChunkRule(uint32_t chunk_id, ERuleCategory category, ERule
 
 	/* first try to get the zone rule */
 	m_chunk_rule_sets.ReadLock();
-	auto itr = chunk_rule_sets.find(chunk_id);
-	if (itr != chunk_rule_sets.end())
+	auto itr = zone_rule_sets.find(chunk_id);
+	if (itr != zone_rule_sets.end())
 		ret = itr->second->GetRule(category, type);
 	m_chunk_rule_sets.ReadUnlock();
 
@@ -340,9 +343,9 @@ Rule* RuleManager::GetChunkRule(uint32_t chunk_id, ERuleCategory category, ERule
 	return ret ? ret : rules[category][type];
 }
 
-void RuleManager::ClearChunkRuleSets() {
+void RuleManager::ClearZoneRuleSets() {
 	m_chunk_rule_sets.WriteLock();
-	chunk_rule_sets.clear();
+	zone_rule_sets.clear();
 	m_chunk_rule_sets.WriteUnlock();
 }
 

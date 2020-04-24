@@ -10,6 +10,7 @@
 #include "OP_CreateGhostCmd_Packet.h"
 #include "OP_UpdateCharacterSheetMsg_Packet.h"
 #include "../Controllers/PlayerController.h"
+#include "../Spawns/Entity.h"
 
 #include "../ZoneServer/ZoneServer.h"
 

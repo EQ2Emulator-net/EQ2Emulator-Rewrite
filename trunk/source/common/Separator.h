@@ -27,10 +27,13 @@ public:
 
 	void DropFirstArg();
 
+	std::string GetInputString();
+
 private:
 	char **args;
 	int max;
 	int size;
+	std::string inputString;
 
 	bool Resize();
 	bool AddArg(const char *arg, int len);

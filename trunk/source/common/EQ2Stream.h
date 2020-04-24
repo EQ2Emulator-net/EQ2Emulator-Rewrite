@@ -46,8 +46,8 @@ public:
 	void SetVersion(uint32_t version) { ClientVersion = version; }
 	uint32_t GetVersion() { return ClientVersion; }
 
-	void QueuePacket(EQ2Packet* packet, bool bDelete = true);
-	void QueuePacket(EQ2Packet& packet);
+	void QueuePacket(EQ2Packet* packet, bool bDelete = true, bool bDump = false);
+	void QueuePacket(EQ2Packet& packet, bool bDump = false);
 
 	bool RequestNewClient() override { return bNeedNewClient; }
 

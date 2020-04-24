@@ -547,4 +547,8 @@ public:
 	uint32_t GetMerchantID() { return m_merchantID; }
 	void SetMerchantType(uint32_t val) { m_merchantType = val; }
 	uint32_t GetMerchantType() { return m_merchantType; }
+
+	static float GetDistance(float x1, float y1, float z1, float x2, float y2, float z2, bool ignore_y = false);
+	float GetDistance(float x, float y, float z, bool ignore_y = false);
+	float GetDistance(const std::shared_ptr<Spawn>& spawn, bool ignore_y = false);
 };
