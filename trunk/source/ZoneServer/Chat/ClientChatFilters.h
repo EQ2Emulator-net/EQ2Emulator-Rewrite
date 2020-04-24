@@ -15,5 +15,6 @@ public:
 	bool IsChannelEnabled(uint8_t filterId);
 
 private:
+	
 	std::vector<uint8_t> filterBytes;
 };

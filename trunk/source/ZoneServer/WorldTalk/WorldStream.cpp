@@ -7,7 +7,7 @@
 
 #include "../ZoneServer/ZoneOperator.h"
 
-extern ZoneOperator z;
+extern ZoneOperator g_zoneOperator;
 
 WorldStream::WorldStream(unsigned int ip, unsigned int port) : EmuStream(ip, port) {
 	authentication = EAuthentication::ENonAuth;
@@ -28,8 +28,8 @@ void WorldStream::Process() {
 		SetAuthentication(EAuthentication::EAuthenticating);
 
 		Emu_RegisterZoneServer_Packet* p = new Emu_RegisterZoneServer_Packet();	
-		p->ip = z.GetHostString();
-		p->port = z.GetPort();
+		p->ip = g_zoneOperator.GetHostString();
+		p->port = g_zoneOperator.GetPort();
 
 		QueuePacket(p);
 	}

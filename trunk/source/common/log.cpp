@@ -30,7 +30,7 @@ typedef struct {
 	LoggingSystem::LogFormat format;
 	bool split;
 	bool pid;
-	char prefix[16];
+	char prefix[32];
 } LogConfig;
 
 LoggingSystem::Log LoggingSystem::logs[LOG_CATEGORY_COUNT][LOG_TYPE_COUNT];

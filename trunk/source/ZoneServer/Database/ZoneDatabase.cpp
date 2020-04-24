@@ -8,7 +8,7 @@
 #include "../Spawns/Object.h"
 #include "../Spawns/GroundSpawn.h"
 
-extern ZoneOperator z;
+extern ZoneOperator g_zoneOperator;
 
 ZoneDatabase::ZoneDatabase() {
 

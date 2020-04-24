@@ -31,6 +31,6 @@ public:
 
 	void HandlePacket(std::shared_ptr<Client> client) override {
 		LogDebug(LOG_CHAT, 0, "Updating the chat filters for a client...");
-		client->chat_filters.Update(*this);
+		client->chat.filters.Update(*this);
 	}
 };

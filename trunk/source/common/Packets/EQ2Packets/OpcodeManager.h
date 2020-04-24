@@ -128,6 +128,9 @@ public:
 
 //Use this macro on a global scope to auto construct this object on program start
 //n is the opcode name, pt is the packet class
+
+//The versions used in the macro are just for the XML dump but try to keep them up to date
+//Add a version for each time there is a change in the packet, thanks!
 #define RegisterEQ2Opcode(n, pt, f, ...) uint32_t zUNIQUENAMEVERz ## pt [] = { __VA_ARGS__ };\
 OpcodeRegistrar<pt> zUNIQUENAMEz ## pt (n, f, zUNIQUENAMEVERz ## pt, sizeof(zUNIQUENAMEVERz ## pt) / sizeof(uint32_t))
 #define RegisterCommonStruct(n, pt, ...) RegisterEQ2Opcode(n, pt, "CommonStructs.xml", __VA_ARGS__)

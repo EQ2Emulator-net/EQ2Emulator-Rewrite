@@ -25,7 +25,7 @@
 #include "../Spawns/GroundSpawn.h"
 
 extern ZoneDatabase database;
-extern ZoneOperator z;
+extern ZoneOperator g_zoneOperator;
 extern CommandProcess g_commandProcess;
 
 ZoneServer::ZoneServer(uint32_t zone_id) {

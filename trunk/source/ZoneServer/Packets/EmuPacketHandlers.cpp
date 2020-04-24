@@ -10,7 +10,7 @@
 #include "../ZoneServer/ZoneServer.h"
 #include "../ZoneServer/ZoneOperator.h"
 
-extern ZoneOperator z;
+extern ZoneOperator g_zoneOperator;
 
 void Emu_RegisterZoneServerReply_Packet::HandlePacket(std::shared_ptr<WorldStream> w) {
 	if (reply == 1) {
@@ -33,7 +33,7 @@ void Emu_RequestZone_Packet::HandlePacket(std::shared_ptr<WorldStream> w) {
 		return;
 	}
 
-	std::shared_ptr<ZoneServer> zone = z.AddNewZone(zone_id, instance_id);
+	std::shared_ptr<ZoneServer> zone = g_zoneOperator.AddNewZone(zone_id, instance_id);
 	if (zone) {
 		p->reply = zone->GetID();
 		w->QueuePacket(p);
@@ -51,5 +51,5 @@ void Emu_TransferClient_Packet::HandlePacket(std::shared_ptr<WorldStream> w) {
 	pc.zone_id = zone_id;
 	pc.instance_id = instance_id;
 
-	z.AddPendingClient(account_id, pc);
+	g_zoneOperator.AddPendingClient(account_id, pc);
 }

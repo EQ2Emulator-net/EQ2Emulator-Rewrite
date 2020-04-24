@@ -12,8 +12,9 @@
 #include "../Packets/OP_ChangeZoneMsg_Packet.h"
 #include "../ZoneServer/ZoneOperator.h"
 #include "../Packets/OP_ChangeServerControlFlagMsg.h"
+#include "../Packets/OP_HearChatCmd_Packet.h"
 
-extern ZoneOperator z;
+extern ZoneOperator g_zoneOperator;
 
 CommandProcess::CommandProcess() {
 	RegisterCommands();
@@ -174,39 +175,23 @@ void CommandProcess::CommandTest(const std::shared_ptr<Client>& client, Separato
 		return;
 	}
 
-	/*auto controller = client->GetController();
-	auto target = controller->GetTarget();
+	auto target = client->GetController()->GetTarget();
+
 	if (!target) {
 		return;
 	}
 
-	uint32_t shift = sep.GetUInt32(0);
+	OP_HearChatCmd_Packet p(client->GetVersion());
 
-	target->ToggleEntityFlags(1 << shift);*/
-
-	std::shared_ptr<Spawn> player = client->GetController()->GetControlled();
-	if (player) {
-		uint32_t mountID = sep.GetUInt32(0);
-		//LogDebug(LOG_PLAYER, 0, "Setting players mount to %u", mountID);
-		player->SetMountType(mountID);
-		EQ2Color color;
-		if (mountID > 0) {
-			color.Red = 255;
-			color.Green = 255;
-			color.Blue = 255;
-			player->SetInfoVisualFlags(4);
-		}
-		else {
-			color.Red = 0;
-			color.Green = 0;
-			color.Blue = 0;
-			player->SetInfoVisualFlags(0);
-		}
-		player->SetMountColor(color);
-		player->SetMountSaddleColor(color);
-
-		//player->SetVisualState(mountID);
-	}
+	p.fromName = "Test";
+	//p.toName = "Foof";
+	p.bUnderstood = 1;
+	p.chatFilterID = sep.GetUInt32(0);
+	//p.toSpawnID = client->GetController()->GetControlled()->GetID();
+	p.fromSpawnID = target->GetID();
+	p.message = "Hello world!";
+	p.bShowBubble = true;
+	client->QueuePacket(p);
 }
 
 void CommandProcess::CommandZone(const std::shared_ptr<Client>& client, Separator& sep) {
@@ -217,7 +202,7 @@ void CommandProcess::CommandZone(const std::shared_ptr<Client>& client, Separato
 
 	uint32_t zone_id = sep.GetUInt32(0);
 
-	auto zone = z.AddNewZone(zone_id, 0);
+	auto zone = g_zoneOperator.AddNewZone(zone_id, 0);
 
 	if (!zone) {
 		//invalid zone id;

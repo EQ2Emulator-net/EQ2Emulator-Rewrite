@@ -5,7 +5,7 @@
 
 #include "../ZoneServer/ZoneOperator.h"
 
-extern ZoneOperator z;
+extern ZoneOperator g_zoneOperator;
 
 class OP_LoginByNumRequestMsg_Packet : public EQ2Packet {
 public:
@@ -35,7 +35,7 @@ public:
 
 	void HandlePacket(std::shared_ptr<Client> client) {
 		LogError(LOG_PACKET, 0, "Client with account id of %u connected", account_id);
-		z.ClientLogIn(client, this);
+		g_zoneOperator.ClientLogIn(client, this);
 	}
 
 	uint32_t account_id;

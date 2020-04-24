@@ -11,12 +11,14 @@
 #include "Commands/CommandProcess.h"
 #include "../common/Packets/XmlStructDumper.h"
 #include "../common/Rules.h"
+#include "Chat/ChatFilterLookup.h"
 
 ZoneDatabase database;
 Classes classes;
-ZoneOperator z;
+ZoneOperator g_zoneOperator;
 CommandProcess g_commandProcess;
 RuleManager g_ruleManager;
+ChatFilterLookup g_chatFilterLookup;
 
 int main() {
 	bool looping = true;
@@ -31,8 +33,10 @@ int main() {
 
 	WorldTalk talk;
 	
-	ConfigReader cr(&z, &database, &talk);
-	success = cr.ReadConfig("zone-config.xml");
+	{
+		ConfigReader cr(&g_zoneOperator, &database, &talk);
+		success = cr.ReadConfig("zone-config.xml");
+	}
 
 	if (success)
 		database.Start();
@@ -52,8 +56,13 @@ int main() {
 		success = database.LoadCommands(g_commandProcess);
 	}
 
+	if (success) {
+		LogDebug(LOG_DATABASE, 0, "Loading chat filters...");
+		success = database.LoadChatFilters(g_chatFilterLookup);
+	}
+
 	if (success)
-		success = z.Open();
+		success = g_zoneOperator.Open();
 
 	if (success)
 		success = talk.Open();
@@ -81,7 +90,7 @@ int main() {
 			}
 		}
 
-		success = z.Process();
+		success = g_zoneOperator.Process();
 
 		SleepMS(5);
 	}
