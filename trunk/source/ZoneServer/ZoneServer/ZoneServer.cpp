@@ -346,4 +346,8 @@ void ZoneServer::LoadThread() {
 	LogInfo(LOG_NPC, 0, "-Loading Widget data...");
 	database.LoadWidgetsForZone(this);
 	LogInfo(LOG_NPC, 0, "-Load Widget data complete!");
+
+	LogInfo(LOG_NPC, 0, "-Loading Sign data...");
+	database.LoadSignsForZone(this);
+	LogInfo(LOG_NPC, 0, "-Load Sign data complete!");
 }

@@ -637,7 +637,7 @@ bool ZoneDatabase::LoadObjectsForZone(ZoneServer* z) {
 bool ZoneDatabase::LoadWidgetsForZone(ZoneServer* z) {
 	DatabaseResult result;
 	bool ret = Select(&result, "SELECT s.id, s.name, s.sub_title, s.prefix, s.suffix, s.last_name, s.race, s.model_type, s.size, s.size_offset, s.targetable, s.show_name, s.command_primary, s.command_secondary, s.visual_state, s.attackable, s.show_level, s.show_command_icon, s.display_hand_icon, s.faction_id, s.collision_radius, s.hp, s.power, s.savagery, s.dissonance, s.merchant_id, s.transport_id, s.merchant_type,\n"
-		"sw.id, sw.widget_id, sw.widget_x, sw.widget_y, sw.widget_z, sw.include_heading, sw.include_location, sw.icon, sw.type+0, sw.open_heading, sw.closed_heading, sw.open_x, sw.open_y, sw.open_z, sw.action_spawn_id, sw.open_sound_file, sw.close_sound_file, sw.open_duration, sw.close_x, sw.close_y, sw.close_z, sw.linked_spawn_id, sw.house_id\n"
+		"sw.id, sw.widget_id, sw.widget_x, sw.widget_y, sw.widget_z, sw.include_heading, sw.include_location, sw.type+0, sw.open_heading, sw.closed_heading, sw.open_x, sw.open_y, sw.open_z, sw.action_spawn_id, sw.open_sound_file, sw.close_sound_file, sw.open_duration, sw.close_x, sw.close_y, sw.close_z, sw.linked_spawn_id, sw.house_id\n"
 		"FROM spawn s\n"
 		"INNER JOIN spawn_widgets sw\n"
 		"ON s.id = sw.spawn_id\n"
@@ -655,10 +655,10 @@ bool ZoneDatabase::LoadWidgetsForZone(ZoneServer* z) {
 	while (result.Next()) {
 		uint32_t index = 0;
 		uint32_t id = result.GetUInt32(index++);
-		if (z->GetNPCFromMasterList(id))
+		if (z->GetWidgetFromMasterList(id))
 			continue;
 
-		std::shared_ptr<Object> spawn = std::make_shared<Object>();
+		std::shared_ptr<Spawn> spawn = std::make_shared<Spawn>();
 
 		// Spawn base info
 		spawn->SetDatabaseID(id);
@@ -701,7 +701,6 @@ bool ZoneDatabase::LoadWidgetsForZone(ZoneServer* z) {
 		wd->SetWidgetZ(result.GetFloat(index++));
 		wd->SetIncludeHeading(result.GetBool(index++));
 		wd->SetIncludeLocation(result.GetBool(index++));
-		index++; // icon, no longer used?
 		wd->SetWidgetType((EWidgetType)result.GetUInt8(index++));
 		wd->SetOpenHeading(result.GetFloat(index++));
 		wd->SetCloseHeading(result.GetFloat(index++));
@@ -735,5 +734,112 @@ bool ZoneDatabase::LoadWidgetsForZone(ZoneServer* z) {
 	}
 
 	LogInfo(LOG_NPC, 0, "--Loaded %u Widget(s).", count);
+	return ret;
+}
+
+bool ZoneDatabase::LoadSignsForZone(ZoneServer* z) {
+	DatabaseResult result;
+	bool ret = Select(&result, "SELECT s.id, s.name, s.sub_title, s.prefix, s.suffix, s.last_name, s.race, s.model_type, s.size, s.size_offset, s.targetable, s.show_name, s.command_primary, s.command_secondary, s.visual_state, s.attackable, s.show_level, s.show_command_icon, s.display_hand_icon, s.faction_id, s.collision_radius, s.hp, s.power, s.savagery, s.dissonance, s.merchant_id, s.transport_id, s.merchant_type,\n"
+		"ss.id, ss.type+0, ss.zone_id, ss.title, ss.description, ss.sign_distance, ss.zone_x, ss.zone_y, ss.zone_z, ss.zone_heading,\n"
+		"ss.widget_id, ss.widget_x, ss.widget_y, ss.widget_z, ss.include_heading, ss.include_location\n"
+		"FROM spawn s\n"
+		"INNER JOIN spawn_signs ss\n"
+		"ON s.id = ss.spawn_id\n"
+		"INNER JOIN spawn_location_entry le\n"
+		"ON ss.spawn_id = le.spawn_id\n"
+		"INNER JOIN spawn_location_placement lp\n"
+		"ON le.spawn_location_id = lp.spawn_location_id\n"
+		"WHERE lp.zone_id = %u\n"
+		"GROUP BY s.id", z->GetID());
+
+	if (!ret)
+		return ret;
+
+	uint32_t count = 0;
+	while (result.Next()) {
+		uint32_t index = 0;
+		uint32_t id = result.GetUInt32(index++);
+		if (z->GetSignFromMasterList(id))
+			continue;
+
+		std::shared_ptr<Spawn> spawn = std::make_shared<Spawn>();
+
+		// Spawn base info
+		spawn->SetDatabaseID(id);
+		spawn->SetName(result.GetString(index++));
+		spawn->SetGuild(result.GetString(index++));
+		spawn->SetPrefixTitle(result.GetString(index++));
+		spawn->SetSuffixTitle(result.GetString(index++));
+		spawn->SetLastName(result.GetString(index++));
+		spawn->SetRace(result.GetUInt8(index++));
+		spawn->SetModelType(result.GetUInt32(index++));
+		spawn->SetSize(result.GetFloat(index++));
+		spawn->SetSizeOffset(result.GetUInt8(index++));
+		bool targetable = result.GetBool(index++);
+		bool show_name = result.GetBool(index++);
+		spawn->SetPrimaryCommandListID(result.GetUInt32(index++));
+		spawn->SetSecondaryCommandListID(result.GetUInt32(index++));
+		spawn->SetVisualState(index++);
+		bool attackable = result.GetBool(index++);
+		bool show_level = result.GetBool(index++);
+		bool show_command_icon = result.GetBool(index++);
+		bool display_hand_icon = result.GetBool(index++);
+		spawn->SetFactionID(result.GetUInt32(index++));
+		spawn->SetCollisionRadius(result.GetFloat(index++));
+		spawn->SetHP(result.GetUInt32(index++));
+		spawn->SetPower(result.GetUInt32(index++));
+		spawn->SetSavagery(result.GetUInt32(index++));
+		spawn->SetDissonance(result.GetUInt32(index++));
+		spawn->SetMerchantID(result.GetUInt32(index++));
+		spawn->SetMerchantType(result.GetUInt32(index++));
+
+		// Sign info starts here
+		std::unique_ptr<Sign>& sign = spawn->GetSignData();
+		if (!sign)
+			sign = std::make_unique<Sign>();
+
+		sign->SetSignDatabseID(result.GetUInt32(index++));
+		sign->SetSignType((ESignType)result.GetUInt8(index++));
+		sign->SetZoneID(result.GetUInt32(index++));
+		sign->SetTitle(result.GetString(index++));
+		sign->SetDescription(result.GetString(index++));
+		sign->SetDistance(result.GetFloat(index++));
+		sign->SetZoneX(result.GetFloat(index++));
+		sign->SetZoneY(result.GetFloat(index++));
+		sign->SetZoneZ(result.GetFloat(index++));
+		sign->SetZoneHeading(result.GetFloat(index++));
+
+		// Widget info starts here
+		uint32_t widget_id = result.GetUInt32(index++);
+		if (widget_id != 0) {
+			std::unique_ptr<Widget>& widget = spawn->GetWidgetData();
+			if (!widget)
+				widget = std::make_unique<Widget>();
+
+			widget->SetWidgetID(widget_id);
+			widget->SetWidgetX(result.GetFloat(index++));
+			widget->SetWidgetY(result.GetFloat(index++));
+			widget->SetWidgetZ(result.GetFloat(index++));
+			widget->SetIncludeHeading(result.GetBool(index++));
+			widget->SetIncludeLocation(result.GetBool(index++));
+		}
+
+		// Entity flags
+		uint32_t addFlags = 0;
+		if (attackable)
+			addFlags |= EntityFlagShowSpecialIcon;
+		if (targetable)
+			addFlags |= EntityFlagTargetable;
+		if (show_level)
+			addFlags |= EntityFlagShowLevel;
+		spawn->EnableEntityFlags(addFlags);
+
+		count++;
+
+		z->AddSignToMasterList(spawn);
+		LogDebug(LOG_NPC, 5, "---Loading Sign: '%s' (%u)", spawn->GetName().c_str(), id);
+	}
+
+	LogInfo(LOG_NPC, 0, "--Loaded %u Sign(s).", count);
 	return ret;
 }
