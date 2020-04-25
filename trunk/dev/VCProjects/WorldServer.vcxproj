@@ -222,6 +222,8 @@
     <ClCompile Include="..\..\source\WorldServer\Packets\EmuPacketHandlers.cpp" />
     <ClCompile Include="..\..\source\WorldServer\Packets\WorldServerPackets.cpp" />
     <ClCompile Include="..\..\source\WorldServer\Packets\WorldServerSubstructs.cpp" />
+    <ClCompile Include="..\..\source\WorldServer\WorldServer\Character.cpp" />
+    <ClCompile Include="..\..\source\WorldServer\WorldServer\CharacterList.cpp" />
     <ClCompile Include="..\..\source\WorldServer\WorldServer\Client.cpp" />
     <ClCompile Include="..\..\source\WorldServer\WorldServer\WorldServer.cpp" />
     <ClCompile Include="..\..\source\WorldServer\ZoneTalk\ZoneStream.cpp" />
@@ -232,6 +234,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\source\common\CharacterBasicInfo.h" />
     <ClInclude Include="..\..\source\common\Classes.h" />
     <ClInclude Include="..\..\source\common\CommonDatabase.h" />
     <ClInclude Include="..\..\source\common\ConfigReader.h" />
@@ -247,10 +250,14 @@
     <ClInclude Include="..\..\source\common\log.h" />
     <ClInclude Include="..\..\source\common\Mutex.h" />
     <ClInclude Include="..\..\source\common\NetUtil.h" />
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_CancelClientTransfer_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_ClientLoginConfirm_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_ClientSessionEnded_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RegisterZoneServerReply_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RegisterZoneServer_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RequestZoneReply_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RequestZone_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_TransferClientConfirm_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_TransferClient_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EQ2Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EQ2Packets\OpcodeManager.h" />
@@ -310,6 +317,8 @@
     <ClInclude Include="..\..\source\WorldServer\Packets\OP_LsClientVerifylogReplyMsg_Packet.h" />
     <ClInclude Include="..\..\source\WorldServer\Packets\OP_PlayCharacterReplyMsg_Packet.h" />
     <ClInclude Include="..\..\source\WorldServer\Packets\OP_PlayCharacterRequestMsg_Packet.h" />
+    <ClInclude Include="..\..\source\WorldServer\WorldServer\Character.h" />
+    <ClInclude Include="..\..\source\WorldServer\WorldServer\CharacterList.h" />
     <ClInclude Include="..\..\source\WorldServer\ZoneTalk\ZoneStream.h" />
     <ClInclude Include="..\..\source\WorldServer\ZoneTalk\ZoneTalk.h" />
     <ClInclude Include="stdafx.h" />

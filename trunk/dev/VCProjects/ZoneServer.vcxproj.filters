@@ -695,5 +695,17 @@
     <ClInclude Include="..\..\source\ZoneServer\Chat\ZoneChat.h">
       <Filter>source\Chat</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_ClientSessionEnded_Packet.h">
+      <Filter>common\Packets\EmuPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_ClientLoginConfirm_Packet.h">
+      <Filter>common\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_TransferClientConfirm_Packet.h">
+      <Filter>common\Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_CancelClientTransfer_Packet.h">
+      <Filter>common\Packets</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

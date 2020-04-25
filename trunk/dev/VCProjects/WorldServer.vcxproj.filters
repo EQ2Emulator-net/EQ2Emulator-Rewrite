@@ -180,6 +180,12 @@
     <ClCompile Include="..\..\source\common\Rules.cpp">
       <Filter>common</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\WorldServer\WorldServer\Character.cpp">
+      <Filter>source\WorldServer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\WorldServer\WorldServer\CharacterList.cpp">
+      <Filter>source\WorldServer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\common\io.h">
@@ -472,6 +478,27 @@
     </ClInclude>
     <ClInclude Include="..\..\source\common\Packets\EQ2Packets\OP_UIEvent_Packet.h">
       <Filter>common\Packets\EQ2Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\WorldServer\CharacterList.h">
+      <Filter>source\WorldServer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\CharacterBasicInfo.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\WorldServer\WorldServer\Character.h">
+      <Filter>source\WorldServer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_TransferClientConfirm_Packet.h">
+      <Filter>common\Packets\EmuPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_ClientLoginConfirm_Packet.h">
+      <Filter>common\Packets\EmuPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_CancelClientTransfer_Packet.h">
+      <Filter>common\Packets\EmuPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_ClientSessionEnded_Packet.h">
+      <Filter>common\Packets\EmuPackets</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

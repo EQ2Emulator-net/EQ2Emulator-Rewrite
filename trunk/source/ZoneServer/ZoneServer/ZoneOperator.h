@@ -7,6 +7,7 @@ class Client;
 class ZoneServer;
 class OP_LoginByNumRequestMsg_Packet;
 class OP_SetRemoteCmdsMsg_Packet;
+class WorldStream;
 
 struct PendingClient {
 	uint32_t access_code;
@@ -37,10 +38,16 @@ public:
 	void ClientLogIn(std::shared_ptr<Client> client, OP_LoginByNumRequestMsg_Packet* packet);
 
 	void AddPendingClient(uint32_t account_id, PendingClient pending_client);
+	void RemovePendingClient(uint32_t access_code);
 
 	std::shared_ptr<ZoneServer> AddNewZone(uint32_t zone_id, uint32_t instance_id);
 
 	std::shared_ptr<ZoneServer> GetZone(uint32_t zone_id, uint32_t instance_id);
+
+	void SetWorldServerName(std::string name);
+	std::string GetWorldServerName();
+	void SetWorldStream(const std::shared_ptr<WorldStream>& stream);
+	std::shared_ptr<WorldStream> GetWorldStream();
 
 private:
 	//Just using the client pointer as a key
@@ -49,4 +56,6 @@ private:
 	std::map<uint32_t, PendingClient> pending_clients;
 	// pair<zoneID, instanceID>
 	std::map<std::pair<uint32_t, uint32_t>, std::shared_ptr<ZoneServer> > zones;
+	std::string worldServerName;
+	std::weak_ptr<WorldStream> worldStream;
 };

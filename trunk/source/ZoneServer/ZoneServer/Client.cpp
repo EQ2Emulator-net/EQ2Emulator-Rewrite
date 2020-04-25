@@ -7,7 +7,12 @@
 #include "../../common/Packets/EQ2Packets/OP_LoginReplyMsg_Packet.h"
 #include "../Controllers/PlayerController.h"
 #include "../Spawns/Spawn.h"
-#include "../ZoneServer/ZoneServer.h"
+#include "ZoneServer.h"
+#include "ZoneOperator.h"
+#include "../WorldTalk/WorldStream.h"
+#include "../../common/Packets/EmuPackets/Emu_ClientSessionEnded_Packet.h"
+
+extern ZoneOperator g_zoneOperator;
 
 Client::Client(unsigned int ip, unsigned short port) : EQ2Stream(ip, port), chat(*this), m_nextSpawnIndex(1) {
 	account_id = 0;
@@ -80,6 +85,13 @@ void Client::Disconnected() {
 	std::shared_ptr<ZoneServer> zone = m_zone.lock();
 	if (zone) {
 		zone->RemoveClient(std::dynamic_pointer_cast<Client>(shared_from_this()));
+	}
+
+	std::shared_ptr<WorldStream> ws = g_zoneOperator.GetWorldStream();
+	if (ws) {
+		auto p = new Emu_ClientSessionEnded_Packet;
+		p->sessionID = GetSessionID();
+		ws->QueuePacket(p);
 	}
 }
 

@@ -31,6 +31,8 @@ public:
 	uint32_t GetPendingInstance() { return pending_instance; }
 	uint32_t GetPendingCharacter() { return pending_character; }
 
+	uint32_t pending_access_code;
+
 protected:
 	void ReadVersionPacket(const unsigned char* data, uint32_t size, uint32_t offset, uint16_t opcode) override;
 
@@ -45,5 +47,4 @@ private:
 	uint32_t pending_zone;
 	uint32_t pending_instance;
 	uint32_t pending_character;
-
 };

@@ -12,6 +12,8 @@
 
 #include "../../common/Classes.h"
 #include "../WorldServer/WorldServer.h"
+#include "../WorldServer/CharacterList.h"
+#include "../WorldServer/Character.h"
 
 #ifdef _WIN32
 	#include <WS2tcpip.h>
@@ -19,8 +21,9 @@
 	#include <arpa/inet.h>
 #endif
 
-extern WorldServer s;
+extern WorldServer g_worldServer;
 extern Classes classes;
+extern CharacterList g_characterList;
 
 WorldDatabase::WorldDatabase() {
 
@@ -60,7 +63,7 @@ bool WorldDatabase::GetAccount(Client* client, std::string user, std::string pas
 		// if user and pass check failed
 		else {
 			// if auto account creation is enabled
-			if (s.GetAutoAccountCreation()) {
+			if (g_worldServer.GetAutoAccountCreation()) {
 				// see if there is already an account with this username
 				success = Select(&result, "SELECT * FROM `account` WHERE `name` = '%s'", esc_user.c_str());
 
@@ -105,7 +108,7 @@ bool WorldDatabase::UpdateAccountClientVersion(uint32_t account, uint32_t versio
 	return Query("UPDATE `account` SET `last_client_version` = %u WHERE `id` = %u", version, account);
 }
 
-bool WorldDatabase::LoadCharacters(uint32_t account, OP_AllCharactersDescReplyMsg_Packet* packet, uint8_t max_adv_level, uint8_t max_ts_level) {
+bool WorldDatabase::LoadCharacterAppearances(uint32_t account, OP_AllCharactersDescReplyMsg_Packet* packet, uint8_t max_adv_level, uint8_t max_ts_level) {
 	bool ret;
 	DatabaseResult result;
 	DatabaseResult result2;
@@ -501,6 +504,17 @@ uint32_t WorldDatabase::CreateCharacter(uint32_t account_id, OP_CreateCharacterR
 	}
 
 	uint32_t char_id = static_cast<uint32_t>(res.last_insert_id);
+
+	auto character = std::make_shared<Character>();
+	CharacterBasicInfo& bi = character->basicInfo;
+	bi.accountID = account_id;
+	bi.advClass = packet->_class;
+	bi.characterID = char_id;
+	bi.characterName = packet->name;
+	bi.race = packet->race;
+	
+	g_characterList.AddCharacter(character);
+	
 	UpdateStartingFactions(char_id, packet->starting_zone);
 	UpdateStartingZone(char_id, packet->_class, packet->race, packet->starting_zone);
 	// Starting here
@@ -1008,4 +1022,32 @@ uint32_t WorldDatabase::GetZoneIDForCharacter(uint32_t char_id) {
 	}
 
 	return ret;
+}
+
+bool WorldDatabase::LoadCharacterList(CharacterList& charList) {
+	DatabaseResult result;
+
+	if (!Select(&result, "SELECT id, account_id, name, race, class, tradeskill_class, level, tradeskill_level FROM characters;")) {
+		return false;
+	}
+
+	while (result.Next()) {
+		auto character = std::make_shared<Character>();
+
+		int i = 0;
+
+		CharacterBasicInfo& bi = character->basicInfo;
+		bi.characterID = result.GetUInt32(i++);
+		bi.accountID = result.GetUInt32(i++);
+		bi.characterName = result.GetString(i++);
+		bi.race = result.GetUInt8(i++);
+		bi.advClass = result.GetUInt8(i++);
+		bi.tradeskillClass = result.GetUInt8(i++);
+		bi.advLevel = result.GetUInt8(i++);
+		bi.tradeskillLevel = result.GetUInt8(i++);
+
+		charList.AddCharacter(character);
+	}
+
+	return true;
 }

@@ -14,9 +14,11 @@ public:
 	void HandlePacket(std::shared_ptr<WorldStream> w);
 
 	uint8_t reply;
+	std::string serverName;
 
 private:
 	void RegisterElements() {
 		RegisterUInt8(reply);
+		Register8String(serverName);
 	}
 };

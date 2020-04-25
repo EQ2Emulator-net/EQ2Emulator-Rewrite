@@ -17,13 +17,14 @@
 #include "ZoneTalk/ZoneTalk.h"
 #include "../common/Packets/XmlStructDumper.h"
 #include "../common/Rules.h"
+#include "WorldServer/CharacterList.h"
 
-WorldServer s;
+WorldServer g_worldServer;
 WorldDatabase database;
 Classes classes;
 ZoneTalk zoneTalk;
 RuleManager g_ruleManager;
-
+CharacterList g_characterList;
 
 int main(int argc, char **argv)
 {
@@ -38,7 +39,7 @@ int main(int argc, char **argv)
 	std::thread logging_thread(&LoggingSystem::LogWritingThread, &logging);
 	LogInfo(LOG_INIT, 0, "Starting %s v%d.%d %s", EQ2_NAME, EQ2_VERSION_MAJOR, EQ2_VERSION_MINOR, EQ2_VERSION_PHASE);
 
-	ConfigReader cr(&s, &database, &zoneTalk);
+	ConfigReader cr(&g_worldServer, &database, &zoneTalk);
 	success = cr.ReadConfig("world-config.xml");
 
 	if (success)
@@ -56,11 +57,16 @@ int main(int argc, char **argv)
 
 	if (success) {
 		LogDebug(LOG_DATABASE, 0, "Loading server config...");
-		success = database.LoadServerConfig(&s);
+		success = database.LoadServerConfig(&g_worldServer);
+	}
+
+	if (success) {
+		LogDebug(LOG_DATABASE, 0, "Loading character list...");
+		success = database.LoadCharacterList(g_characterList);
 	}
 
 	if (success)
-		success = s.Open();
+		success = g_worldServer.Open();
 
 	if (success)
 		success = zoneTalk.Open();
@@ -75,7 +81,7 @@ int main(int argc, char **argv)
 	while (success && looping) {
 		Timer::SetCurrentTime();
 
-		success = s.Process();
+		success = g_worldServer.Process();
 
 		if (success)
 			success = zoneTalk.Process();

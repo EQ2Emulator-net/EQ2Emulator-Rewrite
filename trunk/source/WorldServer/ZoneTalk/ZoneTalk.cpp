@@ -91,24 +91,15 @@ void ZoneTalk::AddZone(std::shared_ptr<ZoneStream> zs, uint32_t zone_id, uint32_
 }
 
 void ZoneTalk::TransferClientToZone(std::shared_ptr<ZoneStream> zs, std::shared_ptr<Client> client, uint32_t zone_id, uint32_t instance_id) {
-	uint32_t access_code = MakeRandomInt(0, 0xFFFFFFFF);
+	uint32_t access_code = MakeRandomNumber();
 
 	// Send info to zone
-	Emu_TransferClient_Packet* t = new Emu_TransferClient_Packet();
+	Emu_TransferClient_Packet* t = new Emu_TransferClient_Packet;
 	t->account_id = client->GetAccountID();
 	t->access_code = access_code;
 	t->character_id = client->GetPendingCharacter();
 	t->zone_id = client->GetPendingZone();
 	t->instance_id = client->GetPendingInstance();
+	client->pending_access_code = access_code;
 	zs->QueuePacket(t);
-
-	// Send packet to client allowing them to connect to the zone
-	OP_PlayCharacterReplyMsg_Packet* p = new OP_PlayCharacterReplyMsg_Packet(client->GetVersion());
-	p->response = PlayCharacterResponse::ESuccess;
-	p->server = zs->GetIP();
-	p->port = zs->GetPort();
-	p->account_id = client->GetAccountID();
-	p->access_code = access_code;
-
-	client->QueuePacket(p);
 }

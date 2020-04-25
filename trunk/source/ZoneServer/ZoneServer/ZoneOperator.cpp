@@ -7,6 +7,8 @@
 #include "../Packets/OP_LoginByNumRequestMsg_Packet.h"
 #include "../Packets/OP_ZoneInfoMsg_Packet.h"
 #include "../Packets/OP_SetRemoteCmdsMsg_Packet.h"
+#include "../../common/Packets/EmuPackets/Emu_ClientLoginConfirm_Packet.h"
+#include "../WorldTalk/WorldStream.h"
 
 ZoneOperator::ZoneOperator() {
 }
@@ -66,11 +68,22 @@ void ZoneOperator::ClientLogIn(std::shared_ptr<Client> client, OP_LoginByNumRequ
 			return;
 		}
 
+		auto ws = GetWorldStream();
+		if (!ws) {
+			return;
+		}
+
 		std::shared_ptr<ZoneServer> z = GetZone(pc.zone_id, pc.instance_id);
 		if (!z) {
 			client->SendLoginReply(3);
 			return;
 		}
+
+		auto p = new Emu_ClientLoginConfirm_Packet;
+		p->access_code = pc.access_code;
+		p->sessionID = client->GetSessionID();
+		p->zoneName = z->GetName();
+		ws->QueuePacket(p);
 		
 		// Login error, 0 = accepted, 1 = invalid password, 2 = currently playing, 6 = bad version, every thing else = unknown reason
 		client->SendLoginReply(0);
@@ -85,6 +98,15 @@ void ZoneOperator::ClientLogIn(std::shared_ptr<Client> client, OP_LoginByNumRequ
 
 void ZoneOperator::AddPendingClient(uint32_t account_id, PendingClient pending_client) {
 	pending_clients[account_id] = pending_client;
+}
+
+void ZoneOperator::RemovePendingClient(uint32_t access_code) {
+	for (auto itr = pending_clients.begin(); itr != pending_clients.end(); itr++) {
+		if (itr->second.access_code == access_code) {
+			pending_clients.erase(itr);
+			break;
+		}
+	}
 }
 
 std::shared_ptr<ZoneServer> ZoneOperator::AddNewZone(uint32_t zone_id, uint32_t instance_id) {
@@ -117,4 +139,20 @@ std::shared_ptr<ZoneServer> ZoneOperator::GetZone(uint32_t zone_id, uint32_t ins
 		return itr->second;
 
 	return nullptr;
+}
+
+void ZoneOperator::SetWorldServerName(std::string name) {
+	worldServerName = name;
+}
+
+std::string ZoneOperator::GetWorldServerName() {
+	return worldServerName;
+}
+
+void ZoneOperator::SetWorldStream(const std::shared_ptr<WorldStream>& stream) {
+	worldStream = stream;
+}
+
+std::shared_ptr<WorldStream> ZoneOperator::GetWorldStream() {
+	return worldStream.lock();
 }

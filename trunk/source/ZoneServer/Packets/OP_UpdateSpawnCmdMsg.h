@@ -9,7 +9,7 @@
 class Substruct_SpawnPosUpdate : public PacketSubstruct {
 public:
 	Substruct_SpawnPosUpdate(uint32_t version) : PacketSubstruct(version), 
-		packedPos(version <= 283, false), data(version), spawnIndex(0), isPlayer(false), coeTimestamp(0) {
+		packedPos(version <= 283, false), data(version), spawnIndex(0), coeHasTimestamp(false), coeTimestamp(0) {
 		packedPos.LinkSubstruct(data, "packedPos");
 	}
 
@@ -19,7 +19,7 @@ public:
 		PacketElement* e = RegisterOversizedByte(spawnIndex);
 		e->SetIsVariableSet(e);
 		if (GetVersion() >= 1188) {
-			PacketElement* bplayer = RegisterBool(isPlayer);
+			PacketElement* bplayer = RegisterBool(coeHasTimestamp);
 			bplayer->SetIsVariableSet(e);
 			RegisterUInt32(coeTimestamp)->SetIsVariableSet(bplayer);
 		}
@@ -29,7 +29,7 @@ public:
 	Substruct_SpawnPosition data;
 	PacketPackedData packedPos;
 	uint16_t spawnIndex;
-	bool isPlayer;
+	bool coeHasTimestamp;
 	uint32_t coeTimestamp;
 };
 
@@ -114,9 +114,9 @@ public:
 		static_cast<SpawnInfoStruct&>(info.data) = spawn_info;
 	}
 
-	void InsertSpawnPosData(const SpawnPositionStruct& spawn_pos, uint16_t index, bool isPlayer, uint32_t timestamp) {
+	void InsertSpawnPosData(const SpawnPositionStruct& spawn_pos, uint16_t index, bool overrideTimestamp, uint32_t timestamp) {
 		pos.spawnIndex = index;
-		pos.isPlayer = isPlayer;
+		pos.coeHasTimestamp = overrideTimestamp;
 		pos.coeTimestamp = timestamp;
 		static_cast<SpawnPositionStruct&>(pos.data) = spawn_pos;
 	}

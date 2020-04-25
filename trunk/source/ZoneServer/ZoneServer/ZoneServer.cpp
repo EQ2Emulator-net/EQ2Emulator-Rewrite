@@ -140,12 +140,12 @@ bool ZoneServer::AddClient(std::shared_ptr<Client> c) {
 	c->SetZone(shared_from_this());
 	
 	WriteLocker lock(pendingClientAdd_lock);
-	pendingClientAdd.push_back(c);
+	pendingClientAdd.insert(c);
 	lock.Unlock();
 
 	OP_ZoneInfoMsg_Packet* zone = new OP_ZoneInfoMsg_Packet(c->GetVersion());
-	zone->server1 = "Test";
-	zone->server2 = "Test";
+	zone->server1 = g_zoneOperator.GetWorldServerName();
+	zone->server2 = zone->server1;
 	zone->zone = file;
 	zone->zone2 = name;
 	zone->zone_desc = description;
@@ -265,7 +265,7 @@ void ZoneServer::RemovePlayer(std::shared_ptr<Entity> player) {
 
 void ZoneServer::RemoveClient(std::shared_ptr<Client> client) {
 	WriteLocker lock(pendingClientRemoval_lock);
-	pendingClientRemoval.push_back(client);
+	pendingClientRemoval.insert(client);
 }
 
 void ZoneServer::OnClientRemoval(const std::shared_ptr<Client>& client) {

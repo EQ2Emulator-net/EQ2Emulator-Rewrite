@@ -4,6 +4,9 @@
 
 #include "../../common/Packets/EQ2Packets/OP_LoginReplyMsg_Packet.h"
 
+class Character;
+class ZoneStream;
+
 class WorldServer : public UDPServer {
 public:
 	WorldServer();
@@ -31,6 +34,11 @@ public:
 	void SetAutoAccountCreation(bool val) { AutoAccountCreation = val; }
 	bool GetAutoAccountCreation() { return AutoAccountCreation; }
 
+	void AddPendingClientTransfer(uint32_t access_code, const std::shared_ptr<Character>& character, const std::shared_ptr<ZoneStream>& stream);
+	void ConfirmClientTransfer(uint32_t access_code, uint32_t sessionID, const std::string& zoneName);
+
+	std::shared_ptr<class Client> GetClientByAccessCode(uint32_t code);
+
 	std::map<uint8_t, std::vector<OP_LoginReplyMsg_Packet::ClassItem::StartingItem> > NormalEquipment;
 	std::map<uint8_t, std::vector<OP_LoginReplyMsg_Packet::ClassItem::StartingItem> > LVL90Equipment;
 	std::map<uint8_t, std::vector<OP_LoginReplyMsg_Packet::ClassItem::StartingItem> > TLEquipment;
@@ -47,4 +55,12 @@ private:
 	uint32_t AllowedRaces;
 	uint32_t AllowedClasses;
 	bool AutoAccountCreation;
+
+	struct PendingClientTransfer {
+		uint32_t timeout;
+		std::weak_ptr<Character> character;
+		std::weak_ptr<ZoneStream> stream;
+	};
+
+	std::map<uint32_t, PendingClientTransfer> pendingClientTransfers;
 };

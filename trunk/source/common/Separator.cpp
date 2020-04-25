@@ -218,6 +218,6 @@ void Separator::DropFirstArg() {
 	--size;
 }
 
-std::string Separator::GetInputString() {
+const std::string& Separator::GetInputString() {
 	return inputString;
 }

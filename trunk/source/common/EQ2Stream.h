@@ -54,6 +54,8 @@ public:
 	void SendDisconnect(uint16_t reason);
 	virtual void Disconnected() { }
 
+	uint32_t GetSessionID() { return Session; }
+
 protected:
 	EQ2Packet* PopPacket(); // InboundQueuePop
 	virtual void ReadVersionPacket(const unsigned char* data, uint32_t size, uint32_t offset, uint16_t opcode) = 0;

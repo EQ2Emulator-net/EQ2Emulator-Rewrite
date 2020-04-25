@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <map>
+#include <set>
 #include <string>
 #include <thread>
 #include <memory>
@@ -60,10 +61,10 @@ private:
 
 	std::map<uint32_t, std::weak_ptr<Client> > Clients;
 
-	std::vector<std::shared_ptr<Client> > pendingClientAdd;
+	std::set<std::shared_ptr<Client> > pendingClientAdd;
 	Mutex pendingClientAdd_lock;
 
-	std::vector<std::shared_ptr<Client> > pendingClientRemoval;
+	std::set<std::shared_ptr<Client> > pendingClientRemoval;
 	Mutex pendingClientRemoval_lock;
 
 	std::thread process_thread;

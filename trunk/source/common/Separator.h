@@ -27,7 +27,7 @@ public:
 
 	void DropFirstArg();
 
-	std::string GetInputString();
+	const std::string& GetInputString();
 
 private:
 	int size;

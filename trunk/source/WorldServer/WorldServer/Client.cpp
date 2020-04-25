@@ -19,6 +19,7 @@ Client::Client(unsigned int ip, unsigned short port) : EQ2Stream(ip, port) {
 	pending_zone = 0;
 	pending_instance = 0;
 	pending_character = 0;
+	pending_access_code = 0;
 }
 
 void Client::Process() {

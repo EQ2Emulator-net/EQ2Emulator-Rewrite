@@ -6,6 +6,8 @@
 #include "../../common/Packets/EmuPackets/Emu_RequestZone_Packet.h"
 #include "../../common/Packets/EmuPackets/Emu_RequestZoneReply_Packet.h"
 #include "../../common/Packets/EmuPackets/Emu_TransferClient_Packet.h"
+#include "../../common/Packets/EmuPackets/Emu_TransferClientConfirm_Packet.h"
+#include "../../common/Packets/EmuPackets/Emu_CancelClientTransfer_Packet.h"
 
 #include "../ZoneServer/ZoneServer.h"
 #include "../ZoneServer/ZoneOperator.h"
@@ -15,6 +17,8 @@ extern ZoneOperator g_zoneOperator;
 void Emu_RegisterZoneServerReply_Packet::HandlePacket(std::shared_ptr<WorldStream> w) {
 	if (reply == 1) {
 		w->SetAuthentication(EAuthentication::EAuthGranted);
+		g_zoneOperator.SetWorldStream(w);
+		g_zoneOperator.SetWorldServerName(serverName);
 		LogDebug(LOG_NET, 0, "Zoneserver is now authenticated.");
 	}
 	else {
@@ -52,4 +56,13 @@ void Emu_TransferClient_Packet::HandlePacket(std::shared_ptr<WorldStream> w) {
 	pc.instance_id = instance_id;
 
 	g_zoneOperator.AddPendingClient(account_id, pc);
+
+	auto p = new Emu_TransferClientConfirm_Packet;
+	p->access_code = access_code;
+	p->characterID = character_id;
+	w->QueuePacket(p);
+}
+
+void Emu_CancelClientTransfer_Packet::HandlePacket(std::shared_ptr<WorldStream> w) {
+	g_zoneOperator.RemovePendingClient(access_code);
 }
