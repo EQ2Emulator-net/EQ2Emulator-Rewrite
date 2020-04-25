@@ -68,6 +68,10 @@ public:
 
 	void Process();
 	void AddClient(std::weak_ptr<Client> client);
+	
+	std::unique_ptr<Sign>& GetSignData() { return signData; }
+	std::unique_ptr<Widget>& GetWidgetData() { return widgetData; }
+
 private:
 	static uint32_t GetNextID();
 
