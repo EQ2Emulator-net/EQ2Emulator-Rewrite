@@ -21,6 +21,7 @@ public:
 	bool LoadObjectsForZone(ZoneServer* z);
 	bool LoadWidgetsForZone(ZoneServer* z);
 	bool LoadSignsForZone(ZoneServer* z);
+	bool LoadGroundSpawnsForZone(ZoneServer* z);
 
 	bool LoadChatFilters(class ChatFilterLookup& lookup);
 

@@ -335,6 +335,9 @@ std::shared_ptr<GroundSpawn> ZoneServer::GetGroundSpawnFromMasterList(uint32_t d
 }
 
 void ZoneServer::LoadThread() {
+
+	// TODO: Entity Commands
+
 	LogInfo(LOG_NPC, 0, "-Loading NPC data...");
 	database.LoadNPCsForZone(this);
 	LogInfo(LOG_NPC, 0, "-Load NPC data complete!");
@@ -350,4 +353,12 @@ void ZoneServer::LoadThread() {
 	LogInfo(LOG_NPC, 0, "-Loading Sign data...");
 	database.LoadSignsForZone(this);
 	LogInfo(LOG_NPC, 0, "-Load Sign data complete!");
+
+	LogInfo(LOG_NPC, 0, "-Loading GroundSpawn data...");
+	database.LoadGroundSpawnsForZone(this);
+	LogInfo(LOG_NPC, 0, "-Load GroundSpawn data complete!");
+
+	// TODO: Spawn locations
+
+	// TODO: process spawn locations (put spawn in world)
 }
