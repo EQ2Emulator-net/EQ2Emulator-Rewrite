@@ -498,7 +498,9 @@ public:
 		m_posStruct.roll = roll;
 		SetPos(&m_posStruct.desiredRoll, roll, updateFlags);
 	}
-
+	void SetActivityTimer(uint32_t timestamp, bool updateFlags = true) {
+		SetInfo(&m_infoStruct.activity_timer, timestamp, updateFlags);
+	}
 	void SetName(std::string value, bool updateFlags = true) {
 		SetTitle(&m_titleStruct.name, value, updateFlags);
 	}

@@ -189,6 +189,8 @@
     <ClInclude Include="..\..\source\ZoneServer\Controllers\PlayerController.h" />
     <ClInclude Include="..\..\source\ZoneServer\Database\ZoneDatabase.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\EncodedPackets.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_CampAbortedMsg_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_CampStartedMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_ChangeServerControlFlagMsg.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_ChangeZoneMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_ChatFiltersMsg.h" />
@@ -215,7 +217,9 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_PredictionUpdateMsg.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_ReadyToZoneMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_RemoteCmdMsg_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_RequestCampMsg.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_SetRemoteCmdsMsg_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_StoodMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_TeleportWithinZoneNoReloadMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_UpdateCharacterSheetMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_UpdatePositionMsg.h" />

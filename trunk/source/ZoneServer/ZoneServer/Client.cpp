@@ -6,7 +6,7 @@
 
 #include "../../common/Packets/EQ2Packets/OP_LoginReplyMsg_Packet.h"
 #include "../Controllers/PlayerController.h"
-#include "../Spawns/Spawn.h"
+#include "../Spawns/Entity.h"
 #include "ZoneServer.h"
 #include "ZoneOperator.h"
 #include "../WorldTalk/WorldStream.h"
@@ -20,6 +20,17 @@ Client::Client(unsigned int ip, unsigned short port) : EQ2Stream(ip, port), chat
 }
 
 void Client::Process() {
+	if (auto controlled = GetController()->GetControlled()) {
+		const SpawnInfoStruct* info = controlled->GetInfoStruct();
+		if (info->entityFlags & EntityFlagCamping) {
+			uint32_t now = Timer::GetServerTime();
+			if (now >= info->activity_timer) {
+				//This player has camped out, send a disconnect packet
+				SendDisconnect(6);
+			}
+		}
+	}
+
 	while (EQ2Packet* p = PopPacket()) {
 		if (NetDebugEnabled()) {
 			LogError(LOG_PACKET, 0, "ZoneServer client packet dump");

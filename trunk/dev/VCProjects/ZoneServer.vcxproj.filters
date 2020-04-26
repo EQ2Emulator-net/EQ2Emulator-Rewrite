@@ -707,5 +707,17 @@
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_CancelClientTransfer_Packet.h">
       <Filter>common\Packets</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_RequestCampMsg.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_CampStartedMsg_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_StoodMsg_Packet.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_CampAbortedMsg_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

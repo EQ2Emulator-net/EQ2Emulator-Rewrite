@@ -236,6 +236,7 @@ void RuleManager::InitRuleDefaults() {
 	};
 
 	RuleInit(ERuleCategory::R_Zone, ERuleType::HearChatDistance, "30");
+	RuleInit(ERuleCategory::R_World, ERuleType::PlayerCampTimer, "20");
 }
 
 RuleManager::~RuleManager() {
