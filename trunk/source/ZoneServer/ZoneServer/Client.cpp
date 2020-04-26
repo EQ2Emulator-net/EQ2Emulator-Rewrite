@@ -3,6 +3,7 @@
 #include "Client.h"
 #include "../Packets/OP_LoginByNumRequestMsg_Packet.h"
 #include "../../common/EQ2Stream.h"
+#include "../Packets/OP_BioUpdateMsg_Packet.h"
 
 #include "../../common/Packets/EQ2Packets/OP_LoginReplyMsg_Packet.h"
 #include "../Controllers/PlayerController.h"
@@ -130,4 +131,13 @@ std::shared_ptr<Spawn> Client::GetSpawnByIndex(uint16_t spawn_index) {
 
 std::shared_ptr<PlayerController> Client::GetController() {
 	return m_controller;
+}
+
+void Client::SendBiography(uint32_t characterID) {
+	LogDebug(LOG_CLIENT, 0, "SendBiography called");
+
+	OP_BioUpdateMsg_Packet* b = new OP_BioUpdateMsg_Packet(GetVersion());
+	b->biography = "This is a test biography sentence"; // (TOO DO: Needs to pull from DB or if stored on the character)
+
+	QueuePacket(b);
 }

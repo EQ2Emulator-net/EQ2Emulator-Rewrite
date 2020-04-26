@@ -50,5 +50,7 @@ public:
 	std::shared_ptr<Spawn> GetSpawnByIndex(uint16_t spawn_index);
 	std::shared_ptr<PlayerController> GetController();
 
+	void SendBiography(uint32_t characterID);
+
 	ClientChat chat;
 };

@@ -94,6 +94,9 @@ void ZoneOperator::ClientLogIn(std::shared_ptr<Client> client, OP_LoginByNumRequ
 		client->SetCharacterID(pc.character_id);
 		clients.erase(client);
 		z->AddClient(client);
+
+		// Send Biography text to client (TOO Do: Move from client to player data location when available)
+		client->SendBiography(pc.character_id);
 	}
 	else {
 		client->SendLoginReply(3);

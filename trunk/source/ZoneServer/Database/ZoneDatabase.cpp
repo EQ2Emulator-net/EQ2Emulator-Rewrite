@@ -925,3 +925,7 @@ bool ZoneDatabase::LoadGroundSpawnsForZone(ZoneServer* z) {
 	LogInfo(LOG_NPC, 0, "--Loaded %u GroundSpawn(s).", count);
 	return ret;
 }
+
+bool ZoneDatabase::CharacterUpdateBiography(uint32_t char_id, const char* bio) {
+	return Query("UPDATE `character_details` SET `biography` = '%s' WHERE `char_id` = '%u'", bio, char_id);
+}
