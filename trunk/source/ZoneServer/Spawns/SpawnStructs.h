@@ -822,8 +822,8 @@ public:
 
 			if (version >= 60055) {
 				RegisterEQ2Color(skin_color);
-				RegisterEQ2Color(kunark_unknown_color1);
 				RegisterEQ2Color(eye_color);
+				RegisterEQ2Color(kunark_unknown_color1);
 				RegisterEQ2Color(soga_eye_color);
 				RegisterEQ2Color(soga_skin_color);
 				RegisterEQ2Color(kunark_unknown_color2);

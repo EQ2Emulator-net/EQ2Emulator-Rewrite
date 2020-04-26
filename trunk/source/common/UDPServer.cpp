@@ -82,7 +82,8 @@ void UDPServer::ReaderThread() {
 			for (auto& itr : Streams) {
 				if (itr.second->CheckHeartbeatDelta(currentTime) >= TIMEOUT_MS) {
 					LogDebug(LOG_NET, 0, "Client timeout : %s", itr.second->ToString().c_str());
-					StreamDisconnected(itr.second);
+					SpinLocker l(m_clientRemovals);
+					clientRemovals.push_back(itr.second);
 				}
 			}
 		}
@@ -94,7 +95,7 @@ void UDPServer::ReaderThread() {
 			for (auto& itr : clientRemovals) {
 				if ((stream_itr = Streams.find(itr->GetConnectionKey())) != Streams.end()) {
 					LogDebug(LOG_NET, 0, "Removing client.");
-					//delete stream_itr->second;
+					StreamDisconnected(itr);
 					Streams.erase(stream_itr);
 				}
 				else {
@@ -155,6 +156,8 @@ void UDPServer::ReaderThread() {
 					currentStream->Process(buffer, length);
 					currentStream->UpdateHeartbeat(currentTime);
 					if (currentStream->RequestNewClient()) {
+						StreamDisconnected(currentStream);
+
 						//We received a new session request for an old client, generate a new client for this key to reset our client state
 						std::shared_ptr<Stream> s = GetNewStream(from.sin_addr.s_addr, from.sin_port);
 						s->SetServer(this);
@@ -170,12 +173,6 @@ void UDPServer::ReaderThread() {
 			LogError(LOG_NET, 0, "FD_ISSET failed");
 		}
 	}
-}
-
-void UDPServer::StreamDisconnected(std::shared_ptr<Stream> stream) {
-	std::map<std::string, Stream*>::iterator stream_itr;
-	SpinLocker lock(m_clientRemovals);
-	clientRemovals.push_back(stream);
 }
 
 void UDPServer::AddStream(std::shared_ptr<Stream> stream, uint64_t key) {

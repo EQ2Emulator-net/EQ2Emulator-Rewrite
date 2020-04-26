@@ -12,6 +12,8 @@
 #include "Packets/EmuPackets/Emu_ClientLoginConfirm_Packet.h"
 #include "Packets/EmuPackets/Emu_CancelClientTransfer_Packet.h"
 #include "Packets/EmuPackets/Emu_ClientSessionEnded_Packet.h"
+#include "Packets/EmuPackets/Emu_RequestZoneTransfer_Packet.h"
+#include "Packets/EmuPackets/Emu_ZoneTransferReply_Packet.h"
 
 class EmuPacketAllocatorBase {
 public:
@@ -78,4 +80,6 @@ namespace EmuOpcode {
 	RegisterEmuOpcode(EmuOpcode_t::EMUOP_CLIENT_LOGIN_CONFIRM, Emu_ClientLoginConfirm_Packet);
 	RegisterEmuOpcode(EmuOpcode_t::EMUOP_CANCEL_CLIENT_TRANSFER, Emu_CancelClientTransfer_Packet);
 	RegisterEmuOpcode(EmuOpcode_t::EMUOP_CLIENT_SESSION_ENDED, Emu_ClientSessionEnded_Packet);
+	RegisterEmuOpcode(EmuOpcode_t::EMUOP_REQUEST_ZONE_TRANSFER, Emu_RequestZoneTransfer_Packet);
+	RegisterEmuOpcode(EmuOpcode_t::EMUOP_ZONE_TRANSFER_REPLY, Emu_ZoneTransferReply_Packet);
 }

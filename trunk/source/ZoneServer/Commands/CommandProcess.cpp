@@ -9,7 +9,6 @@
 #include "../Packets/OP_TeleportWithinZoneNoReloadMsg_Packet.h"
 #include "../Controllers/PlayerController.h"
 #include "../Spawns/Entity.h"
-#include "../Packets/OP_ChangeZoneMsg_Packet.h"
 #include "../ZoneServer/ZoneOperator.h"
 #include "../Packets/OP_ChangeServerControlFlagMsg.h"
 #include "../Packets/OP_HearChatCmd_Packet.h"
@@ -193,34 +192,10 @@ void CommandProcess::CommandZone(const std::shared_ptr<Client>& client, Separato
 
 	uint32_t zone_id = sep.GetUInt32(0);
 
-	auto zone = g_zoneOperator.AddNewZone(zone_id, 0);
-
-	if (!zone) {
-		//invalid zone id;
-		LogError(LOG_COMMAND, 0, "Command \"zone\" invalid invalid zone id %u", zone_id);
+	if (!g_zoneOperator.RequestZoneTransfer(client, zone_id, 0)) {
+		client->chat.SendSimpleGameMessage("\\#FF0000 You're already trying to zone. Please wait...");
 		return;
 	}
-
-	if (zone == client->GetZone()) {
-		LogError(LOG_COMMAND, 0, "Command \"zone\" player tried change to a zone they were already in.");
-		return;
-	}
-
-	PendingClient pc;
-	pc.access_code = MakeRandomNumber();
-	pc.character_id = client->GetCharacterID();
-	pc.instance_id = 0;
-	pc.zone_id = zone_id;
-
-	g_zoneOperator.AddPendingClient(client->GetAccountID(), pc);
-
-	//Most of this logic will probably be moved to the zoneserver and/or zoneoperator, just a test to see if we can load more zones
-	OP_ChangeZoneMsg_Packet p(client->GetVersion());
-	p.ip_address = g_zoneOperator.GetHostString();
-	p.port = g_zoneOperator.GetPort();
-	p.account_id = client->GetAccountID();
-	p.key = pc.access_code;
-	client->QueuePacket(p);
 }
 
 void CommandProcess::CommandFlymode(const std::shared_ptr<Client>& client, Separator& sep) {

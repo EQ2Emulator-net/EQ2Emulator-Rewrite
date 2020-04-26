@@ -49,6 +49,11 @@ public:
 	void SetWorldStream(const std::shared_ptr<WorldStream>& stream);
 	std::shared_ptr<WorldStream> GetWorldStream();
 
+	void HandleZoneTransferReply(class Emu_ZoneTransferReply_Packet* p);
+	bool RequestZoneTransfer(const std::shared_ptr<Client>& client, uint32_t zoneID, uint32_t instanceID);
+
+	void StreamDisconnected(std::shared_ptr<Stream> stream) override;
+
 private:
 	//Just using the client pointer as a key
 	std::set<std::weak_ptr<Client>, std::owner_less<std::weak_ptr<Client> > > clients;
@@ -58,4 +63,8 @@ private:
 	std::map<std::pair<uint32_t, uint32_t>, std::shared_ptr<ZoneServer> > zones;
 	std::string worldServerName;
 	std::weak_ptr<WorldStream> worldStream;
+
+	Mutex pendingZoneTransfers_lock;
+	//<sessionID, client>
+	std::map<uint32_t, std::weak_ptr<Client> > pendingZoneTransfers;
 };

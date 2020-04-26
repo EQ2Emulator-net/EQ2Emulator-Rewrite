@@ -62,5 +62,6 @@ private:
 		std::weak_ptr<ZoneStream> stream;
 	};
 
+	//These are clients that we have sent all connection information to, we're just waiting for them to connect to zone and for us to get confirmation of that
 	std::map<uint32_t, PendingClientTransfer> pendingClientTransfers;
 };

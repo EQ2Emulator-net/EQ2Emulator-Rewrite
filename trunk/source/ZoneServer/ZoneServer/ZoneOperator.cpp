@@ -8,7 +8,11 @@
 #include "../Packets/OP_ZoneInfoMsg_Packet.h"
 #include "../Packets/OP_SetRemoteCmdsMsg_Packet.h"
 #include "../../common/Packets/EmuPackets/Emu_ClientLoginConfirm_Packet.h"
+#include "../../common/Packets/EmuPackets/Emu_ZoneTransferReply_Packet.h"
+#include "../../common/Packets/EmuPackets/Emu_RequestZoneTransfer_Packet.h"
+#include "../Packets/OP_ChangeZoneMsg_Packet.h"
 #include "../WorldTalk/WorldStream.h"
+#include "../../common/Packets/EmuPackets/Emu_ClientSessionEnded_Packet.h"
 
 ZoneOperator::ZoneOperator() {
 }
@@ -155,4 +159,70 @@ void ZoneOperator::SetWorldStream(const std::shared_ptr<WorldStream>& stream) {
 
 std::shared_ptr<WorldStream> ZoneOperator::GetWorldStream() {
 	return worldStream.lock();
+}
+
+void ZoneOperator::HandleZoneTransferReply(Emu_ZoneTransferReply_Packet* p) {
+	WriteLocker lock(pendingZoneTransfers_lock);
+	auto itr = pendingZoneTransfers.find(p->sessionID);
+	if (itr != pendingZoneTransfers.end()) {
+		auto client = itr->second.lock();
+		pendingZoneTransfers.erase(itr);
+
+		if (!client) {
+			return;
+		}
+
+		if (p->bError) {
+			client->chat.SendSimpleGameMessage("\\#FF0000Error requesting a zone change. Try again later!");
+			return;
+		}
+
+		//Forward this client over to the new zone
+		OP_ChangeZoneMsg_Packet out(client->GetVersion());
+		out.ip_address = p->host;
+		out.port = p->port;
+		out.account_id = client->GetAccountID();
+		out.key = p->access_code;
+		client->QueuePacket(out);
+	}
+}
+
+bool ZoneOperator::RequestZoneTransfer(const std::shared_ptr<Client>& client, uint32_t zoneID, uint32_t instanceID) {
+	auto ws = GetWorldStream();
+	if (!ws) {
+		return false;
+	}
+
+	WriteLocker lock(pendingZoneTransfers_lock);
+
+	uint32_t session = client->GetSessionID();
+	if (pendingZoneTransfers.count(session) != 0) {
+		return false;
+	}
+
+	pendingZoneTransfers[session] = client;
+
+	lock.Unlock();
+
+	//Send a request to the world server to transfer this client
+	auto p = new Emu_RequestZoneTransfer_Packet;
+	p->accountID = client->GetAccountID();
+	p->characterID = client->GetCharacterID();
+	p->zoneID = zoneID;
+	p->instanceID = instanceID;
+	p->sessionID = session;
+	ws->QueuePacket(p);
+
+	return true;
+}
+
+void ZoneOperator::StreamDisconnected(std::shared_ptr<Stream> stream) {
+	auto ws = GetWorldStream();
+	if (!ws) {
+		return;
+	}
+
+	auto p = new Emu_ClientSessionEnded_Packet;
+	p->sessionID = std::static_pointer_cast<Client>(stream)->GetSessionID();
+	ws->QueuePacket(p);
 }

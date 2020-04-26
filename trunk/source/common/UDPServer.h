@@ -12,7 +12,6 @@ class UDPServer : public Server {
 public:
 	~UDPServer();
 	bool Open() override;
-	void StreamDisconnected(std::shared_ptr<Stream> stream) override;
 	virtual void AddStream(std::shared_ptr<Stream> stream, uint64_t key);
 
 protected:

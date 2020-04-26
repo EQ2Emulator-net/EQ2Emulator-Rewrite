@@ -18,6 +18,8 @@
 #include "../../common/Packets/EmuPackets/Emu_ClientLoginConfirm_Packet.h"
 #include "../../common/Packets/EmuPackets/Emu_CancelClientTransfer_Packet.h"
 #include "../../common/Packets/EmuPackets/Emu_ClientSessionEnded_Packet.h"
+#include "../../common/Packets/EmuPackets/Emu_RequestZoneTransfer_Packet.h"
+#include "../../common/Packets/EmuPackets/Emu_ZoneTransferReply_Packet.h"
 
 extern ZoneTalk zoneTalk;
 extern WorldServer g_worldServer;
@@ -46,11 +48,6 @@ void Emu_RequestZoneReply_Packet::HandlePacket(std::shared_ptr<ZoneStream> z) {
 }
 
 void Emu_TransferClientConfirm_Packet::HandlePacket(std::shared_ptr<ZoneStream> z) {
-	auto client = g_worldServer.GetClientByAccessCode(access_code);
-	if (!client) {
-		return;
-	}
-
 	auto character = g_characterList.GetCharacterByID(characterID);
 	
 	if (!character) {
@@ -58,30 +55,58 @@ void Emu_TransferClientConfirm_Packet::HandlePacket(std::shared_ptr<ZoneStream> 
 		return;
 	}
 
-	// Send packet to client allowing them to connect to the zone or telling them they can't right now
-	OP_PlayCharacterReplyMsg_Packet* p = new OP_PlayCharacterReplyMsg_Packet(client->GetVersion());
+	if (bFromZone) {
+		ZoneTalk::PendingSessionTransfer transfer = zoneTalk.PopPendingSessionTransfer(access_code);
 
-	if (character->IsOnline()) {
-		//This character is either still marked as online or has a pending connection
-		p->response = PlayCharacterResponse::EAccountInUse;
-		client->QueuePacket(p);
+		auto zs = transfer.zs.lock();
 
-		auto cancel = new Emu_CancelClientTransfer_Packet;
-		cancel->access_code = access_code;
-		z->QueuePacket(cancel);
-		return;
+		if (!zs || transfer.sessionID == 0) {
+			//shouldn't happen
+			return;
+		}
+
+		g_worldServer.AddPendingClientTransfer(access_code, character, z);
+		character->SetPendingZoneConnection();
+
+		//Let zone know what server to forward their client to
+		auto p = new Emu_ZoneTransferReply_Packet;
+		p->access_code = access_code;
+		p->host = z->GetIPString();
+		p->port = z->GetPort();
+		p->sessionID = transfer.sessionID;
+		zs->QueuePacket(p);
 	}
+	else {
+		auto client = g_worldServer.GetClientByAccessCode(access_code);
+		if (!client) {
+			return;
+		}
 
-	g_worldServer.AddPendingClientTransfer(access_code, character, z);
-	character->SetPendingZoneConnection();
+		// Send packet to client allowing them to connect to the zone or telling them they can't right now
+		OP_PlayCharacterReplyMsg_Packet* p = new OP_PlayCharacterReplyMsg_Packet(client->GetVersion());
 
-	// Send packet to client allowing them to connect to the zone
-	p->response = PlayCharacterResponse::ESuccess;
-	p->server = z->GetIP();
-	p->port = z->GetPort();
-	p->account_id = client->GetAccountID();
-	p->access_code = access_code;
-	client->QueuePacket(p);
+		if (character->IsOnline()) {
+			//This character is either still marked as online or has a pending connection
+			p->response = PlayCharacterResponse::EAccountInUse;
+			client->QueuePacket(p);
+
+			auto cancel = new Emu_CancelClientTransfer_Packet;
+			cancel->access_code = access_code;
+			z->QueuePacket(cancel);
+			return;
+		}
+
+		g_worldServer.AddPendingClientTransfer(access_code, character, z);
+		character->SetPendingZoneConnection();
+
+		// Send packet to client allowing them to connect to the zone
+		p->response = PlayCharacterResponse::ESuccess;
+		p->server = z->GetIP();
+		p->port = z->GetPort();
+		p->account_id = client->GetAccountID();
+		p->access_code = access_code;
+		client->QueuePacket(p);
+	}
 }
 
 void Emu_ClientLoginConfirm_Packet::HandlePacket(std::shared_ptr<ZoneStream> z) {
@@ -92,5 +117,26 @@ void Emu_ClientSessionEnded_Packet::HandlePacket(std::shared_ptr<ZoneStream> z) 
 	auto character = g_characterList.GetCharacterBySessionID(sessionID);
 	if (character) {
 		character->RemoveZoneStream(sessionID);
+	}
+}
+
+//This packet is a request from a zoneserver to transfer one of their clients to another zone
+void Emu_RequestZoneTransfer_Packet::HandlePacket(std::shared_ptr<ZoneStream> z) {
+	auto zs = zoneTalk.GetAvailableZone(zoneID);
+	if (zs) {
+		//The zone that the client is trying to transfer to is already running, forward the request
+		uint32_t access_code = zoneTalk.TransferClientToZone(zs, characterID, zoneID, accountID, instanceID, true);
+		zoneTalk.AddPendingSessionTransfer(access_code, sessionID, z);
+	}
+	else if (!zoneTalk.HasPendingZone(zoneID)) {
+		//We could not request this zone be started for some reason, let zone know there is a problem (shouldn't happen tbh)
+		auto p = new Emu_ZoneTransferReply_Packet;
+		p->bError = true;
+		p->sessionID = sessionID;
+		z->QueuePacket(p);
+	}
+	else {
+		//We have to wait for the zone to start up, we'll request the transfer after that happens
+		zoneTalk.AddPendingZoneTransfer(characterID, zoneID, sessionID, accountID);
 	}
 }

@@ -92,3 +92,10 @@ void ClientChat::DisplayText(const char* filterName, const std::string& message,
 	p.onscreenSound = onscreenSound;
 	client.QueuePacket(p);
 }
+
+void ClientChat::SendSimpleGameMessage(const char* msg) {
+	HearChatParams params;
+	params.chatFilterName = "Game Text";
+	params.message = msg;
+	HearChat(params);
+}

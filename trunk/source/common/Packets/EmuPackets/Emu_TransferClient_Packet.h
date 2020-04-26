@@ -14,6 +14,7 @@ public:
 		character_id = 0;
 		zone_id = 0;
 		instance_id = 0;
+		bFromZone = false;
 	}
 	~Emu_TransferClient_Packet() = default;
 
@@ -24,6 +25,7 @@ public:
 	uint32_t character_id;
 	uint32_t zone_id;
 	uint32_t instance_id;
+	bool bFromZone;
 
 private:
 	void RegisterElements() {
@@ -32,5 +34,6 @@ private:
 		RegisterUInt32(character_id);
 		RegisterUInt32(zone_id);
 		RegisterUInt32(instance_id);
+		RegisterBool(bFromZone);
 	}
 };

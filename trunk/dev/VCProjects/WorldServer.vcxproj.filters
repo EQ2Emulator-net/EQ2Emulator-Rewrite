@@ -500,5 +500,11 @@
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_ClientSessionEnded_Packet.h">
       <Filter>common\Packets\EmuPackets</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RequestZoneTransfer_Packet.h">
+      <Filter>common\Packets\EmuPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_ZoneTransferReply_Packet.h">
+      <Filter>common\Packets\EmuPackets</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

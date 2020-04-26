@@ -10,7 +10,6 @@
 #include "ZoneServer.h"
 #include "ZoneOperator.h"
 #include "../WorldTalk/WorldStream.h"
-#include "../../common/Packets/EmuPackets/Emu_ClientSessionEnded_Packet.h"
 
 extern ZoneOperator g_zoneOperator;
 
@@ -85,13 +84,6 @@ void Client::Disconnected() {
 	std::shared_ptr<ZoneServer> zone = m_zone.lock();
 	if (zone) {
 		zone->RemoveClient(std::dynamic_pointer_cast<Client>(shared_from_this()));
-	}
-
-	std::shared_ptr<WorldStream> ws = g_zoneOperator.GetWorldStream();
-	if (ws) {
-		auto p = new Emu_ClientSessionEnded_Packet;
-		p->sessionID = GetSessionID();
-		ws->QueuePacket(p);
 	}
 }
 

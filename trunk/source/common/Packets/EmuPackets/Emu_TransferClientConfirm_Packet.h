@@ -10,6 +10,7 @@ public:
 		RegisterElements();
 
 		access_code = 0;
+		bFromZone = false;
 	}
 	~Emu_TransferClientConfirm_Packet() = default;
 
@@ -17,10 +18,12 @@ public:
 
 	uint32_t access_code;
 	uint32_t characterID;
+	bool bFromZone;
 
 private:
 	void RegisterElements() {
 		RegisterUInt32(access_code);
 		RegisterUInt32(characterID);
+		RegisterBool(bFromZone);
 	}
 };

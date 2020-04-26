@@ -30,6 +30,8 @@ public:
 	void HearChat(const HearChatParams& params);
 	void OnScreenMessage(uint8_t msgType, const std::string& message, const std::string& sound, float durationSecs, EQ2Color color);
 	void DisplayText(const char* filter, const std::string& message, uint8_t onscreenMsgType, bool bOnscreen, const std::string& unkString);
+	
+	void SendSimpleGameMessage(const char* msg);
 
 private:
 	Client& client;

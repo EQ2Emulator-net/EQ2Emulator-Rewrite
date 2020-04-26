@@ -16,7 +16,7 @@ std::shared_ptr<ZoneStream> Character::GetZoneStream() {
 }
 
 void Character::RemoveZoneStream(uint32_t session) {
-	if (session == sessionID) {
+	if (session == sessionID && !bPendingZoneConnection) {
 		sessionID = 0;
 		currentlyConnectedZone.reset();
 	}

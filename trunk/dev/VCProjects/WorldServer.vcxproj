@@ -256,9 +256,11 @@
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RegisterZoneServerReply_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RegisterZoneServer_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RequestZoneReply_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RequestZoneTransfer_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RequestZone_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_TransferClientConfirm_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_TransferClient_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_ZoneTransferReply_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EQ2Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EQ2Packets\OpcodeManager.h" />
     <ClInclude Include="..\..\source\common\Packets\EQ2Packets\OP_KeyRequest_Packet.h" />
