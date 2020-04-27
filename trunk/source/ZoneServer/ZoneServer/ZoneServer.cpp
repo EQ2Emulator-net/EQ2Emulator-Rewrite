@@ -506,8 +506,8 @@ void ZoneServer::AddSpawn(std::shared_ptr<Spawn> spawn) {
 	m_entityList.push_back(std::static_pointer_cast<Entity>(spawn));
 
 	// wrong just being lazy to get spawn to show
-	int32_t x = static_cast<int32_t>(std::floor(spawn->GetX() / 100));
-	int32_t y = static_cast<int32_t>(std::floor(spawn->GetZ() / 100));
+	int32_t x = static_cast<int32_t>(spawn->GetX() / 100.f);
+	int32_t y = static_cast<int32_t>(spawn->GetZ() / 100.f);
 	std::pair<int32_t, int32_t> cellCoords = std::make_pair(x, y);
 	AddSpawnToCell(spawn, cellCoords);
 }

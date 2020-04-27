@@ -48,7 +48,6 @@ public:
 	bool bCampCharSelect;
 	bool unkBool;
 	std::string charName;
-	//guess, another string
 	std::string serverName;
 	bool unkBool2;
 
