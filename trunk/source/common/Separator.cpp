@@ -25,7 +25,7 @@ Separator::Separator(const Separator& other) {
 
 		for (int i = 0; i < size; i++) {
 			const char* cpyPtr = other.args[i];
-			uint32_t offset = cpyPtr - other.buf;
+			uint32_t offset = static_cast<uint32_t>(cpyPtr - other.buf);
 			args[i] = buf + offset;
 		}
 	}
@@ -42,7 +42,7 @@ Separator::Separator(Separator&& other) {
 
 		for (int i = 0; i < size; i++) {
 			const char* cpyPtr = other.args[i];
-			uint32_t offset = cpyPtr - other.buf;
+			uint32_t offset = static_cast<uint32_t>(cpyPtr - other.buf);
 			args[i] = buf + offset;
 		}
 	}

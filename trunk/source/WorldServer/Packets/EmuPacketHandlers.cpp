@@ -71,7 +71,7 @@ void Emu_TransferClientConfirm_Packet::HandlePacket(std::shared_ptr<ZoneStream> 
 		//Let zone know what server to forward their client to
 		auto p = new Emu_ZoneTransferReply_Packet;
 		p->access_code = access_code;
-		p->host = z->GetIPString();
+		p->host = z->GetIP();
 		p->port = z->GetPort();
 		p->sessionID = transfer.sessionID;
 		zs->QueuePacket(p);

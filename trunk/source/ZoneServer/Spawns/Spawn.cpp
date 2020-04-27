@@ -6,7 +6,6 @@
 #include "../Controllers/PlayerController.h"
 #include "../../common/timer.h"
 #include "Entity.h"
-#include <cmath>
 
 // Packets
 #include "../Packets/OP_UpdateSpawnCmdMsg.h"
