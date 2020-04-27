@@ -334,9 +334,198 @@ std::shared_ptr<GroundSpawn> ZoneServer::GetGroundSpawnFromMasterList(uint32_t d
 	return nullptr;
 }
 
+void ZoneServer::AddNPCSpawnLocation(uint32_t id, std::shared_ptr<SpawnLocation> location) {
+	std::map<uint32_t, std::shared_ptr<SpawnLocation> >::iterator itr = m_npcSpawnLocations.find(id);
+	if (itr == m_npcSpawnLocations.end())
+		m_npcSpawnLocations[id] = location;
+	else
+		LogWarn(LOG_NPC, 0, "Attempt to load duplicate NPC Spawn Location (%u).", id);
+}
+
+void ZoneServer::ProcessSpawnLocations() {
+
+	// TODO: For instances load spawns that should be removed
+
+	// map is for spawn groups
+	std::map<uint32_t, bool> processed_spawn_locations;
+	for (std::pair<uint32_t, std::shared_ptr<SpawnLocation> > kvp : m_npcSpawnLocations) {
+		std::shared_ptr<SpawnLocation> sl = kvp.second;
+		if (!sl)
+			continue;
+
+		// If the placement id is in this map it means we already processed it with
+		// another spawn in the same spawn group so don't process it again
+		if (processed_spawn_locations.count(sl->placement_id) > 0)
+			continue;
+
+		// TODO: Spawn group stuff
+
+		// This should be in the else for the spawn group check (TODO above)
+
+		// TODO: instance check to prevent spawns from spawning in the instance
+
+		ProcessSpawnLocation(sl);
+	}
+
+}
+
+void ZoneServer::ProcessSpawnLocation(std::shared_ptr<SpawnLocation> sl, bool respawn) {
+
+	float rndNum = MakeRandom(0, sl->total_percentage);
+	for (std::shared_ptr<SpawnEntry> entry : sl->entries) {
+		if (entry->spawn_percentage == 0)
+			continue;
+
+		if (entry->condition > 0) {
+			// TODO: Check conditions
+		}
+
+		if (entry->spawn_percentage >= rndNum) {
+			std::shared_ptr<Spawn> spawn = nullptr;
+
+			switch (entry->spawn_type) {
+			case SpawnEntryType::ENPC:
+				spawn = AddNPCSpawn(sl, entry);
+				break;
+			case SpawnEntryType::EOBJECT:
+				spawn = AddObjectSpawn(sl, entry);
+				break;
+			case SpawnEntryType::EWIDGET:
+				spawn = AddWidgetSpawn(sl, entry);
+				break;
+			case SpawnEntryType::ESIGN:
+				spawn = AddSignSpawn(sl, entry);
+				break;
+			case SpawnEntryType::EGROUNDSPAWN:
+				spawn = AddGroundSpawnSpawn(sl, entry);
+				break;
+			default:
+				LogError(LOG_ZONE, 0, "Error adding spawn (%u) to zone", entry->spawn_id);
+				continue;
+				break;
+			}
+
+			if (!spawn)
+				continue;
+
+			// TODO: set spawn script
+
+			// TODO: call spawn or respawn
+		}
+	}
+}
+
+std::shared_ptr<Entity> ZoneServer::AddNPCSpawn(std::shared_ptr<SpawnLocation> spawnLocation, std::shared_ptr<SpawnEntry> spawnEntry) {
+	std::shared_ptr<Entity> npc = GetNewNPC(spawnEntry->spawn_id);
+	if (npc) {
+		DeterminePosition(spawnLocation, npc);
+		npc->SetSpawnLocationID(spawnEntry->spawn_location_id);
+		npc->SetSpawnEntryID(spawnEntry->spawn_entry_id);
+		npc->SetRespawnTime(spawnLocation->respawn);
+		npc->SetExpireTime(spawnLocation->expire_time);
+		//if (spawnLocation->expire_time > 0)
+			//AddSpawnExpireTimer(npc, spawnLocation->expire_time, spawnLocation->expire_offset);
+		//AddLoot(npc);
+		AddSpawn(npc);
+	}
+
+	return npc;
+}
+
+std::shared_ptr<Object> ZoneServer::AddObjectSpawn(std::shared_ptr<SpawnLocation> spawnLocation, std::shared_ptr<SpawnEntry> spawnEntry) {
+	return nullptr;
+}
+
+std::shared_ptr<Spawn> ZoneServer::AddWidgetSpawn(std::shared_ptr<SpawnLocation> spawnLocation, std::shared_ptr<SpawnEntry> spawnEntry) {
+	return nullptr;
+}
+
+std::shared_ptr<Spawn> ZoneServer::AddSignSpawn(std::shared_ptr<SpawnLocation> spawnLocation, std::shared_ptr<SpawnEntry> spawnEntry) {
+	return nullptr;
+}
+
+std::shared_ptr<GroundSpawn> ZoneServer::AddGroundSpawnSpawn(std::shared_ptr<SpawnLocation> spawnLocation, std::shared_ptr<SpawnEntry> spawnEntry) {
+	return nullptr;
+}
+
+std::shared_ptr<Entity> ZoneServer::GetNewNPC(uint32_t id) {
+	return nullptr;
+}
+
+std::shared_ptr<Object> ZoneServer::GetNewObject(uint32_t id) {
+	return nullptr;
+}
+
+std::shared_ptr<Spawn> ZoneServer::GetNewWidget(uint32_t id) {
+	return nullptr;
+}
+
+std::shared_ptr<Spawn> ZoneServer::GetNewSign(uint32_t id) {
+	return nullptr;
+}
+
+std::shared_ptr<GroundSpawn> ZoneServer::GetNewGroundSpawn(uint32_t id) {
+	return nullptr;
+}
+
+void ZoneServer::DeterminePosition(std::shared_ptr<SpawnLocation> spawnLocation, std::shared_ptr<Spawn> spawn) {
+	if (spawnLocation->x_offset > 0)
+		spawn->SetX(MakeRandom(spawnLocation->x, spawnLocation->x + spawnLocation->x_offset), false);
+	else
+		spawn->SetX(spawnLocation->x, false);
+
+	if (spawnLocation->y_offset > 0)
+		spawn->SetY(MakeRandom(spawnLocation->y, spawnLocation->y + spawnLocation->y_offset), false);
+	else
+		spawn->SetY(spawnLocation->y, false);
+	
+	if (spawnLocation->z_offset > 0)
+		spawn->SetZ(MakeRandom(spawnLocation->z, spawnLocation->z + spawnLocation->z_offset), false);
+	else
+		spawn->SetZ(spawnLocation->z, false);
+
+
+	spawn->SetHeading(spawnLocation->heading, false);
+	spawn->SetPitch(spawnLocation->pitch, false);
+	spawn->SetRoll(spawnLocation->roll, false);
+	spawn->SetOrigX(spawn->GetX());
+	spawn->SetOrigY(spawn->GetY());
+	spawn->SetOrigZ(spawn->GetZ());
+	spawn->SetOrigHeading(spawn->GetHeading());
+	spawn->SetOrigPitch(spawnLocation->pitch);
+	spawn->SetOrigRoll(spawnLocation->roll);
+	spawn->SetGridID(spawnLocation->grid_id, false);
+	spawn->SetSpawnLocationPlacementID(spawnLocation->placement_id);
+}
+
+void ZoneServer::AddSpawn(std::shared_ptr<Spawn> spawn) {
+	spawn->SetZone(shared_from_this());
+	spawn->PopUpdateFlags();
+
+	// TODO: check for type to push to the correct list
+	m_entityList.push_back(std::static_pointer_cast<Entity>(spawn));
+
+	// wrong just being lazy to get spawn to show
+	int32_t x = static_cast<int32_t>(std::floor(spawn->GetX() / 100));
+	int32_t y = static_cast<int32_t>(std::floor(spawn->GetZ() / 100));
+	std::pair<int32_t, int32_t> cellCoords = std::make_pair(x, y);
+	AddSpawnToCell(spawn, cellCoords);
+}
+
+void ZoneServer::AddSpawnToCell(std::shared_ptr<Spawn> spawn, std::pair<int32_t, int32_t> cellCoords) {
+	std::map<std::pair<int32_t, int32_t>, std::shared_ptr<Cell> >::iterator itr = m_spGrid.find(cellCoords);
+	if (itr != m_spGrid.end())
+		itr->second->AddSpawn(spawn);
+	else {
+		std::shared_ptr<Cell> cell = std::make_shared<Cell>(cellCoords);
+		m_spGrid[cellCoords] = cell;
+		cell->AddSpawn(spawn);
+	}
+}
+
 void ZoneServer::LoadThread() {
 
-	// TODO: Entity Commands
+	// TODO: Entity Commands (Global?)
 
 	LogInfo(LOG_NPC, 0, "-Loading NPC data...");
 	database.LoadNPCsForZone(this);
@@ -359,6 +548,9 @@ void ZoneServer::LoadThread() {
 	LogInfo(LOG_NPC, 0, "-Load GroundSpawn data complete!");
 
 	// TODO: Spawn locations
+	LogInfo(LOG_NPC, 0, "-Loading NPC spawn location data...");
+	database.LoadNPCLocations(this);
+	LogInfo(LOG_NPC, 0, "-Load NPC spawn location data complete!");
 
 	// TODO: process spawn locations (put spawn in world)
 }

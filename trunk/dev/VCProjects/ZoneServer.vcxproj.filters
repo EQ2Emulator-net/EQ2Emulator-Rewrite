@@ -722,5 +722,8 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_BioUpdateMsg_Packet.h">
       <Filter>common\Packets\EQ2Packets</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Spawns\SpawnLocation.h">
+      <Filter>source\Spawns</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

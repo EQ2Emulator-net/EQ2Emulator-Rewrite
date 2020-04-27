@@ -10,6 +10,8 @@
 #include "../../common/Mutex.h"
 #include "../Chat/ZoneChat.h"
 
+#include "../Spawns/SpawnLocation.h"
+
 class Client;
 class Spawn;
 class Entity;
@@ -51,6 +53,25 @@ public:
 	void AddGroundSpawnToMasterList(std::shared_ptr<GroundSpawn> groundSpawn);
 	std::shared_ptr<GroundSpawn> GetGroundSpawnFromMasterList(uint32_t databaseID);
 
+	void AddNPCSpawnLocation(uint32_t id, std::shared_ptr<SpawnLocation> location);
+	// TODO: locations for other types of spawns
+	void ProcessSpawnLocations(); // private?
+	void ProcessSpawnLocation(std::shared_ptr<SpawnLocation> sl, bool respawn = false); // private?
+	std::shared_ptr<Entity> AddNPCSpawn(std::shared_ptr<SpawnLocation> spawnLocation, std::shared_ptr<SpawnEntry> spawnEntry);
+	std::shared_ptr<Object> AddObjectSpawn(std::shared_ptr<SpawnLocation> spawnLocation, std::shared_ptr<SpawnEntry> spawnEntry);
+	std::shared_ptr<Spawn> AddWidgetSpawn(std::shared_ptr<SpawnLocation> spawnLocation, std::shared_ptr<SpawnEntry> spawnEntry);
+	std::shared_ptr<Spawn> AddSignSpawn(std::shared_ptr<SpawnLocation> spawnLocation, std::shared_ptr<SpawnEntry> spawnEntry);
+	std::shared_ptr<GroundSpawn> AddGroundSpawnSpawn(std::shared_ptr<SpawnLocation> spawnLocation, std::shared_ptr<SpawnEntry> spawnEntry);
+	std::shared_ptr<Entity> GetNewNPC(uint32_t id);
+	std::shared_ptr<Object> GetNewObject(uint32_t id);
+	std::shared_ptr<Spawn> GetNewWidget(uint32_t id);
+	std::shared_ptr<Spawn> GetNewSign(uint32_t id);
+	std::shared_ptr<GroundSpawn> GetNewGroundSpawn(uint32_t id);
+	void DeterminePosition(std::shared_ptr<SpawnLocation> spawnLocation, std::shared_ptr<Spawn> spawn); // private?
+	void AddSpawn(std::shared_ptr<Spawn> spawn);
+
+	void AddSpawnToCell(std::shared_ptr<Spawn>, std::pair<int32_t, int32_t> cellCoords);
+
 	void LoadThread();
 
 	ZoneChat chat;
@@ -72,7 +93,7 @@ private:
 
 	Timer m_SpawnUpdateTimer;
 
-	std::map<std::pair<int32_t, int32_t>, Cell> m_spGrid;
+	std::map<std::pair<int32_t, int32_t>, std::shared_ptr<Cell> > m_spGrid;
 	std::vector<std::weak_ptr<Spawn> > m_globalSpawns;
 
 	// Lists of stuff actually in the world
@@ -86,6 +107,9 @@ private:
 	std::map<uint32_t, std::shared_ptr<GroundSpawn> > m_masterGroundSpawnList;
 	std::map<uint32_t, std::shared_ptr<Spawn> > m_masterWidgetList;
 	std::map<uint32_t, std::shared_ptr<Spawn> > m_masterSignList;
+
+	// Lists for spawn locations
+	std::map<uint32_t, std::shared_ptr<SpawnLocation> > m_npcSpawnLocations;
 
 	std::thread m_loadThread;
 

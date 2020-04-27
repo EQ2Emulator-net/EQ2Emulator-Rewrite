@@ -49,8 +49,8 @@ public:
 	void SetDatabaseID(uint32_t id) { m_spawnDatabaseID = id; }
 	std::string GetName() const { return m_titleStruct.name; }
 
-	ZoneServer* GetZone() const { return m_zone; }
-	void SetZone(ZoneServer* zone) { m_zone = zone; }
+	std::shared_ptr<ZoneServer> GetZone() const { return m_zone.lock(); }
+	void SetZone(std::shared_ptr<ZoneServer> zone) { m_zone = zone; }
 
 	const SpawnPositionStruct* GetPosStruct() const;
 	const SpawnVisualizationStruct* GetVisStruct() const;
@@ -75,7 +75,7 @@ public:
 private:
 	static uint32_t GetNextID();
 
-	ZoneServer* m_zone;
+	std::weak_ptr<ZoneServer> m_zone;
 
 	SpawnPositionStruct m_posStruct;
 	SpawnVisualizationStruct m_visStruct;
@@ -106,6 +106,20 @@ private:
 	uint32_t m_dissonance;
 	uint32_t m_merchantID;
 	uint32_t m_merchantType;
+
+	uint32_t m_spawnLocationID;
+	uint32_t m_spawnEntryID;
+	uint32_t m_respawnTime;
+	uint32_t m_expireTime;
+
+	uint32_t m_spawnLocationPlacementID;
+	float m_origX;
+	float m_origY;
+	float m_origZ;
+	float m_origHeading;
+	float m_origPitch;
+	float m_origRoll;
+
 
 public:
 	/* I put the template functions down here so they aren't cluttering up the rest of the class */
@@ -553,6 +567,29 @@ public:
 	uint32_t GetMerchantID() { return m_merchantID; }
 	void SetMerchantType(uint32_t val) { m_merchantType = val; }
 	uint32_t GetMerchantType() { return m_merchantType; }
+	void SetSpawnLocationID(uint32_t val) { m_spawnLocationID = val; }
+	uint32_t GetSpawnLocationID() { return m_spawnLocationID; }
+	void SetSpawnEntryID(uint32_t val) { m_spawnEntryID = val; }
+	uint32_t GetSpawnEntryID() { return m_spawnEntryID; }
+	void SetRespawnTime(uint32_t val) { m_respawnTime = val; }
+	uint32_t GetRespawnTime() { return m_respawnTime; }
+	void SetExpireTime(uint32_t val) { m_expireTime = val; }
+	uint32_t GetExpireTime() { return m_expireTime; }
+	void SetSpawnLocationPlacementID(uint32_t val) { m_spawnLocationPlacementID = val; }
+	uint32_t GetSpawnLocationPlacementID() { return m_spawnLocationPlacementID; }
+	void SetOrigX(float val) { m_origX = val; }
+	float GetOrigX() { return m_origX; }
+	void SetOrigY(float val) { m_origY = val; }
+	float GetOrigY() { return m_origY; }
+	void SetOrigZ(float val) { m_origZ = val; }
+	float GetOrigZ() { return m_origZ; }
+	void SetOrigHeading(float val) { m_origHeading = val; }
+	float GetOrigHeading() { return m_origHeading; }
+	void SetOrigPitch(float val) { m_origPitch = val; }
+	float GetOrigPitch() { return m_origPitch; }
+	void SetOrigRoll(float val) { m_origRoll = val; }
+	float GetOrigRoll() { return m_origRoll; }
+	float GetHeading() { return m_posStruct.heading; }
 
 	static float GetDistance(float x1, float y1, float z1, float x2, float y2, float z2, bool ignore_y = false);
 	float GetDistance(float x, float y, float z, bool ignore_y = false);

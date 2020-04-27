@@ -5,6 +5,7 @@
 
 Cell::Cell(std::pair<int32_t, int32_t> cellCoordinates) {
 	m_cellCoordinates = cellCoordinates;
+	bIsActive = false;
 }
 
 Cell::~Cell() {
@@ -22,4 +23,8 @@ void Cell::Process() {
 		else
 			itr = m_spawnList.erase(itr);
 	}
+}
+
+void Cell::AddSpawn(std::shared_ptr<Spawn> spawn) {
+	m_spawnList.push_back(spawn);
 }

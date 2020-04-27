@@ -4,6 +4,12 @@
 
 class GroundSpawn : public Spawn {
 public:
+	GroundSpawn() {
+		m_groundSpawnDatabaseID = 0;
+		m_numberOfHarvests = 0;
+		m_numberAttemptsPerHarvest = 0;
+		m_groundSpawnID = 0;
+	}
 
 	void SetGroundSpawnDatabaseID(uint32_t val) { m_groundSpawnDatabaseID = val; }
 	void SetNumberOfHarvests(uint8_t val) { m_numberOfHarvests = val; }

@@ -11,7 +11,7 @@
 // Packets
 #include "../Packets/OP_UpdateSpawnCmdMsg.h"
 
-Spawn::Spawn() : m_updateFlagsByte(0), m_zone(nullptr) {
+Spawn::Spawn() : m_updateFlagsByte(0) {
 	memset(&m_infoStruct, 0, sizeof(m_infoStruct));
 	memset(&m_visStruct, 0, sizeof(m_visStruct));
 	m_spawnID = GetNextID();

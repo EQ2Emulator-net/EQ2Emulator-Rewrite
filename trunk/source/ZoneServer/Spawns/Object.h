@@ -4,6 +4,10 @@
 
 class Object : public Spawn {
 public:
+	Object() {
+		m_objectDatabaseID = 0;
+		m_deviceID = 0;
+	}
 
 	void SetObjectDatabaseID(uint32_t id) { m_objectDatabaseID = id; }
 	uint32_t GetObjectDatabaseID() { return m_objectDatabaseID; }

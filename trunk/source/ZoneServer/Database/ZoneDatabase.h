@@ -23,6 +23,8 @@ public:
 	bool LoadSignsForZone(ZoneServer* z);
 	bool LoadGroundSpawnsForZone(ZoneServer* z);
 
+	bool LoadNPCLocations(ZoneServer* z);
+
 	bool CharacterUpdateBiography(uint32_t char_id, const char* bio);
 
 	bool LoadChatFilters(class ChatFilterLookup& lookup);

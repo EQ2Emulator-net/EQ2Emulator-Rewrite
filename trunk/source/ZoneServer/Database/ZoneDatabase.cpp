@@ -923,9 +923,79 @@ bool ZoneDatabase::LoadGroundSpawnsForZone(ZoneServer* z) {
 	}
 
 	LogInfo(LOG_NPC, 0, "--Loaded %u GroundSpawn(s).", count);
-	return ret;
+	return ret;	
 }
 
 bool ZoneDatabase::CharacterUpdateBiography(uint32_t char_id, const char* bio) {
 	return Query("UPDATE `character_details` SET `biography` = '%s' WHERE `char_id` = '%u'", bio, char_id);
+}
+
+bool ZoneDatabase::LoadNPCLocations(ZoneServer* z) {
+	DatabaseResult result;
+	bool ret = Select(&result, "SELECT sln.id, sln.name,\n"
+		"slp.id, slp.x, slp.y, slp.z, slp.x_offset, slp.y_offset, slp.z_offset, slp.heading, slp.pitch, slp.roll, slp.respawn, slp.expire_timer, slp.expire_offset, slp.grid_id,\n"
+		"sle.id, sle.spawn_id, sle.spawnpercentage, sle.condition\n"
+		"FROM spawn_location_name sln, spawn_location_placement slp, spawn_location_entry sle, spawn_npcs sn\n"
+		"WHERE sn.spawn_id = sle.spawn_id AND sln.id = sle.spawn_location_id AND sln.id = slp.spawn_location_id AND slp.zone_id=%u ORDER BY sln.id, sle.id",
+		z->GetID());
+
+	if (!ret)
+		return ret;
+
+	uint32_t count = 0;
+	uint32_t location_id = 0xFFFFFFFF;
+	std::shared_ptr<SpawnLocation> spawn_location = nullptr;
+	while (result.Next()) {
+		uint32_t id = result.GetUInt32(0);
+		if (location_id == 0xFFFFFFFF || id != location_id) {
+			if (spawn_location) {
+				z->AddNPCSpawnLocation(location_id, spawn_location);
+				count++;
+			}
+
+			spawn_location = std::make_shared<SpawnLocation>();
+		}
+
+		std::shared_ptr<SpawnEntry> entry = std::make_shared<SpawnEntry>();
+		location_id = id;
+
+		// spawn_location_name
+		spawn_location->name = result.GetString(1);
+
+		// spawn_location_placement
+		spawn_location->placement_id = result.GetUInt32(2);
+		spawn_location->x = result.GetFloat(3);
+		spawn_location->y = result.GetFloat(4);
+		spawn_location->z = result.GetFloat(5);
+		spawn_location->x_offset = result.GetFloat(6);
+		spawn_location->y_offset = result.GetFloat(7);
+		spawn_location->z_offset = result.GetFloat(8);
+		spawn_location->heading = result.GetFloat(9);
+		spawn_location->pitch = result.GetFloat(10);
+		spawn_location->roll = result.GetFloat(11);
+		spawn_location->respawn = result.GetUInt32(12);
+		// TODO: Respawn_offset
+		spawn_location->expire_time = result.GetUInt32(13);
+		spawn_location->expire_offset = result.GetUInt32(14);
+		spawn_location->grid_id = result.GetUInt32(15);
+
+		// spawn_location_entry
+		entry->spawn_location_id = location_id;
+		entry->spawn_entry_id = result.GetUInt32(16);
+		entry->spawn_id = result.GetUInt32(17);
+		entry->spawn_percentage = result.GetFloat(18);
+		entry->condition = result.GetUInt32(19);
+		entry->spawn_type = SpawnEntryType::ENPC;
+
+		spawn_location->total_percentage += entry->spawn_percentage;
+		spawn_location->AddEntry(entry);
+	}
+
+	if (spawn_location) {
+		z->AddNPCSpawnLocation(location_id, spawn_location);
+		count++;
+	}
+
+	LogInfo(LOG_NPC, 0, "--Loaded %u NPC spawn location(s).", count);
+	return ret;
 }
