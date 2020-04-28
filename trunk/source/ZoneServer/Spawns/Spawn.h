@@ -39,6 +39,7 @@ class Client;
 class Spawn : public std::enable_shared_from_this<Spawn> {
 public:
 	Spawn();
+	Spawn(std::shared_ptr<Spawn> in);
 	~Spawn();
 
 	float GetX() const { return m_posStruct.x; }
@@ -119,7 +120,7 @@ private:
 	float m_origHeading;
 	float m_origPitch;
 	float m_origRoll;
-
+	std::pair<int32_t, int32_t> m_currentCellCoordinates;
 
 public:
 	/* I put the template functions down here so they aren't cluttering up the rest of the class */
@@ -449,12 +450,14 @@ public:
 	}
 	void SetX(float x, bool updateFlags = true) {
 		SetPos(&m_posStruct.x, x, updateFlags);
+		UpdateCellCoordinates();
 	}
 	void SetY(float y, bool updateFlags = true) {
 		SetPos(&m_posStruct.y, y, updateFlags);
 	}
 	void SetZ(float z, bool updateFlags = true) {
 		SetPos(&m_posStruct.z, z, updateFlags);
+		UpdateCellCoordinates();
 	}
 	void SetLocation(float x, float y, float z, bool updateFlags = true) {
 		SetX(x, false);
@@ -590,6 +593,8 @@ public:
 	void SetOrigRoll(float val) { m_origRoll = val; }
 	float GetOrigRoll() { return m_origRoll; }
 	float GetHeading() { return m_posStruct.heading; }
+	std::pair<int32_t, int32_t> GetCellCoordinates() { return m_currentCellCoordinates; }
+	void UpdateCellCoordinates();
 
 	static float GetDistance(float x1, float y1, float z1, float x2, float y2, float z2, bool ignore_y = false);
 	float GetDistance(float x, float y, float z, bool ignore_y = false);

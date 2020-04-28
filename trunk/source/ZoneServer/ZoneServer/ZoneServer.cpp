@@ -175,7 +175,6 @@ bool ZoneServer::AddClient(std::shared_ptr<Client> c) {
 	zone->unknown11 = 4294967292;
 
 	c->QueuePacket(zone);
-
 	g_commandProcess.SendCommandList(c);
 
 	return true;
@@ -204,7 +203,8 @@ void ZoneServer::SendCharacterInfo(std::shared_ptr<Client> client) {
 
 	AddPlayer(entity);
 
-	SendPlayersToNewClient(client);	
+	SendPlayersToNewClient(client);
+	ActivateCellsForClient(client);
 }
 
 void ZoneServer::AddPlayer(std::shared_ptr<Entity> player) {
@@ -367,6 +367,7 @@ void ZoneServer::ProcessSpawnLocations() {
 		ProcessSpawnLocation(sl);
 	}
 
+	TryActivateCells();
 }
 
 void ZoneServer::ProcessSpawnLocation(std::shared_ptr<SpawnLocation> sl, bool respawn) {
@@ -449,7 +450,11 @@ std::shared_ptr<GroundSpawn> ZoneServer::AddGroundSpawnSpawn(std::shared_ptr<Spa
 }
 
 std::shared_ptr<Entity> ZoneServer::GetNewNPC(uint32_t id) {
-	return nullptr;
+	std::map<uint32_t, std::shared_ptr<Entity> >::iterator itr = m_masterNPCList.find(id);
+	if (itr != m_masterNPCList.end())
+		return std::make_shared<Entity>(itr->second);
+	else
+		return nullptr;
 }
 
 std::shared_ptr<Object> ZoneServer::GetNewObject(uint32_t id) {
@@ -505,9 +510,9 @@ void ZoneServer::AddSpawn(std::shared_ptr<Spawn> spawn) {
 	// TODO: check for type to push to the correct list
 	m_entityList.push_back(std::static_pointer_cast<Entity>(spawn));
 
-	// wrong just being lazy to get spawn to show
-	int32_t x = static_cast<int32_t>(spawn->GetX() / 100.f);
-	int32_t y = static_cast<int32_t>(spawn->GetZ() / 100.f);
+	// wrong just being lazy to get spawn to show (100 is cell size, make it a rule)
+	int32_t x = static_cast<int32_t>(std::floor(spawn->GetX() / 100.f));
+	int32_t y = static_cast<int32_t>(std::floor(spawn->GetZ() / 100.f));
 	std::pair<int32_t, int32_t> cellCoords = std::make_pair(x, y);
 	AddSpawnToCell(spawn, cellCoords);
 }
@@ -521,6 +526,80 @@ void ZoneServer::AddSpawnToCell(std::shared_ptr<Spawn> spawn, std::pair<int32_t,
 		m_spGrid[cellCoords] = cell;
 		cell->AddSpawn(spawn);
 	}
+}
+
+void ZoneServer::TryActivateCells() {
+	if (Clients.size() == 0)
+		return;
+
+	for (std::pair<uint32_t, std::weak_ptr<Client> > c : Clients) {
+		std::shared_ptr<Client> client = c.second.lock();
+		if (client)
+			ActivateCellsForClient(client);
+	}
+}
+
+void ZoneServer::ActivateCellsForClient(std::shared_ptr<Client> client) {
+	std::shared_ptr<PlayerController> controller = client->GetController();
+	if (!controller)
+		return;
+
+	std::shared_ptr<Entity> player = controller->GetControlled();
+	if (!player)
+		return;
+
+	std::vector<std::shared_ptr<Cell> > cells = GetNeighboringCells(player->GetCellCoordinates());
+	for (std::shared_ptr<Cell> cell : cells)
+		cell->ActivateCell(client);
+}
+
+std::vector<std::shared_ptr<Cell> > ZoneServer::GetNeighboringCells(std::pair<int32_t, int32_t> cellCoords) {
+	std::vector<std::shared_ptr<Cell> > ret;
+
+	std::map<std::pair<int32_t, int32_t>, std::shared_ptr<Cell> >::iterator itr = m_spGrid.find(cellCoords);
+	if (itr != m_spGrid.end())
+		ret.push_back(itr->second);
+
+	itr = m_spGrid.find(std::make_pair(cellCoords.first - 1, cellCoords.second - 1));
+	if (itr != m_spGrid.end())
+		ret.push_back(itr->second);
+
+	itr = m_spGrid.find(std::make_pair(cellCoords.first, cellCoords.second - 1));
+	if (itr != m_spGrid.end())
+		ret.push_back(itr->second);
+
+	itr = m_spGrid.find(std::make_pair(cellCoords.first + 1, cellCoords.second - 1));
+	if (itr != m_spGrid.end())
+		ret.push_back(itr->second);
+
+	itr = m_spGrid.find(std::make_pair(cellCoords.first - 1, cellCoords.second));
+	if (itr != m_spGrid.end())
+		ret.push_back(itr->second);
+
+	itr = m_spGrid.find(std::make_pair(cellCoords.first + 1, cellCoords.second));
+	if (itr != m_spGrid.end())
+		ret.push_back(itr->second);
+
+	itr = m_spGrid.find(std::make_pair(cellCoords.first - 1, cellCoords.second + 1));
+	if (itr != m_spGrid.end())
+		ret.push_back(itr->second);
+
+	itr = m_spGrid.find(std::make_pair(cellCoords.first, cellCoords.second + 1));
+	if (itr != m_spGrid.end())
+		ret.push_back(itr->second);
+
+	itr = m_spGrid.find(std::make_pair(cellCoords.first + 1, cellCoords.second + 1));
+	if (itr != m_spGrid.end())
+		ret.push_back(itr->second);
+
+	return ret;
+}
+
+std::pair<int32_t, int32_t> ZoneServer::GettCellCoordinatesForSpawn(std::shared_ptr<Spawn> spawn) {
+	// !00 is cell size, should be a rule
+	int32_t x = static_cast<int32_t>(std::floor(spawn->GetX() / 100));
+	int32_t y = static_cast<int32_t>(std::floor(spawn->GetZ() / 100));
+	return std::make_pair(x, y);
 }
 
 void ZoneServer::LoadThread() {
@@ -553,4 +632,5 @@ void ZoneServer::LoadThread() {
 	LogInfo(LOG_NPC, 0, "-Load NPC spawn location data complete!");
 
 	// TODO: process spawn locations (put spawn in world)
+	ProcessSpawnLocations();
 }

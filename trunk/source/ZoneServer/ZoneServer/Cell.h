@@ -1,6 +1,7 @@
 #pragma once
 
 class Spawn;
+class Client;
 
 class Cell {
 public:
@@ -13,6 +14,7 @@ public:
 
 	void AddSpawn(std::shared_ptr<Spawn> spawn);
 	bool IsActive() { return bIsActive; }
+	void ActivateCell(std::shared_ptr<Client> client);
 
 private:
 	std::pair<int32_t, int32_t> m_cellCoordinates;

@@ -71,6 +71,10 @@ public:
 	void AddSpawn(std::shared_ptr<Spawn> spawn);
 
 	void AddSpawnToCell(std::shared_ptr<Spawn>, std::pair<int32_t, int32_t> cellCoords);
+	void TryActivateCells();
+	void ActivateCellsForClient(std::shared_ptr<Client> client);
+	std::vector<std::shared_ptr<Cell> > GetNeighboringCells(std::pair<int32_t, int32_t> cellCoords);
+	std::pair<int32_t, int32_t> GettCellCoordinatesForSpawn(std::shared_ptr<Spawn> spawn);
 
 	void LoadThread();
 
@@ -99,6 +103,8 @@ private:
 	// Lists of stuff actually in the world
 	std::vector<std::shared_ptr<Entity> > m_entityList;
 	std::vector<std::shared_ptr<Object> > m_objectList;
+	std::vector<std::shared_ptr<Spawn> > m_signList;
+	std::vector<std::shared_ptr<Spawn> > m_widgetList;
 	std::vector<std::shared_ptr<GroundSpawn> > m_groundspawnList;
 
 	// Master lists loaded from the database, key = database id

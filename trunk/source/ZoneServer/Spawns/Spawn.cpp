@@ -6,6 +6,7 @@
 #include "../Controllers/PlayerController.h"
 #include "../../common/timer.h"
 #include "Entity.h"
+#include "../ZoneServer/ZoneServer.h"
 
 // Packets
 #include "../Packets/OP_UpdateSpawnCmdMsg.h"
@@ -15,6 +16,65 @@ Spawn::Spawn() : m_updateFlagsByte(0) {
 	memset(&m_visStruct, 0, sizeof(m_visStruct));
 	m_spawnID = GetNextID();
 	movementTimestamp = Timer::GetServerTime();
+}
+
+Spawn::Spawn(std::shared_ptr<Spawn> in) {
+	memcpy(&m_infoStruct, in->GetInfoStruct(), sizeof(m_infoStruct));
+	memcpy(&m_visStruct, in->GetVisStruct(), sizeof(m_visStruct));
+	memcpy(&m_posStruct, in->GetPosStruct(), sizeof(m_infoStruct));
+	m_spawnID = GetNextID();
+	movementTimestamp = Timer::GetServerTime();
+	m_titleStruct.name = in->GetTitleStruct()->name;
+	m_titleStruct.last_name = in->GetTitleStruct()->last_name;
+	m_titleStruct.guild = in->GetTitleStruct()->guild;
+	m_titleStruct.prefix_title = in->GetTitleStruct()->prefix_title;
+	m_titleStruct.suffix_title = in->GetTitleStruct()->suffix_title;
+	m_titleStruct.pvp_title = in->GetTitleStruct()->pvp_title;
+	m_titleStruct.isPlayer = in->GetTitleStruct()->isPlayer;
+	m_titleStruct.unknown1 = in->GetTitleStruct()->unknown1;
+	m_updateFlagsByte = 0;
+	if (in->GetSignData() != nullptr)
+		signData = std::make_unique<Sign>(*in->GetSignData());
+	if (in->GetWidgetData() != nullptr)
+		widgetData = std::make_unique<Widget>(*in->GetWidgetData());
+	m_spawnID = GetNextID();
+	m_spawnDatabaseID = in->GetDatabaseID();
+	m_sizeOffset = in->GetSizeOffset();
+	m_primaryCommandListID = in->GetPrimaryCommandListID();
+	m_secondaryCommandListID = in->GetSecondaryCommandListID();
+	m_factionID = in->GetFactionID();
+	m_hp = in->GetHP();
+	m_power = in->GetPower();
+	m_savagery = in->GetSavagery();
+	m_dissonance = in->GetDissonance();
+	m_merchantID = in->GetMerchantID();
+	m_merchantType = in->GetMerchantType();
+	m_spawnLocationID = 0;
+	m_spawnEntryID = 0;
+	m_respawnTime = 0;
+	m_expireTime = 0;
+	m_spawnLocationPlacementID = 0;
+	m_origX = 0.0f;
+	m_origY = 0.0f;
+	m_origZ = 0.0f;
+	m_origHeading = 0.0f;
+	m_origPitch = 0.0f;
+	m_origRoll = 0.0f;
+
+	if (m_posStruct.collisionRadius == 0)
+		m_posStruct.collisionRadius = 1.0f;
+
+	if (m_posStruct.sizeRatio == 0)
+		m_posStruct.sizeRatio = 1.0f;
+
+	if (m_posStruct.sizeMultiplierRatio == 0)
+		m_posStruct.sizeMultiplierRatio = 1.0f;
+
+	if (m_posStruct.size == 0)
+		m_posStruct.size = 1.0f;
+	
+	if (m_sizeOffset > 0)
+		m_posStruct.size = MakeRandom(m_posStruct.size, m_posStruct.size + m_sizeOffset);
 }
 
 Spawn::~Spawn() {
@@ -85,6 +145,17 @@ uint32_t Spawn::GetNextID() {
 	//There was a comment in old code about the ID ending in 255 crashing the client, not sure if it's true but doing it anyway
 	while (ret = g_spawnID.fetch_add(1), (ret & 0xFF) == 0xFF);
 	return ret;
+}
+
+void Spawn::UpdateCellCoordinates() {
+	std::shared_ptr<ZoneServer> zone = m_zone.lock();
+	if (!zone)
+		return;
+
+	std::pair<int32_t, int32_t> newCoords = zone->GettCellCoordinatesForSpawn(shared_from_this());
+	if (newCoords != m_currentCellCoordinates) {
+		m_currentCellCoordinates = newCoords;
+	}
 }
 
 float Spawn::GetDistance(float x1, float y1, float z1, float x2, float y2, float z2, bool ignore_y) {

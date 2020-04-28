@@ -30,6 +30,8 @@ void CommandProcess::RegisterCommands() {
 	RegisterCommandHandler(28, CommandShout);
 	RegisterCommandHandler(14, CommandEmote);
 	RegisterCommandHandler(30, CommandOOC);
+	RegisterCommandHandler(402, CommandGrid);
+
 }
 
 void CommandProcess::RegisterCommandHandler(uint32_t handler_id, CommandHandler_t handler) {
@@ -290,4 +292,23 @@ void CommandProcess::CommandOOC(const std::shared_ptr<Client>& client, Separator
 	}
 
 	zone->chat.HandleOutOfCharacter(sep.GetInputString().c_str(), sender);
+}
+
+void CommandProcess::CommandGrid(const std::shared_ptr<Client>& client, Separator& sep) {
+	std::shared_ptr<Entity> player = client->GetController()->GetControlled();
+	if (!player) {
+		return;
+	}
+
+	uint32_t grid = player->GetPosStruct()->grid_id;
+	std::pair<int32_t, int32_t> cellCoord = player->GetCellCoordinates();
+
+	client->chat.SendSimpleGameMessage("Test");
+	
+	LogDebug(LOG_PLAYER, 0, "Grid ID: %u\nCell Coordinates: %i, %i", grid, cellCoord.first, cellCoord.second);
+	char temp[64];
+	sprintf(temp, "Grid ID: %u", grid);
+	client->chat.SendSimpleGameMessage(temp);
+	sprintf(temp, "Cell Coordinates: %i, %i", cellCoord.first, cellCoord.second);
+	client->chat.SendSimpleGameMessage(temp);
 }
