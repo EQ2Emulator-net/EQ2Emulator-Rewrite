@@ -23,3 +23,13 @@ std::shared_ptr<Character> CharacterList::GetCharacterBySessionID(uint32_t sessi
 	}
 	return std::shared_ptr<Character>();
 }
+
+bool CharacterList::AccountIsOnline(uint32_t accountID) {
+	for (auto& itr : charMap) {
+		if (itr.second->basicInfo.accountID == accountID && itr.second->IsOnline()) {
+			return true;
+		}
+	}
+
+	return false;
+}

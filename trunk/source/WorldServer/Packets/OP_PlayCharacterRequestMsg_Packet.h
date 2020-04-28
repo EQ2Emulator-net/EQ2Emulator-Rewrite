@@ -7,11 +7,13 @@
 #include "../WorldServer/Client.h"
 #include "../ZoneTalk/ZoneTalk.h"
 #include "../Database/WorldDatabase.h"
+#include "../WorldServer/CharacterList.h"
 
 #include "OP_PlayCharacterReplyMsg_Packet.h"
 
 extern ZoneTalk zoneTalk;
 extern WorldDatabase database;
+extern CharacterList g_characterList;
 
 class OP_PlayCharacterRequestMsg_Packet : public EQ2Packet {
 public:
@@ -29,7 +31,12 @@ public:
 		auto zs = zoneTalk.GetAvailableZone(zone_id);
 		client->SetPendingZone(char_id, zone_id, 0);
 
-		if (zs) {
+		if (g_characterList.AccountIsOnline(client->GetAccountID())) {
+			OP_PlayCharacterReplyMsg_Packet* p = new OP_PlayCharacterReplyMsg_Packet(client->GetVersion());
+			p->response = PlayCharacterResponse::EAccountInUse;
+			client->QueuePacket(p);
+		}
+		else if (zs) {
 			uint32_t access_code = zoneTalk.TransferClientToZone(zs, char_id, zone_id, client->GetAccountID(), 0, false);
 			client->pending_access_code = access_code;
 		}
