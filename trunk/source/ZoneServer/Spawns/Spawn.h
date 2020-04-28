@@ -17,7 +17,7 @@ const uint32_t EntityFlagShowLevel = 1 << 9; // This also hides/shows the health
 const uint32_t EntityFlagInteractable = 1 << 10; //shows the hand icon
 const uint32_t EntityFlagTargetable = 1 << 11;
 const uint32_t EntityFlagIsTransport = 1 << 12; //guess
-const uint32_t EntityFlagShowSpecialIcon = 1 << 13; //Shows various icons depending on the spawn's entity commands
+const uint32_t EntityFlagShowCommandIcon = 1 << 13; //Shows various icons depending on the spawn's entity commands
 const uint32_t EntityFlagLootable = 1 << 14;
 const uint32_t EntityFlagInCombat = 1 << 15;
 const uint32_t EntityFlagAfk = 1 << 16; // Check if afk added in 1188 or if it was in icon previously
@@ -32,6 +32,13 @@ const uint32_t EntityFlagMentoring = 1 << 28;
 const uint32_t EntityFlagWeaponsEquipped = 1 << 29;
 const uint32_t EntityFlagImmunityGained = 1 << 30;
 const uint32_t EntityFlagImmunityRemaining = 1 << 31;
+
+//Info vis flags
+const uint8_t INFO_VIS_FLAG_INVIS = 1;
+const uint8_t INFO_VIS_FLAG_HIDE_HOOD = 1 << 1;
+const uint8_t INFO_VIS_FLAG_MOUNTED = 1 << 2;
+const uint8_t INFO_VIS_FLAG_CROUCH = 1 << 3;
+
 
 class ZoneServer;
 class Client;
@@ -67,6 +74,14 @@ public:
 
 	UpdateFlags PopUpdateFlags();
 
+	struct BaseViewerFlags {
+		bool bAttackable : 1;
+		bool bTargetable : 1;
+		bool bShowLevel : 1;
+		bool bShowCommandIcon : 1;
+		bool bDisplayHandIcon : 1;
+	};
+
 	void Process();
 	void AddClient(std::weak_ptr<Client> client);
 	
@@ -96,7 +111,7 @@ private:
 	std::vector<std::weak_ptr<Client> > m_clients;
 	uint32_t movementTimestamp;
 
-	uint8_t m_sizeOffset;
+	float m_sizeOffset;
 	uint32_t m_primaryCommandListID;
 	uint32_t m_secondaryCommandListID;
 	uint32_t m_factionID;
@@ -426,6 +441,14 @@ public:
 		uint8_t flags = m_infoStruct.visual_flag ^ toggle;
 		SetInfo(&m_infoStruct.visual_flag, flags, bUpdateFlags);
 	}
+	void EnableInfoVisFlags(uint8_t flags, bool bUpdateFlags = true) {
+		uint8_t f = m_infoStruct.visual_flag | flags;
+		SetInfo(&m_infoStruct.visual_flag, f, bUpdateFlags);
+	}
+	void DisableInfoVisFlags(uint8_t flags, bool bUpdateFlags = true) {
+		uint8_t f = m_infoStruct.visual_flag & (~flags);
+		SetInfo(&m_infoStruct.visual_flag, f, bUpdateFlags);
+	}
 	void SetLevel(uint8_t value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.level, value, updateFlags);
 	}
@@ -548,8 +571,8 @@ public:
 		m_updateFlags.m_posChanged = true;
 	}
 
-	void SetSizeOffset(uint8_t offset) { m_sizeOffset = offset; }
-	uint8_t GetSizeOffset() { return m_sizeOffset; }
+	void SetSizeOffset(float offset) { m_sizeOffset = offset; }
+	float GetSizeOffset() { return m_sizeOffset; }
 	void SetPrimaryCommandListID(uint32_t id) { m_primaryCommandListID = id; }
 	uint32_t GetPrimaryCommandListID() { return m_primaryCommandListID; }
 	void SetSecondaryCommandListID(uint32_t id) { m_secondaryCommandListID = id; }

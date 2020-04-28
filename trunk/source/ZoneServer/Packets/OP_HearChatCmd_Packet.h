@@ -57,8 +57,6 @@ public:
 	uint8_t unknown;
 	uint8_t unknowna;
 	uint8_t unknownc;
-	uint32_t unknownb;
-	uint32_t unknownd;
 
 	uint8_t unknown4;
 	uint8_t unknown5;
@@ -70,9 +68,7 @@ private:
 		chatFilterID = 0xFF;
 		unknown = 0;
 		unknowna = 0;
-		unknownb = 0;
 		unknownc = 0;
-		unknownd = 0;
 		unknown4 = 0;
 		unknown5 = 0;
 		unknown6 = 0;

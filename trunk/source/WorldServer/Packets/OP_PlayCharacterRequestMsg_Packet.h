@@ -27,16 +27,18 @@ public:
 	}
 
 	void HandlePacket(std::shared_ptr<Client> client) {
-		uint32_t zone_id = database.GetZoneIDForCharacter(char_id);
-		auto zs = zoneTalk.GetAvailableZone(zone_id);
-		client->SetPendingZone(char_id, zone_id, 0);
-
 		if (g_characterList.AccountIsOnline(client->GetAccountID())) {
 			OP_PlayCharacterReplyMsg_Packet* p = new OP_PlayCharacterReplyMsg_Packet(client->GetVersion());
 			p->response = PlayCharacterResponse::EAccountInUse;
 			client->QueuePacket(p);
+			return;
 		}
-		else if (zs) {
+
+		uint32_t zone_id = database.GetZoneIDForCharacter(char_id);
+		auto zs = zoneTalk.GetAvailableZone(zone_id);
+		client->SetPendingZone(char_id, zone_id, 0);
+
+		if (zs) {
 			uint32_t access_code = zoneTalk.TransferClientToZone(zs, char_id, zone_id, client->GetAccountID(), 0, false);
 			client->pending_access_code = access_code;
 		}

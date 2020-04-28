@@ -6,13 +6,15 @@
 
 struct HearChatParams {
 	HearChatParams() : language(0), bFromNPC(false), bShowBubble(false), bUnderstood(true),
-		fromSpawnID(0xFFFFFFFF), toSpawnID(0xFFFFFFFF) {}
+		fromSpawnID(0xFFFFFFFF), toSpawnID(0xFFFFFFFF), unknownb(1), unknownd(2) {}
 	uint8_t language;
 	bool bFromNPC;
 	bool bShowBubble;
 	bool bUnderstood;
 	uint32_t fromSpawnID;
 	uint32_t toSpawnID;
+	uint32_t unknownb;
+	uint32_t unknownd;
 	std::string fromName;
 	std::string toName;
 	std::string message;

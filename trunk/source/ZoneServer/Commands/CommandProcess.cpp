@@ -177,13 +177,7 @@ void CommandProcess::CommandMove(const std::shared_ptr<Client>& client, Separato
 }
 
 void CommandProcess::CommandTest(const std::shared_ptr<Client>& client, Separator& sep) {
-	if (sep.GetSize() < 1) {
-		return;
-	}
-
-	const char* filter = sep.GetString(0);
-
-	client->chat.DisplayText(filter, "Hello world!", 16, true, "");
+	client->chat.SendSimpleGameMessage("Test");
 }
 
 void CommandProcess::CommandZone(const std::shared_ptr<Client>& client, Separator& sep) {

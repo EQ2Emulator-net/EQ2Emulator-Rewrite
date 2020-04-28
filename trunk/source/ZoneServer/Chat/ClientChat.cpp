@@ -94,8 +94,5 @@ void ClientChat::DisplayText(const char* filterName, const std::string& message,
 }
 
 void ClientChat::SendSimpleGameMessage(const char* msg) {
-	HearChatParams params;
-	params.chatFilterName = "Game Text";
-	params.message = msg;
-	HearChat(params);
+	DisplayText("Default Text", msg, 0xFF, false, "");
 }

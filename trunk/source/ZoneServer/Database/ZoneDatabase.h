@@ -30,5 +30,6 @@ public:
 	bool LoadChatFilters(class ChatFilterLookup& lookup);
 
 private:
-
+	//The return value is the next indice in the query result
+	uint32_t ProcessSpawnTableFields(const std::shared_ptr<class Spawn>& spawn, class DatabaseResult& result);
 };

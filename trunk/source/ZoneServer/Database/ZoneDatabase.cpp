@@ -10,6 +10,8 @@
 
 extern ZoneOperator g_zoneOperator;
 
+constexpr const char* GetSpawnTableFields();
+
 ZoneDatabase::ZoneDatabase() {
 
 }
@@ -428,7 +430,7 @@ bool ZoneDatabase::LoadCharacter(uint32_t char_id, uint32_t account_id, std::sha
 
 bool ZoneDatabase::LoadNPCsForZone(ZoneServer* z) {
 	DatabaseResult result;
-	bool ret = Select(&result, "SELECT npc.spawn_id, s.name, npc.min_level, npc.max_level, npc.enc_level, s.race, s.model_type, npc.class_, npc.gender, s.command_primary, s.command_secondary, s.show_name, npc.min_group_size, npc.max_group_size, npc.hair_type_id, npc.facial_hair_type_id, npc.wing_type_id, npc.chest_type_id, npc.legs_type_id, npc.soga_hair_type_id, npc.soga_facial_hair_type_id, s.attackable, s.show_level, s.targetable, s.show_command_icon, s.display_hand_icon, s.hp, s.power, s.size, s.collision_radius, npc.action_state, s.visual_state, npc.mood_state, npc.initial_state, npc.activity_status, s.faction_id, s.sub_title, s.merchant_id, s.merchant_type, s.size_offset, npc.attack_type, npc.ai_strategy+0, npc.spell_list_id, npc.secondary_spell_list_id, npc.skill_list_id, npc.secondary_skill_list_id, npc.equipment_list_id, npc.str, npc.sta, npc.wis, npc.intel, npc.agi, npc.heat, npc.cold, npc.magic, npc.mental, npc.divine, npc.disease, npc.poison, npc.aggro_radius, npc.cast_percentage, npc.randomize, npc.soga_model_type, npc.heroic_flag, npc.alignment, npc.elemental, npc.arcane, npc.noxious, s.savagery, s.dissonance, npc.hide_hood, npc.emote_state, s.prefix, s.suffix, s.last_name\n"
+	bool ret = Select(&result, "SELECT %s, npc.min_level, npc.max_level, npc.enc_level, npc.class_, npc.gender, npc.min_group_size, npc.max_group_size, npc.hair_type_id, npc.facial_hair_type_id, npc.wing_type_id, npc.chest_type_id, npc.legs_type_id, npc.soga_hair_type_id, npc.soga_facial_hair_type_id, npc.action_state, npc.mood_state, npc.initial_state, npc.activity_status, npc.attack_type, npc.ai_strategy+0, npc.spell_list_id, npc.secondary_spell_list_id, npc.skill_list_id, npc.secondary_skill_list_id, npc.equipment_list_id, npc.str, npc.sta, npc.wis, npc.intel, npc.agi, npc.heat, npc.cold, npc.magic, npc.mental, npc.divine, npc.disease, npc.poison, npc.aggro_radius, npc.cast_percentage, npc.randomize, npc.soga_model_type, npc.heroic_flag, npc.alignment, npc.elemental, npc.arcane, npc.noxious, npc.hide_hood, npc.emote_state, \n"
 									"FROM spawn s\n"
 									"INNER JOIN spawn_npcs npc\n"
 									"ON s.id = npc.spawn_id\n"
@@ -437,7 +439,7 @@ bool ZoneDatabase::LoadNPCsForZone(ZoneServer* z) {
 									"INNER JOIN spawn_location_placement lp\n"
 									"ON le.spawn_location_id = lp.spawn_location_id\n"
 									"WHERE lp.zone_id = %u\n"
-									"GROUP BY s.id", z->GetID());
+									"GROUP BY s.id", GetSpawnTableFields(), z->GetID());
 	if (!ret)
 		return ret;
 
@@ -448,101 +450,97 @@ bool ZoneDatabase::LoadNPCsForZone(ZoneServer* z) {
 			continue;
 
 		std::shared_ptr<Entity> npc = std::make_shared<Entity>();
-		npc->SetDatabaseID(id);
-		npc->SetName(result.GetString(1));
-		npc->SetLevel(result.GetUInt8(2));
-		// TODO: min/max level
-		//npc->SetMinLevel(result.GetUInt8(2));
-		//npc->SetMaxLevel(result.GetUInt8(3));
-		npc->SetDifficulty(result.GetUInt8(4));
-		npc->SetRace(result.GetUInt8(5));
-		npc->SetModelType(result.GetUInt32(6));
-		npc->SetAdventureClass(result.GetUInt8(7));
-		npc->SetGender(result.GetUInt8(8));
-		// TODO: Load enity_commands table before loading spawns
-		// primary commands - result.GetUint32(9);
-		// secondary commands - result.GetUInt32(10);
-		// Display name (vis flags in vis substruct) - result.GetUInt8(11)
-		// 12 - min_group_size, no clue what this is for
-		// 13 - max_group_size, no clue what this is for
-		npc->SetHairType(result.GetUInt32(14));
-		npc->SetFacialHairType(result.GetUInt32(15));
-		npc->SetWingType(result.GetUInt32(16));
-		npc->SetChestType(result.GetUInt32(17));
-		npc->SetLegsType(result.GetUInt32(18));
-		npc->SetSogaHairType(result.GetUInt32(19));
-		npc->SetSogaFacialHairType(result.GetUInt32(20));
-		bool attackable = result.GetBool(21);
-		bool show_level = result.GetBool(22);
-		bool targetable = result.GetBool(23);
-		bool show_command_icon = result.GetBool(24);
-		uint32_t addFlags = 0;
-		//For the attack icon
-		if (attackable)
-			addFlags |= EntityFlagShowSpecialIcon;
-		if (targetable)
-			addFlags |= EntityFlagTargetable;
-		if (show_level)
-			addFlags |= EntityFlagShowLevel;
-		npc->EnableEntityFlags(addFlags);
-		npc->SetHandFlag(result.GetUInt8(25));
-		// Total HP - result.GetUInt32(26)
-		// Total MP - result.GetUInt32(27)
-		npc->SetSize(result.GetFloat(28));
-		npc->SetCollisionRadius(result.GetFloat(29));
-		npc->SetActionState(result.GetUInt32(30));
-		npc->SetVisualState(result.GetUInt32(31));
-		npc->SetMoodState(result.GetUInt32(32));
-		npc->SetState(result.GetUInt32(33));
-		npc->EnableEntityFlags(result.GetUInt32(34) | EntityIsNpc);
-		// Faction ID - result.GetUInt32(35);
-		if (!result.IsNull(36))
-			npc->SetGuild(result.GetString(36));
-		// Merchant ID - result.GetUInt32(37)
-		// MerchantType - result.GetUInt8(38)
-		// Size Offset (not used?) - result.GetUInt8(39)
-		// Attack Type - result.GetUInt8(40)
-		// AI Strategy - result.GetUInt8(41)
-		// Primary Spell List - result.GetUInt32(42)
-		// Secondary Spell List - result.GetUInt32(43)
-		// Primary Skill List - result.GetUInt32(44)
-		// Secondary Skill List - result.GetUInt32(45)
-		// Equipment List ID - result.GetUInt32(46)
-		// Base Str  - result.GetFloat(47)
-		// Base Sta - result.GetFloat(48)
-		// Base Wis - result.GetFloat(49)
-		// Base Int - result.GetFloat(50)
-		// Base Agi - result.GetFloat(51)
-		// Base Heat - result.GetUInt32(52)
-		// Base Cold - result.GetUInt32(53)
-		// Base Magic - result.GetUInt32(54)
-		// Base Mental  - result.GetUInt32(55)
-		// Base Divine - result.GetUInt32(56)
-		// Base Disease - result.GetUInt32(57)
-		// Base Poison - result.GetUInt32(58)
-		// Aggro Radius - result.GetFloat(59)
-		// Cast Percentage - result.GetUInt8(60)
-		// randomize - result.GetUint32(61)
-		npc->SetSogaModelType(result.GetUInt32(62));
-		npc->SetHeroicFlag(result.GetUInt8(63));
-		// Alignment - result.GetUInt8(64)
-		// Base Elemental - result.GetUInt32(65)
-		// Base Arcane - result.GetUInt32(66)
-		// Base Noxious - result.GetUInt32(67)
-		// Total Savagery - result.GetUInt32(68)
-		// Total Dissonance - result.GetUInt32(69)
-		// Hide Hood (vis flags in info struct) - result.GetUInt8(70)
-		bool bhideHood = result.GetBool(70);
 
-		//Set vis flags
-		//npc->SetVisFlags()
-		npc->SetEmoteState(result.GetUInt32(71));
-		if (!result.IsNull(72))
-			npc->SetPrefixTitle(result.GetString(72));
-		if (!result.IsNull(73))
-			npc->SetSuffixTitle(result.GetString(73));
-		if (!result.IsNull(74))
-			npc->SetLastName(result.GetString(74));
+		//Base spawn data
+		uint32_t i = ProcessSpawnTableFields(npc, result);
+
+		npc->EnableEntityFlags(EntityIsNpc);
+
+		npc->SetLevel(result.GetUInt8(i++));
+		// TODO: min/max level
+		//npc->SetMinLevel(result.GetUInt8(i++));
+		i++;
+		//npc->SetMaxLevel(result.GetUInt8(i++));
+		npc->SetDifficulty(result.GetUInt8(i++));
+		npc->SetAdventureClass(result.GetUInt8(i++));
+		npc->SetGender(result.GetUInt8(i++));
+		// min_group_size, no clue what this is for
+		// max_group_size, no clue what this is for
+		i += 2;
+		npc->SetHairType(result.GetUInt32(i++));
+		npc->SetFacialHairType(result.GetUInt32(i++));
+		npc->SetWingType(result.GetUInt32(i++));
+		npc->SetChestType(result.GetUInt32(i++));
+		npc->SetLegsType(result.GetUInt32(i++));
+		npc->SetSogaHairType(result.GetUInt32(i++));
+		npc->SetSogaFacialHairType(result.GetUInt32(i++));
+		npc->SetActionState(result.GetUInt32(i++));
+		npc->SetMoodState(result.GetUInt32(i++));
+		npc->SetState(result.GetUInt32(i++));
+		//Activity status..think we already put these flags into EntityFlags via query
+		i++;
+		// Attack Type
+		i++;
+		// AI Strategy
+		i++;
+		// Primary Spell List
+		i++;
+		// Secondary Spell List
+		i++;
+		// Primary Skill List
+		i++;
+		// Secondary Skill List
+		i++;
+		// Equipment List ID
+		i++;
+		// Base Str
+		i++;
+		// Base Sta
+		i++;
+		// Base Wis
+		i++;
+		// Base Int
+		i++;
+		// Base Agi
+		i++;
+		// Base Heat
+		i++;
+		// Base Cold
+		i++;
+		// Base Magic
+		i++;
+		// Base Mental
+		i++;
+		// Base Divine
+		i++;
+		// Base Disease
+		i++;
+		// Base Poison
+		i++;
+		// Aggro Radius
+		i++;
+		// Cast Percentage 
+		i++;
+		// randomize
+		i++;
+		npc->SetSogaModelType(result.GetUInt32(i++));
+		npc->SetHeroicFlag(result.GetUInt8(i++));
+		// Alignment
+		i++;
+		// Base Elemental
+		i++;
+		// Base Arcane
+		i++;
+		// Base Noxious
+		i++;
+		//Hide hood
+		if (result.GetBool(i++)) {
+			npc->EnableInfoVisFlags(INFO_VIS_FLAG_HIDE_HOOD);
+		}
+		else {
+			npc->DisableInfoVisFlags(INFO_VIS_FLAG_HIDE_HOOD);
+		}
+		npc->SetEmoteState(result.GetUInt32(i++));
 
 		count++;
 
@@ -557,7 +555,7 @@ bool ZoneDatabase::LoadNPCsForZone(ZoneServer* z) {
 
 bool ZoneDatabase::LoadObjectsForZone(ZoneServer* z) {
 	DatabaseResult result;
-	bool ret = Select(&result, "SELECT s.id, s.name, s.sub_title, s.prefix, s.suffix, s.last_name, s.race, s.model_type, s.size, s.size_offset, s.targetable, s.show_name, s.command_primary, s.command_secondary, s.visual_state, s.attackable, s.show_level, s.show_command_icon, s.display_hand_icon, s.faction_id, s.collision_radius, s.hp, s.power, s.savagery, s.dissonance, s.merchant_id, s.transport_id, s.merchant_type,\n"
+	bool ret = Select(&result, "SELECT %s,\n"
 									"so.id, so.device_id\n"
 									"FROM spawn s\n"
 									"INNER JOIN spawn_objects so\n"
@@ -567,7 +565,7 @@ bool ZoneDatabase::LoadObjectsForZone(ZoneServer* z) {
 									"INNER JOIN spawn_location_placement lp\n"
 									"ON le.spawn_location_id = lp.spawn_location_id\n"
 									"WHERE lp.zone_id = %u\n"
-									"GROUP BY s.id", z->GetID());
+									"GROUP BY s.id", GetSpawnTableFields(), z->GetID());
 
 	if (!ret)
 		return ret;
@@ -582,47 +580,11 @@ bool ZoneDatabase::LoadObjectsForZone(ZoneServer* z) {
 		std::shared_ptr<Object> spawn = std::make_shared<Object>();
 
 		// Spawn base info
-		spawn->SetDatabaseID(id);
-		spawn->SetName(result.GetString(index++));
-		spawn->SetGuild(result.GetString(index++));
-		spawn->SetPrefixTitle(result.GetString(index++));
-		spawn->SetSuffixTitle(result.GetString(index++));
-		spawn->SetLastName(result.GetString(index++));
-		spawn->SetRace(result.GetUInt8(index++));
-		spawn->SetModelType(result.GetUInt32(index++));
-		spawn->SetSize(result.GetFloat(index++));
-		spawn->SetSizeOffset(result.GetUInt8(index++));
-		bool targetable = result.GetBool(index++);
-		bool show_name = result.GetBool(index++);
-		spawn->SetPrimaryCommandListID(result.GetUInt32(index++));
-		spawn->SetSecondaryCommandListID(result.GetUInt32(index++));
-		spawn->SetVisualState(index++);
-		bool attackable = result.GetBool(index++);
-		bool show_level = result.GetBool(index++);
-		bool show_command_icon = result.GetBool(index++);
-		bool display_hand_icon = result.GetBool(index++);
-		spawn->SetFactionID(result.GetUInt32(index++));
-		spawn->SetCollisionRadius(result.GetFloat(index++));
-		spawn->SetHP(result.GetUInt32(index++));
-		spawn->SetPower(result.GetUInt32(index++));
-		spawn->SetSavagery(result.GetUInt32(index++));
-		spawn->SetDissonance(result.GetUInt32(index++));
-		spawn->SetMerchantID(result.GetUInt32(index++));
-		spawn->SetMerchantType(result.GetUInt32(index++));
+		index = ProcessSpawnTableFields(spawn, result);
 
 		// Object Info starts here
 		spawn->SetObjectDatabaseID(result.GetUInt32(index++));
 		spawn->SetDeviceID(result.GetUInt8(index++));
-
-		// Entity flags
-		uint32_t addFlags = 0;
-		if (attackable)
-			addFlags |= EntityFlagShowSpecialIcon;
-		if (targetable)
-			addFlags |= EntityFlagTargetable;
-		if (show_level)
-			addFlags |= EntityFlagShowLevel;
-		spawn->EnableEntityFlags(addFlags);
 			
 		count++;
 
@@ -636,7 +598,7 @@ bool ZoneDatabase::LoadObjectsForZone(ZoneServer* z) {
 
 bool ZoneDatabase::LoadWidgetsForZone(ZoneServer* z) {
 	DatabaseResult result;
-	bool ret = Select(&result, "SELECT s.id, s.name, s.sub_title, s.prefix, s.suffix, s.last_name, s.race, s.model_type, s.size, s.size_offset, s.targetable, s.show_name, s.command_primary, s.command_secondary, s.visual_state, s.attackable, s.show_level, s.show_command_icon, s.display_hand_icon, s.faction_id, s.collision_radius, s.hp, s.power, s.savagery, s.dissonance, s.merchant_id, s.transport_id, s.merchant_type,\n"
+	bool ret = Select(&result, "SELECT %s,\n"
 		"sw.id, sw.widget_id, sw.widget_x, sw.widget_y, sw.widget_z, sw.include_heading, sw.include_location, sw.type+0, sw.open_heading, sw.closed_heading, sw.open_x, sw.open_y, sw.open_z, sw.action_spawn_id, sw.open_sound_file, sw.close_sound_file, sw.open_duration, sw.close_x, sw.close_y, sw.close_z, sw.linked_spawn_id, sw.house_id\n"
 		"FROM spawn s\n"
 		"INNER JOIN spawn_widgets sw\n"
@@ -646,7 +608,7 @@ bool ZoneDatabase::LoadWidgetsForZone(ZoneServer* z) {
 		"INNER JOIN spawn_location_placement lp\n"
 		"ON le.spawn_location_id = lp.spawn_location_id\n"
 		"WHERE lp.zone_id = %u\n"
-		"GROUP BY s.id", z->GetID());
+		"GROUP BY s.id", GetSpawnTableFields(), z->GetID());
 
 	if (!ret)
 		return ret;
@@ -661,33 +623,7 @@ bool ZoneDatabase::LoadWidgetsForZone(ZoneServer* z) {
 		std::shared_ptr<Spawn> spawn = std::make_shared<Spawn>();
 
 		// Spawn base info
-		spawn->SetDatabaseID(id);
-		spawn->SetName(result.GetString(index++));
-		spawn->SetGuild(result.GetString(index++));
-		spawn->SetPrefixTitle(result.GetString(index++));
-		spawn->SetSuffixTitle(result.GetString(index++));
-		spawn->SetLastName(result.GetString(index++));
-		spawn->SetRace(result.GetUInt8(index++));
-		spawn->SetModelType(result.GetUInt32(index++));
-		spawn->SetSize(result.GetFloat(index++));
-		spawn->SetSizeOffset(result.GetUInt8(index++));
-		bool targetable = result.GetBool(index++);
-		bool show_name = result.GetBool(index++);
-		spawn->SetPrimaryCommandListID(result.GetUInt32(index++));
-		spawn->SetSecondaryCommandListID(result.GetUInt32(index++));
-		spawn->SetVisualState(index++);
-		bool attackable = result.GetBool(index++);
-		bool show_level = result.GetBool(index++);
-		bool show_command_icon = result.GetBool(index++);
-		bool display_hand_icon = result.GetBool(index++);
-		spawn->SetFactionID(result.GetUInt32(index++));
-		spawn->SetCollisionRadius(result.GetFloat(index++));
-		spawn->SetHP(result.GetUInt32(index++));
-		spawn->SetPower(result.GetUInt32(index++));
-		spawn->SetSavagery(result.GetUInt32(index++));
-		spawn->SetDissonance(result.GetUInt32(index++));
-		spawn->SetMerchantID(result.GetUInt32(index++));
-		spawn->SetMerchantType(result.GetUInt32(index++));
+		index = ProcessSpawnTableFields(spawn, result);
 
 		// Widget Info starts here
 		std::unique_ptr<Widget>& wd = spawn->GetWidgetData();
@@ -717,16 +653,6 @@ bool ZoneDatabase::LoadWidgetsForZone(ZoneServer* z) {
 		wd->SetLinkedSpawnID(result.GetUInt32(index++));
 		wd->SetHouseID(result.GetUInt32(index++));
 
-		// Entity flags
-		uint32_t addFlags = 0;
-		if (attackable)
-			addFlags |= EntityFlagShowSpecialIcon;
-		if (targetable)
-			addFlags |= EntityFlagTargetable;
-		if (show_level)
-			addFlags |= EntityFlagShowLevel;
-		spawn->EnableEntityFlags(addFlags);
-
 		count++;
 
 		z->AddWidgetToMasterList(spawn);
@@ -739,7 +665,7 @@ bool ZoneDatabase::LoadWidgetsForZone(ZoneServer* z) {
 
 bool ZoneDatabase::LoadSignsForZone(ZoneServer* z) {
 	DatabaseResult result;
-	bool ret = Select(&result, "SELECT s.id, s.name, s.sub_title, s.prefix, s.suffix, s.last_name, s.race, s.model_type, s.size, s.size_offset, s.targetable, s.show_name, s.command_primary, s.command_secondary, s.visual_state, s.attackable, s.show_level, s.show_command_icon, s.display_hand_icon, s.faction_id, s.collision_radius, s.hp, s.power, s.savagery, s.dissonance, s.merchant_id, s.transport_id, s.merchant_type,\n"
+	bool ret = Select(&result, "SELECT %s,\n"
 		"ss.id, ss.type+0, ss.zone_id, ss.title, ss.description, ss.sign_distance, ss.zone_x, ss.zone_y, ss.zone_z, ss.zone_heading,\n"
 		"ss.widget_id, ss.widget_x, ss.widget_y, ss.widget_z, ss.include_heading, ss.include_location\n"
 		"FROM spawn s\n"
@@ -750,7 +676,7 @@ bool ZoneDatabase::LoadSignsForZone(ZoneServer* z) {
 		"INNER JOIN spawn_location_placement lp\n"
 		"ON le.spawn_location_id = lp.spawn_location_id\n"
 		"WHERE lp.zone_id = %u\n"
-		"GROUP BY s.id", z->GetID());
+		"GROUP BY s.id", GetSpawnTableFields(), z->GetID());
 
 	if (!ret)
 		return ret;
@@ -765,33 +691,7 @@ bool ZoneDatabase::LoadSignsForZone(ZoneServer* z) {
 		std::shared_ptr<Spawn> spawn = std::make_shared<Spawn>();
 
 		// Spawn base info
-		spawn->SetDatabaseID(id);
-		spawn->SetName(result.GetString(index++));
-		spawn->SetGuild(result.GetString(index++));
-		spawn->SetPrefixTitle(result.GetString(index++));
-		spawn->SetSuffixTitle(result.GetString(index++));
-		spawn->SetLastName(result.GetString(index++));
-		spawn->SetRace(result.GetUInt8(index++));
-		spawn->SetModelType(result.GetUInt32(index++));
-		spawn->SetSize(result.GetFloat(index++));
-		spawn->SetSizeOffset(result.GetUInt8(index++));
-		bool targetable = result.GetBool(index++);
-		bool show_name = result.GetBool(index++);
-		spawn->SetPrimaryCommandListID(result.GetUInt32(index++));
-		spawn->SetSecondaryCommandListID(result.GetUInt32(index++));
-		spawn->SetVisualState(index++);
-		bool attackable = result.GetBool(index++);
-		bool show_level = result.GetBool(index++);
-		bool show_command_icon = result.GetBool(index++);
-		bool display_hand_icon = result.GetBool(index++);
-		spawn->SetFactionID(result.GetUInt32(index++));
-		spawn->SetCollisionRadius(result.GetFloat(index++));
-		spawn->SetHP(result.GetUInt32(index++));
-		spawn->SetPower(result.GetUInt32(index++));
-		spawn->SetSavagery(result.GetUInt32(index++));
-		spawn->SetDissonance(result.GetUInt32(index++));
-		spawn->SetMerchantID(result.GetUInt32(index++));
-		spawn->SetMerchantType(result.GetUInt32(index++));
+		index = ProcessSpawnTableFields(spawn, result);
 
 		// Sign info starts here
 		std::unique_ptr<Sign>& sign = spawn->GetSignData();
@@ -824,16 +724,6 @@ bool ZoneDatabase::LoadSignsForZone(ZoneServer* z) {
 			widget->SetIncludeLocation(result.GetBool(index++));
 		}
 
-		// Entity flags
-		uint32_t addFlags = 0;
-		if (attackable)
-			addFlags |= EntityFlagShowSpecialIcon;
-		if (targetable)
-			addFlags |= EntityFlagTargetable;
-		if (show_level)
-			addFlags |= EntityFlagShowLevel;
-		spawn->EnableEntityFlags(addFlags);
-
 		count++;
 
 		z->AddSignToMasterList(spawn);
@@ -846,7 +736,7 @@ bool ZoneDatabase::LoadSignsForZone(ZoneServer* z) {
 
 bool ZoneDatabase::LoadGroundSpawnsForZone(ZoneServer* z) {
 	DatabaseResult result;
-	bool ret = Select(&result, "SELECT s.id, s.name, s.sub_title, s.prefix, s.suffix, s.last_name, s.race, s.model_type, s.size, s.size_offset, s.targetable, s.show_name, s.command_primary, s.command_secondary, s.visual_state, s.attackable, s.show_level, s.show_command_icon, s.display_hand_icon, s.faction_id, s.collision_radius, s.hp, s.power, s.savagery, s.dissonance, s.merchant_id, s.transport_id, s.merchant_type,\n"
+	bool ret = Select(&result, "SELECT %s,\n"
 		"sg.id, sg.number_harvests, sg.num_attempts_per_harvest, sg.groundspawn_id, sg.collection_skill\n"
 		"FROM spawn s\n"
 		"INNER JOIN spawn_ground sg\n"
@@ -856,7 +746,7 @@ bool ZoneDatabase::LoadGroundSpawnsForZone(ZoneServer* z) {
 		"INNER JOIN spawn_location_placement lp\n"
 		"ON le.spawn_location_id = lp.spawn_location_id\n"
 		"WHERE lp.zone_id = %u\n"
-		"GROUP BY s.id", z->GetID());
+		"GROUP BY s.id", GetSpawnTableFields(), z->GetID());
 
 	if (!ret)
 		return ret;
@@ -871,33 +761,7 @@ bool ZoneDatabase::LoadGroundSpawnsForZone(ZoneServer* z) {
 		std::shared_ptr<GroundSpawn> spawn = std::make_shared<GroundSpawn>();
 
 		// Spawn base info
-		spawn->SetDatabaseID(id);
-		spawn->SetName(result.GetString(index++));
-		spawn->SetGuild(result.GetString(index++));
-		spawn->SetPrefixTitle(result.GetString(index++));
-		spawn->SetSuffixTitle(result.GetString(index++));
-		spawn->SetLastName(result.GetString(index++));
-		spawn->SetRace(result.GetUInt8(index++));
-		spawn->SetModelType(result.GetUInt32(index++));
-		spawn->SetSize(result.GetFloat(index++));
-		spawn->SetSizeOffset(result.GetUInt8(index++));
-		bool targetable = result.GetBool(index++);
-		bool show_name = result.GetBool(index++);
-		spawn->SetPrimaryCommandListID(result.GetUInt32(index++));
-		spawn->SetSecondaryCommandListID(result.GetUInt32(index++));
-		spawn->SetVisualState(index++);
-		bool attackable = result.GetBool(index++);
-		bool show_level = result.GetBool(index++);
-		bool show_command_icon = result.GetBool(index++);
-		bool display_hand_icon = result.GetBool(index++);
-		spawn->SetFactionID(result.GetUInt32(index++));
-		spawn->SetCollisionRadius(result.GetFloat(index++));
-		spawn->SetHP(result.GetUInt32(index++));
-		spawn->SetPower(result.GetUInt32(index++));
-		spawn->SetSavagery(result.GetUInt32(index++));
-		spawn->SetDissonance(result.GetUInt32(index++));
-		spawn->SetMerchantID(result.GetUInt32(index++));
-		spawn->SetMerchantType(result.GetUInt32(index++));
+		index = ProcessSpawnTableFields(spawn, result);
 
 		// GroundSpawn info starts here
 		spawn->SetGroundSpawnDatabaseID(result.GetUInt32(index++));
@@ -905,16 +769,6 @@ bool ZoneDatabase::LoadGroundSpawnsForZone(ZoneServer* z) {
 		spawn->SetNumberAttemptsPerHarvets(result.GetUInt8(index++));
 		spawn->SetGroundSpawnID(result.GetUInt32(index++));
 		spawn->SetCollectionSkill(result.GetString(index++));
-
-		// Entity flags
-		uint32_t addFlags = 0;
-		if (attackable)
-			addFlags |= EntityFlagShowSpecialIcon;
-		if (targetable)
-			addFlags |= EntityFlagTargetable;
-		if (show_level)
-			addFlags |= EntityFlagShowLevel;
-		spawn->EnableEntityFlags(addFlags);
 
 		count++;
 
@@ -998,4 +852,67 @@ bool ZoneDatabase::LoadNPCLocations(ZoneServer* z) {
 
 	LogInfo(LOG_NPC, 0, "--Loaded %u NPC spawn location(s).", count);
 	return ret;
+}
+
+constexpr const char* GetSpawnTableFields() {
+	return "s.id, s.name,s.sub_title,s.prefix,s.suffix,s.last_name,s.race,s.model_type,s.size,s.size_offset,s.entity_flags,s.targetable,s.show_name,"
+		"s.command_primary,s.command_secondary,s.visual_state,s.attackable,s.show_level,s.show_command_icon,s.display_hand_icon,s.faction_id,"
+		"s.collision_radius,s.hp,s.power,s.savagery,s.dissonance,s.merchant_id,s.transport_id,s.merchant_type";
+}
+
+uint32_t ZoneDatabase::ProcessSpawnTableFields(const std::shared_ptr<Spawn>& spawn, DatabaseResult& res) {
+	uint32_t i = 0;
+	uint32_t entityFlags = 0;
+
+	spawn->SetDatabaseID(res.GetUInt32(i++));
+	spawn->SetName(res.GetString(i++));
+	spawn->SetGuild(res.GetString(i++));
+	spawn->SetPrefixTitle(res.GetString(i++));
+	spawn->SetSuffixTitle(res.GetString(i++));
+	spawn->SetLastName(res.GetString(i++));
+	spawn->SetRace(res.GetUInt8(i++));
+	spawn->SetModelType(res.GetUInt32(i++));
+	spawn->SetSize(res.GetFloat(i++));
+	spawn->SetSizeOffset(res.GetFloat(i++));
+	entityFlags = res.GetUInt32(i++);
+	//Targetable
+	if (res.GetBool(i++)) {
+		entityFlags |= EntityFlagTargetable;
+	}
+	//Show name
+	res.GetBool(i++);
+	spawn->SetPrimaryCommandListID(res.GetUInt32(i++));
+	spawn->SetSecondaryCommandListID(res.GetUInt32(i++));
+	spawn->SetVisualState(res.GetUInt32(i++));
+	//Attackable
+	if (res.GetBool(i++)) {
+		entityFlags |= EntityFlagShowCommandIcon;
+	}
+	//Show level
+	if (res.GetBool(i++)) {
+		entityFlags |= EntityFlagShowLevel;
+	}
+	//Show command icon
+	if (res.GetBool(i++)) {
+		entityFlags |= EntityFlagShowCommandIcon;
+	}
+	//Display hand icon
+	if (res.GetBool(i++)) {
+		entityFlags |= EntityFlagInteractable;
+	}
+	spawn->SetFactionID(res.GetUInt32(i++));
+	spawn->SetCollisionRadius(res.GetFloat(i++));
+	spawn->SetHP(res.GetUInt32(i++));
+	spawn->SetPower(res.GetUInt32(i++));
+	spawn->SetSavagery(res.GetUInt32(i++));
+	spawn->SetDissonance(res.GetUInt32(i++));
+	spawn->SetMerchantID(res.GetUInt32(i++));
+	//Transport ID
+	res.GetUInt32(i++);
+	spawn->SetMerchantType(res.GetUInt32(i++));
+
+	spawn->SetEntityFlags(entityFlags);
+	spawn->PopUpdateFlags();
+
+	return i;
 }
