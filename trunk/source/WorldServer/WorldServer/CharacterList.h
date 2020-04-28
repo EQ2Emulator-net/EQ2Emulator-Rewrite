@@ -14,6 +14,7 @@ public:
 	std::shared_ptr<Character> GetCharacterByID(uint32_t id);
 	std::shared_ptr<Character> GetCharacterBySessionID(uint32_t session);
 	bool AccountIsOnline(uint32_t accountID);
+	void FlagCharactersOnZoneServerOffline(const std::shared_ptr<class ZoneStream>& zs);
 	
 private:
 	std::map<uint32_t, std::shared_ptr<Character> > charMap;

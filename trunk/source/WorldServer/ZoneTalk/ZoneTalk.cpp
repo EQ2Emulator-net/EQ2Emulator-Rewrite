@@ -7,8 +7,10 @@
 #include "../../common/Packets/EmuPackets/Emu_TransferClient_Packet.h"
 
 #include "../Database/WorldDatabase.h"
+#include "../WorldServer/CharacterList.h"
 
 extern WorldDatabase database;
+extern CharacterList g_characterList;
 
 ZoneTalk::ZoneTalk() : TCPServer(true) {
 	
@@ -29,7 +31,7 @@ bool ZoneTalk::Process() {
 }
 
 void ZoneTalk::StreamDisconnected(std::shared_ptr<Stream> stream) {
-	
+	g_characterList.FlagCharactersOnZoneServerOffline(std::static_pointer_cast<ZoneStream>(stream));
 }
 
 std::shared_ptr<ZoneStream> ZoneTalk::GetAvailableZone(uint32_t zone_id) {

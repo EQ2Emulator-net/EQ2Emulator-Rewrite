@@ -33,3 +33,12 @@ bool CharacterList::AccountIsOnline(uint32_t accountID) {
 
 	return false;
 }
+
+void CharacterList::FlagCharactersOnZoneServerOffline(const std::shared_ptr<ZoneStream>& zs) {
+	for (auto& itr : charMap) {
+		auto& character = itr.second;
+		if (character->GetZoneStream() == zs) {
+			character->RemoveZoneStream(character->GetSessionID());
+		}
+	}
+}
