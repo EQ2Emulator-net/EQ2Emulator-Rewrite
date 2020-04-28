@@ -255,13 +255,26 @@ bool ZoneDatabase::LoadNPCsForZone(ZoneServer* z) {
 		"FROM spawn_location_placement slp\n"
 		"INNER JOIN spawn_location_entry sle ON sle.spawn_location_id = slp.spawn_location_id\n"
 		"INNER JOIN npc_appearance na ON sle.spawn_id = na.spawn_id\n"
-		"WHERE slp.zone_id = %u", z->GetID());
+		"WHERE slp.zone_id = %u\n"
+		"ORDER BY spawn_id", z->GetID());
 
 	if (ret) {
 		ProcessEntityColors(result, npcs);
+
+		result.Clear();
+
+		ret = Select(&result, "SELECT na.spawn_id, na.slot_id, na.equip_type, na.red, na.green, na.blue, na.highlight_red, na.highlight_green, na.highlight_blue\n"
+			"FROM spawn_location_placement slp\n"
+			"INNER JOIN spawn_location_entry sle ON sle.spawn_location_id = slp.spawn_location_id\n"
+			"INNER JOIN npc_appearance_equip na ON sle.spawn_id = na.spawn_id\n"
+			"WHERE slp.zone_id = %u\n"
+			"ORDER BY na.spawn_id;", z->GetID());
+
+		ProcessNpcAppearanceEquipment(result, npcs);
 	}
 
 	for (auto& itr : npcs) {
+		itr.second->PopUpdateFlags();
 		z->AddNPCToMasterList(itr.second);
 	}
 
@@ -649,7 +662,7 @@ void ZoneDatabase::ProcessEntityColors(DatabaseResult& result, std::unordered_ma
 	while (result.Next()) {
 		uint32_t id = result.GetUInt32(0);
 		if (id != lastID) {
-			lastID = 0;
+			lastID = id;
 			entity = outEntities[id];
 		}
 
@@ -830,5 +843,35 @@ void ZoneDatabase::ProcessEntityColors(DatabaseResult& result, std::unordered_ma
 			entity->SetSogaNoseType(v[1], 1, false);
 			entity->SetSogaNoseType(v[2], 2, false);
 		}
+	}
+}
+
+//The input result to this function should be indexed by (spawn_id, slot_id, equip_type, red, green, blue, 
+//highlight_red, highlight_green, highlight_blue)
+void ZoneDatabase::ProcessNpcAppearanceEquipment(DatabaseResult& result, std::unordered_map<uint32_t, std::shared_ptr<Entity> >& outEntities) {
+	std::shared_ptr<Entity> entity;
+	uint32_t lastID = 0;
+	EQ2EquipmentItem item;
+
+	while (result.Next()) {
+		uint32_t id = result.GetUInt32(0);
+		if (id != lastID) {
+			entity = outEntities[id];
+			lastID = id;
+		}
+
+		assert(entity);
+
+		uint8_t slot = result.GetUInt8(1);
+		
+		item.type = result.GetUInt32(2);
+		item.color.Red = result.GetUInt8(3);
+		item.color.Green = result.GetUInt8(4);
+		item.color.Blue = result.GetUInt8(5);
+		item.highlight.Red = result.GetUInt8(6);
+		item.highlight.Green = result.GetUInt8(7);
+		item.highlight.Blue = result.GetUInt8(8);
+
+		entity->SetAppearanceEquipmentItem(slot, item, false);
 	}
 }

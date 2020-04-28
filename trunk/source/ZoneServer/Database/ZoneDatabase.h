@@ -5,6 +5,7 @@
 class ZoneServer;
 class Entity;
 class CommandProcess;
+class DatabaseResult;
 
 class ZoneDatabase : public CommonDatabase {
 public:
@@ -22,8 +23,6 @@ public:
 	bool LoadWidgetsForZone(ZoneServer* z);
 	bool LoadSignsForZone(ZoneServer* z);
 	bool LoadGroundSpawnsForZone(ZoneServer* z);
-	//The input result to this function should be indexed by (id, type, red, green, blue)
-	void ProcessEntityColors(class DatabaseResult& result, std::unordered_map<uint32_t, std::shared_ptr<class Entity> >& outEntities);
 
 	bool LoadNPCLocations(ZoneServer* z);
 
@@ -34,4 +33,8 @@ public:
 private:
 	//The return value is the next indice in the query result
 	uint32_t ProcessSpawnTableFields(const std::shared_ptr<class Spawn>& spawn, class DatabaseResult& result);
+	//The input result to this function should be indexed by (id, type, red, green, blue)
+	void ProcessEntityColors(DatabaseResult& result, std::unordered_map<uint32_t, std::shared_ptr<Entity> >& outEntities);
+	//The input result to this function should be indexed by (spawn_id, slot_id, equip_type, red, green, blue, highlight_red, highlight_green, highlight_blue)
+	void ProcessNpcAppearanceEquipment(DatabaseResult& result, std::unordered_map<uint32_t, std::shared_ptr<Entity> >& outEntities);
 };

@@ -183,3 +183,9 @@ float Spawn::GetDistance(float x, float y, float z, bool ignore_y) {
 float Spawn::GetDistance(const std::shared_ptr<Spawn>& spawn, bool ignore_y) {
 	return GetDistance(spawn->GetX(), spawn->GetY(), spawn->GetZ(), ignore_y);
 }
+
+void Spawn::SetAppearanceEquipmentItem(uint8_t slotID, const EQ2EquipmentItem& item, bool updateFlags) {
+	SetInfo(&m_infoStruct.equipment_colors[slotID], item.color, false);
+	SetInfo(&m_infoStruct.equipment_highlights[slotID], item.highlight, false);
+	SetInfo(&m_infoStruct.equipment_types[slotID], item.type, updateFlags);
+}

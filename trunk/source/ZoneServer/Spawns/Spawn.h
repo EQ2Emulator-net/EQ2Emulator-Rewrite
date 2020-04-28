@@ -570,7 +570,7 @@ public:
 		static_cast<SpawnPositionStruct&>(m_posStruct) = pos;
 		m_updateFlags.m_posChanged = true;
 	}
-
+	void SetAppearanceEquipmentItem(uint8_t slotID, const struct EQ2EquipmentItem& item, bool updateFlags = true);
 	void SetSizeOffset(float offset) { m_sizeOffset = offset; }
 	float GetSizeOffset() { return m_sizeOffset; }
 	void SetPrimaryCommandListID(uint32_t id) { m_primaryCommandListID = id; }
