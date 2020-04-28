@@ -48,7 +48,7 @@ public:
 		static_cast<SpawnTitleStruct&>(footer.titleStruct) = *spawn->GetTitleStruct();
 
 		//ADD PROPER WAY TO GET SPAWN TYPE
-		footer.spawn_type = 1;
+		footer.spawn_type = (spawn->GetInfoStruct()->entityFlags & EntityIsNpc) ? 0 : 1;
 	}
 
 	void SetEncodedBuffers(const std::shared_ptr<Client>& client, uint32_t spawnIndex) {

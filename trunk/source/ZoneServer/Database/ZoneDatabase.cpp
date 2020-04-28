@@ -109,320 +109,15 @@ bool ZoneDatabase::LoadCharacter(uint32_t char_id, uint32_t account_id, std::sha
 		// Set Account Age
 
 		DatabaseResult result2;
-		ret = Select(&result2, "SELECT type, red, green, blue FROM char_colors WHERE char_id = %u", char_id);
+		ret = Select(&result2, "SELECT char_id, type, red, green, blue FROM char_colors WHERE char_id = %u", char_id);
 		if (!ret)
 			return ret;
 
-		while (result2.Next()) {
-			std::string type = result2.GetString(0);
+		//I know it looks stupid using a map for 1 entity but this lets us reuse the same code for characters and npcs
+		std::unordered_map<uint32_t, std::shared_ptr<Entity> > colorLoadMap;
+		colorLoadMap[char_id] = entity;
 
-			if (type == "skin_color") {
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				entity->SetSkinColor(c, false);
-			}
-			else if (type == "eye_color") {
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				entity->SetEyeColor(c, false);
-			}
-			else if (type == "hair_color1") {
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				entity->SetHairColor1(c, false);
-			}
-			else if (type == "hair_color2") {
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				entity->SetHairColor2(c, false);
-			}
-			else if (type == "hair_highlight") {
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				entity->SetHairHighlight(c, false);
-			}
-			else if (type == "hair_type_color") {
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				entity->SetHairColor(c, false);
-			}
-			else if (type == "hair_type_highlight_color") {
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				entity->SetHairHighlightColor(c, false);
-			}
-			else if (type == "hair_face_color") {
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				entity->SetFacialHairColor(c);
-			}
-			else if (type == "hair_face_highlight_color") {
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				entity->SetFacialHairHighlightColor(c, false);
-			}
-			else if (type == "wing_color1") {
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				entity->SetWingColor(c, false);
-			}
-			else if (type == "wing_color2") {
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				entity->SetWingHighlightColor(c, false);
-			}
-			else if (type == "shirt_color") {
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				entity->SetChestColor(c, false);
-			}
-			else if (type == "unknown_chest_color") {
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				entity->SetChestHighlightColor(c, false);
-			}
-			else if (type == "pants_color") {
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				entity->SetLegsColor(c, false);
-			}
-			else if (type == "unknown_legs_color") {
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				entity->SetLegsHighlightColor(c, false);
-			}
-			else if (type == "unknown9") {
-				//guessing since this is right before eye type this is skull?
-				entity->SetSkullType(result2.GetInt8(1), 0, false);
-				entity->SetSkullType(result2.GetInt8(2), 1, false);
-				entity->SetSkullType(result2.GetInt8(3), 2, false);
-			}
-			else if (type == "eye_type") {
-				entity->SetEyeType(result2.GetInt8(1), 0, false);
-				entity->SetEyeType(result2.GetInt8(2), 1, false);
-				entity->SetEyeType(result2.GetInt8(3), 2, false);
-			}
-			else if (type == "ear_type") {
-				entity->SetEarType(result2.GetInt8(1), 0, false);
-				entity->SetEarType(result2.GetInt8(2), 1, false);
-				entity->SetEarType(result2.GetInt8(3), 2, false);
-			}
-			else if (type == "eye_brow_type") {
-				entity->SetEyeBrowType(result2.GetInt8(1), 0, false);
-				entity->SetEyeBrowType(result2.GetInt8(2), 1, false);
-				entity->SetEyeBrowType(result2.GetInt8(3), 2, false);
-			}
-			else if (type == "cheek_type") {
-				entity->SetCheekType(result2.GetInt8(1), 0, false);
-				entity->SetCheekType(result2.GetInt8(2), 1, false);
-				entity->SetCheekType(result2.GetInt8(3), 2, false);
-			}
-			else if (type == "lip_type") {
-				entity->SetLipType(result2.GetInt8(1), 0, false);
-				entity->SetLipType(result2.GetInt8(2), 1, false);
-				entity->SetLipType(result2.GetInt8(3), 2, false);
-			}
-			else if (type == "chin_type") {
-				entity->SetChinType(result2.GetInt8(1), 0, false);
-				entity->SetChinType(result2.GetInt8(2), 1, false);
-				entity->SetChinType(result2.GetInt8(3), 2, false);
-			}
-			else if (type == "nose_type") {
-				entity->SetNoseType(result2.GetInt8(1), 0, false);
-				entity->SetNoseType(result2.GetInt8(2), 1, false);
-				entity->SetNoseType(result2.GetInt8(3), 2, false);
-			}
-			else if (type == "body_size") {
-				entity->SetBodySize(result2.GetInt8(1), false);
-			}
-			else if (type == "soga_skin_color") {
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				entity->SetSogaSkinColor(c, false);
-			}
-			else if (type == "soga_eye_color") {
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				entity->SetSogaEyeColor(c, false);
-			}
-			else if (type == "soga_hair_color1") {
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				entity->SetSogaHairColor1(c, false);
-			}
-			else if (type == "soga_hair_color2") {
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				entity->SetSogaHairColor2(c, false);
-			}
-			else if (type == "soga_hair_highlight") {
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				entity->SetSogaHairHighlight(c, false);
-			}
-			else if (type == "soga_hair_type_color") {
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				entity->SetSogaHairColor(c, false);
-			}
-			else if (type == "soga_hair_type_highlight_color") {
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				entity->SetSogaHairHighlightColor(c, false);
-			}
-			else if (type == "soga_hair_face_color") {
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				entity->SetSogaFacialHairColor(c, false);
-			}
-			else if (type == "soga_hair_face_highlight_color") {
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				entity->SetSogaFacialHairHighlightColor(c, false);
-			}
-			else if (type == "soga_wing_color1") {
-				/*
-				Not in struct
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				*/
-			}
-			else if (type == "soga_wing_color2") {
-				/*
-				Not in struct
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				*/
-			}
-			else if (type == "soga_shirt_color") {
-				/*
-				Not in struct
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				*/
-			}
-			else if (type == "soga_unknown_chest_color") {
-				/*
-				Not in struct
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				*/
-			}
-			else if (type == "soga_pants_color") {
-				/*
-				Not in struct
-				EQ2Color c;
-				c.Red = result2.GetUInt8(1);
-				c.Green = result2.GetUInt8(2);
-				c.Blue = result2.GetUInt8(3);
-				*/
-			}
-			else if (type == "soga_unknown_legs_color") {
-				/*
-				Not in struct
-				EQ2Color c;
-				c.soga_unknown_legs_color.Red = result2.GetUInt8(1);
-				c.soga_unknown_legs_color.Green = result2.GetUInt8(2);
-				c.soga_unknown_legs_color.Blue = result2.GetUInt8(3);
-				*/
-			}
-			else if (type == "soga_unknown13") {
-				entity->SetSogaSkullType(result2.GetInt8(1), 0, false);
-				entity->SetSogaSkullType(result2.GetInt8(2), 1, false);
-				entity->SetSogaSkullType(result2.GetInt8(3), 2, false);
-			}
-			else if (type == "soga_eye_type") {
-				entity->SetSogaEyeType(result2.GetInt8(1), 0, false);
-				entity->SetSogaEyeType(result2.GetInt8(2), 1, false);
-				entity->SetSogaEyeType(result2.GetInt8(3), 2, false);
-			}
-			else if (type == "soga_ear_type") {
-				entity->SetSogaEarType(result2.GetInt8(1), 0, false);
-				entity->SetSogaEarType(result2.GetInt8(2), 1, false);
-				entity->SetSogaEarType(result2.GetInt8(3), 2, false);
-			}
-			else if (type == "soga_eye_brow_type") {
-				entity->SetSogaEyeBrowType(result2.GetInt8(1), 0, false);
-				entity->SetSogaEyeBrowType(result2.GetInt8(2), 1, false);
-				entity->SetSogaEyeBrowType(result2.GetInt8(3), 2, false);
-			}
-			else if (type == "soga_cheek_type") {
-				entity->SetSogaCheekType(result2.GetInt8(1), 0, false);
-				entity->SetSogaCheekType(result2.GetInt8(2), 1, false);
-				entity->SetSogaCheekType(result2.GetInt8(3), 2, false);
-			}
-			else if (type == "soga_lip_type") {
-				entity->SetSogaLipType(result2.GetInt8(1), 0, false);
-				entity->SetSogaLipType(result2.GetInt8(2), 1, false);
-				entity->SetSogaLipType(result2.GetInt8(3), 2, false);
-			}
-			else if (type == "soga_chin_type") {
-				entity->SetSogaChinType(result2.GetInt8(1), 0, false);
-				entity->SetSogaChinType(result2.GetInt8(2), 1, false);
-				entity->SetSogaChinType(result2.GetInt8(3), 2, false);
-			}
-			else if (type == "soga_nose_type") {
-				entity->SetSogaNoseType(result2.GetInt8(1), 0, false);
-				entity->SetSogaNoseType(result2.GetInt8(2), 1, false);
-				entity->SetSogaNoseType(result2.GetInt8(3), 2, false);
-			}
-		}
+		ProcessEntityColors(result2, colorLoadMap);
 	}
 
 	return ret;
@@ -430,7 +125,7 @@ bool ZoneDatabase::LoadCharacter(uint32_t char_id, uint32_t account_id, std::sha
 
 bool ZoneDatabase::LoadNPCsForZone(ZoneServer* z) {
 	DatabaseResult result;
-	bool ret = Select(&result, "SELECT %s, npc.min_level, npc.max_level, npc.enc_level, npc.class_, npc.gender, npc.min_group_size, npc.max_group_size, npc.hair_type_id, npc.facial_hair_type_id, npc.wing_type_id, npc.chest_type_id, npc.legs_type_id, npc.soga_hair_type_id, npc.soga_facial_hair_type_id, npc.action_state, npc.mood_state, npc.initial_state, npc.activity_status, npc.attack_type, npc.ai_strategy+0, npc.spell_list_id, npc.secondary_spell_list_id, npc.skill_list_id, npc.secondary_skill_list_id, npc.equipment_list_id, npc.str, npc.sta, npc.wis, npc.intel, npc.agi, npc.heat, npc.cold, npc.magic, npc.mental, npc.divine, npc.disease, npc.poison, npc.aggro_radius, npc.cast_percentage, npc.randomize, npc.soga_model_type, npc.heroic_flag, npc.alignment, npc.elemental, npc.arcane, npc.noxious, npc.hide_hood, npc.emote_state, \n"
+	bool ret = Select(&result, "SELECT %s, npc.min_level, npc.max_level, npc.enc_level, npc.class_, npc.gender, npc.min_group_size, npc.max_group_size, npc.hair_type_id, npc.facial_hair_type_id, npc.wing_type_id, npc.chest_type_id, npc.legs_type_id, npc.soga_hair_type_id, npc.soga_facial_hair_type_id, npc.action_state, npc.mood_state, npc.initial_state, npc.activity_status, npc.attack_type, npc.ai_strategy+0, npc.spell_list_id, npc.secondary_spell_list_id, npc.skill_list_id, npc.secondary_skill_list_id, npc.equipment_list_id, npc.str, npc.sta, npc.wis, npc.intel, npc.agi, npc.heat, npc.cold, npc.magic, npc.mental, npc.divine, npc.disease, npc.poison, npc.aggro_radius, npc.cast_percentage, npc.randomize, npc.soga_model_type, npc.heroic_flag, npc.alignment, npc.elemental, npc.arcane, npc.noxious, npc.hide_hood, npc.emote_state \n"
 									"FROM spawn s\n"
 									"INNER JOIN spawn_npcs npc\n"
 									"ON s.id = npc.spawn_id\n"
@@ -442,6 +137,9 @@ bool ZoneDatabase::LoadNPCsForZone(ZoneServer* z) {
 									"GROUP BY s.id", GetSpawnTableFields(), z->GetID());
 	if (!ret)
 		return ret;
+
+	std::unordered_map<uint32_t, std::shared_ptr<Entity> > npcs;
+	npcs.reserve(result.GetNumRows());
 
 	uint32_t count = 0;
 	while (result.Next()) {
@@ -542,13 +240,30 @@ bool ZoneDatabase::LoadNPCsForZone(ZoneServer* z) {
 		}
 		npc->SetEmoteState(result.GetUInt32(i++));
 
-		count++;
+		npcs[npc->GetDatabaseID()] = npc;
 
-		z->AddNPCToMasterList(npc);
+		count++;
 		LogDebug(LOG_NPC, 5, "---Loading NPC: '%s' (%u)", npc->GetName().c_str(), id);
 	}
 
 	LogInfo(LOG_NPC, 0, "--Loaded %u NPC(s).", count);
+
+	LogInfo(LOG_NPC, 0, "--Loading NPC Appearances.");
+	result.Clear();
+	ret = Select(&result,
+		"SELECT na.spawn_id, na.`type`, na.red, na.green, na.blue\n"
+		"FROM spawn_location_placement slp\n"
+		"INNER JOIN spawn_location_entry sle ON sle.spawn_location_id = slp.spawn_location_id\n"
+		"INNER JOIN npc_appearance na ON sle.spawn_id = na.spawn_id\n"
+		"WHERE slp.zone_id = %u", z->GetID());
+
+	if (ret) {
+		ProcessEntityColors(result, npcs);
+	}
+
+	for (auto& itr : npcs) {
+		z->AddNPCToMasterList(itr.second);
+	}
 
 	return ret;
 }
@@ -862,7 +577,6 @@ constexpr const char* GetSpawnTableFields() {
 
 uint32_t ZoneDatabase::ProcessSpawnTableFields(const std::shared_ptr<Spawn>& spawn, DatabaseResult& res) {
 	uint32_t i = 0;
-	uint32_t entityFlags = 0;
 
 	spawn->SetDatabaseID(res.GetUInt32(i++));
 	spawn->SetName(res.GetString(i++));
@@ -874,7 +588,8 @@ uint32_t ZoneDatabase::ProcessSpawnTableFields(const std::shared_ptr<Spawn>& spa
 	spawn->SetModelType(res.GetUInt32(i++));
 	spawn->SetSize(res.GetFloat(i++));
 	spawn->SetSizeOffset(res.GetFloat(i++));
-	entityFlags = res.GetUInt32(i++);
+	uint32_t entityFlags = 0;//res.GetUInt32(i++);
+	i++;
 	//Targetable
 	if (res.GetBool(i++)) {
 		entityFlags |= EntityFlagTargetable;
@@ -915,4 +630,205 @@ uint32_t ZoneDatabase::ProcessSpawnTableFields(const std::shared_ptr<Spawn>& spa
 	spawn->PopUpdateFlags();
 
 	return i;
+}
+
+//The input result to this function should be indexed by (id, type, red, green, blue)
+void ZoneDatabase::ProcessEntityColors(DatabaseResult& result, std::unordered_map<uint32_t, std::shared_ptr<Entity> >& outEntities) {
+	uint32_t lastID = 0;
+	std::shared_ptr<Entity> entity;
+
+	union {
+		uint8_t uVal[3];
+		int8_t sVal[3];
+	};
+
+	//Major hackery..
+	EQ2Color& c = reinterpret_cast<EQ2Color&>(uVal[0]);
+	int8_t* v = sVal;
+
+	while (result.Next()) {
+		uint32_t id = result.GetUInt32(0);
+		if (id != lastID) {
+			lastID = 0;
+			entity = outEntities[id];
+		}
+
+		assert(entity);
+
+		CStringCmpNoCopy type = result.GetString(1);
+
+		//Union + casting trickery to reduce the code we need here
+		c.Red = static_cast<uint8_t>(result.GetInt32(2));
+		c.Green = static_cast<uint8_t>(result.GetInt32(3));
+		c.Blue = static_cast<uint8_t>(result.GetInt32(4));
+
+		if (type == "skin_color") {
+			entity->SetSkinColor(c, false);
+		}
+		else if (type == "eye_color") {
+			entity->SetEyeColor(c, false);
+		}
+		else if (type == "hair_color1") {
+			entity->SetHairColor1(c, false);
+		}
+		else if (type == "hair_color2") {
+			entity->SetHairColor2(c, false);
+		}
+		else if (type == "hair_highlight") {
+			entity->SetHairHighlight(c, false);
+		}
+		else if (type == "hair_type_color") {
+			entity->SetHairColor(c, false);
+		}
+		else if (type == "hair_type_highlight_color") {
+			entity->SetHairHighlightColor(c, false);
+		}
+		else if (type == "hair_face_color") {
+			entity->SetFacialHairColor(c);
+		}
+		else if (type == "hair_face_highlight_color") {
+			entity->SetFacialHairHighlightColor(c, false);
+		}
+		else if (type == "wing_color1") {
+			entity->SetWingColor(c, false);
+		}
+		else if (type == "wing_color2") {
+			entity->SetWingHighlightColor(c, false);
+		}
+		else if (type == "shirt_color") {
+			entity->SetChestColor(c, false);
+		}
+		else if (type == "unknown_chest_color") {
+			entity->SetChestHighlightColor(c, false);
+		}
+		else if (type == "pants_color") {
+			entity->SetLegsColor(c, false);
+		}
+		else if (type == "unknown_legs_color") {
+			entity->SetLegsHighlightColor(c, false);
+		}
+		else if (type == "unknown9") {
+			//guessing since this is right before eye type this is skull?
+			entity->SetSkullType(v[0], 0, false);
+			entity->SetSkullType(v[1], 1, false);
+			entity->SetSkullType(v[2], 2, false);
+		}
+		else if (type == "eye_type") {
+			entity->SetEyeType(v[0], 0, false);
+			entity->SetEyeType(v[1], 1, false);
+			entity->SetEyeType(v[2], 2, false);
+		}
+		else if (type == "ear_type") {
+			entity->SetEarType(v[0], 0, false);
+			entity->SetEarType(v[1], 1, false);
+			entity->SetEarType(v[2], 2, false);
+		}
+		else if (type == "eye_brow_type") {
+			entity->SetEyeBrowType(v[0], 0, false);
+			entity->SetEyeBrowType(v[1], 1, false);
+			entity->SetEyeBrowType(v[2], 2, false);
+		}
+		else if (type == "cheek_type") {
+			entity->SetCheekType(v[0], 0, false);
+			entity->SetCheekType(v[1], 1, false);
+			entity->SetCheekType(v[2], 2, false);
+		}
+		else if (type == "lip_type") {
+			entity->SetLipType(v[0], 0, false);
+			entity->SetLipType(v[1], 1, false);
+			entity->SetLipType(v[2], 2, false);
+		}
+		else if (type == "chin_type") {
+			entity->SetChinType(v[0], 0, false);
+			entity->SetChinType(v[1], 1, false);
+			entity->SetChinType(v[2], 2, false);
+		}
+		else if (type == "nose_type") {
+			entity->SetNoseType(v[0], 0, false);
+			entity->SetNoseType(v[1], 1, false);
+			entity->SetNoseType(v[2], 2, false);
+		}
+		else if (type == "body_size") {
+			entity->SetBodySize(v[0], false);
+		}
+		else if (type == "soga_skin_color") {
+			entity->SetSogaSkinColor(c, false);
+		}
+		else if (type == "soga_eye_color") {
+			entity->SetSogaEyeColor(c, false);
+		}
+		else if (type == "soga_hair_color1") {
+			entity->SetSogaHairColor1(c, false);
+		}
+		else if (type == "soga_hair_color2") {
+			entity->SetSogaHairColor2(c, false);
+		}
+		else if (type == "soga_hair_highlight") {
+			entity->SetSogaHairHighlight(c, false);
+		}
+		else if (type == "soga_hair_type_color") {
+			entity->SetSogaHairColor(c, false);
+		}
+		else if (type == "soga_hair_type_highlight_color") {
+			entity->SetSogaHairHighlightColor(c, false);
+		}
+		else if (type == "soga_hair_face_color") {
+			entity->SetSogaFacialHairColor(c, false);
+		}
+		else if (type == "soga_hair_face_highlight_color") {
+			entity->SetSogaFacialHairHighlightColor(c, false);
+		}
+		else if (type == "soga_wing_color1") {
+		}
+		else if (type == "soga_wing_color2") {
+		}
+		else if (type == "soga_shirt_color") {
+		}
+		else if (type == "soga_unknown_chest_color") {
+		}
+		else if (type == "soga_pants_color") {
+		}
+		else if (type == "soga_unknown_legs_color") {
+		}
+		else if (type == "soga_unknown13") {
+			entity->SetSogaSkullType(v[0], 0, false);
+			entity->SetSogaSkullType(v[1], 1, false);
+			entity->SetSogaSkullType(v[2], 2, false);
+		}
+		else if (type == "soga_eye_type") {
+			entity->SetSogaEyeType(v[0], 0, false);
+			entity->SetSogaEyeType(v[1], 1, false);
+			entity->SetSogaEyeType(v[2], 2, false);
+		}
+		else if (type == "soga_ear_type") {
+			entity->SetSogaEarType(v[0], 0, false);
+			entity->SetSogaEarType(v[1], 1, false);
+			entity->SetSogaEarType(v[2], 2, false);
+		}
+		else if (type == "soga_eye_brow_type") {
+			entity->SetSogaEyeBrowType(v[0], 0, false);
+			entity->SetSogaEyeBrowType(v[1], 1, false);
+			entity->SetSogaEyeBrowType(v[2], 2, false);
+		}
+		else if (type == "soga_cheek_type") {
+			entity->SetSogaCheekType(v[0], 0, false);
+			entity->SetSogaCheekType(v[1], 1, false);
+			entity->SetSogaCheekType(v[2], 2, false);
+		}
+		else if (type == "soga_lip_type") {
+			entity->SetSogaLipType(v[0], 0, false);
+			entity->SetSogaLipType(v[1], 1, false);
+			entity->SetSogaLipType(v[2], 2, false);
+		}
+		else if (type == "soga_chin_type") {
+			entity->SetSogaChinType(v[0], 0, false);
+			entity->SetSogaChinType(v[1], 1, false);
+			entity->SetSogaChinType(v[2], 2, false);
+		}
+		else if (type == "soga_nose_type") {
+			entity->SetSogaNoseType(v[0], 0, false);
+			entity->SetSogaNoseType(v[1], 1, false);
+			entity->SetSogaNoseType(v[2], 2, false);
+		}
+	}
 }

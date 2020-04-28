@@ -1,3 +1,5 @@
+#pragma once
+
 #include "database.h"
 
 //This class has functions that are used on both the worldserver and zoneserver

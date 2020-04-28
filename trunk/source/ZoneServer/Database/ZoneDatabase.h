@@ -22,6 +22,8 @@ public:
 	bool LoadWidgetsForZone(ZoneServer* z);
 	bool LoadSignsForZone(ZoneServer* z);
 	bool LoadGroundSpawnsForZone(ZoneServer* z);
+	//The input result to this function should be indexed by (id, type, red, green, blue)
+	void ProcessEntityColors(class DatabaseResult& result, std::unordered_map<uint32_t, std::shared_ptr<class Entity> >& outEntities);
 
 	bool LoadNPCLocations(ZoneServer* z);
 

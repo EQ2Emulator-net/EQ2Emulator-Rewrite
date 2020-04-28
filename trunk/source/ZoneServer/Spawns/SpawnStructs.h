@@ -11,6 +11,7 @@ struct SpawnPositionStruct {
 	SpawnPositionStruct() {
 		memset(this, 0, sizeof(*this));
 		sizeUnknown = 3.f;
+		faceActorID = 0xFFFFFFFF;
 	}
 
 	uint32_t positionState;

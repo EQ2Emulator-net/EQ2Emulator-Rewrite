@@ -7,6 +7,6 @@ void Substruct_SpawnVisualization::InsertSpawnData(const std::shared_ptr<Spawn>&
 	const SpawnVisualizationStruct* vis = spawn->GetVisStruct();
 	static_cast<SpawnVisualizationStruct&>(*this) = *vis;
 
-	//vis_flags = 54;
+	vis_flags = 54;
 	//if (vis->bHideHood)
 }

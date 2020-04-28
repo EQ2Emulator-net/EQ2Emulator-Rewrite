@@ -9,6 +9,8 @@ public:
 	DatabaseResult();
 	virtual ~DatabaseResult();
 
+	void Clear();
+
 	void AddResult(MYSQL_RES* res, bool first);
 	bool Next();
 	bool NextResultSet();

@@ -13,11 +13,17 @@ DatabaseResult::DatabaseResult() :
 }
 
 DatabaseResult::~DatabaseResult() {
+	Clear();
+}
+
+void DatabaseResult::Clear() {
 	for (auto& itr : results) {
 		mysql_free_result(itr);
 	}
+	results.clear();
 	if (current_res) {
 		mysql_free_result(current_res);
+		current_res = nullptr;
 	}
 }
 

@@ -44,3 +44,14 @@ uint32_t MakeRandomNumber();
 
 //This will compare a weak_ptr to either a shared_ptr or weak_ptr
 #define EmuWeakCmp(lhs, rhs) (!(lhs.owner_before(rhs) || rhs.owner_before(lhs)))
+
+class CStringCmpNoCopy {
+public:
+	CStringCmpNoCopy(const char* v) : myVal(v) {}
+	~CStringCmpNoCopy() = default;
+	const char* myVal;
+
+	bool operator==(const char* rhs) {
+		return strcmp(myVal, rhs) == 0;
+	}
+};
