@@ -10,7 +10,7 @@
 struct SpawnPositionStruct {
 	SpawnPositionStruct() {
 		memset(this, 0, sizeof(*this));
-		sizeUnknown = 3.f;
+		//sizeUnknown = 3.f;
 		faceActorID = 0xFFFFFFFF;
 	}
 
@@ -39,10 +39,11 @@ struct SpawnPositionStruct {
 	float destLocX2;
 	float destLocY2;
 	float destLocZ2;
-	float size;
+	//I think collision radius is like the base scale
 	float collisionRadius;
+	//I think this is a "temp" scale but in reality mostly permanent
+	float size;
 	float sizeRatio;
-	float sizeMultiplierRatio;
 	uint32_t faceActorID;
 	float baseLocX;
 	float baseLocY;
@@ -262,13 +263,13 @@ public:
 			RegisterInt16(size_compressed);
 		}
 		else {
-			RegisterInt16(size_compressed);
+			RegisterInt16(collisionRadius_compressed);
 			RegisterInt16(sizeUnknown_compressed);
 		}
 		
 		if (GetVersion() > 283) {
+			RegisterFloat(size);
 			RegisterFloat(sizeRatio);
-			RegisterFloat(sizeMultiplierRatio);
 		}
 		RegisterUInt32(faceActorID);
 		RegisterInt16(actorStopRange_compressed);

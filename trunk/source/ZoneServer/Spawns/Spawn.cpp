@@ -67,9 +67,6 @@ Spawn::Spawn(std::shared_ptr<Spawn> in) {
 	if (m_posStruct.sizeRatio == 0.0f)
 		m_posStruct.sizeRatio = 1.0f;
 
-	if (m_posStruct.sizeMultiplierRatio == 0.0f)
-		m_posStruct.sizeMultiplierRatio = 1.0f;
-
 	if (m_posStruct.size == 0.0f)
 		m_posStruct.size = 1.0f;
 	

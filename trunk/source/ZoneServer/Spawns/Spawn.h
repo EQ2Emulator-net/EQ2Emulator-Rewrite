@@ -532,9 +532,6 @@ public:
 	void SetSizeRatio(float value, bool updateFlags = true) {
 		SetPos(&m_posStruct.sizeRatio, value, updateFlags);
 	}
-	void SetSizeMultiplierRatio(float value, bool updateFlags = true) {
-		SetPos(&m_posStruct.sizeMultiplierRatio, value, updateFlags);
-	}
 	void SetRoll(float roll, bool updateFlags = true) {
 		m_posStruct.roll = roll;
 		SetPos(&m_posStruct.desiredRoll, roll, updateFlags);

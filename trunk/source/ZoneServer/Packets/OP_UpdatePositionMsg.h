@@ -26,9 +26,9 @@ struct Substruct_MovementData : public PacketEncodedData, public SpawnPositionSt
 		}
 		RegisterFloat(desiredHeadingVelocity);
 		RegisterFloat(desiredPitchVelocity);
+		RegisterFloat(collisionRadius);
 		RegisterFloat(size);
 		RegisterFloat(sizeRatio);
-		RegisterFloat(sizeMultiplierRatio);
 		RegisterFloat(speedModifier);
 		RegisterFloat(swimmingSpeedModifier);
 		RegisterFloat(desiredStrafeSpeed);
