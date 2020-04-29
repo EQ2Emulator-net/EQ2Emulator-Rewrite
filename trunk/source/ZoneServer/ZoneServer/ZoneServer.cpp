@@ -653,9 +653,9 @@ void ZoneServer::ChangeSpawnCell(std::shared_ptr<Spawn> spawn, std::pair<int32_t
 void ZoneServer::TryDeactivateCellsForClient(std::shared_ptr<Client> client, std::pair<int32_t, int32_t> cellCoord) {
 	std::vector<std::shared_ptr<Cell> > cells = GetNeighboringCells(cellCoord);
 	for (std::shared_ptr<Cell> cell : cells) {
-		/*if (GetCellDistance(client->GetController()->GetControlled()->GetCellCoordinates(), cell->GetCellCoordinates()) > 1)
+		if (GetCellDistance(client->GetController()->GetControlled()->GetCellCoordinates(), cell->GetCellCoordinates()) > 1)
 			cell->SendRemoveSpawnsForClient(client);
-		*/
+		
 
 		uint32_t minDistance = 0xFFFFFFFF;
 		for (std::shared_ptr<Entity> p : players)

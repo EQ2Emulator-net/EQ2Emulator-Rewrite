@@ -38,9 +38,9 @@ public:
 
 	void SetHeaderData(const std::shared_ptr<Spawn>& spawn, uint16_t index) {
 		header.index = index;
-		header.spawn_id = spawn->GetID();
+		header.spawn_id = index;
 		header.spawn_anim = 0xFFFFFFFF;
-		header.crc = spawn->GetID();
+		header.crc = 1;
 		header.time_stamp = Timer::GetServerTime();
 	}
 

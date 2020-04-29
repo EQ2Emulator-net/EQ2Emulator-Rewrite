@@ -29,9 +29,10 @@ public:
 			zone->SendCharacterInfo(client);
 
 			auto spawn = client->GetController()->GetControlled();
+			uint32_t index = client->GetIndexForSpawn(spawn);
 
 			OP_EqSetPOVGhostCmd_Packet* pov = new OP_EqSetPOVGhostCmd_Packet(client->GetVersion());
-			pov->spawn_id = spawn->GetID();
+			pov->spawn_id = index;
 			client->QueuePacket(pov);
 
 			OP_EqSetControlGhostCmd_Packet* control = new OP_EqSetControlGhostCmd_Packet(client->GetVersion());
@@ -45,7 +46,7 @@ public:
 			control->speed = 5;
 			control->air_speed = 5;
 			control->size = 0.8f;
-			control->spawn_id = spawn->GetID();
+			control->spawn_id = index;
 			control->unknown2 = 0xFF;
 			client->QueuePacket(control);
 
