@@ -84,6 +84,7 @@ public:
 
 	void Process();
 	void AddClient(std::weak_ptr<Client> client);
+	void RemoveClient(std::weak_ptr<Client> client);
 	
 	std::unique_ptr<Sign>& GetSignData() { return signData; }
 	std::unique_ptr<Widget>& GetWidgetData() { return widgetData; }
@@ -569,6 +570,7 @@ public:
 		movementTimestamp = timestamp;
 		static_cast<SpawnPositionStruct&>(m_posStruct) = pos;
 		m_updateFlags.m_posChanged = true;
+		UpdateCellCoordinates();
 	}
 	void SetAppearanceEquipmentItem(uint8_t slotID, const struct EQ2EquipmentItem& item, bool updateFlags = true);
 	void SetSizeOffset(float offset) { m_sizeOffset = offset; }

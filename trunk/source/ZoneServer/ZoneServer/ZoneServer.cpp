@@ -182,8 +182,8 @@ bool ZoneServer::AddClient(std::shared_ptr<Client> c) {
 
 void ZoneServer::SendCharacterInfo(std::shared_ptr<Client> client) {
 	std::shared_ptr<Entity> entity = std::make_shared<Entity>();
-
 	database.LoadCharacter(client->GetCharacterID(), client->GetAccountID(), entity);
+	entity->SetZone(shared_from_this());
 
 	// Set this in the spawn constructor
 	entity->SetState(16512, false);
@@ -196,6 +196,14 @@ void ZoneServer::SendCharacterInfo(std::shared_ptr<Client> client) {
 	entity->SetX(GetSafeX(), false);
 	entity->SetY(GetSafeY(), false);
 	entity->SetZ(GetSafeZ(), false);
+	
+	m_playerClientList[entity->GetID()] = client;
+
+	std::pair<int32_t, int32_t> cellCoords = entity->GetCellCoordinates();
+	LogWarn(LOG_PLAYER, 0, "New player in cell (%i, %i) player loc = (%f, %f, %f)", cellCoords.first, cellCoords.second, entity->GetX(), entity->GetY(), entity->GetZ());
+
+	cellCoords = GetCellCoordinatesForSpawn(entity);
+	LogWarn(LOG_PLAYER, 0, "Cell coords check 2 (%i, %i)", cellCoords.first, cellCoords.second);
 
 	std::shared_ptr<PlayerController> controller = client->GetController();
 	controller->SetControlled(entity);
@@ -236,6 +244,10 @@ void ZoneServer::SendSpawnToClient(std::shared_ptr<Spawn> spawn, std::shared_ptr
 	spawn->AddClient(client);
 }
 
+void ZoneServer::RemoveSpawnFromClient(std::shared_ptr<Spawn> spawn, std::shared_ptr <Client> client) {
+	SendDestroyGhost(client, spawn);
+}
+
 void ZoneServer::RemoveSpawnFromAllClients(std::shared_ptr<Spawn> spawn) {
 	for (std::pair<uint32_t, std::weak_ptr<Client> > c : Clients) {
 		std::shared_ptr<Client> client = c.second.lock();
@@ -249,10 +261,18 @@ void ZoneServer::SendDestroyGhost(std::shared_ptr<Client> client, std::shared_pt
 	if (!client->WasSentSpawn(spawn))
 		return;
 
+	uint32_t index = client->GetIndexForSpawn(spawn);
 	OP_EqDestroyGhostCmd_Packet* p = new OP_EqDestroyGhostCmd_Packet(client->GetVersion());
-	p->spawn_index = client->GetIndexForSpawn(spawn);
+	p->spawn_index = index;
 	p->bDelete = 1;
 	client->QueuePacket(p);
+
+	client->RemoveSpawnFromIndexMap(spawn);
+	client->encoded_packets.RemoveBuffer(EEncodedPackets::EEncoded_UpdateSpawnInfo, index);
+	client->encoded_packets.RemoveBuffer(EEncodedPackets::EEncoded_UpdateSpawnPos, index);
+	client->encoded_packets.RemoveBuffer(EEncodedPackets::EEncoded_UpdateSpawnVis, index);
+
+	spawn->RemoveClient(client);
 }
 
 void ZoneServer::RemovePlayer(std::shared_ptr<Entity> player) {
@@ -517,15 +537,21 @@ void ZoneServer::AddSpawn(std::shared_ptr<Spawn> spawn) {
 	AddSpawnToCell(spawn, cellCoords);
 }
 
-void ZoneServer::AddSpawnToCell(std::shared_ptr<Spawn> spawn, std::pair<int32_t, int32_t> cellCoords) {
-	std::map<std::pair<int32_t, int32_t>, std::shared_ptr<Cell> >::iterator itr = m_spGrid.find(cellCoords);
+std::shared_ptr<Cell> ZoneServer::GetCell(std::pair<int32_t, int32_t> coordinates) {
+	std::map<std::pair<int32_t, int32_t>, std::shared_ptr<Cell> >::iterator itr = m_spGrid.find(coordinates);
 	if (itr != m_spGrid.end())
-		itr->second->AddSpawn(spawn);
+		return itr->second;
 	else {
-		std::shared_ptr<Cell> cell = std::make_shared<Cell>(cellCoords);
-		m_spGrid[cellCoords] = cell;
-		cell->AddSpawn(spawn);
+		std::shared_ptr<Cell> cell = std::make_shared<Cell>(coordinates);
+		m_spGrid[coordinates] = cell;
+		return cell;
 	}
+}
+
+void ZoneServer::AddSpawnToCell(std::shared_ptr<Spawn> spawn, std::pair<int32_t, int32_t> cellCoords) {
+	std::shared_ptr<Cell> cell = GetCell(cellCoords);
+	if (cell)
+		cell->AddSpawn(spawn);
 }
 
 void ZoneServer::TryActivateCells() {
@@ -595,11 +621,58 @@ std::vector<std::shared_ptr<Cell> > ZoneServer::GetNeighboringCells(std::pair<in
 	return ret;
 }
 
-std::pair<int32_t, int32_t> ZoneServer::GettCellCoordinatesForSpawn(std::shared_ptr<Spawn> spawn) {
-	// !00 is cell size, should be a rule
-	int32_t x = static_cast<int32_t>(std::floor(spawn->GetX() / 100));
-	int32_t y = static_cast<int32_t>(std::floor(spawn->GetZ() / 100));
+std::pair<int32_t, int32_t> ZoneServer::GetCellCoordinatesForSpawn(std::shared_ptr<Spawn> spawn) {
+	// 100 is cell size, should be a rule
+	int32_t x = static_cast<int32_t>(std::floor(spawn->GetX() / 100.0f));
+	int32_t y = static_cast<int32_t>(std::floor(spawn->GetZ() / 100.0f));
 	return std::make_pair(x, y);
+}
+
+uint32_t ZoneServer::GetCellDistance(std::shared_ptr<Cell> cell1, std::shared_ptr<Cell> cell2) {
+	return GetCellDistance(cell1->GetCellCoordinates(), cell2->GetCellCoordinates());
+}
+
+uint32_t ZoneServer::GetCellDistance(std::pair<int32_t, int32_t> coord1, std::pair<int32_t, int32_t> coord2) {
+	return std::max<uint32_t>(std::abs(coord1.first - coord2.first), std::abs(coord1.second - coord2.second));
+}
+
+void ZoneServer::ChangeSpawnCell(std::shared_ptr<Spawn> spawn, std::pair<int32_t, int32_t> oldCellCoord) {
+	// If not a player and not a global spawn move the spawn to the new cell
+	std::shared_ptr<Cell> newCell = GetCell(spawn->GetCellCoordinates());
+	std::shared_ptr<Cell> oldCell = GetCell(oldCellCoord);
+
+	newCell->AddSpawn(spawn);
+	oldCell->RemoveSpawn(spawn);
+	// If Player deactivate old cells and activate new
+	std::shared_ptr<Client> client = GetClientForSpawn(spawn);
+	if (client) {
+		ActivateCellsForClient(client);
+		TryDeactivateCellsForClient(client, oldCellCoord);
+	}
+}
+
+void ZoneServer::TryDeactivateCellsForClient(std::shared_ptr<Client> client, std::pair<int32_t, int32_t> cellCoord) {
+	std::vector<std::shared_ptr<Cell> > cells = GetNeighboringCells(cellCoord);
+	for (std::shared_ptr<Cell> cell : cells) {
+		/*if (GetCellDistance(client->GetController()->GetControlled()->GetCellCoordinates(), cell->GetCellCoordinates()) > 1)
+			cell->SendRemoveSpawnsForClient(client);
+		*/
+
+		uint32_t minDistance = 0xFFFFFFFF;
+		for (std::shared_ptr<Entity> p : players)
+			minDistance = std::min<uint32_t>(minDistance, GetCellDistance(p->GetCellCoordinates(), cell->GetCellCoordinates()));
+
+		if (minDistance > 1)
+			cell->DeactivateCell();
+	}
+}
+
+std::shared_ptr<Client> ZoneServer::GetClientForSpawn(std::shared_ptr<Spawn> spawn) {
+	std::map<uint32_t, std::weak_ptr<Client> >::iterator itr = m_playerClientList.find(spawn->GetID());
+	if (itr != m_playerClientList.end())
+		return itr->second.lock();
+
+	return nullptr;
 }
 
 void ZoneServer::LoadThread() {

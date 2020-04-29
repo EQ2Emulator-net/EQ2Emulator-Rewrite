@@ -37,6 +37,7 @@ public:
 	void SendPlayersToNewClient(std::shared_ptr<Client> client);
 	void SendSpawnToClient(std::shared_ptr<Spawn> spawn, std::shared_ptr<Client> client);
 	
+	void RemoveSpawnFromClient(std::shared_ptr<Spawn> spawn, std::shared_ptr <Client> client);
 	void RemoveSpawnFromAllClients(std::shared_ptr<Spawn> spawn);
 	void SendDestroyGhost(std::shared_ptr<Client> client, std::shared_ptr<Spawn> spawn);
 	void RemovePlayer(std::shared_ptr<Entity> player);
@@ -70,21 +71,26 @@ public:
 	void DeterminePosition(std::shared_ptr<SpawnLocation> spawnLocation, std::shared_ptr<Spawn> spawn); // private?
 	void AddSpawn(std::shared_ptr<Spawn> spawn);
 
+	std::shared_ptr<Cell> GetCell(std::pair<int32_t, int32_t> coordinates);
 	void AddSpawnToCell(std::shared_ptr<Spawn>, std::pair<int32_t, int32_t> cellCoords);
 	void TryActivateCells();
 	void ActivateCellsForClient(std::shared_ptr<Client> client);
 	std::vector<std::shared_ptr<Cell> > GetNeighboringCells(std::pair<int32_t, int32_t> cellCoords);
-	std::pair<int32_t, int32_t> GettCellCoordinatesForSpawn(std::shared_ptr<Spawn> spawn);
+	std::pair<int32_t, int32_t> GetCellCoordinatesForSpawn(std::shared_ptr<Spawn> spawn);
+	uint32_t GetCellDistance(std::shared_ptr<Cell> cell1, std::shared_ptr<Cell> cell2);
+	uint32_t GetCellDistance(std::pair<int32_t, int32_t> coord1, std::pair<int32_t, int32_t> coord2);
+	void ChangeSpawnCell(std::shared_ptr<Spawn> spawn, std::pair<int32_t, int32_t> oldCellCoord);
+	void TryDeactivateCellsForClient(std::shared_ptr<Client> client, std::pair<int32_t, int32_t> cellCoord);
 
+	std::shared_ptr<Client> GetClientForSpawn(std::shared_ptr<Spawn> spawn);
 	void LoadThread();
 
 	ZoneChat chat;
 private:
 
 	std::vector<std::shared_ptr<Entity> > players;
-
-
 	std::map<uint32_t, std::weak_ptr<Client> > Clients;
+	std::map<uint32_t, std::weak_ptr<Client> > m_playerClientList;
 
 	std::set<std::shared_ptr<Client> > pendingClientAdd;
 	Mutex pendingClientAdd_lock;

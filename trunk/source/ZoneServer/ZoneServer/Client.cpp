@@ -110,6 +110,14 @@ uint16_t Client::AddSpawnToIndexMap(const std::shared_ptr<Spawn>& spawn) {
 	return index;
 }
 
+void Client::RemoveSpawnFromIndexMap(const std::shared_ptr<Spawn>& spawn) {
+	std::map<std::weak_ptr<Spawn>, uint16_t>::iterator itr = m_spawnIndexMap.find(spawn);
+	if (itr != m_spawnIndexMap.end()) {
+		m_spawnLookupMap.erase(itr->second);
+		m_spawnIndexMap.erase(itr);
+	}
+}
+
 uint16_t Client::GetIndexForSpawn(std::shared_ptr<Spawn> spawn) {
 	uint16_t index = 0;
 

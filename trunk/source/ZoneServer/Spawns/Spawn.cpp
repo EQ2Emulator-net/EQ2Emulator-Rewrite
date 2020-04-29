@@ -61,19 +61,19 @@ Spawn::Spawn(std::shared_ptr<Spawn> in) {
 	m_origPitch = 0.0f;
 	m_origRoll = 0.0f;
 
-	if (m_posStruct.collisionRadius == 0)
+	if (m_posStruct.collisionRadius == 0.0f)
 		m_posStruct.collisionRadius = 1.0f;
 
-	if (m_posStruct.sizeRatio == 0)
+	if (m_posStruct.sizeRatio == 0.0f)
 		m_posStruct.sizeRatio = 1.0f;
 
-	if (m_posStruct.sizeMultiplierRatio == 0)
+	if (m_posStruct.sizeMultiplierRatio == 0.0f)
 		m_posStruct.sizeMultiplierRatio = 1.0f;
 
-	if (m_posStruct.size == 0)
+	if (m_posStruct.size == 0.0f)
 		m_posStruct.size = 1.0f;
 	
-	if (m_sizeOffset > 0)
+	if (m_sizeOffset > 0.0f)
 		m_posStruct.size = MakeRandom(m_posStruct.size, m_posStruct.size + m_sizeOffset);
 }
 
@@ -117,6 +117,16 @@ void Spawn::AddClient(std::weak_ptr<Client> client) {
 	m_clients.push_back(client);
 }
 
+void Spawn::RemoveClient(std::weak_ptr<Client> client) {
+	std::vector<std::weak_ptr<Client> >::iterator itr;
+	for (itr = m_clients.begin(); itr != m_clients.end(); itr++) {
+		if (EmuWeakCmp((*itr), client)) {
+			m_clients.erase(itr);
+			break;
+		}
+	}
+}
+
 Spawn::UpdateFlags Spawn::PopUpdateFlags() {
 	UpdateFlags ret = m_updateFlags;
 	m_updateFlagsByte = 0;
@@ -152,10 +162,10 @@ void Spawn::UpdateCellCoordinates() {
 	if (!zone)
 		return;
 
-	std::pair<int32_t, int32_t> newCoords = zone->GettCellCoordinatesForSpawn(shared_from_this());
-	if (newCoords != m_currentCellCoordinates) {
-		m_currentCellCoordinates = newCoords;
-	}
+	std::pair<int32_t, int32_t> oldCell = m_currentCellCoordinates;
+	m_currentCellCoordinates = zone->GetCellCoordinatesForSpawn(shared_from_this());
+	if (m_currentCellCoordinates != oldCell)
+		zone->ChangeSpawnCell(shared_from_this(), oldCell);
 }
 
 float Spawn::GetDistance(float x1, float y1, float z1, float x2, float y2, float z2, bool ignore_y) {
