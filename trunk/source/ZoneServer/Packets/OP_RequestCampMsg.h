@@ -17,7 +17,7 @@ public:
 		bCampDesktop = false;
 		bCampCharSelect = false;
 		unkBool = false;
-		unkBool2 = false;
+		bLogin = false;
 	}
 
 	void HandlePacket(std::shared_ptr<Client> client) override {
@@ -25,7 +25,7 @@ public:
 		p.bCampCharSelect = bCampCharSelect;
 		p.bCampDesktop = bCampDesktop;
 		p.unkBool = unkBool;
-		p.unkBool2 = unkBool2;
+		p.bLogin = bLogin;
 		p.charName = charName;
 		p.serverName = serverName;
 
@@ -49,7 +49,7 @@ public:
 	bool unkBool;
 	std::string charName;
 	std::string serverName;
-	bool unkBool2;
+	bool bLogin;
 
 private:
 	void RegisterElements() {
@@ -66,7 +66,7 @@ private:
 		Register16String(serverName);
 
 		if (GetVersion() >= 1153) {
-			RegisterBool(unkBool2);
+			RegisterBool(bLogin);
 		}
 	}
 };

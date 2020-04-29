@@ -11,7 +11,7 @@ public:
 		bCampDesktop = false;
 		bCampCharSelect = false;
 		unkBool = false;
-		unkBool2 = false;
+		bLogin = false;
 	}
 
 	uint8_t numSeconds;
@@ -22,7 +22,7 @@ public:
 	//guess, another string
 	std::string serverName;
 	uint32_t unknown;
-	bool unkBool2;
+	bool bLogin;
 
 private:
 	void RegisterElements() {
@@ -40,7 +40,7 @@ private:
 
 		if (GetVersion() >= 1153) {
 			RegisterUInt32(unknown);
-			RegisterBool(unkBool2);
+			RegisterBool(bLogin);
 		}
 	}
 };
