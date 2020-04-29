@@ -101,7 +101,15 @@ public:
 			return;
 		}
 
-		//LogDebug(LOG_PLAYER, 0, "pos flags %u", movement.positionState);
+		//Convert heading to a value we recognize
+		movement.heading += 180.f;
+		movement.desiredHeading += 180.f;
+		if (movement.heading >= 360.f) {
+			movement.heading -= 360.f;
+		}
+		if (movement.desiredHeading >= 360.f) {
+			movement.desiredHeading -= 360.f;
+		}
 		
 		controller->ApplyPredictionUpdate(timestamp, static_cast<const SpawnPositionStruct&>(movement));
 	}

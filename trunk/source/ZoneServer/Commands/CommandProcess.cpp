@@ -177,7 +177,25 @@ void CommandProcess::CommandMove(const std::shared_ptr<Client>& client, Separato
 }
 
 void CommandProcess::CommandTest(const std::shared_ptr<Client>& client, Separator& sep) {
-	client->chat.SendSimpleGameMessage("Test");
+	auto controller = client->GetController();
+
+	auto target = controller->GetTarget();
+
+	if (!target) {
+		return;
+	}
+
+	uint16_t spawnID = client->GetIndexForSpawn(target);
+
+	if (spawnID == 0) {
+		//should never happen
+		return;
+	}
+
+	SpawnPositionStruct pos = *target->GetPosStruct();
+	pos.actorStopRange = 10.f;
+	pos.faceActorID = spawnID;
+	target->SetSpawnPositionData(pos, Timer::GetServerTime());
 }
 
 void CommandProcess::CommandZone(const std::shared_ptr<Client>& client, Separator& sep) {
