@@ -49,6 +49,28 @@ public:
 	Spawn(std::shared_ptr<Spawn> in);
 	~Spawn();
 
+	bool IsMercenary() { return (GetInfoStruct()->entityFlags & EntityIsMercenary) != 0; }
+	bool IsStaticObject() { return (GetInfoStruct()->entityFlags & EntityFlagStaticObject) != 0; }
+	bool IsMerchant() { return (GetInfoStruct()->entityFlags & EntityFlagMerchant) != 0; }
+	bool IsShowLevel() { return (GetInfoStruct()->entityFlags & EntityFlagShowLevel) != 0; }
+	bool IsInteractable() { return (GetInfoStruct()->entityFlags & EntityFlagInteractable) != 0; }
+	bool IsTargetable() { return (GetInfoStruct()->entityFlags & EntityFlagTargetable) != 0; }
+	bool IsTransport() { return (GetInfoStruct()->entityFlags & EntityFlagIsTransport) != 0; }
+	bool IsLootable() { return (GetInfoStruct()->entityFlags & EntityFlagLootable) != 0; }
+	bool IsInCombat() { return (GetInfoStruct()->entityFlags & EntityFlagInCombat) != 0; }
+	bool IsAFK() { return (GetInfoStruct()->entityFlags & EntityFlagAfk) != 0; }
+	bool IsRoleplaying() { return (GetInfoStruct()->entityFlags & EntityFlagRoleplaying) != 0; }
+	bool IsAnonymous() { return (GetInfoStruct()->entityFlags & EntityFlagAnonymous) != 0; }
+	bool IsLinkdead() { return (GetInfoStruct()->entityFlags & EntityFlagLinkdead) != 0; }
+	bool IsCamping() { return (GetInfoStruct()->entityFlags & EntityFlagCamping) != 0; }
+	bool IsLFG() { return (GetInfoStruct()->entityFlags & EntityFlagLFG) != 0; }
+	bool IsLFW() { return (GetInfoStruct()->entityFlags & EntityFlagLFW) != 0; }
+	bool IsSolid() { return (GetInfoStruct()->entityFlags & EntityFlagSolid) != 0; }
+	bool IsMentoring() { return (GetInfoStruct()->entityFlags & EntityFlagMentoring) != 0; }
+	bool IsWeaponsEquipped() { return (GetInfoStruct()->entityFlags & EntityFlagWeaponsEquipped) != 0; }
+	bool IsImmunityGained() { return (GetInfoStruct()->entityFlags & EntityFlagImmunityGained) != 0; }
+	bool IsImmunityRemaining() { return (GetInfoStruct()->entityFlags & EntityFlagImmunityRemaining) != 0; }
+
 	float GetX() const { return m_posStruct.x; }
 	float GetY() const { return m_posStruct.y; }
 	float GetZ() const { return m_posStruct.z; }

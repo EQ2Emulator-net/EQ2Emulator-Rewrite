@@ -635,6 +635,9 @@ uint32_t ZoneDatabase::ProcessSpawnTableFields(const std::shared_ptr<Spawn>& spa
 	spawn->SetSavagery(res.GetUInt32(i++));
 	spawn->SetDissonance(res.GetUInt32(i++));
 	spawn->SetMerchantID(res.GetUInt32(i++));
+	if (spawn->GetMerchantID() > 0) {
+		spawn->EnableEntityFlags(EntityFlagMerchant);
+	}
 	//Transport ID
 	res.GetUInt32(i++);
 	spawn->SetMerchantType(res.GetUInt32(i++));
