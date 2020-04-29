@@ -19,7 +19,6 @@ void ZoneChat::HandleSay(const char* msg, const std::shared_ptr<Entity>& sender,
 	params.bFromNPC = sender->IsNPC();
 	params.bShowBubble = true;
 	params.fromName = sender->GetName();
-	params.fromSpawnID = sender->GetID();
 	params.chatFilterName = "Say";
 	params.language = language;
 	params.toSpawnID = 0xFFFFFFFF;
@@ -33,7 +32,6 @@ void ZoneChat::HandleShout(const char* msg, const std::shared_ptr<Entity>& sende
 	params.bFromNPC = sender->IsNPC();
 	params.bShowBubble = true;
 	params.fromName = sender->GetName();
-	params.fromSpawnID = sender->GetID();
 	params.chatFilterName = "Shout";
 	params.language = language;
 	params.toSpawnID = 0xFFFFFFFF;
@@ -43,6 +41,13 @@ void ZoneChat::HandleShout(const char* msg, const std::shared_ptr<Entity>& sende
 
 		if (!client) {
 			continue;
+		}
+
+		if (uint16_t spawnID = client->GetIndexForSpawn(sender)) {
+			params.fromSpawnID = spawnID;
+		}
+		else {
+			params.fromSpawnID = 0xFFFFFFFF;
 		}
 
 		client->chat.HearChat(params);
@@ -62,6 +67,13 @@ void ZoneChat::HearChatClientsInRange(HearChatParams& params, const std::shared_
 
 		if (!client) {
 			continue;
+		}
+
+		if (uint16_t spawnID = client->GetIndexForSpawn(sender)) {
+			params.fromSpawnID = spawnID;
+		}
+		else {
+			params.fromSpawnID = 0xFFFFFFFF;
 		}
 
 		auto entity = client->GetController()->GetControlled();
@@ -107,7 +119,6 @@ void ZoneChat::HandleEmoteChat(const char* msg, const std::shared_ptr<Entity>& s
 	params.bFromNPC = sender->IsNPC();
 	params.bShowBubble = false;
 	params.fromName = sender->GetName();
-	params.fromSpawnID = sender->GetID();
 	params.chatFilterName = "Emote";
 	params.language = 0;
 	params.toSpawnID = 0xFFFFFFFF;
@@ -121,7 +132,7 @@ void ZoneChat::HandleOutOfCharacter(const char* msg, const std::shared_ptr<Entit
 	params.bFromNPC = sender->IsNPC();
 	params.bShowBubble = false;
 	params.fromName = sender->GetName();
-	params.fromSpawnID = sender->GetID();
+	params.fromSpawnID = 0xFFFFFFFF;
 	params.chatFilterName = "Out of Character";
 	params.language = 0;
 	params.toSpawnID = 0xFFFFFFFF;
