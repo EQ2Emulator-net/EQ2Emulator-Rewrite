@@ -242,7 +242,7 @@ void ZoneServer::SendSpawnToClient(std::shared_ptr<Spawn> spawn, std::shared_ptr
 	OP_CreateGhostCmd_Packet* ghost = new OP_CreateGhostCmd_Packet(client->GetVersion());
 	ghost->InsertSpawnData(client, spawn, client->AddSpawnToIndexMap(spawn));
 	ghost->SetEncodedBuffers(client, ghost->header.index);
-	spawn->AddClient(client, ghost->vis.CalculateCRC());
+	spawn->AddClient(client, ghost->vis.CalculateCRC(), spawn->GetVisUpdateTag());
 	client->QueuePacket(ghost);
 }
 

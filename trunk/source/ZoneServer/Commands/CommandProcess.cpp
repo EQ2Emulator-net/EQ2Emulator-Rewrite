@@ -178,6 +178,10 @@ void CommandProcess::CommandMove(const std::shared_ptr<Client>& client, Separato
 }
 
 void CommandProcess::CommandTest(const std::shared_ptr<Client>& client, Separator& sep) {
+	if (!sep.IsNumber(0)) {
+		return;
+	}
+
 	auto controller = client->GetController();
 
 	auto target = controller->GetTarget();
@@ -186,17 +190,7 @@ void CommandProcess::CommandTest(const std::shared_ptr<Client>& client, Separato
 		return;
 	}
 
-	uint16_t spawnID = client->GetIndexForSpawn(target);
-
-	if (spawnID == 0) {
-		//should never happen
-		return;
-	}
-
-	SpawnPositionStruct pos = *target->GetPosStruct();
-	pos.actorStopRange = 10.f;
-	pos.faceActorID = spawnID;
-	target->SetSpawnPositionData(pos, Timer::GetServerTime());
+	target->SetLevel(sep.GetUInt32(0));
 }
 
 void CommandProcess::CommandZone(const std::shared_ptr<Client>& client, Separator& sep) {

@@ -18,6 +18,10 @@ Spawn::Spawn() : m_updateFlagsByte(0) {
 	movementTimestamp = Timer::GetServerTime();
 	bShowName = true;
 	bAttackable = false;
+	visUpdateTag = 0;
+	lastVisUpdateSent = 0;
+	//Targetable by default
+	m_infoStruct.entityFlags |= EntityFlagTargetable;
 }
 
 Spawn::Spawn(std::shared_ptr<Spawn> in) {
@@ -76,6 +80,8 @@ Spawn::Spawn(std::shared_ptr<Spawn> in) {
 
 	bAttackable = in->bAttackable;
 	bShowName = in->bShowName;
+	visUpdateTag = 0;
+	lastVisUpdateSent = 0;
 }
 
 Spawn::~Spawn() {
@@ -85,79 +91,102 @@ Spawn::~Spawn() {
 void Spawn::Process() {
 	// m_controller->Process();
 
-	if (m_updateFlagsByte > 0) {
-		UpdateFlags spawnUpdateFlags = PopUpdateFlags();
-		for (auto& itr : m_clients) {
-			//We may need to modify these flags for this spawn
-			UpdateFlags update = spawnUpdateFlags;
-			std::shared_ptr<Client> client = itr.first.lock();
+	bool bCheckVisUpdate;
+	if (bCheckVisUpdate = visUpdateTag != lastVisUpdateSent) {
+		//This spawn may have changed their vis struct with clients, so check this loop
+		lastVisUpdateSent = visUpdateTag;
+	}
 
-			if (!client) {
+	UpdateFlags spawnUpdateFlags = PopUpdateFlags();
+
+	if (m_clients.empty()) {
+		return;
+	}
+
+	for (auto& itr : m_clients) {
+		//We may need to modify these flags for this spawn
+		UpdateFlags update = spawnUpdateFlags;
+		bool bCheckVis = bCheckVisUpdate;
+		uint32_t& visTag = itr.second.second;
+		uint32_t& visCRC = itr.second.first;
+		std::shared_ptr<Client> client = itr.first.lock();
+
+		if (!client) {
+			continue;
+		}
+
+		auto player = client->GetController()->GetControlled();
+
+		//Check if the client's player needs a vis re-check
+		if (player && player->GetVisUpdateTag() != visTag) {
+			visTag = player->GetVisUpdateTag();
+			bCheckVis = true;
+		}
+
+		uint16_t index = client->GetIndexForSpawn(shared_from_this());
+
+		if (update.m_titleChanged) {
+			OP_UpdateTitleCmd_Packet* p2 = new OP_UpdateTitleCmd_Packet(client->GetVersion());
+			p2->spawn_id = index;
+
+			p2->name = m_titleStruct.name;
+			p2->unknown1 = m_titleStruct.unknown1;
+			p2->isPlayer = m_titleStruct.isPlayer;
+			p2->last_name = m_titleStruct.last_name;
+			p2->suffix_title = m_titleStruct.suffix_title;
+			p2->prefix_title = m_titleStruct.prefix_title;
+			p2->pvp_title = m_titleStruct.pvp_title;
+			p2->guild_title = m_titleStruct.guild;
+
+			client->QueuePacket(p2);
+		}
+
+		// Don't send updates to yourself
+		if (player.get() == this) {
+			update.m_posChanged = false;
+		}
+
+		OP_UpdateGhostCmdMsg_Packet* packet = nullptr;
+
+		//Check vis first because we may not actually need to send an update for this client
+		if (bCheckVis) {
+			SpawnVisualizationStruct vis;
+			vis.DetermineForClient(client, shared_from_this());
+			uint32_t newCRC = vis.CalculateCRC();
+
+			if (visCRC != newCRC) {
+				//We have an update to send!
+				visCRC = newCRC;
+				packet = new OP_UpdateGhostCmdMsg_Packet(client->GetVersion());
+				static_cast<SpawnVisualizationStruct&>(packet->vis.data) = vis;
+				packet->vis.spawnIndex = index;
+			}
+			else if (!update.m_infoChanged && !update.m_posChanged) {
 				continue;
 			}
-
-			uint16_t index = client->GetIndexForSpawn(shared_from_this());
-
-			if (update.m_titleChanged) {
-				OP_UpdateTitleCmd_Packet* p2 = new OP_UpdateTitleCmd_Packet(client->GetVersion());
-				p2->spawn_id = index;
-
-				p2->name = m_titleStruct.name;
-				p2->unknown1 = m_titleStruct.unknown1;
-				p2->isPlayer = m_titleStruct.isPlayer;
-				p2->last_name = m_titleStruct.last_name;
-				p2->suffix_title = m_titleStruct.suffix_title;
-				p2->prefix_title = m_titleStruct.prefix_title;
-				p2->pvp_title = m_titleStruct.pvp_title;
-				p2->guild_title = m_titleStruct.guild;
-
-				client->QueuePacket(p2);
-			}
-
-			// Don't send updates to yourself
-			if (client->GetController()->GetControlled().get() == this) {
-				update.m_posChanged = false;
-			}
-
-			OP_UpdateGhostCmdMsg_Packet* packet = nullptr;
-
-			//Check vis first because we may not actually need to send an update for this client
-			if (update.m_checkVisChange) {
-				SpawnVisualizationStruct vis;
-				vis.DetermineForClient(client, shared_from_this());
-				uint32_t visCRC = vis.CalculateCRC();
-
-				if (visCRC != itr.second) {
-					//We have an update to send!
-					itr.second = visCRC;
-					packet = new OP_UpdateGhostCmdMsg_Packet(client->GetVersion());
-					static_cast<SpawnVisualizationStruct&>(packet->vis.data) = vis;
-					packet->vis.spawnIndex = index;
-				}
-				else if (!update.m_infoChanged && !update.m_posChanged) {
-					continue;
-				}
-			}
-
-			if (!packet)
-				packet = new OP_UpdateGhostCmdMsg_Packet(client->GetVersion());
-
-			packet->timestamp = Timer::GetServerTime();
-
-			if (update.m_infoChanged)
-				packet->InsertSpawnInfoData(*GetInfoStruct(), index);
-
-			if (update.m_posChanged && client->GetController()->GetControlled().get() != this)
-				packet->InsertSpawnPosData(*GetPosStruct(), index, true, movementTimestamp);
-
-			packet->SetEncodedBuffers(client, index);
-			client->QueuePacket(packet);
 		}
+		else if (!update.m_infoChanged && !update.m_posChanged) {
+			continue;
+		}
+
+		if (!packet)
+			packet = new OP_UpdateGhostCmdMsg_Packet(client->GetVersion());
+
+		packet->timestamp = Timer::GetServerTime();
+
+		if (update.m_infoChanged)
+			packet->InsertSpawnInfoData(*GetInfoStruct(), index);
+
+		if (update.m_posChanged && client->GetController()->GetControlled().get() != this)
+			packet->InsertSpawnPosData(*GetPosStruct(), index, true, movementTimestamp);
+
+		packet->SetEncodedBuffers(client, index);
+		client->QueuePacket(packet);
 	}
 }
 
-void Spawn::AddClient(std::weak_ptr<Client> client, uint32_t visCRC) {
-	m_clients[client] = visCRC;
+void Spawn::AddClient(std::weak_ptr<Client> client, uint32_t visCRC, uint32_t visUpdateTag) {
+	m_clients[client] = std::make_pair(visCRC, visUpdateTag);
 }
 
 void Spawn::RemoveClient(std::weak_ptr<Client> client) {

@@ -85,6 +85,7 @@ bool EQ2Packet::TryCombine(EQ2Packet* rhs, uint32_t MaxLength) {
 	uint16_t combinedAdd = bCombined ? 0 : (2 + (Size - 2 >= 255 ? 3 : 1));
 	uint16_t addSize = rhs->Size - 2;
 	uint32_t newSize = Size + combinedAdd + addSize + (addSize >= 255 ? 3 : 1);
+
 	//We have 2 bytes at the beginning for sequence which we used to set earlier, remove it eventually
 	if (newSize - 2 > MaxLength) {
 		return false;
@@ -120,7 +121,7 @@ bool EQ2Packet::TryCombine(EQ2Packet* rhs, uint32_t MaxLength) {
 	}
 
 	//Add the new packet's size
-	if (rhs->Size >= 255) {
+	if (addSize >= 255) {
 		combBuf[offset++] = 0xFF;
 		*reinterpret_cast<uint16_t*>(combBuf + offset) = htons(static_cast<uint16_t>(addSize));
 		offset += 2;

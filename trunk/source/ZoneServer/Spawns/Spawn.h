@@ -104,13 +104,14 @@ public:
 		bool m_posChanged : 1;
 		bool m_infoChanged : 1;
 		bool m_titleChanged : 1;
-		bool m_checkVisChange : 1;
 	};
 
 	UpdateFlags PopUpdateFlags();
 
+	uint32_t GetVisUpdateTag() { return visUpdateTag; }
+
 	void Process();
-	void AddClient(std::weak_ptr<Client> client, uint32_t visCRC);
+	void AddClient(std::weak_ptr<Client> client, uint32_t visCRC, uint32_t visUpdateTag);
 	void RemoveClient(std::weak_ptr<Client> client);
 	
 	std::unique_ptr<Sign>& GetSignData() { return signData; }
@@ -118,6 +119,9 @@ public:
 
 private:
 	static uint32_t GetNextID();
+
+	//Call this every time something changes that may affect the spawn vis struct
+	void IncrementVisUpdateTag() { ++visUpdateTag; }
 
 	std::weak_ptr<ZoneServer> m_zone;
 
@@ -134,8 +138,8 @@ private:
 	std::unique_ptr<Widget> widgetData;
 	uint32_t m_spawnID;
 	uint32_t m_spawnDatabaseID;
-	//map<Client, vis CRC>
-	std::map<std::weak_ptr<Client>, uint32_t, std::owner_less<std::weak_ptr<Client> > > m_clients;
+	//map<Client, pair<vis CRC, vis update tag> >
+	std::map<std::weak_ptr<Client>, std::pair<uint32_t, uint32_t>, std::owner_less<std::weak_ptr<Client> > > m_clients;
 	uint32_t movementTimestamp;
 
 	float m_sizeOffset;
@@ -164,6 +168,9 @@ private:
 	float m_origRoll;
 	std::pair<int32_t, int32_t> m_currentCellCoordinates;
 
+	//Each time a spawn has an update that could affect the visual spawn struct, increment this
+	uint32_t visUpdateTag;
+	uint32_t lastVisUpdateSent;
 	bool bAttackable;
 	bool bShowName;
 
@@ -416,17 +423,28 @@ public:
 	void SetEntityFlags(uint32_t flags, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.entityFlags, flags, updateFlags);
 	}
+	//These are the entity flags that can affect the vis struct
+	static const uint32_t ENTITY_FLAGS_AFFECT_VIS = EntityFlagInteractable | EntityFlagShowLevel | EntityFlagShowCommandIcon | EntityFlagTargetable;
 	void ToggleEntityFlags(uint32_t toggle, bool bupdateFlags = true) {
 		uint32_t flags = m_infoStruct.entityFlags;
 		SetEntityFlags(flags ^ toggle, bupdateFlags);
+		if (toggle & ENTITY_FLAGS_AFFECT_VIS) {
+			IncrementVisUpdateTag();
+		}
 	}
 	void EnableEntityFlags(uint32_t flags, bool bUpdateFlags = true) {
 		uint32_t current = m_infoStruct.entityFlags;
 		SetEntityFlags(current | flags, bUpdateFlags);
+		if (flags & ENTITY_FLAGS_AFFECT_VIS) {
+			IncrementVisUpdateTag();
+		}
 	}
 	void DisableEntityFlags(uint32_t flags, bool bUpdateFlags = true) {
 		uint32_t current = m_infoStruct.entityFlags;
 		SetEntityFlags(current & (~flags), bUpdateFlags);
+		if (flags & ENTITY_FLAGS_AFFECT_VIS) {
+			IncrementVisUpdateTag();
+		}
 	}
 	void ToggleInfoVisFlags(uint8_t toggle, bool bUpdateFlags = true) {
 		uint8_t flags = m_infoStruct.visual_flag ^ toggle;
@@ -442,6 +460,7 @@ public:
 	}
 	void SetLevel(uint8_t value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.level, value, updateFlags);
+		IncrementVisUpdateTag();
 	}
 	void SetHeroicFlag(uint8_t value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.heroic_flag, value, updateFlags);
@@ -613,8 +632,10 @@ public:
 	float GetDistance(const std::shared_ptr<Spawn>& spawn, bool ignore_y = false);
 
 	bool IsAttackable() { return bAttackable; }
-	void SetAttackable(bool val) { bAttackable = val; }
+	void SetAttackable(bool val) { bAttackable = val; IncrementVisUpdateTag(); }
 	bool ShouldShowName() { return bShowName; }
+
+	void SetShowName(bool val) { bShowName = val; IncrementVisUpdateTag(); }
 
 	uint8_t GetAdventureLevel() { return m_infoStruct.level; }
 };
