@@ -182,10 +182,6 @@ void CommandProcess::CommandMove(const std::shared_ptr<Client>& client, Separato
 }
 
 void CommandProcess::CommandTest(const std::shared_ptr<Client>& client, Separator& sep) {
-	if (!sep.IsNumber(0)) {
-		return;
-	}
-
 	auto controller = client->GetController();
 
 	auto target = controller->GetTarget();
@@ -194,7 +190,7 @@ void CommandProcess::CommandTest(const std::shared_ptr<Client>& client, Separato
 		return;
 	}
 
-	target->SetLevel(sep.GetUInt32(0));
+	target->SetShowLevel(!target->ShouldShowLevel());
 }
 
 void CommandProcess::CommandZone(const std::shared_ptr<Client>& client, Separator& sep) {

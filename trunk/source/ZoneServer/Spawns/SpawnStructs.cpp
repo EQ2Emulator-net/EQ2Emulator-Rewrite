@@ -48,7 +48,12 @@ void SpawnVisualizationStruct::DetermineForClient(const std::shared_ptr<Client>&
 	}
 
 	SetVisualFlags(client, spawn, player);
-	considerDifficulty = static_cast<uint8_t>(Spawn::GetConsiderDifficulty(player->GetAdventureLevel(), spawn->GetAdventureLevel()));
+	if (vis_flags & VIS_FLAG_SHOW_LEVEL) {
+		considerDifficulty = static_cast<uint8_t>(Spawn::GetConsiderDifficulty(player->GetAdventureLevel(), spawn->GetAdventureLevel()));
+	}
+	else {
+		considerDifficulty = static_cast<uint8_t>(EConsiderDifficulty::WHITE);
+	}
 	bShowHandFlag = spawn->IsInteractable();
 }
 
@@ -105,7 +110,7 @@ void Substruct_SpawnVisualization::RegisterElements() {
 
 SpawnPositionStruct::SpawnPositionStruct() {
 	memset(this, 0, sizeof(*this));
-	//sizeUnknown = 3.f;
+	//sizeUnknown = -1.f;
 	faceActorID = 0xFFFFFFFF;
 }
 

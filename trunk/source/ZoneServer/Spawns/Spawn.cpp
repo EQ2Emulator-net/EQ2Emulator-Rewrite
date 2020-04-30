@@ -7,13 +7,11 @@
 #include "../../common/timer.h"
 #include "Entity.h"
 #include "../ZoneServer/ZoneServer.h"
-
 // Packets
 #include "../Packets/OP_UpdateSpawnCmdMsg.h"
 #include "../Packets/OP_UpdateTitleCmd_Packet.h"
 
 Spawn::Spawn() : m_updateFlagsByte(0) {
-	memset(&m_infoStruct, 0, sizeof(m_infoStruct));
 	m_spawnID = GetNextID();
 	movementTimestamp = Timer::GetServerTime();
 	bShowName = true;
@@ -21,22 +19,16 @@ Spawn::Spawn() : m_updateFlagsByte(0) {
 	visUpdateTag = 0;
 	lastVisUpdateSent = 0;
 	//Targetable by default
-	m_infoStruct.entityFlags |= EntityFlagTargetable;
+	bShowLevel = true;
+	bShowCommandIcon = true;
 }
 
 Spawn::Spawn(std::shared_ptr<Spawn> in) {
 	memcpy(&m_infoStruct, in->GetInfoStruct(), sizeof(m_infoStruct));
-	memcpy(&m_posStruct, in->GetPosStruct(), sizeof(m_infoStruct));
+	memcpy(&m_posStruct, in->GetPosStruct(), sizeof(m_posStruct));
 	m_spawnID = GetNextID();
 	movementTimestamp = Timer::GetServerTime();
-	m_titleStruct.name = in->GetTitleStruct()->name;
-	m_titleStruct.last_name = in->GetTitleStruct()->last_name;
-	m_titleStruct.guild = in->GetTitleStruct()->guild;
-	m_titleStruct.prefix_title = in->GetTitleStruct()->prefix_title;
-	m_titleStruct.suffix_title = in->GetTitleStruct()->suffix_title;
-	m_titleStruct.pvp_title = in->GetTitleStruct()->pvp_title;
-	m_titleStruct.isPlayer = in->GetTitleStruct()->isPlayer;
-	m_titleStruct.unknown1 = in->GetTitleStruct()->unknown1;
+	m_titleStruct = *in->GetTitleStruct();
 	m_updateFlagsByte = 0;
 	if (in->GetSignData() != nullptr)
 		signData = std::make_unique<Sign>(*in->GetSignData());
@@ -80,8 +72,13 @@ Spawn::Spawn(std::shared_ptr<Spawn> in) {
 
 	bAttackable = in->bAttackable;
 	bShowName = in->bShowName;
+	bShowCommandIcon = in->bShowCommandIcon;
+	bShowLevel = in->bShowLevel;
 	visUpdateTag = 0;
 	lastVisUpdateSent = 0;
+
+	m_primaryCommandList = in->m_primaryCommandList;
+	m_secondaryCommandList = in->m_secondaryCommandList;
 }
 
 Spawn::~Spawn() {
@@ -103,9 +100,17 @@ void Spawn::Process() {
 		return;
 	}
 
+	//Using optional so we can have this on the stack while not automatically constructing it
+	std::optional<OP_UpdateGhostCmdMsg_Packet> packet;
+
 	for (auto& itr : m_clients) {
 		//We may need to modify these flags for this spawn
-		UpdateFlags update = spawnUpdateFlags;
+		union {
+			UpdateFlags update;
+			uint8_t updateByte;
+		};
+		update = spawnUpdateFlags;
+
 		bool bCheckVis = bCheckVisUpdate;
 		uint32_t& visTag = itr.second.second;
 		uint32_t& visCRC = itr.second.first;
@@ -123,31 +128,34 @@ void Spawn::Process() {
 			bCheckVis = true;
 		}
 
-		uint16_t index = client->GetIndexForSpawn(shared_from_this());
-
-		if (update.m_titleChanged) {
-			OP_UpdateTitleCmd_Packet* p2 = new OP_UpdateTitleCmd_Packet(client->GetVersion());
-			p2->spawn_id = index;
-
-			p2->name = m_titleStruct.name;
-			p2->unknown1 = m_titleStruct.unknown1;
-			p2->isPlayer = m_titleStruct.isPlayer;
-			p2->last_name = m_titleStruct.last_name;
-			p2->suffix_title = m_titleStruct.suffix_title;
-			p2->prefix_title = m_titleStruct.prefix_title;
-			p2->pvp_title = m_titleStruct.pvp_title;
-			p2->guild_title = m_titleStruct.guild;
-
-			client->QueuePacket(p2);
-		}
-
-		// Don't send updates to yourself
+		// Don't send position updates to yourself
 		if (player.get() == this) {
 			update.m_posChanged = false;
 		}
 
-		OP_UpdateGhostCmdMsg_Packet* packet = nullptr;
+		//We definitely have no updates to send this round
+		if (updateByte == 0 && !bCheckVis) {
+			continue;
+		}
 
+		uint16_t index = client->GetIndexForSpawn(shared_from_this());
+
+		if (update.m_titleChanged) {
+			OP_UpdateTitleCmd_Packet p2(client->GetVersion());
+			p2.spawn_id = index;
+
+			p2.name = m_titleStruct.name;
+			p2.unknown1 = m_titleStruct.unknown1;
+			p2.isPlayer = m_titleStruct.isPlayer;
+			p2.last_name = m_titleStruct.last_name;
+			p2.suffix_title = m_titleStruct.suffix_title;
+			p2.prefix_title = m_titleStruct.prefix_title;
+			p2.pvp_title = m_titleStruct.pvp_title;
+			p2.guild_title = m_titleStruct.guild;
+
+			client->QueuePacket(p2);
+		}
+		
 		//Check vis first because we may not actually need to send an update for this client
 		if (bCheckVis) {
 			SpawnVisualizationStruct vis;
@@ -157,7 +165,10 @@ void Spawn::Process() {
 			if (visCRC != newCRC) {
 				//We have an update to send!
 				visCRC = newCRC;
-				packet = new OP_UpdateGhostCmdMsg_Packet(client->GetVersion());
+				if (!packet)
+					packet.emplace(client->GetVersion());
+				else if (packet->GetVersion() != client->GetVersion())
+					packet->ResetVersion(client->GetVersion());
 				static_cast<SpawnVisualizationStruct&>(packet->vis.data) = vis;
 				packet->vis.spawnIndex = index;
 			}
@@ -168,20 +179,30 @@ void Spawn::Process() {
 		else if (!update.m_infoChanged && !update.m_posChanged) {
 			continue;
 		}
+		else if (packet) {
+			packet->vis.spawnIndex = 0;
+		}
+		
 
 		if (!packet)
-			packet = new OP_UpdateGhostCmdMsg_Packet(client->GetVersion());
+			packet.emplace(client->GetVersion());
+		else if (packet->GetVersion() != client->GetVersion())
+			packet->ResetVersion(client->GetVersion());
 
 		packet->timestamp = Timer::GetServerTime();
 
 		if (update.m_infoChanged)
 			packet->InsertSpawnInfoData(*GetInfoStruct(), index);
+		else
+			packet->info.spawnIndex = 0;
 
 		if (update.m_posChanged && client->GetController()->GetControlled().get() != this)
 			packet->InsertSpawnPosData(*GetPosStruct(), index, true, movementTimestamp);
+		else
+			packet->pos.spawnIndex = 0;
 
 		packet->SetEncodedBuffers(client, index);
-		client->QueuePacket(packet);
+		client->QueuePacket(*packet);
 	}
 }
 

@@ -9,6 +9,7 @@
 #include "../Spawns/GroundSpawn.h"
 
 extern ZoneOperator g_zoneOperator;
+extern MasterEntityCommandList g_masterEntityCommandList;
 
 constexpr const char* GetSpawnTableFields();
 
@@ -151,8 +152,6 @@ bool ZoneDatabase::LoadNPCsForZone(ZoneServer* z) {
 
 		//Base spawn data
 		uint32_t i = ProcessSpawnTableFields(npc, result);
-
-		npc->EnableEntityFlags(EntityIsNpc);
 
 		npc->SetLevel(result.GetUInt8(i++));
 		// TODO: min/max level
@@ -671,7 +670,7 @@ bool ZoneDatabase::LoadGroundSpawnLocations(ZoneServer* z) {
 }
 
 constexpr const char* GetSpawnTableFields() {
-	return "s.id, s.name,s.sub_title,s.prefix,s.suffix,s.last_name,s.race,s.model_type,s.size,s.size_offset,s.entity_flags,s.targetable,s.show_name,"
+	return "s.id, s.name,s.sub_title,s.prefix,s.suffix,s.last_name,s.race,s.model_type,s.size,s.size_offset,s.targetable,s.show_name,"
 		"s.command_primary,s.command_secondary,s.visual_state,s.attackable,s.show_level,s.show_command_icon,s.display_hand_icon,s.faction_id,"
 		"s.collision_radius,s.hp,s.power,s.savagery,s.dissonance,s.merchant_id,s.transport_id,s.merchant_type";
 }
@@ -689,30 +688,24 @@ uint32_t ZoneDatabase::ProcessSpawnTableFields(const std::shared_ptr<Spawn>& spa
 	spawn->SetModelType(res.GetUInt32(i++));
 	spawn->SetSize(res.GetFloat(i++));
 	spawn->SetSizeOffset(res.GetFloat(i++));
-	uint32_t entityFlags = 0;//res.GetUInt32(i++);
-	i++;
+	uint32_t entityFlags = EntityIsNpc;
 	//Targetable
-	if (res.GetBool(i++)) {
-		entityFlags |= EntityFlagTargetable;
+	if (!res.GetBool(i++)) {
+		entityFlags |= EntityFlagNotTargetable;
 	}
 	//Show name
-	res.GetBool(i++);
+	spawn->SetShowName(res.GetBool(i++));
 	spawn->SetPrimaryCommandListID(res.GetUInt32(i++));
+	spawn->SetPrimaryCommandList(g_masterEntityCommandList.GetListByID(spawn->GetPrimaryCommandListID()));
 	spawn->SetSecondaryCommandListID(res.GetUInt32(i++));
+	spawn->SetSecondaryCommandList(g_masterEntityCommandList.GetListByID(spawn->GetSecondaryCommandListID()));
 	spawn->SetVisualState(res.GetUInt32(i++));
 	//Attackable
-	if (res.GetBool(i++)) {
-		spawn->SetAttackable(true);
-		entityFlags |= EntityFlagShowCommandIcon | EntityFlagShowLevel;
-	}
+	spawn->SetAttackable(res.GetBool(i++));
 	//Show level
-	if (res.GetBool(i++)) {
-		entityFlags |= EntityFlagShowLevel;
-	}
+	spawn->SetShowLevel(res.GetBool(i++));
 	//Show command icon
-	if (res.GetBool(i++)) {
-		entityFlags |= EntityFlagShowCommandIcon;
-	}
+	spawn->SetShowCommandIcon(res.GetBool(i++));
 	//Display hand icon
 	if (res.GetBool(i++)) {
 		entityFlags |= EntityFlagInteractable;

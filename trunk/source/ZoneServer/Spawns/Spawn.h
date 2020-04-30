@@ -6,6 +6,7 @@
 #include <memory>
 #include "Widget.h"
 #include "Sign.h"
+#include "EntityCommands.h"
 
 //EntityFlagValues
 const uint32_t EntityFlagAlive = 1;
@@ -13,11 +14,11 @@ const uint32_t EntityIsNpc = 1 << 1;
 const uint32_t EntityIsMercenary = 1 << 2;
 const uint32_t EntityFlagStaticObject = 1 << 3;
 const uint32_t EntityFlagMerchant = 1 << 4;
-const uint32_t EntityFlagShowLevel = 1 << 9; // This also hides/shows the health bar
+const uint32_t EntityFlagHideIcon = 1 << 9; //hides any special icons for this spawn
 const uint32_t EntityFlagInteractable = 1 << 10; //shows the hand icon
-const uint32_t EntityFlagTargetable = 1 << 11;
+const uint32_t EntityFlagNotTargetable = 1 << 11;
 const uint32_t EntityFlagIsTransport = 1 << 12; //guess
-const uint32_t EntityFlagShowCommandIcon = 1 << 13; //Shows various icons depending on the spawn's entity commands
+//const uint32_t EntityFlagShowCommandIcon = 1 << 13; //Shows various icons depending on the spawn's entity commands
 const uint32_t EntityFlagLootable = 1 << 14;
 const uint32_t EntityFlagInCombat = 1 << 15;
 const uint32_t EntityFlagAfk = 1 << 16; // Check if afk added in 1188 or if it was in icon previously
@@ -62,9 +63,9 @@ public:
 	bool IsMercenary() { return (GetInfoStruct()->entityFlags & EntityIsMercenary) != 0; }
 	bool IsStaticObject() { return (GetInfoStruct()->entityFlags & EntityFlagStaticObject) != 0; }
 	bool IsMerchant() { return (GetInfoStruct()->entityFlags & EntityFlagMerchant) != 0; }
-	bool ShouldShowLevel() { return (GetInfoStruct()->entityFlags & EntityFlagShowLevel) != 0; }
+	bool ShouldShowLevel() { return bShowLevel; }
 	bool IsInteractable() { return (GetInfoStruct()->entityFlags & EntityFlagInteractable) != 0; }
-	bool IsTargetable() { return (GetInfoStruct()->entityFlags & EntityFlagTargetable) != 0; }
+	bool IsTargetable() { return (GetInfoStruct()->entityFlags & EntityFlagNotTargetable) == 0; }
 	bool IsTransport() { return (GetInfoStruct()->entityFlags & EntityFlagIsTransport) != 0; }
 	bool IsLootable() { return (GetInfoStruct()->entityFlags & EntityFlagLootable) != 0; }
 	bool IsInCombat() { return (GetInfoStruct()->entityFlags & EntityFlagInCombat) != 0; }
@@ -80,7 +81,7 @@ public:
 	bool IsWeaponsEquipped() { return (GetInfoStruct()->entityFlags & EntityFlagWeaponsEquipped) != 0; }
 	bool IsImmunityGained() { return (GetInfoStruct()->entityFlags & EntityFlagImmunityGained) != 0; }
 	bool IsImmunityRemaining() { return (GetInfoStruct()->entityFlags & EntityFlagImmunityRemaining) != 0; }
-	bool ShouldShowCommandIcon() { return (GetInfoStruct()->entityFlags & EntityFlagShowCommandIcon) != 0; }
+	bool ShouldShowCommandIcon() { return bShowCommandIcon; }
 	bool IsNPC() { return (GetInfoStruct()->entityFlags & EntityIsNpc) != 0; }
 
 	float GetX() const { return m_posStruct.x; }
@@ -121,6 +122,11 @@ public:
 	std::unique_ptr<Sign>& GetSignData() { return signData; }
 	std::unique_ptr<Widget>& GetWidgetData() { return widgetData; }
 
+	std::shared_ptr<const EntityCommandList> GetPrimaryCommandList() { return m_primaryCommandList; }
+	std::shared_ptr<const EntityCommandList> GetSecondaryCommandList() { return m_secondaryCommandList; }
+	void SetPrimaryCommandList(const std::shared_ptr<const EntityCommandList>& cmds) {	m_primaryCommandList = cmds; }
+	void SetSecondaryCommandList(const std::shared_ptr<const EntityCommandList>& cmds) { m_secondaryCommandList = cmds; }
+
 private:
 	static uint32_t GetNextID();
 
@@ -147,8 +153,6 @@ private:
 	uint32_t movementTimestamp;
 
 	float m_sizeOffset;
-	uint32_t m_primaryCommandListID;
-	uint32_t m_secondaryCommandListID;
 	uint32_t m_factionID;
 	// These may need to be changed
 	uint32_t m_hp;
@@ -172,11 +176,18 @@ private:
 	float m_origRoll;
 	std::pair<int32_t, int32_t> m_currentCellCoordinates;
 
+	uint32_t m_primaryCommandListID;
+	uint32_t m_secondaryCommandListID;
+	std::shared_ptr<const EntityCommandList> m_primaryCommandList;
+	std::shared_ptr<const EntityCommandList> m_secondaryCommandList;
+
 	//Each time a spawn has an update that could affect the visual spawn struct, increment this
 	uint32_t visUpdateTag;
 	uint32_t lastVisUpdateSent;
 	bool bAttackable;
 	bool bShowName;
+	bool bShowLevel;
+	bool bShowCommandIcon;
 
 public:
 	/* I put the template functions down here so they aren't cluttering up the rest of the class */
@@ -424,11 +435,15 @@ public:
 	void SetEmoteState(uint32_t new_val, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.emote_state, new_val, updateFlags);
 	}
-	void SetEntityFlags(uint32_t flags, bool updateFlags = true) {
-		SetInfo(&m_infoStruct.entityFlags, flags, updateFlags);
-	}
 	//These are the entity flags that can affect the vis struct
-	static const uint32_t ENTITY_FLAGS_AFFECT_VIS = EntityFlagInteractable | EntityFlagShowLevel | EntityFlagShowCommandIcon | EntityFlagTargetable;
+	static const uint32_t ENTITY_FLAGS_AFFECT_VIS = EntityFlagInteractable | EntityFlagNotTargetable;
+	void SetEntityFlags(uint32_t flags, bool updateFlags = true) {
+		uint32_t oldFlags = m_infoStruct.entityFlags;
+		SetInfo(&m_infoStruct.entityFlags, flags, updateFlags);
+		if ((oldFlags & ENTITY_FLAGS_AFFECT_VIS) || (flags & ENTITY_FLAGS_AFFECT_VIS)) {
+			IncrementVisUpdateTag();
+		}
+	}
 	void ToggleEntityFlags(uint32_t toggle, bool bupdateFlags = true) {
 		uint32_t flags = m_infoStruct.entityFlags;
 		SetEntityFlags(flags ^ toggle, bupdateFlags);
@@ -656,8 +671,13 @@ public:
 	bool IsAttackable() { return bAttackable; }
 	void SetAttackable(bool val) { bAttackable = val; IncrementVisUpdateTag(); }
 	bool ShouldShowName() { return bShowName; }
-
+	void SetShowLevel(bool val) { bShowLevel = val; IncrementVisUpdateTag(); }
 	void SetShowName(bool val) { bShowName = val; IncrementVisUpdateTag(); }
+
+	void SetShowCommandIcon(bool val) {
+		bShowCommandIcon = val;
+		IncrementVisUpdateTag(); 
+	}
 
 	uint8_t GetAdventureLevel() { return m_infoStruct.level; }
 };

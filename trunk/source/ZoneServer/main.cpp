@@ -12,6 +12,7 @@
 #include "../common/Packets/XmlStructDumper.h"
 #include "../common/Rules.h"
 #include "Chat/ChatFilterLookup.h"
+#include "Spawns/EntityCommands.h"
 
 ZoneDatabase database;
 Classes classes;
@@ -19,6 +20,7 @@ ZoneOperator g_zoneOperator;
 CommandProcess g_commandProcess;
 RuleManager g_ruleManager;
 ChatFilterLookup g_chatFilterLookup;
+MasterEntityCommandList g_masterEntityCommandList;
 
 int main() {
 	bool looping = true;
@@ -59,6 +61,11 @@ int main() {
 	if (success) {
 		LogDebug(LOG_DATABASE, 0, "Loading chat filters...");
 		success = database.LoadChatFilters(g_chatFilterLookup);
+	}
+
+	if (success) {
+		LogDebug(LOG_DATABASE, 0, "Loading entity commands...");
+		success = database.LoadEntityCommands(g_masterEntityCommandList);
 	}
 
 	if (success)

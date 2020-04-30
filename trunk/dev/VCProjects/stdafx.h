@@ -33,6 +33,7 @@
 #include <assert.h>
 #include <chrono>
 #include <cmath>
+#include <optional>
 
 //OS Specific
 #if defined(_WIN32)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../common/Packets/PacketElements/PacketElements.h"
+#include "../Spawns/EntityCommands.h"
 #include <string>
 #include <vector>
 
@@ -33,29 +34,40 @@ public:
 
 	std::vector<Substruct_Group> group_array;
 
-	struct Substruct_CommandList : public PacketSubstruct {
+	struct Substruct_EntityCommand : public PacketSubstruct {
 		std::string command_list_name;
 		float command_list_max_distance;
-		uint8_t command_list_error_code;
+		bool command_list_has_error_text;
 		uint8_t command_list_unknown;
 		std::string command_list_error;
 		std::string command_list_command;
 
-		Substruct_CommandList(uint32_t ver = 0) : PacketSubstruct(ver, true), command_list_max_distance(0.f), command_list_error_code(0), command_list_unknown(0) {
+		Substruct_EntityCommand(uint32_t ver = 0) : PacketSubstruct(ver, true), command_list_max_distance(0.f), command_list_has_error_text(false), command_list_unknown(0) {
 			
 		}
 
 		void RegisterElements() override {
 			Register16String(command_list_name);
 			RegisterFloat(command_list_max_distance);
-			auto e = RegisterUInt8(command_list_error_code);
+			auto e = RegisterBool(command_list_has_error_text);
 			RegisterUInt8(command_list_unknown);
 			Register16String(command_list_error)->SetIsVariableSet(e);
 			Register16String(command_list_command);
 		}
 	};
 
-	std::vector<Substruct_CommandList> command_list_array;
+	std::vector<Substruct_EntityCommand> command_list_array;
+
+	void AddEntityCommand(const EntityCommand& cmd) {
+		command_list_array.emplace_back(GetVersion());
+		Substruct_SpawnHeader::Substruct_EntityCommand& pCmd = command_list_array.back();
+
+		pCmd.command_list_command = cmd.command;
+		pCmd.command_list_max_distance = cmd.distance;
+		pCmd.command_list_error = cmd.errorText;
+		pCmd.command_list_has_error_text = !cmd.errorText.empty();
+		pCmd.command_list_name = cmd.commandText;
+	}
 
 	Substruct_SpawnHeader(uint32_t version) : PacketSubstruct(version) {
 		spawn_anim = 0;
@@ -86,7 +98,7 @@ public:
 			RegisterUInt32(crc);
 		}
 		PacketUInt8* clsize = RegisterUInt8(command_list_size);
-		clsize->SetMyArray(RegisterArray(command_list_array, Substruct_CommandList));
+		clsize->SetMyArray(RegisterArray(command_list_array, Substruct_EntityCommand));
 		Register16String(default_command);
 		RegisterFloat(max_distance);
 		PacketUInt8* gsize = RegisterUInt8(group_size);

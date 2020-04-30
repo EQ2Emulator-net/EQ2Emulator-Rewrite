@@ -42,13 +42,39 @@ public:
 		header.spawn_anim = 0xFFFFFFFF;
 		header.crc = 1;
 		header.time_stamp = Timer::GetServerTime();
+
+		header.command_list_array.clear();
+
+		if (auto primaryCommands = spawn->GetPrimaryCommandList()) {
+			//Set the default command
+			header.default_command = primaryCommands->commands[0].command;
+			header.max_distance = primaryCommands->commands[0].distance;
+
+			for (auto& cmd : primaryCommands->commands) {
+				header.AddEntityCommand(cmd);
+			}
+		}
+
+		if (auto secondaryCommands = spawn->GetSecondaryCommandList()) {
+			for (auto& cmd : secondaryCommands->commands) {
+				header.AddEntityCommand(cmd);
+			}
+		}
 	}
 
 	void SetFooterData(const std::shared_ptr<Spawn>& spawn) {
 		static_cast<SpawnTitleStruct&>(footer.titleStruct) = *spawn->GetTitleStruct();
 
-		//ADD PROPER WAY TO GET SPAWN TYPE
-		footer.spawn_type = (spawn->GetInfoStruct()->entityFlags & EntityIsNpc) ? 0 : 1;
+		//Logic from old code.. dunno for sure if it is correct
+		if (spawn->IsAttackable()) {
+			footer.spawn_type = 3;
+		}
+		else if (spawn->GetAdventureLevel() > 0) {
+			footer.spawn_type = 1;
+		}
+		else {
+			footer.spawn_type = 6;
+		}
 	}
 
 	void SetEncodedBuffers(const std::shared_ptr<Client>& client, uint32_t spawnIndex) {
