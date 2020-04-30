@@ -960,6 +960,9 @@ void EQ2Stream::QueuePacket(EQ2Packet* p, bool bDelete, bool bDump) {
 		if (NetDebugEnabled() || bDump) {
 			DumpBytes(buf, p->Size);
 		}
+		p->PacketEncrypted = false;
+		p->PacketPrepared = false;
+		p->EQ2Compressed = false;
 		EQ2QueuePacket(p, bDelete);
 	}
 }
