@@ -60,6 +60,7 @@
     <ClCompile Include="..\..\source\ZoneServer\Chat\ClientChatFilters.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Chat\ZoneChat.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Commands\CommandProcess.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Commands\CommandSpawn.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Controllers\BaseController.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Controllers\PlayerController.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Database\ZoneDatabase.cpp" />
@@ -226,6 +227,7 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_UpdatePositionMsg.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_UpdateSpawnCmdMsg.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_UpdateTargetMsg.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_UpdateTitleCmd_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_ZoneInfoMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_GroupMember.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_MaintainedEffects.h" />

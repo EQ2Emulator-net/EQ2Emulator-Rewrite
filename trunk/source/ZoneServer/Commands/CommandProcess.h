@@ -53,4 +53,7 @@ private:
 	static void CommandEmote(const std::shared_ptr<Client>& client, Separator& sep);
 	static void CommandOOC(const std::shared_ptr<Client>& client, Separator& sep);
 	static void CommandGrid(const std::shared_ptr<Client>& client, Separator& sep);
+
+	// CommandSpawn.cpp
+	static void CommandSpawnSet(const std::shared_ptr<Client>& client, Separator& sep);
 };

@@ -37,6 +37,7 @@
 #include "OP_StoodMsg_Packet.h"
 #include "OP_CampAbortedMsg_Packet.h"
 #include "OP_BioUpdateMsg_Packet.h"
+#include "OP_UpdateTitleCmd_Packet.h"
 
 // Server to Client
 RegisterZoneStruct("OP_ZoneInfoMsg", OP_ZoneInfoMsg_Packet, 283, 284, 942, 957, 959, 1067, 1096, 1142, 1193, 63119, 63182);
@@ -63,6 +64,7 @@ RegisterZoneStruct("OP_OnscreenMsgMsg", OP_OnscreenMsgMsg_Packet, 1, 284);
 RegisterZoneStruct("OP_EqOpenDialogCmd", OP_OpenDialogCmd_Packet, 1, 1096);
 RegisterZoneStruct("OP_CampStartedMsg", OP_CampStartedMsg_Packet, 1, 284, 1153);
 RegisterZoneStruct("OP_CampAbortedMsg", OP_CampAbortedMsg_Packet, 1);
+RegisterZoneStruct("OP_UpdateTitleCmd", OP_UpdateTitleCmd_Packet, 1, 1153);
 
 // Client to Server
 RegisterZoneStruct("OP_LoginByNumRequestMsg", OP_LoginByNumRequestMsg_Packet, 1, 1212);

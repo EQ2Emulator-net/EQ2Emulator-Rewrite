@@ -130,6 +130,11 @@ void ZoneServer::Process() {
 			for (std::shared_ptr<Entity> player : players) {
 				player->Process();
 			}
+
+			for (std::pair<std::pair<int32_t, int32_t>, std::shared_ptr<Cell> > kvp : m_spGrid) {
+				if (kvp.second->IsActive())
+					kvp.second->Process();
+			}
 		}
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(50)); // Probably play with this value

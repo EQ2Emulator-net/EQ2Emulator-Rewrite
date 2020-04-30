@@ -10,6 +10,7 @@
 
 // Packets
 #include "../Packets/OP_UpdateSpawnCmdMsg.h"
+#include "../Packets/OP_UpdateTitleCmd_Packet.h"
 
 Spawn::Spawn() : m_updateFlagsByte(0) {
 	memset(&m_infoStruct, 0, sizeof(m_infoStruct));
@@ -33,6 +34,7 @@ Spawn::Spawn(std::shared_ptr<Spawn> in) {
 	m_titleStruct.isPlayer = in->GetTitleStruct()->isPlayer;
 	m_titleStruct.unknown1 = in->GetTitleStruct()->unknown1;
 	m_updateFlagsByte = 0;
+	m_titleStruct.m_updateFlagsByte = 0;
 	if (in->GetSignData() != nullptr)
 		signData = std::make_unique<Sign>(*in->GetSignData());
 	if (in->GetWidgetData() != nullptr)
@@ -105,6 +107,32 @@ void Spawn::Process() {
 
 				packet->SetEncodedBuffers(client, index);
 				client->QueuePacket(packet);
+
+				if (update.m_titleChanged) {
+					OP_UpdateTitleCmd_Packet* p2 = new OP_UpdateTitleCmd_Packet(client->GetVersion());
+					p2->spawn_id = index;
+
+					if (m_titleStruct.m_updateFlags.nameChanged)
+						p2->name = m_titleStruct.name;
+					if (m_titleStruct.m_updateFlags.unknown1Changed)
+						p2->unknown1 = m_titleStruct.unknown1;
+					if (m_titleStruct.m_updateFlags.isPlayerChanged)
+						p2->isPlayer = m_titleStruct.isPlayer;
+					if (m_titleStruct.m_updateFlags.lastNameChanged)
+						p2->last_name = m_titleStruct.last_name;
+					if (m_titleStruct.m_updateFlags.suffixChanged)
+						p2->suffix_title = m_titleStruct.suffix_title;
+					if (m_titleStruct.m_updateFlags.prefixChanged)
+						p2->prefix_title = m_titleStruct.prefix_title;
+					if (m_titleStruct.m_updateFlags.pvpChanged)
+						p2->pvp_title = m_titleStruct.pvp_title;
+					if (m_titleStruct.m_updateFlags.guildChanged)
+						p2->guild_title = m_titleStruct.guild;
+
+					client->QueuePacket(p2);
+
+					m_titleStruct.m_updateFlagsByte = 0;
+				}
 			}
 		}
 	}

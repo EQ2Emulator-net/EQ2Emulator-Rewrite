@@ -243,6 +243,9 @@
     <ClCompile Include="..\..\source\ZoneServer\Chat\ZoneChat.cpp">
       <Filter>source\ZoneServer</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Commands\CommandSpawn.cpp">
+      <Filter>source\Commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h">
@@ -724,6 +727,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\Spawns\SpawnLocation.h">
       <Filter>source\Spawns</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_UpdateTitleCmd_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
