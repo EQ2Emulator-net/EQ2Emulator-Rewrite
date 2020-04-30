@@ -15,9 +15,7 @@ public:
 	~CommandProcess() = default;
 
 	void AddCommand(uint32_t handler_id, const std::string& cmd, uint32_t parent_id, const std::string& required_status);
-
 	void ProcessCommand(const std::shared_ptr<Client>& client, uint32_t handler, const std::string& args);
-
 	void SendCommandList(const std::shared_ptr<Client>& client);
 
 private:
@@ -53,6 +51,8 @@ private:
 	static void CommandEmote(const std::shared_ptr<Client>& client, Separator& sep);
 	static void CommandOOC(const std::shared_ptr<Client>& client, Separator& sep);
 	static void CommandGrid(const std::shared_ptr<Client>& client, Separator& sep);
+	static void CommandAFK(const std::shared_ptr<Client>& client, Separator& sep);
+	static void CommandTell(const std::shared_ptr<Client>& client, Separator& sep);
 
 	// CommandSpawn.cpp
 	static void CommandSpawnSet(const std::shared_ptr<Client>& client, Separator& sep);

@@ -88,6 +88,7 @@ public:
 	void TryDeactivateCellsForClient(std::shared_ptr<Client> client, std::pair<int32_t, int32_t> cellCoord);
 
 	std::shared_ptr<Client> GetClientForSpawn(std::shared_ptr<Spawn> spawn);
+	std::shared_ptr<Entity> GetPlayerEntityByName(std::string player);
 	void LoadThread();
 
 	ZoneChat chat;

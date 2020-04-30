@@ -731,5 +731,8 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_UpdateTitleCmd_Packet.h">
       <Filter>source\Packets\Server-&gt;Client</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_EqCannedEmoteCmd_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

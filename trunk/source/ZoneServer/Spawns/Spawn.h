@@ -624,6 +624,7 @@ public:
 	void SetOrigRoll(float val) { m_origRoll = val; }
 	float GetOrigRoll() { return m_origRoll; }
 	float GetHeading() { return m_posStruct.heading; }
+	int8_t GetGender() { return m_infoStruct.gender;  }
 	std::pair<int32_t, int32_t> GetCellCoordinates() { return m_currentCellCoordinates; }
 	void UpdateCellCoordinates();
 

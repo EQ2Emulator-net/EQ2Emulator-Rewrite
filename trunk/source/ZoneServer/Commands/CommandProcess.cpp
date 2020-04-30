@@ -13,8 +13,10 @@
 #include "../Packets/OP_ChangeServerControlFlagMsg.h"
 #include "../Packets/OP_HearChatCmd_Packet.h"
 #include "../ZoneServer/ZoneServer.h"
+#include "../Packets/OP_EqCannedEmoteCmd_Packet.h"
 
 extern ZoneOperator g_zoneOperator;
+extern ZoneServer g_zoneServer;
 
 CommandProcess::CommandProcess() {
 	RegisterCommands();
@@ -32,7 +34,8 @@ void CommandProcess::RegisterCommands() {
 	RegisterCommandHandler(30, CommandOOC);
 	RegisterCommandHandler(402, CommandGrid);
 	RegisterCommandHandler(219, CommandSpawnSet);
-
+	RegisterCommandHandler(6, CommandAFK);
+	RegisterCommandHandler(17, CommandTell);
 }
 
 void CommandProcess::RegisterCommandHandler(uint32_t handler_id, CommandHandler_t handler) {
@@ -318,4 +321,131 @@ void CommandProcess::CommandGrid(const std::shared_ptr<Client>& client, Separato
 	client->chat.SendSimpleGameMessage(temp);
 	sprintf(temp, "Cell Coordinates: %i, %i", cellCoord.first, cellCoord.second);
 	client->chat.SendSimpleGameMessage(temp);
+}
+
+void CommandProcess::CommandAFK(const std::shared_ptr<Client>& client, Separator& sep) {
+	std::shared_ptr<Entity> player = client->GetController()->GetControlled();
+	if (!player) {
+		return;
+	}
+
+	auto zone = client->GetZone();
+	if (!zone) {
+		return;
+	}
+
+	// TOO DOO: Store away message
+
+	player->ToggleEntityFlags(EntityFlagAfk);
+
+	OP_EqCannedEmoteCmd_Packet* packet = new OP_EqCannedEmoteCmd_Packet(client->GetVersion());
+	if (player->IsAFK()) {
+		std::shared_ptr<Spawn> target = client->GetController()->GetTarget();
+		int16_t player_index = client->GetIndexForSpawn(player);
+
+		packet->spawn_id = player_index;
+
+		if (target) {
+			packet->emote_msg = player->GetName() + " tells " + target->GetName() + " that " + (player->GetGender() == 1 ? "he" : "she") + " is going afk.";
+		}
+		else {
+			packet->emote_msg = player->GetName() + " is going afk.";
+		}
+
+		packet->anim_type = 13229;
+		packet->unknown = 0;
+
+		// Send to everyone
+		zone->chat.SendToPlayersInRange(player, packet, 30.f, true);
+	}
+
+	std::string afk_message = player->IsAFK()? "You are now afk." : "You are no longer afk.";
+	client->chat.DisplayText("Narrative", afk_message, 0x00ff, false, "");
+
+	if (player->IsAFK())
+	{
+
+		if (sep.GetSize() > 0) {
+			//player->SetAwayMessage("I am away from the keyboard, " + string(sep.GetInputString().c_str()));
+		}
+		else {
+			//player->SetAwayMessage("Sorry, I am A.F.K. (Away From Keyboard)");
+		}
+	}
+	else {
+		//player->SetAwayMessage("");
+	}
+}
+
+void CommandProcess::CommandTell(const std::shared_ptr<Client>& client, Separator& sep) {
+	// Does not handle cross zones yet only works in same zone
+	std::shared_ptr<Entity> player = client->GetController()->GetControlled();
+	if (!player) {
+		return;
+	}
+
+	auto zone = client->GetZone();
+	if (!zone) {
+		return;
+	}
+
+	if (sep.GetSize() < 2) {
+		// Send message about not saying anything
+		return;
+	}
+
+	std::string reciever = sep.GetString(0);
+	reciever[0] = toupper(reciever[0]);
+	std::string sender = player->GetName();
+	std::string message = sep.GetInputString().c_str() + strlen(reciever.c_str()) + 1;
+
+
+	std::shared_ptr<Entity> reciever_player = zone->GetPlayerEntityByName(reciever.c_str());
+	if (!reciever_player) {
+		LogDebug(LOG_PLAYER, 0, "CommandTell: too_player was not valid");
+		// Send message back to player that recipent was not found
+		return;
+	}
+
+	if (player == reciever_player) {
+		// Send message about not being able to send to yourself
+		return;
+	}
+
+	// Check if reciever has the sender on Ignore
+
+	std::shared_ptr<Client> reciever_client = zone->GetClientForSpawn(reciever_player);
+	if (!reciever_client) {
+		LogDebug(LOG_PLAYER, 0, "CommandTell: reciever_client was not valid");
+		return;
+	}
+
+	HearChatParams params;
+	params.bFromNPC = false;
+	params.fromSpawnID = 0xFFFFFFFF;
+	params.toSpawnID = 0xFFFFFFFF;
+	params.fromName = sender.c_str();
+	params.toName = reciever.c_str();
+	params.bShowBubble = false;
+	params.message = message;
+	params.chatFilterName = "Tell";
+
+	reciever_client->chat.HearChat(params);
+	client->chat.HearChat(params);
+
+	if (reciever_player->IsAFK()) {
+
+		HearChatParams params;
+		params.bFromNPC = false;
+		params.fromSpawnID = 0xFFFFFFFF;
+		params.toSpawnID = 0xFFFFFFFF;
+		params.fromName = reciever.c_str();
+		params.toName = sender.c_str();
+		params.bShowBubble = false;
+		params.message = "Temp: Sorry, I am A.F.K. (Away From Keyboard)";
+		params.chatFilterName = "Tell";
+
+		reciever_client->chat.HearChat(params);
+		client->chat.HearChat(params);
+	}
 }

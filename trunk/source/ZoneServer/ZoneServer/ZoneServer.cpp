@@ -9,6 +9,7 @@
 #include "../Controllers/PlayerController.h"
 #include "../Commands/CommandProcess.h"
 #include "Cell.h"
+#include "../../common/string.h"
 
 // Packets
 #include "../Packets/OP_ZoneInfoMsg_Packet.h"
@@ -844,6 +845,16 @@ std::shared_ptr<Client> ZoneServer::GetClientForSpawn(std::shared_ptr<Spawn> spa
 	std::map<uint32_t, std::weak_ptr<Client> >::iterator itr = m_playerClientList.find(spawn->GetID());
 	if (itr != m_playerClientList.end())
 		return itr->second.lock();
+
+	return nullptr;
+}
+
+std::shared_ptr<Entity> ZoneServer::GetPlayerEntityByName(std::string player) {
+	for (std::shared_ptr<Entity> p : players) {
+		if (strcasecmp(p->GetName().c_str(),player.c_str()) == 0) {
+			return p;
+		}
+	}
 
 	return nullptr;
 }

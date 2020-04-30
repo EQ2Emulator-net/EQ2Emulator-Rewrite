@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <memory>
+#include "../../common/Packets/EQ2Packet.h"
 
 class Entity;
 class Client;
@@ -17,6 +18,7 @@ public:
 	void HandleShout(const char* msg, const std::shared_ptr<Entity>& sender, uint8_t language = 0);
 	void HandleEmoteChat(const char* msg, const std::shared_ptr<Entity>& sender);
 	void HandleOutOfCharacter(const char* msg, const std::shared_ptr<Entity>& sender);
+	void SendToPlayersInRange(const std::shared_ptr<Entity>& sender, EQ2Packet* p, float hearSpawnDistance = 0.f, bool self = false);
 
 private:
 	const std::map<uint32_t, std::weak_ptr<Client> >& zoneClients;

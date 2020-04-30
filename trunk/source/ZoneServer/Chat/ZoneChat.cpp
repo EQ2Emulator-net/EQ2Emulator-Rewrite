@@ -147,3 +147,37 @@ void ZoneChat::HandleOutOfCharacter(const char* msg, const std::shared_ptr<Entit
 		client->chat.HearChat(params);
 	}
 }
+
+void ZoneChat::SendToPlayersInRange(const std::shared_ptr<Entity>& sender, EQ2Packet* p, float hearSpawnDistance, bool self) {
+	for (auto& itr : zoneClients) {
+		auto client = itr.second.lock();
+
+		if (!client) {
+			continue;
+		}
+
+		auto entity = client->GetController()->GetControlled();
+		if (!entity) {
+			continue;
+		}
+
+		if (sender == entity && self) {
+			client->QueuePacket(p, false);
+		}
+		else {
+			if (hearSpawnDistance == 0.f) {
+				hearSpawnDistance = g_ruleManager.GetZoneRule(zone.GetID(), ERuleCategory::R_Zone, ERuleType::HearChatDistance)->GetFloat();
+			}
+
+			float distance = sender->GetDistance(entity);
+
+			if (distance > hearSpawnDistance) {
+				continue;
+			}
+
+			client->QueuePacket(p, false);
+		}
+	}
+
+	delete p;
+}
