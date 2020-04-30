@@ -129,17 +129,19 @@ public:
 ///<summary>Packet struct containing the "viewer specific" variables which change depending on the client</summary>
 struct SpawnVisualizationStruct {
 	uint32_t	unknown;
-	uint8_t		arrow_color;
+	uint8_t		considerDifficulty;
 	uint8_t		locked_no_loot;
-	int8_t		npc_con;
+	//in old code this was npc_con
+	int8_t		factionCon;
 	uint8_t		quest_flag;
 	uint8_t		merc_icon;
-	uint8_t		npc_hate;
+	//npc_hate in old code
+	bool        bShowAggro;
 	uint8_t		unknowna;
 	uint8_t		name_quest_icon;
 	uint32_t	unknowna2;
 	uint8_t		unknownb[3];
-	uint8_t		hand_flag;
+	bool    	bShowHandFlag;
 	uint32_t    unknown2b;
 	uint32_t    unknown4;
 	uint8_t		unknown2[6];
@@ -149,21 +151,19 @@ struct SpawnVisualizationStruct {
 	uint8_t     tag2;
 	uint8_t     unknown3;
 	uint16_t    vis_flags;
-	
-	//These aren't in the packet directly but get converted to vis_flags
-	bool bHideHood;
-	bool bStealth;
-	bool bInvis;
 
 	SpawnVisualizationStruct() {
 		memset(this, 0, sizeof(SpawnVisualizationStruct));
 	}
 
-	uint32_t CalculateCRC() {
+	uint32_t CalculateCRC();
+	void DetermineForClient(const std::shared_ptr<class Client>& client, const std::shared_ptr<class Spawn>& spawn);
 
-	}
+private:
+	void SetVisualFlags(const std::shared_ptr<class Client>& client, const std::shared_ptr<class Spawn>& spawn, const std::shared_ptr<class Entity>& player);
+	void SetConLevel(const std::shared_ptr<class Spawn>& spawn, const std::shared_ptr<class Entity>& player);
 
-	static const uint16_t VIS_FLAG_UNGROUPED_PLAYER = 1 << 0;
+	static const uint16_t VIS_FLAG_GROUPED_WITH_PLAYER = 1 << 0;
 	static const uint16_t VIS_FLAG_SHOW_COMMAND_ICON = 1 << 1;
 	static const uint16_t VIS_FLAG_TARGETABLE = 1 << 2;
 	static const uint16_t VIS_FLAG_RED_OUTLINE = 1 << 3;
@@ -181,8 +181,6 @@ public:
 	}
 
 	void RegisterElements();
-
-	void InsertSpawnData(const std::shared_ptr<class Spawn>& spawn);
 };
 
 ///<summary>Packet sub struct containing spell information</summary>
@@ -410,7 +408,7 @@ struct TitleUpdateFlags {
 };
 
 struct SpawnTitleStruct {
-	SpawnTitleStruct() : isPlayer(false), unknown1(0) {}
+	SpawnTitleStruct() : isPlayer(false), unknown1(0), m_updateFlagsByte(0) {}
 
 	std::string name;
 	uint8_t unknown1;

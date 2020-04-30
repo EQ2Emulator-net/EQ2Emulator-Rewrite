@@ -39,11 +39,21 @@ const uint8_t INFO_VIS_FLAG_HIDE_HOOD = 1 << 1;
 const uint8_t INFO_VIS_FLAG_MOUNTED = 1 << 2;
 const uint8_t INFO_VIS_FLAG_CROUCH = 1 << 3;
 
+enum class EConsiderDifficulty : uint8_t {
+	GRAY = 0,
+	GREEN = 1,
+	BLUE = 2,
+	WHITE = 3,
+	YELLOW = 4,
+	ORANGE = 5,
+	RED = 6
+};
 
 class ZoneServer;
 class Client;
 
 class Spawn : public std::enable_shared_from_this<Spawn> {
+	friend struct SpawnVisualizationStruct;
 public:
 	Spawn();
 	Spawn(std::shared_ptr<Spawn> in);
@@ -52,7 +62,7 @@ public:
 	bool IsMercenary() { return (GetInfoStruct()->entityFlags & EntityIsMercenary) != 0; }
 	bool IsStaticObject() { return (GetInfoStruct()->entityFlags & EntityFlagStaticObject) != 0; }
 	bool IsMerchant() { return (GetInfoStruct()->entityFlags & EntityFlagMerchant) != 0; }
-	bool IsShowLevel() { return (GetInfoStruct()->entityFlags & EntityFlagShowLevel) != 0; }
+	bool ShouldShowLevel() { return (GetInfoStruct()->entityFlags & EntityFlagShowLevel) != 0; }
 	bool IsInteractable() { return (GetInfoStruct()->entityFlags & EntityFlagInteractable) != 0; }
 	bool IsTargetable() { return (GetInfoStruct()->entityFlags & EntityFlagTargetable) != 0; }
 	bool IsTransport() { return (GetInfoStruct()->entityFlags & EntityFlagIsTransport) != 0; }
@@ -70,6 +80,8 @@ public:
 	bool IsWeaponsEquipped() { return (GetInfoStruct()->entityFlags & EntityFlagWeaponsEquipped) != 0; }
 	bool IsImmunityGained() { return (GetInfoStruct()->entityFlags & EntityFlagImmunityGained) != 0; }
 	bool IsImmunityRemaining() { return (GetInfoStruct()->entityFlags & EntityFlagImmunityRemaining) != 0; }
+	bool ShouldShowCommandIcon() { return (GetInfoStruct()->entityFlags & EntityFlagShowCommandIcon) != 0; }
+	bool IsNPC() { return (GetInfoStruct()->entityFlags & EntityIsNpc) != 0; }
 
 	float GetX() const { return m_posStruct.x; }
 	float GetY() const { return m_posStruct.y; }
@@ -83,29 +95,22 @@ public:
 	void SetZone(std::shared_ptr<ZoneServer> zone) { m_zone = zone; }
 
 	const SpawnPositionStruct* GetPosStruct() const;
-	const SpawnVisualizationStruct* GetVisStruct() const;
 	const SpawnInfoStruct* GetInfoStruct() const;
 	const SpawnTitleStruct* GetTitleStruct() const;
 
+	static EConsiderDifficulty GetConsiderDifficulty(uint8_t considererLevel, uint8_t targetLevel);
+
 	struct UpdateFlags {
 		bool m_posChanged : 1;
-		bool m_visChanged : 1;
 		bool m_infoChanged : 1;
 		bool m_titleChanged : 1;
+		bool m_checkVisChange : 1;
 	};
 
 	UpdateFlags PopUpdateFlags();
 
-	struct BaseViewerFlags {
-		bool bAttackable : 1;
-		bool bTargetable : 1;
-		bool bShowLevel : 1;
-		bool bShowCommandIcon : 1;
-		bool bDisplayHandIcon : 1;
-	};
-
 	void Process();
-	void AddClient(std::weak_ptr<Client> client);
+	void AddClient(std::weak_ptr<Client> client, uint32_t visCRC);
 	void RemoveClient(std::weak_ptr<Client> client);
 	
 	std::unique_ptr<Sign>& GetSignData() { return signData; }
@@ -117,7 +122,6 @@ private:
 	std::weak_ptr<ZoneServer> m_zone;
 
 	SpawnPositionStruct m_posStruct;
-	SpawnVisualizationStruct m_visStruct;
 	SpawnInfoStruct m_infoStruct;
 	SpawnTitleStruct m_titleStruct;
 
@@ -130,8 +134,8 @@ private:
 	std::unique_ptr<Widget> widgetData;
 	uint32_t m_spawnID;
 	uint32_t m_spawnDatabaseID;
-
-	std::vector<std::weak_ptr<Client> > m_clients;
+	//map<Client, vis CRC>
+	std::map<std::weak_ptr<Client>, uint32_t, std::owner_less<std::weak_ptr<Client> > > m_clients;
 	uint32_t movementTimestamp;
 
 	float m_sizeOffset;
@@ -159,6 +163,9 @@ private:
 	float m_origPitch;
 	float m_origRoll;
 	std::pair<int32_t, int32_t> m_currentCellCoordinates;
+
+	bool bAttackable;
+	bool bShowName;
 
 public:
 	/* I put the template functions down here so they aren't cluttering up the rest of the class */
@@ -195,12 +202,6 @@ public:
 	}
 
 	template <typename Field, typename Value>
-	void SetVis(Field* field, const Value& value, bool setUpdateFlags = true) {
-		if (Set(field, value, setUpdateFlags))
-			m_updateFlags.m_visChanged = true;
-	}
-
-	template <typename Field, typename Value>
 	void SetInfo(Field* field, const Value& value, bool setUpdateFlags = true) {
 		if (Set(field, value, setUpdateFlags))
 			m_updateFlags.m_infoChanged = true;
@@ -211,39 +212,6 @@ public:
 		if (Set(field, value, setUpdateFlags))
 			m_updateFlags.m_titleChanged = true;
 	}
-
-	void SetVisUnknown(uint32_t value, bool updateFlags = true) {
-		SetVis(&m_visStruct.unknown, value, updateFlags);
-	}
-	void SetLockedNoLoot(uint8_t new_val, bool updateFlags = true) {
-		SetVis(&m_visStruct.locked_no_loot, new_val, updateFlags);
-	}
-	void SetMercIcon(uint8_t value, bool updateFlags = true) {
-		SetVis(&m_visStruct.merc_icon, value, updateFlags);
-	}
-	void SetVisUnknownA(uint8_t value, bool updateFlags = true) {
-		SetVis(&m_visStruct.unknowna, value, updateFlags);
-	}
-	void SetVisFlags(uint16_t value, bool updateFlags = true) {
-		SetVis(&m_visStruct.vis_flags, value, updateFlags);
-	}
-	void ToggleVisFlags(uint16_t toggle, bool updateFlags = true) {
-		uint16_t flags = m_visStruct.vis_flags ^ toggle;
-		SetVis(&m_visStruct.vis_flags, flags, updateFlags);
-	}
-	void SetVisUnknownB(uint8_t value, uint8_t index, bool updateFlags = true) {
-		SetVis(&m_visStruct.unknownb[index], value, updateFlags);
-	}
-	void SetHandFlag(uint8_t new_val, bool updateFlags = true) {
-		SetVis(&m_visStruct.hand_flag, new_val, updateFlags);
-	}
-	/*void SetVisUnknown2(uint8_t value, uint8_t index, bool updateFlags = true) {
-		SetVis(&m_visStruct.unknown2[index], value, updateFlags);
-	}*/
-	void SetVisUnknown2A(uint8_t value, uint8_t index, bool updateFlags = true) {
-		SetVis(&m_visStruct.unknown2a[index], value, updateFlags);
-	}
-
 	void SetModelType(uint32_t value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.model_type, value, updateFlags);
 	}
@@ -651,4 +619,10 @@ public:
 	static float GetDistance(float x1, float y1, float z1, float x2, float y2, float z2, bool ignore_y = false);
 	float GetDistance(float x, float y, float z, bool ignore_y = false);
 	float GetDistance(const std::shared_ptr<Spawn>& spawn, bool ignore_y = false);
+
+	bool IsAttackable() { return bAttackable; }
+	void SetAttackable(bool val) { bAttackable = val; }
+	bool ShouldShowName() { return bShowName; }
+
+	uint8_t GetAdventureLevel() { return m_infoStruct.level; }
 };

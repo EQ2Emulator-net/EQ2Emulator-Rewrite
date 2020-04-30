@@ -614,7 +614,8 @@ uint32_t ZoneDatabase::ProcessSpawnTableFields(const std::shared_ptr<Spawn>& spa
 	spawn->SetVisualState(res.GetUInt32(i++));
 	//Attackable
 	if (res.GetBool(i++)) {
-		entityFlags |= EntityFlagShowCommandIcon;
+		spawn->SetAttackable(true);
+		entityFlags |= EntityFlagShowCommandIcon | EntityFlagShowLevel;
 	}
 	//Show level
 	if (res.GetBool(i++)) {

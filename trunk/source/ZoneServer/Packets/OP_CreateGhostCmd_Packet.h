@@ -28,11 +28,11 @@ public:
 		}
 	}
 
-	virtual void InsertSpawnData(const std::shared_ptr<Spawn>& spawn, uint16_t index) {
+	virtual void InsertSpawnData(const std::shared_ptr<Client>& client, const std::shared_ptr<Spawn>& spawn, uint16_t index) {
 		SetHeaderData(spawn, index);
 		static_cast<SpawnPositionStruct&>(pos) = *spawn->GetPosStruct();
 		static_cast<SpawnInfoStruct&>(info) = *spawn->GetInfoStruct();
-		vis.InsertSpawnData(spawn);
+		vis.DetermineForClient(client, spawn);
 		SetFooterData(spawn);
 	}
 

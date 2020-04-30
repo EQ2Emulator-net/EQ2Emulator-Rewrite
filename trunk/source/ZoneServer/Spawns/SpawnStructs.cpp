@@ -2,28 +2,69 @@
 
 #include "SpawnStructs.h"
 #include "Spawn.h"
+#include "../../common/CRC16.h"
+#include "../ZoneServer/Client.h"
+#include "../Controllers/PlayerController.h"
+#include "Entity.h"
 
-void Substruct_SpawnVisualization::InsertSpawnData(const std::shared_ptr<Spawn>& spawn) {
-	const SpawnVisualizationStruct* vis = spawn->GetVisStruct();
-	static_cast<SpawnVisualizationStruct&>(*this) = *vis;
 
-	vis_flags = 54;
-	//if (vis->bHideHood)
+uint32_t SpawnVisualizationStruct::CalculateCRC() {
+	//Not sure why they named this function CRC16 when it returns a 32 but whatever
+	return CRC16(reinterpret_cast<const unsigned char*>(this), sizeof(*this), 0xFFFFFFFF);
+}
+
+void SpawnVisualizationStruct::SetVisualFlags(const std::shared_ptr<Client>& client, const std::shared_ptr<Spawn>& spawn, 
+	const std::shared_ptr<class Entity>& player)
+{
+	//Determine vis flags for this spawn
+	vis_flags = 0;
+	if (spawn->IsTargetable()) {
+		vis_flags |= VIS_FLAG_TARGETABLE;
+	}
+	if (spawn->ShouldShowLevel()) {
+		vis_flags |= VIS_FLAG_SHOW_LEVEL;
+	}
+	if (spawn->ShouldShowCommandIcon()) {
+		vis_flags |= VIS_FLAG_SHOW_COMMAND_ICON;
+	}
+	if (spawn == player) {
+		//OR if they're grouped!!
+		vis_flags |= VIS_FLAG_GROUPED_WITH_PLAYER;
+	}
+	if (spawn->ShouldShowName()) {
+		vis_flags |= VIS_FLAG_DISPLAY_NAME;
+	}
+	if (spawn->IsAttackable()) {
+		vis_flags |= VIS_FLAG_ATTACKABLE;
+	}
+}
+
+void SpawnVisualizationStruct::DetermineForClient(const std::shared_ptr<Client>& client, const std::shared_ptr<Spawn>& spawn) {
+	auto player = client->GetController()->GetControlled();
+
+	if (!player) {
+		LogError(LOG_CLIENT, 0, "Tried to make a spawn visual packet for a client with no player?");
+		return;
+	}
+
+	SetVisualFlags(client, spawn, player);
+	considerDifficulty = static_cast<uint8_t>(Spawn::GetConsiderDifficulty(player->GetAdventureLevel(), spawn->GetAdventureLevel()));
+	bShowHandFlag = spawn->IsInteractable();
 }
 
 void Substruct_SpawnVisualization::RegisterElements() {
 	if (version >= 60055) {
 		RegisterUInt32(unknown);
 	}
-	RegisterUInt8(arrow_color);
+	RegisterUInt8(considerDifficulty);
 	RegisterUInt8(locked_no_loot);
-	RegisterInt8(npc_con);
+	RegisterInt8(factionCon);
 	RegisterUInt8(quest_flag);
 	if (version >= 1188) {
 		RegisterUInt8(merc_icon);
 	}
 	if (version >= 936) {
-		RegisterUInt8(npc_hate);
+		RegisterBool(bShowAggro);
 	}
 	if (version >= 1142) {
 		RegisterUInt8(unknowna);
@@ -41,7 +82,7 @@ void Substruct_SpawnVisualization::RegisterElements() {
 		RegisterUInt8(unknownb);
 		RegisterUInt8(pvp_difficulty);
 	}
-	RegisterUInt8(hand_flag);
+	RegisterBool(bShowHandFlag);
 	RegisterUInt32(unknown4);
 	RescopeArrayElement(unknown2);
 
@@ -229,14 +270,17 @@ void Substruct_SpawnPosition::RegisterElements() {
 
 void Substruct_SpawnPosition::WriteElement(unsigned char* outbuf, uint32_t& offset) {
 	//These values are converted in the spawn packet to a different scale before being compressed (they can go negative)
+	float tmpHeading = heading;
+	float tmpDesiredHeading = desiredHeading;
+
 	heading -= 180.f;
 	desiredHeading -= 180.f;
 
 	CompressData();
 	PacketEncodedData::WriteElement(outbuf, offset);
 
-	heading += 180.f;
-	heading += 180.f;
+	heading = tmpHeading;
+	desiredHeading = tmpDesiredHeading;
 }
 
 bool Substruct_SpawnPosition::ReadElement(const unsigned char* buf, uint32_t& offset, uint32_t bufsize) {
