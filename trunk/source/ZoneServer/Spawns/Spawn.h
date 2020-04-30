@@ -90,6 +90,10 @@ public:
 	uint32_t GetDatabaseID() { return m_spawnDatabaseID; }
 	void SetDatabaseID(uint32_t id) { m_spawnDatabaseID = id; }
 	std::string GetName() const { return m_titleStruct.name; }
+	std::string GetLastName() const { return m_titleStruct.last_name; }
+	std::string GetGuildTitle() const { return m_titleStruct.guild; }
+	std::string GetPrefixTitle() const { return m_titleStruct.prefix_title; }
+	std::string GetSuffixTitle() const { return m_titleStruct.suffix_title; }
 
 	std::shared_ptr<ZoneServer> GetZone() const { return m_zone.lock(); }
 	void SetZone(std::shared_ptr<ZoneServer> zone) { m_zone = zone; }
@@ -623,8 +627,25 @@ public:
 	float GetOrigPitch() { return m_origPitch; }
 	void SetOrigRoll(float val) { m_origRoll = val; }
 	float GetOrigRoll() { return m_origRoll; }
+
+	uint8_t GetDifficulty() { return m_infoStruct.difficulty; }
+	uint8_t GetGender() { return m_infoStruct.gender;  }
+	uint16_t GetHeroic() { return m_infoStruct.heroic_flag; }
+	uint32_t GetGridID() { return m_posStruct.grid_id; }
+	uint32_t GetRace() { return m_infoStruct.race; }
+	uint32_t GetAdventureClass() { return m_infoStruct.adv_class; }
+	uint32_t GetModelType() { return m_infoStruct.model_type; }
+	uint32_t GetSogaModelType() { return m_infoStruct.soga_model_type; }
+	uint32_t GetVisualState() { return m_infoStruct.visual_state; }
+	uint32_t GetActionState() { return m_infoStruct.action_state; }
+	uint32_t GetMoodState() { return m_infoStruct.mood_state; }
+	uint32_t GetEmoteState() { return m_infoStruct.emote_state; }
 	float GetHeading() { return m_posStruct.heading; }
-	int8_t GetGender() { return m_infoStruct.gender;  }
+	float GetPitch() { return m_posStruct.desiredPitch; }
+	float GetRoll() { return m_posStruct.desiredRoll; }
+	float GetCollisionRadius() { return m_posStruct.collisionRadius; }
+	float GetSize() { return m_posStruct.size; }
+
 	std::pair<int32_t, int32_t> GetCellCoordinates() { return m_currentCellCoordinates; }
 	void UpdateCellCoordinates();
 

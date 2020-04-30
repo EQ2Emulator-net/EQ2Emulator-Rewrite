@@ -36,6 +36,7 @@ void CommandProcess::RegisterCommands() {
 	RegisterCommandHandler(219, CommandSpawnSet);
 	RegisterCommandHandler(6, CommandAFK);
 	RegisterCommandHandler(17, CommandTell);
+	RegisterCommandHandler(224, CommandSpawnDetails);
 }
 
 void CommandProcess::RegisterCommandHandler(uint32_t handler_id, CommandHandler_t handler) {
