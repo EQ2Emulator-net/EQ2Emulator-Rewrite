@@ -9,6 +9,11 @@ public:
 		m_deviceID = 0;
 	}
 
+	Object(std::shared_ptr<Object> in) : Spawn(in) {
+		m_objectDatabaseID = in->GetObjectDatabaseID();
+		m_deviceID = in->GetDeviceID();
+	}
+
 	void SetObjectDatabaseID(uint32_t id) { m_objectDatabaseID = id; }
 	uint32_t GetObjectDatabaseID() { return m_objectDatabaseID; }
 	void SetDeviceID(uint8_t id) { m_deviceID = id; }

@@ -512,17 +512,12 @@ bool ZoneDatabase::CharacterUpdateBiography(uint32_t char_id, const char* bio) {
 	return Query("UPDATE `character_details` SET `biography` = '%s' WHERE `char_id` = '%u'", bio, char_id);
 }
 
-bool ZoneDatabase::LoadNPCLocations(ZoneServer* z) {
+uint32_t ZoneDatabase::LoadSpawnLocation(std::string query, ZoneServer* z, SpawnEntryType type) {
 	DatabaseResult result;
-	bool ret = Select(&result, "SELECT sln.id, sln.name,\n"
-		"slp.id, slp.x, slp.y, slp.z, slp.x_offset, slp.y_offset, slp.z_offset, slp.heading, slp.pitch, slp.roll, slp.respawn, slp.expire_timer, slp.expire_offset, slp.grid_id,\n"
-		"sle.id, sle.spawn_id, sle.spawnpercentage, sle.condition\n"
-		"FROM spawn_location_name sln, spawn_location_placement slp, spawn_location_entry sle, spawn_npcs sn\n"
-		"WHERE sn.spawn_id = sle.spawn_id AND sln.id = sle.spawn_location_id AND sln.id = slp.spawn_location_id AND slp.zone_id=%u ORDER BY sln.id, sle.id",
-		z->GetID());
+	bool ret = Select(&result, query.c_str(), z->GetID());
 
 	if (!ret)
-		return ret;
+		return 0;
 
 	uint32_t count = 0;
 	uint32_t location_id = 0xFFFFFFFF;
@@ -531,7 +526,24 @@ bool ZoneDatabase::LoadNPCLocations(ZoneServer* z) {
 		uint32_t id = result.GetUInt32(0);
 		if (location_id == 0xFFFFFFFF || id != location_id) {
 			if (spawn_location) {
-				z->AddNPCSpawnLocation(location_id, spawn_location);
+				switch (type) {
+				case SpawnEntryType::ENPC:
+					z->AddNPCSpawnLocation(location_id, spawn_location);
+					break;
+				case SpawnEntryType::EOBJECT:
+					z->AddObjectSpawnLocation(location_id, spawn_location);
+					break;
+				case SpawnEntryType::EWIDGET:
+					z->AddWidgetSpawnLocation(location_id, spawn_location);
+					break;
+				case SpawnEntryType::ESIGN:
+					z->AddSignSpawnLocation(location_id, spawn_location);
+					break;
+				case SpawnEntryType::EGROUNDSPAWN:
+					z->AddGroundSpawnSpawnLocation(location_id, spawn_location);
+					break;
+				}
+				
 				count++;
 			}
 
@@ -567,19 +579,95 @@ bool ZoneDatabase::LoadNPCLocations(ZoneServer* z) {
 		entry->spawn_id = result.GetUInt32(17);
 		entry->spawn_percentage = result.GetFloat(18);
 		entry->condition = result.GetUInt32(19);
-		entry->spawn_type = SpawnEntryType::ENPC;
+		entry->spawn_type = type;
 
 		spawn_location->total_percentage += entry->spawn_percentage;
 		spawn_location->AddEntry(entry);
 	}
 
 	if (spawn_location) {
-		z->AddNPCSpawnLocation(location_id, spawn_location);
+		switch (type) {
+		case SpawnEntryType::ENPC:
+			z->AddNPCSpawnLocation(location_id, spawn_location);
+			break;
+		case SpawnEntryType::EOBJECT:
+			z->AddObjectSpawnLocation(location_id, spawn_location);
+			break;
+		case SpawnEntryType::EWIDGET:
+			z->AddWidgetSpawnLocation(location_id, spawn_location);
+			break;
+		case SpawnEntryType::ESIGN:
+			z->AddSignSpawnLocation(location_id, spawn_location);
+			break;
+		case SpawnEntryType::EGROUNDSPAWN:
+			z->AddGroundSpawnSpawnLocation(location_id, spawn_location);
+			break;
+		}
+
 		count++;
 	}
 
+	return count;
+}
+
+bool ZoneDatabase::LoadNPCLocations(ZoneServer* z) {
+	std::string query = "SELECT sln.id, sln.name,\n"
+		"slp.id, slp.x, slp.y, slp.z, slp.x_offset, slp.y_offset, slp.z_offset, slp.heading, slp.pitch, slp.roll, slp.respawn, slp.expire_timer, slp.expire_offset, slp.grid_id,\n"
+		"sle.id, sle.spawn_id, sle.spawnpercentage, sle.condition\n"
+		"FROM spawn_location_name sln, spawn_location_placement slp, spawn_location_entry sle, spawn_npcs sn\n"
+		"WHERE sn.spawn_id = sle.spawn_id AND sln.id = sle.spawn_location_id AND sln.id = slp.spawn_location_id AND slp.zone_id=%u ORDER BY sln.id, sle.id";
+
+	uint32_t count = LoadSpawnLocation(query, z, SpawnEntryType::ENPC);
 	LogInfo(LOG_NPC, 0, "--Loaded %u NPC spawn location(s).", count);
-	return ret;
+	return true;
+}
+
+bool ZoneDatabase::LoadObjectLocations(ZoneServer* z) {
+	std::string query = "SELECT sln.id, sln.name,\n"
+		"slp.id, slp.x, slp.y, slp.z, slp.x_offset, slp.y_offset, slp.z_offset, slp.heading, slp.pitch, slp.roll, slp.respawn, slp.expire_timer, slp.expire_offset, slp.grid_id,\n"
+		"sle.id, sle.spawn_id, sle.spawnpercentage, sle.condition\n"
+		"FROM spawn_location_name sln, spawn_location_placement slp, spawn_location_entry sle, spawn_objects so\n"
+		"WHERE so.spawn_id = sle.spawn_id AND sln.id = sle.spawn_location_id AND sln.id = slp.spawn_location_id AND slp.zone_id=%u ORDER BY sln.id, sle.id";
+
+	uint32_t count = LoadSpawnLocation(query, z, SpawnEntryType::EOBJECT);
+	LogInfo(LOG_NPC, 0, "--Loaded %u Object spawn location(s).", count);
+	return true;
+}
+
+bool ZoneDatabase::LoadWidgetLocations(ZoneServer* z) {
+	std::string query = "SELECT sln.id, sln.name,\n"
+		"slp.id, slp.x, slp.y, slp.z, slp.x_offset, slp.y_offset, slp.z_offset, slp.heading, slp.pitch, slp.roll, slp.respawn, slp.expire_timer, slp.expire_offset, slp.grid_id,\n"
+		"sle.id, sle.spawn_id, sle.spawnpercentage, sle.condition\n"
+		"FROM spawn_location_name sln, spawn_location_placement slp, spawn_location_entry sle, spawn_widgets sw\n"
+		"WHERE sw.spawn_id = sle.spawn_id AND sln.id = sle.spawn_location_id AND sln.id = slp.spawn_location_id AND slp.zone_id=%u ORDER BY sln.id, sle.id";
+
+	uint32_t count = LoadSpawnLocation(query, z, SpawnEntryType::EWIDGET);
+	LogInfo(LOG_NPC, 0, "--Loaded %u Widget spawn location(s).", count);
+	return true;
+}
+
+bool ZoneDatabase::LoadSignLocations(ZoneServer* z) {
+	std::string query = "SELECT sln.id, sln.name,\n"
+		"slp.id, slp.x, slp.y, slp.z, slp.x_offset, slp.y_offset, slp.z_offset, slp.heading, slp.pitch, slp.roll, slp.respawn, slp.expire_timer, slp.expire_offset, slp.grid_id,\n"
+		"sle.id, sle.spawn_id, sle.spawnpercentage, sle.condition\n"
+		"FROM spawn_location_name sln, spawn_location_placement slp, spawn_location_entry sle, spawn_signs ss\n"
+		"WHERE ss.spawn_id = sle.spawn_id AND sln.id = sle.spawn_location_id AND sln.id = slp.spawn_location_id AND slp.zone_id=%u ORDER BY sln.id, sle.id";
+
+	uint32_t count = LoadSpawnLocation(query, z, SpawnEntryType::ESIGN);
+	LogInfo(LOG_NPC, 0, "--Loaded %u Sign spawn location(s).", count);
+	return true;
+}
+
+bool ZoneDatabase::LoadGroundSpawnLocations(ZoneServer* z) {
+	std::string query = "SELECT sln.id, sln.name,\n"
+		"slp.id, slp.x, slp.y, slp.z, slp.x_offset, slp.y_offset, slp.z_offset, slp.heading, slp.pitch, slp.roll, slp.respawn, slp.expire_timer, slp.expire_offset, slp.grid_id,\n"
+		"sle.id, sle.spawn_id, sle.spawnpercentage, sle.condition\n"
+		"FROM spawn_location_name sln, spawn_location_placement slp, spawn_location_entry sle, spawn_ground sg\n"
+		"WHERE sg.spawn_id = sle.spawn_id AND sln.id = sle.spawn_location_id AND sln.id = slp.spawn_location_id AND slp.zone_id=%u ORDER BY sln.id, sle.id";
+
+	uint32_t count = LoadSpawnLocation(query, z, SpawnEntryType::EGROUNDSPAWN);
+	LogInfo(LOG_NPC, 0, "--Loaded %u GroundSpawn spawn location(s).", count);
+	return true;
 }
 
 constexpr const char* GetSpawnTableFields() {

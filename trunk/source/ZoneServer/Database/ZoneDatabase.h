@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../common/CommonDatabase.h"
+#include "../Spawns/SpawnLocation.h"
 
 class ZoneServer;
 class Entity;
@@ -24,7 +25,12 @@ public:
 	bool LoadSignsForZone(ZoneServer* z);
 	bool LoadGroundSpawnsForZone(ZoneServer* z);
 
+	uint32_t LoadSpawnLocation(std::string query, ZoneServer* z, SpawnEntryType type);
 	bool LoadNPCLocations(ZoneServer* z);
+	bool LoadObjectLocations(ZoneServer* z);
+	bool LoadWidgetLocations(ZoneServer* z);
+	bool LoadSignLocations(ZoneServer* z);
+	bool LoadGroundSpawnLocations(ZoneServer* z);
 
 	bool CharacterUpdateBiography(uint32_t char_id, const char* bio);
 

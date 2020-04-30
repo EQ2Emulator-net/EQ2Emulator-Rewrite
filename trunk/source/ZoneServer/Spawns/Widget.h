@@ -37,6 +37,29 @@ public:
 	void SetIncludeLocation(bool val) { m_includeLocation = val; }
 	void SetWidgetDatabaseID(uint32_t val) { m_widgetDatabaseID = val; }
 
+	EWidgetType GetWidgetType() { return m_widgetType; }
+	uint32_t GetWidgetID() { return m_widgetID; }
+	uint32_t GetActionSpawnID() { return m_actionSpawnID; }
+	uint32_t GetLinkedSpawnID() { m_linkedSpawnID; }
+	uint32_t GetHouseID() { return m_houseID; }
+	uint32_t GetOpenDuration() { return m_openDuration; }
+	float GetWidgetX() { return m_widgetX; }
+	float GetWidgetY() { return m_widgetY; }
+	float GetWidgetZ() { return m_widgetZ; }
+	float GetOpenX() { return m_openX; }
+	float GetOpenY() { return m_openY; }
+	float GetOpenZ() { return m_openZ; }
+	float GetCloseX() { return m_closeX; }
+	float GetCloseY() { return m_closeY; }
+	float GetCloseZ() { return m_closeZ; }
+	float GetOpenHeading() { return m_openHeading; }
+	float GetCloseHeading() { return m_closeHeading; }
+	std::string GetOpenSoundFile() { return m_openSoundFile; }
+	std::string GetCloseSoundFile() { return m_closeSoundFile; }
+	bool GetIncludeHeading() { return m_includeHeading; }
+	bool GetIncludeLocation() { return m_includeLocation; }
+	uint32_t GetWidgetDatabaseID() { return m_widgetDatabaseID; }
+
 private:
 	EWidgetType m_widgetType;
 	uint32_t m_widgetID;

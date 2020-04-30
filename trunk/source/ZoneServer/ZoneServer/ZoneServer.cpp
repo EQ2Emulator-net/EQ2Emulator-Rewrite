@@ -14,6 +14,8 @@
 #include "../Packets/OP_ZoneInfoMsg_Packet.h"
 #include "../Packets/OP_SetRemoteCmdsMsg_Packet.h"
 #include "../Packets/OP_CreateGhostCmd_Packet.h"
+#include "../Packets/OP_CreateSignWidgetCmd_Packet.h"
+#include "../Packets/OP_CreateWidgetCmd_Packet.h"
 #include "../Packets/OP_EqDestroyGhostCmd_Packet.h"
 
 // Spawns
@@ -199,6 +201,7 @@ void ZoneServer::SendCharacterInfo(std::shared_ptr<Client> client) {
 	entity->SetX(GetSafeX(), false);
 	entity->SetY(GetSafeY(), false);
 	entity->SetZ(GetSafeZ(), false);
+	entity->SetIsPlayer(true, false);
 	
 	m_playerClientList[entity->GetID()] = client;
 
@@ -239,7 +242,34 @@ void ZoneServer::SendSpawnToClient(std::shared_ptr<Spawn> spawn, std::shared_ptr
 	if (client->WasSentSpawn(spawn))
 		return;
 
-	OP_CreateGhostCmd_Packet* ghost = new OP_CreateGhostCmd_Packet(client->GetVersion());
+	OP_CreateGhostCmd_Packet* ghost = nullptr;
+	if (spawn->GetSignData()) {
+		ghost = new OP_CreateSignWidgetCmd_Packet(client->GetVersion());
+		OP_CreateSignWidgetCmd_Packet* sign = static_cast<OP_CreateSignWidgetCmd_Packet*>(ghost);
+		sign->signData.title = spawn->GetSignData()->GetTitle();
+		sign->signData.description = spawn->GetSignData()->GetDescription();
+		sign->signData.distance = spawn->GetSignData()->GetDistance();
+		sign->signData.show = true;
+		// language...
+		if (spawn->GetWidgetData()) {
+			OP_CreateWidgetCmd_Packet* widget = static_cast<OP_CreateWidgetCmd_Packet*>(ghost);
+			widget->widgetData.widgetID = spawn->GetWidgetData()->GetWidgetID();
+			widget->widgetData.widgetX = spawn->GetWidgetData()->GetWidgetX();
+			widget->widgetData.widgetY = spawn->GetWidgetData()->GetWidgetY();
+			widget->widgetData.widgetZ = spawn->GetWidgetData()->GetWidgetZ();
+		}
+	}
+	else if (spawn->GetWidgetData()) {
+		ghost = new OP_CreateWidgetCmd_Packet(client->GetVersion());
+		OP_CreateWidgetCmd_Packet* widget = static_cast<OP_CreateWidgetCmd_Packet*>(ghost);
+		widget->widgetData.widgetID = spawn->GetWidgetData()->GetWidgetID();
+		widget->widgetData.widgetX = spawn->GetWidgetData()->GetWidgetX();
+		widget->widgetData.widgetY = spawn->GetWidgetData()->GetWidgetY();
+		widget->widgetData.widgetZ = spawn->GetWidgetData()->GetWidgetZ();
+	}
+	else
+		ghost = new OP_CreateGhostCmd_Packet(client->GetVersion());
+
 	ghost->InsertSpawnData(client, spawn, client->AddSpawnToIndexMap(spawn));
 	ghost->SetEncodedBuffers(client, ghost->header.index);
 	spawn->AddClient(client, ghost->vis.CalculateCRC(), spawn->GetVisUpdateTag());
@@ -364,13 +394,75 @@ void ZoneServer::AddNPCSpawnLocation(uint32_t id, std::shared_ptr<SpawnLocation>
 		LogWarn(LOG_NPC, 0, "Attempt to load duplicate NPC Spawn Location (%u).", id);
 }
 
+void ZoneServer::AddObjectSpawnLocation(uint32_t id, std::shared_ptr<SpawnLocation> location) {
+	std::map<uint32_t, std::shared_ptr<SpawnLocation> >::iterator itr = m_objectSpawnLocations.find(id);
+	if (itr == m_objectSpawnLocations.end())
+		m_objectSpawnLocations[id] = location;
+	else
+		LogWarn(LOG_NPC, 0, "Attempt to load duplicate Object Spawn Location (%u).", id);
+}
+
+void ZoneServer::AddWidgetSpawnLocation(uint32_t id, std::shared_ptr<SpawnLocation> location) {
+	std::map<uint32_t, std::shared_ptr<SpawnLocation> >::iterator itr = m_widgetSpawnLocations.find(id);
+	if (itr == m_widgetSpawnLocations.end())
+		m_widgetSpawnLocations[id] = location;
+	else
+		LogWarn(LOG_NPC, 0, "Attempt to load duplicate Widget Spawn Location (%u).", id);
+}
+
+void ZoneServer::AddSignSpawnLocation(uint32_t id, std::shared_ptr<SpawnLocation> location) {
+	std::map<uint32_t, std::shared_ptr<SpawnLocation> >::iterator itr = m_signSpawnLocations.find(id);
+	if (itr == m_signSpawnLocations.end())
+		m_signSpawnLocations[id] = location;
+	else
+		LogWarn(LOG_NPC, 0, "Attempt to load duplicate Sign Spawn Location (%u).", id);
+}
+
+void ZoneServer::AddGroundSpawnSpawnLocation(uint32_t id, std::shared_ptr<SpawnLocation> location) {
+	std::map<uint32_t, std::shared_ptr<SpawnLocation> >::iterator itr = m_groundspawnSpawnLocations.find(id);
+	if (itr == m_groundspawnSpawnLocations.end())
+		m_groundspawnSpawnLocations[id] = location;
+	else
+		LogWarn(LOG_NPC, 0, "Attempt to load duplicate GroundSpawn Spawn Location (%u).", id);
+}
+
 void ZoneServer::ProcessSpawnLocations() {
+	ProcessSpawnLocations(SpawnEntryType::ENPC);
+	ProcessSpawnLocations(SpawnEntryType::EOBJECT);
+	ProcessSpawnLocations(SpawnEntryType::EWIDGET);
+	ProcessSpawnLocations(SpawnEntryType::ESIGN);
+	ProcessSpawnLocations(SpawnEntryType::EGROUNDSPAWN);
+
+	TryActivateCells();
+}
+
+void ZoneServer::ProcessSpawnLocations(SpawnEntryType type) {
+	std::map<uint32_t, std::shared_ptr<SpawnLocation> >* list = nullptr;
+	switch (type) {
+	case SpawnEntryType::ENPC:
+		list = &m_npcSpawnLocations;
+		break;
+	case SpawnEntryType::EOBJECT:
+		list = &m_objectSpawnLocations;
+		break;
+	case SpawnEntryType::EWIDGET:
+		list = &m_widgetSpawnLocations;
+		break;
+	case SpawnEntryType::ESIGN:
+		list = &m_signSpawnLocations;
+		break;
+	case SpawnEntryType::EGROUNDSPAWN:
+		list = &m_groundspawnSpawnLocations;
+		break;
+	}
+
+	if (!list)
+		return;
 
 	// TODO: For instances load spawns that should be removed
 
-	// map is for spawn groups
 	std::map<uint32_t, bool> processed_spawn_locations;
-	for (std::pair<uint32_t, std::shared_ptr<SpawnLocation> > kvp : m_npcSpawnLocations) {
+	for (std::pair<uint32_t, std::shared_ptr<SpawnLocation> > kvp : *list) {
 		std::shared_ptr<SpawnLocation> sl = kvp.second;
 		if (!sl)
 			continue;
@@ -389,7 +481,6 @@ void ZoneServer::ProcessSpawnLocations() {
 		ProcessSpawnLocation(sl);
 	}
 
-	TryActivateCells();
 }
 
 void ZoneServer::ProcessSpawnLocation(std::shared_ptr<SpawnLocation> sl, bool respawn) {
@@ -449,26 +540,74 @@ std::shared_ptr<Entity> ZoneServer::AddNPCSpawn(std::shared_ptr<SpawnLocation> s
 		//if (spawnLocation->expire_time > 0)
 			//AddSpawnExpireTimer(npc, spawnLocation->expire_time, spawnLocation->expire_offset);
 		//AddLoot(npc);
-		AddSpawn(npc);
+		AddSpawn(npc, SpawnEntryType::ENPC);
 	}
 
 	return npc;
 }
 
 std::shared_ptr<Object> ZoneServer::AddObjectSpawn(std::shared_ptr<SpawnLocation> spawnLocation, std::shared_ptr<SpawnEntry> spawnEntry) {
-	return nullptr;
+	std::shared_ptr<Object> object = GetNewObject(spawnEntry->spawn_id);
+	if (object) {
+		DeterminePosition(spawnLocation, object);
+		object->SetSpawnLocationID(spawnEntry->spawn_location_id);
+		object->SetSpawnEntryID(spawnEntry->spawn_entry_id);
+		object->SetRespawnTime(spawnLocation->respawn);
+		object->SetExpireTime(spawnLocation->expire_time);
+		//if (spawnLocation->expire_time > 0)
+			//AddSpawnExpireTimer(object, spawnLocation->expire_time, spawnLocation->expire_offset);
+		AddSpawn(object, SpawnEntryType::EOBJECT);
+	}
+
+	return object;
 }
 
 std::shared_ptr<Spawn> ZoneServer::AddWidgetSpawn(std::shared_ptr<SpawnLocation> spawnLocation, std::shared_ptr<SpawnEntry> spawnEntry) {
-	return nullptr;
+	std::shared_ptr<Spawn> widget = GetNewWidget(spawnEntry->spawn_id);
+	if (widget) {
+		DeterminePosition(spawnLocation, widget);
+		widget->SetSpawnLocationID(spawnEntry->spawn_location_id);
+		widget->SetSpawnEntryID(spawnEntry->spawn_entry_id);
+		widget->SetRespawnTime(spawnLocation->respawn);
+		widget->SetExpireTime(spawnLocation->expire_time);
+		//if (spawnLocation->expire_time > 0)
+			//AddSpawnExpireTimer(widget, spawnLocation->expire_time, spawnLocation->expire_offset);
+		AddSpawn(widget, SpawnEntryType::EWIDGET);
+	}
+
+	return widget;
 }
 
 std::shared_ptr<Spawn> ZoneServer::AddSignSpawn(std::shared_ptr<SpawnLocation> spawnLocation, std::shared_ptr<SpawnEntry> spawnEntry) {
-	return nullptr;
+	std::shared_ptr<Spawn> sign = GetNewSign(spawnEntry->spawn_id);
+	if (sign) {
+		DeterminePosition(spawnLocation, sign);
+		sign->SetSpawnLocationID(spawnEntry->spawn_location_id);
+		sign->SetSpawnEntryID(spawnEntry->spawn_entry_id);
+		sign->SetRespawnTime(spawnLocation->respawn);
+		sign->SetExpireTime(spawnLocation->expire_time);
+		//if (spawnLocation->expire_time > 0)
+			//AddSpawnExpireTimer(sign, spawnLocation->expire_time, spawnLocation->expire_offset);
+		AddSpawn(sign, SpawnEntryType::ESIGN);
+	}
+
+	return sign;
 }
 
 std::shared_ptr<GroundSpawn> ZoneServer::AddGroundSpawnSpawn(std::shared_ptr<SpawnLocation> spawnLocation, std::shared_ptr<SpawnEntry> spawnEntry) {
-	return nullptr;
+	std::shared_ptr<GroundSpawn> groundSpawn = GetNewGroundSpawn(spawnEntry->spawn_id);
+	if (groundSpawn) {
+		DeterminePosition(spawnLocation, groundSpawn);
+		groundSpawn->SetSpawnLocationID(spawnEntry->spawn_location_id);
+		groundSpawn->SetSpawnEntryID(spawnEntry->spawn_entry_id);
+		groundSpawn->SetRespawnTime(spawnLocation->respawn);
+		groundSpawn->SetExpireTime(spawnLocation->expire_time);
+		//if (spawnLocation->expire_time > 0)
+			//AddSpawnExpireTimer(groundSpawn, spawnLocation->expire_time, spawnLocation->expire_offset);
+		AddSpawn(groundSpawn, SpawnEntryType::EGROUNDSPAWN);
+	}
+
+	return groundSpawn;
 }
 
 std::shared_ptr<Entity> ZoneServer::GetNewNPC(uint32_t id) {
@@ -480,19 +619,35 @@ std::shared_ptr<Entity> ZoneServer::GetNewNPC(uint32_t id) {
 }
 
 std::shared_ptr<Object> ZoneServer::GetNewObject(uint32_t id) {
-	return nullptr;
+	std::map<uint32_t, std::shared_ptr<Object> >::iterator itr = m_masterObjectList.find(id);
+	if (itr != m_masterObjectList.end())
+		return std::make_shared<Object>(itr->second);
+	else
+		return nullptr;
 }
 
 std::shared_ptr<Spawn> ZoneServer::GetNewWidget(uint32_t id) {
-	return nullptr;
+	std::map<uint32_t, std::shared_ptr<Spawn> >::iterator itr = m_masterWidgetList.find(id);
+	if (itr != m_masterWidgetList.end())
+		return std::make_shared<Spawn>(itr->second);
+	else
+		return nullptr;
 }
 
 std::shared_ptr<Spawn> ZoneServer::GetNewSign(uint32_t id) {
-	return nullptr;
+	std::map<uint32_t, std::shared_ptr<Spawn> >::iterator itr = m_masterSignList.find(id);
+	if (itr != m_masterSignList.end())
+		return std::make_shared<Spawn>(itr->second);
+	else
+		return nullptr;
 }
 
 std::shared_ptr<GroundSpawn> ZoneServer::GetNewGroundSpawn(uint32_t id) {
-	return nullptr;
+	std::map<uint32_t, std::shared_ptr<GroundSpawn> >::iterator itr = m_masterGroundSpawnList.find(id);
+	if (itr != m_masterGroundSpawnList.end())
+		return std::make_shared<GroundSpawn>(itr->second);
+	else
+		return nullptr;
 }
 
 void ZoneServer::DeterminePosition(std::shared_ptr<SpawnLocation> spawnLocation, std::shared_ptr<Spawn> spawn) {
@@ -525,12 +680,28 @@ void ZoneServer::DeterminePosition(std::shared_ptr<SpawnLocation> spawnLocation,
 	spawn->SetSpawnLocationPlacementID(spawnLocation->placement_id);
 }
 
-void ZoneServer::AddSpawn(std::shared_ptr<Spawn> spawn) {
+void ZoneServer::AddSpawn(std::shared_ptr<Spawn> spawn, SpawnEntryType type) {
 	spawn->SetZone(shared_from_this());
 	spawn->PopUpdateFlags();
 
 	// TODO: check for type to push to the correct list
-	m_entityList.push_back(std::static_pointer_cast<Entity>(spawn));
+	switch (type) {
+	case SpawnEntryType::ENPC:
+		m_entityList.push_back(std::static_pointer_cast<Entity>(spawn));
+		break;
+	case SpawnEntryType::EOBJECT:
+		m_objectList.push_back(std::static_pointer_cast<Object>(spawn));
+		break;
+	case SpawnEntryType::EWIDGET:
+		m_widgetList.push_back(spawn);
+		break;
+	case SpawnEntryType::ESIGN:
+		m_signList.push_back(spawn);
+		break;
+	case SpawnEntryType::EGROUNDSPAWN:
+		m_groundspawnList.push_back(std::static_pointer_cast<GroundSpawn>(spawn));
+		break;
+	}
 
 	// wrong just being lazy to get spawn to show (100 is cell size, make it a rule)
 	int32_t x = static_cast<int32_t>(std::floor(spawn->GetX() / 100.f));
@@ -701,10 +872,25 @@ void ZoneServer::LoadThread() {
 	database.LoadGroundSpawnsForZone(this);
 	LogInfo(LOG_NPC, 0, "-Load GroundSpawn data complete!");
 
-	// TODO: Spawn locations
 	LogInfo(LOG_NPC, 0, "-Loading NPC spawn location data...");
 	database.LoadNPCLocations(this);
 	LogInfo(LOG_NPC, 0, "-Load NPC spawn location data complete!");
+
+	LogInfo(LOG_NPC, 0, "-Loading Object spawn location data...");
+	database.LoadObjectLocations(this);
+	LogInfo(LOG_NPC, 0, "-Load Object spawn location data complete!");
+
+	LogInfo(LOG_NPC, 0, "-Loading Widget spawn location data...");
+	database.LoadWidgetLocations(this);
+	LogInfo(LOG_NPC, 0, "-Load Widget spawn location data complete!");
+
+	LogInfo(LOG_NPC, 0, "-Loading Sign spawn location data...");
+	database.LoadSignLocations(this);
+	LogInfo(LOG_NPC, 0, "-Load Sign spawn location data complete!");
+
+	LogInfo(LOG_NPC, 0, "-Loading GroundSpawn spawn location data...");
+	database.LoadGroundSpawnLocations(this);
+	LogInfo(LOG_NPC, 0, "-Load GroundSpawn spawn location data complete!");
 
 	// TODO: process spawn locations (put spawn in world)
 	ProcessSpawnLocations();

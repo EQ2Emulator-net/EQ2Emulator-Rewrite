@@ -30,7 +30,7 @@ void Cell::Process() {
 
 void Cell::AddSpawn(std::shared_ptr<Spawn> spawn) {
 	m_spawnList.push_back(spawn);
-	LogDebug(LOG_ZONE, 0, "Adding spawn (%s) to cell (%i, %i)", spawn->GetName().c_str(), m_cellCoordinates.first, m_cellCoordinates.second);
+	LogDebug(LOG_ZONE, 7, "Adding spawn (%s) to cell (%i, %i)", spawn->GetName().c_str(), m_cellCoordinates.first, m_cellCoordinates.second);
 }
 
 void Cell::RemoveSpawn(std::shared_ptr<Spawn> spawn) {
@@ -38,7 +38,7 @@ void Cell::RemoveSpawn(std::shared_ptr<Spawn> spawn) {
 	for (itr = m_spawnList.begin(); itr != m_spawnList.end(); ) {
 		if (EmuWeakCmp((*itr), spawn)) {
 			itr = m_spawnList.erase(itr);
-			LogDebug(LOG_ZONE, 0, "Removing spawn (%s) from cell (%i, %i)", spawn->GetName().c_str(), m_cellCoordinates.first, m_cellCoordinates.second);
+			LogDebug(LOG_ZONE, 7, "Removing spawn (%s) from cell (%i, %i)", spawn->GetName().c_str(), m_cellCoordinates.first, m_cellCoordinates.second);
 		}
 		else
 			itr++;

@@ -25,6 +25,17 @@ public:
 	void SetSignType(ESignType val) { m_signType = val; }
 	void SetSignDatabseID(uint32_t val) { m_signDatabaseID = val; }
 
+	uint32_t GetZoneID() { return m_zoneID; }
+	std::string GetTitle() { return m_title; }
+	std::string GetDescription() { return m_description; }
+	float GetDistance() { return m_distance; }
+	float GetZoneX() { return m_zoneX; }
+	float GetZoneY() { return m_zoneY; }
+	float GetZoneZ() { return m_zoneZ; }
+	float GetZoneHeading() { return m_zoneHeading; }
+	ESignType GetSignType() { return m_signType; }
+	uint32_t GetSignDatabaseID() { return m_signDatabaseID; }
+
 private:
 	uint32_t m_zoneID;
 	std::string m_title;

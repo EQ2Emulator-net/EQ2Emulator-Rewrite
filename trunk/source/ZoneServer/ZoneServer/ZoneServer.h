@@ -55,8 +55,13 @@ public:
 	std::shared_ptr<GroundSpawn> GetGroundSpawnFromMasterList(uint32_t databaseID);
 
 	void AddNPCSpawnLocation(uint32_t id, std::shared_ptr<SpawnLocation> location);
+	void AddObjectSpawnLocation(uint32_t id, std::shared_ptr<SpawnLocation> location);
+	void AddWidgetSpawnLocation(uint32_t id, std::shared_ptr<SpawnLocation> location);
+	void AddSignSpawnLocation(uint32_t id, std::shared_ptr<SpawnLocation> location);
+	void AddGroundSpawnSpawnLocation(uint32_t id, std::shared_ptr<SpawnLocation> location);
 	// TODO: locations for other types of spawns
 	void ProcessSpawnLocations(); // private?
+	void ProcessSpawnLocations(SpawnEntryType type); // private?
 	void ProcessSpawnLocation(std::shared_ptr<SpawnLocation> sl, bool respawn = false); // private?
 	std::shared_ptr<Entity> AddNPCSpawn(std::shared_ptr<SpawnLocation> spawnLocation, std::shared_ptr<SpawnEntry> spawnEntry);
 	std::shared_ptr<Object> AddObjectSpawn(std::shared_ptr<SpawnLocation> spawnLocation, std::shared_ptr<SpawnEntry> spawnEntry);
@@ -69,7 +74,7 @@ public:
 	std::shared_ptr<Spawn> GetNewSign(uint32_t id);
 	std::shared_ptr<GroundSpawn> GetNewGroundSpawn(uint32_t id);
 	void DeterminePosition(std::shared_ptr<SpawnLocation> spawnLocation, std::shared_ptr<Spawn> spawn); // private?
-	void AddSpawn(std::shared_ptr<Spawn> spawn);
+	void AddSpawn(std::shared_ptr<Spawn> spawn, SpawnEntryType type);
 
 	std::shared_ptr<Cell> GetCell(std::pair<int32_t, int32_t> coordinates);
 	void AddSpawnToCell(std::shared_ptr<Spawn>, std::pair<int32_t, int32_t> cellCoords);
@@ -122,6 +127,10 @@ private:
 
 	// Lists for spawn locations
 	std::map<uint32_t, std::shared_ptr<SpawnLocation> > m_npcSpawnLocations;
+	std::map<uint32_t, std::shared_ptr<SpawnLocation> > m_objectSpawnLocations;
+	std::map<uint32_t, std::shared_ptr<SpawnLocation> > m_widgetSpawnLocations;
+	std::map<uint32_t, std::shared_ptr<SpawnLocation> > m_signSpawnLocations;
+	std::map<uint32_t, std::shared_ptr<SpawnLocation> > m_groundspawnSpawnLocations;
 
 	std::thread m_loadThread;
 
