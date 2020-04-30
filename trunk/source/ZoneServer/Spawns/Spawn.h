@@ -531,35 +531,27 @@ public:
 	}
 	void SetName(std::string value, bool updateFlags = true) {
 		SetTitle(&m_titleStruct.name, value, updateFlags);
-		m_titleStruct.m_updateFlags.nameChanged = true;
 	}
 	void SetUnknown1(uint8_t value, bool updateFlags = true) {
 		SetTitle(&m_titleStruct.unknown1, value, updateFlags);
-		m_titleStruct.m_updateFlags.unknown1Changed = true;
 	}
 	void SetIsPlayer(uint8_t value, bool updateFlags = true) {
 		SetTitle(&m_titleStruct.isPlayer, value, updateFlags);
-		m_titleStruct.m_updateFlags.isPlayerChanged = true;
 	}
 	void SetLastName(std::string value, bool updateFlags = true) {
 		SetTitle(&m_titleStruct.last_name, value, updateFlags);
-		m_titleStruct.m_updateFlags.lastNameChanged = true;
 	}
 	void SetSuffixTitle(std::string value, bool updateFlags = true) {
 		SetTitle(&m_titleStruct.suffix_title, value, updateFlags);
-		m_titleStruct.m_updateFlags.suffixChanged = true;
 	}
 	void SetPrefixTitle(std::string value, bool updateFlags = true) {
 		SetTitle(&m_titleStruct.prefix_title, value, updateFlags);
-		m_titleStruct.m_updateFlags.prefixChanged = true;
 	}
 	void SetPvPTitle(std::string value, bool updateFlags = true) {
 		SetTitle(&m_titleStruct.pvp_title, value, updateFlags);
-		m_titleStruct.m_updateFlags.pvpChanged = true;
 	}
 	void SetGuild(std::string value, bool updateFlags = true) {
 		SetTitle(&m_titleStruct.guild, value, updateFlags);
-		m_titleStruct.m_updateFlags.guildChanged = true;
 	}
 	void SetSpawnPositionData(const SpawnPositionStruct& pos, uint32_t timestamp) {
 		movementTimestamp = timestamp;

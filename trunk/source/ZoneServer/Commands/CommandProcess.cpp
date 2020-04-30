@@ -31,6 +31,7 @@ void CommandProcess::RegisterCommands() {
 	RegisterCommandHandler(14, CommandEmote);
 	RegisterCommandHandler(30, CommandOOC);
 	RegisterCommandHandler(402, CommandGrid);
+	RegisterCommandHandler(219, CommandSpawnSet);
 
 }
 

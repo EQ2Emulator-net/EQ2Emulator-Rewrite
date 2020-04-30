@@ -396,19 +396,8 @@ public:
 	void RegisterElements();
 };
 
-struct TitleUpdateFlags {
-	bool nameChanged : 1;
-	bool unknown1Changed : 1;
-	bool isPlayerChanged : 1;
-	bool lastNameChanged : 1;
-	bool suffixChanged : 1;
-	bool prefixChanged : 1;
-	bool pvpChanged : 1;
-	bool guildChanged : 1;
-};
-
 struct SpawnTitleStruct {
-	SpawnTitleStruct() : isPlayer(false), unknown1(0), m_updateFlagsByte(0) {}
+	SpawnTitleStruct() : isPlayer(false), unknown1(0) {}
 
 	std::string name;
 	uint8_t unknown1;
@@ -418,11 +407,6 @@ struct SpawnTitleStruct {
 	std::string prefix_title;
 	std::string pvp_title;
 	std::string guild;
-
-	union {
-		TitleUpdateFlags m_updateFlags;
-		uint8_t m_updateFlagsByte;
-	};
 };
 
 class Substruct_SpawnTitleStruct : public SpawnTitleStruct, public PacketSubstruct {
