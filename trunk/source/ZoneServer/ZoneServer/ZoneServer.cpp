@@ -203,6 +203,7 @@ void ZoneServer::SendCharacterInfo(std::shared_ptr<Client> client) {
 	entity->SetY(GetSafeY(), false);
 	entity->SetZ(GetSafeZ(), false);
 	entity->SetIsPlayer(true, false);
+	entity->SetMovementMode(0, false);
 	
 	m_playerClientList[entity->GetID()] = client;
 

@@ -30,10 +30,14 @@ Spawn::Spawn(std::shared_ptr<Spawn> in) {
 	movementTimestamp = Timer::GetServerTime();
 	m_titleStruct = *in->GetTitleStruct();
 	m_updateFlagsByte = 0;
-	if (in->GetSignData() != nullptr)
+	if (in->GetSignData() != nullptr) {
 		signData = std::make_unique<Sign>(*in->GetSignData());
-	if (in->GetWidgetData() != nullptr)
+		m_posStruct.moveType = 0.34375f;
+	}
+	if (in->GetWidgetData() != nullptr) {
 		widgetData = std::make_unique<Widget>(*in->GetWidgetData());
+		m_posStruct.moveType = 0.34375f;
+	}
 	m_spawnID = GetNextID();
 	m_spawnDatabaseID = in->GetDatabaseID();
 	m_sizeOffset = in->GetSizeOffset();
@@ -57,6 +61,8 @@ Spawn::Spawn(std::shared_ptr<Spawn> in) {
 	m_origHeading = 0.0f;
 	m_origPitch = 0.0f;
 	m_origRoll = 0.0f;
+
+	m_posStruct.movementMode = 2;
 
 	if (m_posStruct.collisionRadius == 0.0f)
 		m_posStruct.collisionRadius = 1.0f;

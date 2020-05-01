@@ -16,6 +16,7 @@ public:
 		m_numberOfHarvests = in->GetNumberOfHarvests();
 		m_numberAttemptsPerHarvest = in->GetNumberAttemptsPerHarvest();
 		m_groundSpawnID = in->GetGroundSpawnID();
+		SetMoveType(0.5f, false);
 	}
 
 	void SetGroundSpawnDatabaseID(uint32_t val) { m_groundSpawnDatabaseID = val; }
