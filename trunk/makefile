@@ -39,7 +39,10 @@ endif
 # Formatting helpers
 SourcePattern=source/%.cpp
 ObjPattern=obj/$(SOLUTION)/$(BUILD)/%.o
+LuaSourcePattern=source/Lua/%.c
+LuaObjPattern = obj/Lua/$(BUILD)/%.o
 SourceToObj=$(patsubst $(SourcePattern),$(ObjPattern),$1)
+LuaSourceToObj=$(patsubst $(LuaSourcePattern),$(LuaObjPattern),$1)
 # Recursive wildcard function (searches the supplied directory and every sub directory for files matching a pattern)
 rwildcard=$(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2))
 
@@ -47,17 +50,19 @@ rwildcard=$(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2))
 Common_Source		= $(call rwildcard,source/common/,*.cpp)
 World_Source		= $(call rwildcard,source/WorldServer/,*.cpp)
 Zone_Source         = $(call rwildcard,source/ZoneServer/,*.cpp)
+Lua_Source          = $(call rwildcard,source/Lua/,*.c)
 
 Common_Objects      = $(call SourceToObj,$(Common_Source))
 World_Objects       = $(call SourceToObj,$(World_Source))
 Zone_Objects        = $(call SourceToObj,$(Zone_Source))
+Lua_Objects         = $(call LuaSourceToObj,$(Lua_Source))
 
 ifeq ($(SOLUTION),world)
 	Solution_Objects := $(World_Objects) $(Common_Objects) 
 endif
 
 ifeq ($(SOLUTION),zone)
-	Solution_Objects := $(Zone_Objects) $(Common_Objects)
+	Solution_Objects := $(Zone_Objects) $(Common_Objects) $(Lua_Objects)
 endif
 
 # Recipes	
@@ -67,6 +72,10 @@ $(APP):$(Solution_Objects)
 	@echo Finished building $(SOLUTION).
 
 $(ObjPattern): $(SourcePattern)
+	@mkdir -p $(dir $@)
+	$(CXX) $(CPPFLAGS) $(C_Flags) $(D_Flags) $(W_Flags) -c $< -o $@
+	
+$(LuaObjPattern): $(LuaSourcePattern)
 	@mkdir -p $(dir $@)
 	$(CXX) $(CPPFLAGS) $(C_Flags) $(D_Flags) $(W_Flags) -c $< -o $@
 	
@@ -95,6 +104,9 @@ clean_world:
 	
 clean_zone:
 	rm -rf obj/zone/ $(wildcard bin/eq2zone*.eq2bin)
+	
+clean_lua:
+	rm -rf obj/Lua/
 
 clean_all:
 	rm -rf obj/ $(wildcard bin/*.eq2bin)

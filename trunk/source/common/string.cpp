@@ -4,9 +4,9 @@
 
 size_t
 strlcpy(char *dst, const char *src, size_t size) {
-    register char *d = dst;
-    register const char *s = src;
-    register size_t n = size;
+    char *d = dst;
+    const char *s = src;
+    size_t n = size;
 
     if (n != 0 && --n != 0) {
         do {
