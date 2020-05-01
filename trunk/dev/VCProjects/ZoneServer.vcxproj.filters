@@ -348,7 +348,7 @@
     <ClCompile Include="..\..\source\Lua\lzio.c">
       <Filter>Lua</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\VGEmu\trunk\src\Lua\lapi.c">
+    <ClCompile Include="..\..\source\Lua\lapi.c">
       <Filter>Lua</Filter>
     </ClCompile>
   </ItemGroup>

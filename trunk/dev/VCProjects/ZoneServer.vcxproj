@@ -19,9 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\VGEmu\trunk\src\Lua\lapi.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="..\..\source\common\Classes.cpp" />
     <ClCompile Include="..\..\source\common\CommonDatabase.cpp" />
     <ClCompile Include="..\..\source\common\ConfigReader.cpp" />
@@ -58,6 +55,9 @@
     <ClCompile Include="..\..\source\common\timer.cpp" />
     <ClCompile Include="..\..\source\common\UDPServer.cpp" />
     <ClCompile Include="..\..\source\common\util.cpp" />
+    <ClCompile Include="..\..\source\Lua\lapi.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\..\source\Lua\lauxlib.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
