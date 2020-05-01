@@ -183,6 +183,7 @@
     <ClCompile Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\Cell.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\Client.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\ZoneServer\MasterZoneLookup.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\ZoneOperator.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\ZoneServer.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -378,6 +379,7 @@
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h" />
     <ClInclude Include="..\..\source\ZoneServer\ZoneServer\Cell.h" />
     <ClInclude Include="..\..\source\ZoneServer\ZoneServer\Client.h" />
+    <ClInclude Include="..\..\source\ZoneServer\ZoneServer\MasterZoneLookup.h" />
     <ClInclude Include="..\..\source\ZoneServer\ZoneServer\ZoneServer.h" />
     <ClInclude Include="..\..\source\ZoneServer\ZoneServer\ZoneOperator.h" />
     <ClInclude Include="stdafx.h" />

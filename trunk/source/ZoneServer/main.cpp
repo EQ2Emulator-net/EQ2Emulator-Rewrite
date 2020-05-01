@@ -13,6 +13,7 @@
 #include "../common/Rules.h"
 #include "Chat/ChatFilterLookup.h"
 #include "Spawns/EntityCommands.h"
+#include "ZoneServer/MasterZoneLookup.h"
 
 ZoneDatabase database;
 Classes classes;
@@ -21,6 +22,7 @@ CommandProcess g_commandProcess;
 RuleManager g_ruleManager;
 ChatFilterLookup g_chatFilterLookup;
 MasterEntityCommandList g_masterEntityCommandList;
+MasterZoneLookup g_masterZoneLookup;
 
 int main() {
 	bool looping = true;
@@ -66,6 +68,11 @@ int main() {
 	if (success) {
 		LogDebug(LOG_DATABASE, 0, "Loading entity commands...");
 		success = database.LoadEntityCommands(g_masterEntityCommandList);
+	}
+
+	if (success) {
+		LogDebug(LOG_DATABASE, 0, "Loading master zone list...");
+		success = database.LoadMasterZoneList(g_masterZoneLookup);
 	}
 
 	if (success)

@@ -360,6 +360,9 @@
     <ClCompile Include="..\..\source\ZoneServer\Lua\LuaInterface.cpp">
       <Filter>source\Lua</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\ZoneServer\MasterZoneLookup.cpp">
+      <Filter>source\ZoneServer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h">
@@ -934,6 +937,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\Lua\LuaInterface.h">
       <Filter>source\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\ZoneServer\MasterZoneLookup.h">
+      <Filter>source\ZoneServer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

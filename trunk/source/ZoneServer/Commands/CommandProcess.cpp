@@ -14,9 +14,11 @@
 #include "../Packets/OP_HearChatCmd_Packet.h"
 #include "../ZoneServer/ZoneServer.h"
 #include "../Packets/OP_EqCannedEmoteCmd_Packet.h"
+#include "../ZoneServer/MasterZoneLookup.h"
 
 extern ZoneOperator g_zoneOperator;
 extern ZoneServer g_zoneServer;
+extern MasterZoneLookup g_masterZoneLookup;
 
 CommandProcess::CommandProcess() {
 	RegisterCommands();
@@ -192,12 +194,32 @@ void CommandProcess::CommandTest(const std::shared_ptr<Client>& client, Separato
 }
 
 void CommandProcess::CommandZone(const std::shared_ptr<Client>& client, Separator& sep) {
-	//Add more checks/syntax for this, like zone names/instance ids
-	if (!sep.IsNumber(0)) {
-		return;
-	}
+	//Add more checks/syntax for this, like instance ids
+	uint32_t zone_id = 0;
+	std::string zone_name = "";
 
-	uint32_t zone_id = sep.GetUInt32(0);
+	if (sep.IsNumber(0)) {
+		zone_id = sep.GetUInt32(0);
+
+		MasterZoneDetails* details = g_masterZoneLookup.GetZoneInfoByID(zone_id);
+		if (!details) {
+			std::string message = "\\#FF0000 Unable to locate zone ID: " + to_string(zone_id);
+			client->chat.SendSimpleGameMessage(message.c_str());
+			return;
+		}
+	}
+	else {
+		zone_name = sep.GetString(0);
+
+		MasterZoneDetails* details = g_masterZoneLookup.GetZoneInfoByName(zone_name);
+		if (!details) {
+			std::string message = "\\#FF0000 Unable to locate zone name: " + zone_name;
+			client->chat.SendSimpleGameMessage(message.c_str());
+			return;
+		}
+
+		zone_id = details->id;
+	}
 
 	if (!g_zoneOperator.RequestZoneTransfer(client, zone_id, 0)) {
 		client->chat.SendSimpleGameMessage("\\#FF0000 You're already trying to zone. Please wait...");

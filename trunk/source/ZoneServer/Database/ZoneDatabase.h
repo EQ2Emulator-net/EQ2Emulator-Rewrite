@@ -38,6 +38,8 @@ public:
 
 	bool LoadEntityCommands(class MasterEntityCommandList& masterList);
 
+	bool LoadMasterZoneList(class MasterZoneLookup& lookup);
+
 private:
 	//The return value is the next indice in the query result
 	uint32_t ProcessSpawnTableFields(const std::shared_ptr<class Spawn>& spawn, class DatabaseResult& result);
