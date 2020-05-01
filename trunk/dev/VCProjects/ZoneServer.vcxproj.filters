@@ -58,6 +58,9 @@
     <Filter Include="Lua">
       <UniqueIdentifier>{4a687757-ac84-4a32-afd5-005b278e8fab}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\Lua">
+      <UniqueIdentifier>{028d56a8-6869-470a-a912-b245e332aafc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\ZoneServer\main.cpp">
@@ -350,6 +353,12 @@
     </ClCompile>
     <ClCompile Include="..\..\source\Lua\lapi.c">
       <Filter>Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Lua\LuaUserData.cpp">
+      <Filter>source\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Lua\LuaInterface.cpp">
+      <Filter>source\Lua</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -919,6 +928,12 @@
     </ClInclude>
     <ClInclude Include="..\..\source\Lua\lzio.h">
       <Filter>Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Lua\LuaUserData.h">
+      <Filter>source\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Lua\LuaInterface.h">
+      <Filter>source\Lua</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
