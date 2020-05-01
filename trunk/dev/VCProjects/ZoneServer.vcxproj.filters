@@ -246,6 +246,9 @@
     <ClCompile Include="..\..\source\ZoneServer\Commands\CommandSpawn.cpp">
       <Filter>source\Commands</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Spawns\EntityCommands.cpp">
+      <Filter>source\Spawns</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h">
@@ -733,6 +736,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_EqCannedEmoteCmd_Packet.h">
       <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Spawns\EntityCommands.h">
+      <Filter>source\Spawns</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

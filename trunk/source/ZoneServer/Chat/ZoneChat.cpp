@@ -43,7 +43,7 @@ void ZoneChat::HandleShout(const char* msg, const std::shared_ptr<Entity>& sende
 			continue;
 		}
 
-		if (uint16_t spawnID = client->GetIndexForSpawn(sender)) {
+		if (uint32_t spawnID = client->GetIDForSpawn(sender)) {
 			params.fromSpawnID = spawnID;
 		}
 		else {
@@ -69,7 +69,7 @@ void ZoneChat::HearChatClientsInRange(HearChatParams& params, const std::shared_
 			continue;
 		}
 
-		if (uint16_t spawnID = client->GetIndexForSpawn(sender)) {
+		if (uint32_t spawnID = client->GetIDForSpawn(sender)) {
 			params.fromSpawnID = spawnID;
 		}
 		else {

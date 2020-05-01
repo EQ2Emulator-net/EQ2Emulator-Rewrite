@@ -205,7 +205,7 @@ void ZoneServer::SendCharacterInfo(std::shared_ptr<Client> client) {
 	entity->SetIsPlayer(true, false);
 	entity->SetMovementMode(0, false);
 	
-	m_playerClientList[entity->GetID()] = client;
+	m_playerClientList[entity->GetServerID()] = client;
 
 	std::pair<int32_t, int32_t> cellCoords = entity->GetCellCoordinates();
 	LogWarn(LOG_PLAYER, 0, "New player in cell (%i, %i) player loc = (%f, %f, %f)", cellCoords.first, cellCoords.second, entity->GetX(), entity->GetY(), entity->GetZ());
@@ -843,7 +843,7 @@ void ZoneServer::TryDeactivateCellsForClient(std::shared_ptr<Client> client, std
 }
 
 std::shared_ptr<Client> ZoneServer::GetClientForSpawn(std::shared_ptr<Spawn> spawn) {
-	std::map<uint32_t, std::weak_ptr<Client> >::iterator itr = m_playerClientList.find(spawn->GetID());
+	std::map<uint32_t, std::weak_ptr<Client> >::iterator itr = m_playerClientList.find(spawn->GetServerID());
 	if (itr != m_playerClientList.end())
 		return itr->second.lock();
 

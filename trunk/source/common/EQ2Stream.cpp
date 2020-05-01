@@ -1005,7 +1005,7 @@ void EQ2Stream::SendSessionResponse() {
 void EQ2Stream::SendDisconnect(uint16_t reason) {
 	auto disconnect = new OP_SessionDisconnect_Packet;
 	disconnect->Session = htonl(Session);
-	disconnect->Reason = htons(reason);
+	disconnect->Reason = reason;
 
 	NonSequencedPush(disconnect);
 

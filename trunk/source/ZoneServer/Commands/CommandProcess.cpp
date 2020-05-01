@@ -182,15 +182,13 @@ void CommandProcess::CommandMove(const std::shared_ptr<Client>& client, Separato
 }
 
 void CommandProcess::CommandTest(const std::shared_ptr<Client>& client, Separator& sep) {
-	auto controller = client->GetController();
+	//auto controller = client->GetController();
 
-	auto target = controller->GetTarget();
+	//auto target = controller->GetTarget();
 
-	if (!target) {
-		return;
-	}
-
-	target->SetShowLevel(!target->ShouldShowLevel());
+	//if (!target) {
+	//	return;
+	//}
 }
 
 void CommandProcess::CommandZone(const std::shared_ptr<Client>& client, Separator& sep) {
@@ -338,9 +336,8 @@ void CommandProcess::CommandAFK(const std::shared_ptr<Client>& client, Separator
 	OP_EqCannedEmoteCmd_Packet* packet = new OP_EqCannedEmoteCmd_Packet(client->GetVersion());
 	if (player->IsAFK()) {
 		std::shared_ptr<Spawn> target = client->GetController()->GetTarget();
-		int16_t player_index = client->GetIndexForSpawn(player);
 
-		packet->spawn_id = player_index;
+		packet->spawn_id = client->GetIDForSpawn(player);
 
 		if (target) {
 			packet->emote_msg = player->GetName() + " tells " + target->GetName() + " that " + (player->GetGender() == 1 ? "he" : "she") + " is going afk.";
@@ -357,7 +354,7 @@ void CommandProcess::CommandAFK(const std::shared_ptr<Client>& client, Separator
 	}
 
 	std::string afk_message = player->IsAFK()? "You are now afk." : "You are no longer afk.";
-	client->chat.DisplayText("Narrative", afk_message, 0x00ff, false, "");
+	client->chat.DisplayText("Narrative", afk_message);
 
 	if (player->IsAFK())
 	{

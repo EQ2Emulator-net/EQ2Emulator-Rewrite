@@ -17,8 +17,8 @@ const uint32_t EntityFlagMerchant = 1 << 4;
 const uint32_t EntityFlagHideIcon = 1 << 9; //hides any special icons for this spawn
 const uint32_t EntityFlagInteractable = 1 << 10; //shows the hand icon
 const uint32_t EntityFlagNotTargetable = 1 << 11;
-const uint32_t EntityFlagIsTransport = 1 << 12; //guess
-//const uint32_t EntityFlagShowCommandIcon = 1 << 13; //Shows various icons depending on the spawn's entity commands
+const uint32_t EntityFlagIsTransport = 1 << 12;
+const uint32_t EntityFlagShowHouseIcon = 1 << 13;
 const uint32_t EntityFlagLootable = 1 << 14;
 const uint32_t EntityFlagInCombat = 1 << 15;
 const uint32_t EntityFlagAfk = 1 << 16; // Check if afk added in 1188 or if it was in icon previously
@@ -87,7 +87,7 @@ public:
 	float GetX() const { return m_posStruct.x; }
 	float GetY() const { return m_posStruct.y; }
 	float GetZ() const { return m_posStruct.z; }
-	uint32_t GetID() const { return m_spawnID; }
+	uint32_t GetServerID() const { return m_spawnID; }
 	uint32_t GetDatabaseID() { return m_spawnDatabaseID; }
 	void SetDatabaseID(uint32_t id) { m_spawnDatabaseID = id; }
 	std::string GetName() const { return m_titleStruct.name; }

@@ -144,11 +144,9 @@ void Spawn::Process() {
 			continue;
 		}
 
-		uint16_t index = client->GetIndexForSpawn(shared_from_this());
-
 		if (update.m_titleChanged) {
 			OP_UpdateTitleCmd_Packet p2(client->GetVersion());
-			p2.spawn_id = index;
+			p2.spawn_id = client->GetIDForSpawn(shared_from_this());
 
 			p2.name = m_titleStruct.name;
 			p2.unknown1 = m_titleStruct.unknown1;
@@ -161,6 +159,8 @@ void Spawn::Process() {
 
 			client->QueuePacket(p2);
 		}
+
+		uint16_t index = client->GetIndexForSpawn(shared_from_this());
 		
 		//Check vis first because we may not actually need to send an update for this client
 		if (bCheckVis) {

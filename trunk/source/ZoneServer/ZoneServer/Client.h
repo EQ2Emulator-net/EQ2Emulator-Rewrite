@@ -27,11 +27,13 @@ private:
 
 	uint32_t account_id;
 	uint32_t character_id;
-	std::atomic<uint16_t> m_nextSpawnIndex;
+	uint16_t m_nextSpawnIndex;
+	uint32_t m_nextSpawnID;
 
 	std::weak_ptr<ZoneServer> m_zone;
 	std::map<std::weak_ptr<Spawn>, uint16_t, std::owner_less<std::weak_ptr<Spawn>> > m_spawnIndexMap;
-	std::map<uint16_t, std::weak_ptr<Spawn>> m_spawnLookupMap;
+	std::map<uint16_t, std::weak_ptr<Spawn>> m_spawnIndexLookupMap;
+	std::map<std::weak_ptr<Spawn>, uint32_t, std::owner_less<std::weak_ptr<Spawn>> > m_spawnIDMap;
 	std::shared_ptr<PlayerController> m_controller;
 
 public:
@@ -49,6 +51,8 @@ public:
 	void RemoveSpawnFromIndexMap(const std::shared_ptr<Spawn>& spawn);
 	uint16_t GetIndexForSpawn(std::shared_ptr<Spawn> spawn);
 	std::shared_ptr<Spawn> GetSpawnByIndex(uint16_t spawn_index);
+	uint32_t GetIDForSpawn(const std::shared_ptr<Spawn>& spawn);
+	std::shared_ptr<Spawn> GetSpawnByID(uint32_t id);
 	std::shared_ptr<PlayerController> GetController();
 
 	void SendBiography(uint32_t characterID);

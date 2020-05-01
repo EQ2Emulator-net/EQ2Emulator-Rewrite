@@ -14,7 +14,7 @@
 
 extern ZoneOperator g_zoneOperator;
 
-Client::Client(unsigned int ip, unsigned short port) : EQ2Stream(ip, port), chat(*this), m_nextSpawnIndex(1) {
+Client::Client(unsigned int ip, unsigned short port) : EQ2Stream(ip, port), chat(*this), m_nextSpawnIndex(1), m_nextSpawnID(1) {
 	account_id = 0;
 	character_id = 0;
 	m_controller = std::make_shared<PlayerController>();
@@ -104,17 +104,46 @@ bool Client::WasSentSpawn(const std::shared_ptr<Spawn>& spawn) {
 }
 
 uint16_t Client::AddSpawnToIndexMap(const std::shared_ptr<Spawn>& spawn) {
-	uint16_t index = m_nextSpawnIndex.fetch_add(1);
+	uint16_t index = 1;
+	if (m_nextSpawnIndex == 0xFFFF) {
+		//This client has exhausted the spawn indices available..find one that has opened back up
+		if (!m_spawnIndexLookupMap.empty()) {
+			//Should be impossible to be empty here but just incase
+			uint16_t tmp = 1;
+			uint16_t lowest = m_spawnIndexLookupMap.begin()->first;
+			if (tmp < lowest) {
+				index = tmp;
+			}
+			else {
+				tmp = lowest;
+				for (auto& itr : m_spawnIndexLookupMap) {
+					if (tmp++ < itr.first) {
+						index = tmp - 1;
+						break;
+					}
+				}
+			}
+		}
+	}
+	else index = m_nextSpawnIndex++;
+
+	uint32_t spawnID = m_nextSpawnID++;
+
 	m_spawnIndexMap[spawn] = index;
-	m_spawnLookupMap[index] = spawn;
+	m_spawnIndexLookupMap[index] = spawn;
+	m_spawnIDMap[spawn] = spawnID;
 	return index;
 }
 
 void Client::RemoveSpawnFromIndexMap(const std::shared_ptr<Spawn>& spawn) {
 	std::map<std::weak_ptr<Spawn>, uint16_t>::iterator itr = m_spawnIndexMap.find(spawn);
 	if (itr != m_spawnIndexMap.end()) {
-		m_spawnLookupMap.erase(itr->second);
+		m_spawnIndexLookupMap.erase(itr->second);
 		m_spawnIndexMap.erase(itr);
+	}
+	auto itr2 = m_spawnIDMap.find(spawn);
+	if (itr2 != m_spawnIDMap.end()) {
+		m_spawnIDMap.erase(itr2);
 	}
 }
 
@@ -129,9 +158,28 @@ uint16_t Client::GetIndexForSpawn(std::shared_ptr<Spawn> spawn) {
 }
 
 std::shared_ptr<Spawn> Client::GetSpawnByIndex(uint16_t spawn_index) {
-	auto itr = m_spawnLookupMap.find(spawn_index);
-	if (itr != m_spawnLookupMap.end()) {
+	auto itr = m_spawnIndexLookupMap.find(spawn_index);
+	if (itr != m_spawnIndexLookupMap.end()) {
 		return itr->second.lock();
+	}
+
+	return std::shared_ptr<Spawn>();
+}
+
+uint32_t Client::GetIDForSpawn(const std::shared_ptr<Spawn>& spawn) {
+	auto itr = m_spawnIDMap.find(spawn);
+	if (itr != m_spawnIDMap.end()) {
+		return itr->second;
+	}
+
+	return 0;
+}
+
+std::shared_ptr<Spawn> Client::GetSpawnByID(uint32_t id) {
+	for (auto& itr : m_spawnIDMap) {
+		if (itr.second == id) {
+			return itr.first.lock();
+		}
 	}
 
 	return std::shared_ptr<Spawn>();
