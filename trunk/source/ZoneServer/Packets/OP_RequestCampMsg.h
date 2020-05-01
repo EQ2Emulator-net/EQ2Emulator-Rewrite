@@ -22,12 +22,22 @@ public:
 
 	void HandlePacket(std::shared_ptr<Client> client) override {
 		OP_CampStartedMsg_Packet p(client->GetVersion());
-		p.bCampCharSelect = bCampCharSelect;
+
+		if (!bCampDesktop && !bLogin && !bCampCharSelect) {
+			p.bCampCharSelect = true;
+			p.unkBool = true;
+			p.charName = "characterselect";
+			p.serverName = g_zoneOperator.GetWorldServerName();
+		}
+		else {
+			p.bCampCharSelect = bCampCharSelect;
+			p.unkBool = unkBool;
+			p.charName = charName;
+			p.serverName = serverName;
+		}
+
 		p.bCampDesktop = bCampDesktop;
-		p.unkBool = unkBool;
 		p.bLogin = bLogin;
-		p.charName = charName;
-		p.serverName = serverName;
 
 		if (!bQuit) {
 			//TODO: Check if admin to bypass camp timer
