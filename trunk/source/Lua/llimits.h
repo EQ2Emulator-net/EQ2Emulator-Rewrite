@@ -79,6 +79,13 @@ typedef union {
 typedef LUAI_UACNUMBER l_uacNumber;
 typedef LUAI_UACINT l_uacInt;
 
+#ifdef EQ2_DEBUG
+#include <cassert>
+
+//EQ2Emu - Foof - Adding this in for checking on heap corruption
+#define lua_assert(c) (assert((c)), (void)0)
+#endif
+
 
 /* internal assertions for in-house debugging */
 #if defined(lua_assert)
