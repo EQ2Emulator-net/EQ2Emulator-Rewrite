@@ -275,7 +275,8 @@ struct SpawnInfoStruct {
 	uint8_t							gender;
 	uint8_t							adv_class;
 	uint8_t							difficulty;
-	uint8_t							unknown21[3];
+	uint8_t							show_archtype_icon;
+	uint8_t							unknown21[2];
 	uint16_t						unknownz5;
 	uint8_t							unknown6[6];
 	uint32_t						unknown6b;

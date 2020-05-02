@@ -663,8 +663,9 @@ void Substruct_SpawnInfo::RegisterElements() {
 		RegisterUInt8(difficulty);
 
 		if (version >= 60055) {
+			RegisterUInt8(show_archtype_icon);
 			RescopeArrayElement(unknown21);
-			RegisterUInt8(unknown21)->SetCount(3);
+			RegisterUInt8(unknown21)->SetCount(2);
 			//RegisterUInt32(activity_timer);
 			//RescopeArrayElement(unknown18);
 			//RegisterUInt8(unknown18)->SetCount(68);

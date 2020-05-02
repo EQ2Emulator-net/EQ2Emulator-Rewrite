@@ -506,6 +506,9 @@ public:
 	void SetDifficulty(uint8_t value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.difficulty, value, updateFlags);
 	}
+	void SetShowArchtypeIcon(std::string value, bool updateFlags = true) {
+		SetInfo(&m_infoStruct.show_archtype_icon, value, updateFlags);
+	}
 
 	void SetGridID(uint32_t grid, bool updateFlags = true) {
 		SetPos(&m_posStruct.grid_id, grid, updateFlags);
