@@ -9,6 +9,7 @@ public:
 		m_numberOfHarvests = 0;
 		m_numberAttemptsPerHarvest = 0;
 		m_groundSpawnID = 0;
+		SetState(129, false);
 	}
 
 	GroundSpawn(std::shared_ptr<GroundSpawn> in) : Spawn(in) {
@@ -17,6 +18,7 @@ public:
 		m_numberAttemptsPerHarvest = in->GetNumberAttemptsPerHarvest();
 		m_groundSpawnID = in->GetGroundSpawnID();
 		SetMoveType(0.5f, false);
+		SetState(in->GetPosStruct()->positionState, false);
 	}
 
 	void SetGroundSpawnDatabaseID(uint32_t val) { m_groundSpawnDatabaseID = val; }

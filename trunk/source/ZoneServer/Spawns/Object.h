@@ -7,11 +7,13 @@ public:
 	Object() {
 		m_objectDatabaseID = 0;
 		m_deviceID = 0;
+		SetState(1, false);
 	}
 
 	Object(std::shared_ptr<Object> in) : Spawn(in) {
 		m_objectDatabaseID = in->GetObjectDatabaseID();
 		m_deviceID = in->GetDeviceID();
+		SetState(in->GetPosStruct()->positionState, false);
 	}
 
 	void SetObjectDatabaseID(uint32_t id) { m_objectDatabaseID = id; }

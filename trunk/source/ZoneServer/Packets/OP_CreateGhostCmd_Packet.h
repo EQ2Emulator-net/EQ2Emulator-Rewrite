@@ -29,16 +29,16 @@ public:
 	}
 
 	virtual void InsertSpawnData(const std::shared_ptr<Client>& client, const std::shared_ptr<Spawn>& spawn, uint16_t index) {
-		SetHeaderData(spawn, index);
+		SetHeaderData(spawn, index, client->GetIDForSpawn(spawn));
 		static_cast<SpawnPositionStruct&>(pos) = *spawn->GetPosStruct();
 		static_cast<SpawnInfoStruct&>(info) = *spawn->GetInfoStruct();
 		vis.DetermineForClient(client, spawn);
 		SetFooterData(spawn);
 	}
 
-	void SetHeaderData(const std::shared_ptr<Spawn>& spawn, uint16_t index) {
+	void SetHeaderData(const std::shared_ptr<Spawn>& spawn, uint16_t index, uint32_t id) {
 		header.index = index;
-		header.spawn_id = index;
+		header.spawn_id = id;
 		header.spawn_anim = 0xFFFFFFFF;
 		header.crc = 1;
 		header.time_stamp = Timer::GetServerTime();

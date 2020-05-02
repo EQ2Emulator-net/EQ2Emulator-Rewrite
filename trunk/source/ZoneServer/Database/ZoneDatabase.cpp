@@ -507,6 +507,58 @@ bool ZoneDatabase::LoadGroundSpawnsForZone(ZoneServer* z) {
 	return ret;	
 }
 
+bool ZoneDatabase::LoadSpawnLocationGroups(ZoneServer* z) {
+	DatabaseResult result;
+	bool ret = Select(&result, "SELECT slg.group_id, slg.placement_id, slp.spawn_location_id FROM spawn_location_group slg, spawn_location_placement slp WHERE slg.placement_id = slp.id and slp.zone_id = %u", z->GetID());
+	if (!ret)
+		return ret;
+
+	uint32_t count = 0;
+	while (result.Next()) {
+		uint32_t group_id = result.GetUInt32(0);
+		uint32_t placement_id = result.GetUInt32(1);
+		uint32_t location_id = result.GetUInt32(2);
+		z->AddSpawnGroupLocation(group_id, placement_id, location_id);
+		count++;
+	}
+
+	return ret;
+}
+
+bool ZoneDatabase::LoadSpawnGroupChances(ZoneServer* z) {
+	DatabaseResult result;
+	bool ret = Select(&result, "SELECT slgc.group_id, slgc.percentage FROM spawn_location_group_chances slgc, spawn_location_group slg, spawn_location_placement slp where slgc.group_id = slg.group_id and slg.placement_id = slp.id and slp.zone_id = %u", z->GetID());
+	if (!ret)
+		return ret;
+
+	uint32_t count = 0;
+	while (result.Next()) {
+		uint32_t group_id = result.GetUInt32(0);
+		float percent = result.GetFloat(1);
+		z->AddSpawnGroupChance(group_id, percent);
+		count++;
+	}
+
+	return ret;
+}
+
+bool ZoneDatabase::LoadSpawnLocationGroupAssociations(ZoneServer* z) {
+	DatabaseResult result;
+	bool ret = Select(&result, "SELECT distinct slga.group_id1, slga.group_id2 FROM spawn_location_group_associations slga, spawn_location_group slg, spawn_location_placement slp where (slg.group_id = slga.group_id1 or slg.group_id = slga.group_id2) and slg.placement_id = slp.id and slp.zone_id = %u", z->GetID());
+	if (!ret)
+		return ret;
+
+	uint32_t count = 0;
+	while (result.Next()) {
+		uint32_t group_id1 = result.GetUInt32(0);
+		uint32_t group_id2 = result.GetUInt32(1);
+		z->AddSpawnGroupAssociation(group_id1, group_id2);
+		count++;
+	}
+
+	return ret;
+}
+
 bool ZoneDatabase::CharacterUpdateBiography(uint32_t char_id, const char* bio) {
 	return Query("UPDATE `character_details` SET `biography` = '%s' WHERE `char_id` = '%u'", bio, char_id);
 }

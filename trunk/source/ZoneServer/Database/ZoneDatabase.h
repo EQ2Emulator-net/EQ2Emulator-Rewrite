@@ -25,6 +25,10 @@ public:
 	bool LoadSignsForZone(ZoneServer* z);
 	bool LoadGroundSpawnsForZone(ZoneServer* z);
 
+	bool LoadSpawnLocationGroups(ZoneServer* z);
+	bool LoadSpawnGroupChances(ZoneServer* z);
+	bool LoadSpawnLocationGroupAssociations(ZoneServer* z);
+
 	uint32_t LoadSpawnLocation(std::string query, ZoneServer* z, SpawnEntryType type);
 	bool LoadNPCLocations(ZoneServer* z);
 	bool LoadObjectLocations(ZoneServer* z);

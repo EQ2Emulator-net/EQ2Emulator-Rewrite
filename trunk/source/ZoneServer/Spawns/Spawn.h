@@ -164,6 +164,7 @@ private:
 
 	uint32_t m_spawnLocationID;
 	uint32_t m_spawnEntryID;
+	uint32_t m_groupID;
 	uint32_t m_respawnTime;
 	uint32_t m_expireTime;
 
@@ -627,6 +628,8 @@ public:
 	uint32_t GetSpawnLocationID() { return m_spawnLocationID; }
 	void SetSpawnEntryID(uint32_t val) { m_spawnEntryID = val; }
 	uint32_t GetSpawnEntryID() { return m_spawnEntryID; }
+	void SetSpawnGroupID(uint32_t val) { m_groupID = val; }
+	uint32_t GetSpawnGroupID() { return m_groupID; }
 	void SetRespawnTime(uint32_t val) { m_respawnTime = val; }
 	uint32_t GetRespawnTime() { return m_respawnTime; }
 	void SetExpireTime(uint32_t val) { m_expireTime = val; }

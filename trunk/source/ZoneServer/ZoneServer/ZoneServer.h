@@ -62,7 +62,8 @@ public:
 	// TODO: locations for other types of spawns
 	void ProcessSpawnLocations(); // private?
 	void ProcessSpawnLocations(SpawnEntryType type); // private?
-	void ProcessSpawnLocation(std::shared_ptr<SpawnLocation> sl, bool respawn = false); // private?
+	std::map<uint32_t, std::shared_ptr<SpawnLocation> >* GetSpawnLocationList(SpawnEntryType type);
+	std::shared_ptr<Spawn> ProcessSpawnLocation(std::shared_ptr<SpawnLocation> sl, bool respawn = false); // private?
 	std::shared_ptr<Entity> AddNPCSpawn(std::shared_ptr<SpawnLocation> spawnLocation, std::shared_ptr<SpawnEntry> spawnEntry);
 	std::shared_ptr<Object> AddObjectSpawn(std::shared_ptr<SpawnLocation> spawnLocation, std::shared_ptr<SpawnEntry> spawnEntry);
 	std::shared_ptr<Spawn> AddWidgetSpawn(std::shared_ptr<SpawnLocation> spawnLocation, std::shared_ptr<SpawnEntry> spawnEntry);
@@ -75,6 +76,11 @@ public:
 	std::shared_ptr<GroundSpawn> GetNewGroundSpawn(uint32_t id);
 	void DeterminePosition(std::shared_ptr<SpawnLocation> spawnLocation, std::shared_ptr<Spawn> spawn); // private?
 	void AddSpawn(std::shared_ptr<Spawn> spawn, SpawnEntryType type);
+
+	void AddSpawnGroupLocation(uint32_t group_id, uint32_t placement_location_id, uint32_t spawn_location_id);
+	void AddSpawnGroupChance(uint32_t group_id, float percent);
+	void AddSpawnGroupAssociation(uint32_t group_id1, uint32_t group_id2);
+	uint32_t CalculateSpawnGroup(std::shared_ptr<SpawnLocation> spawnLocation, SpawnEntryType type, bool respawn = false);
 
 	std::shared_ptr<Cell> GetCell(std::pair<int32_t, int32_t> coordinates);
 	void AddSpawnToCell(std::shared_ptr<Spawn>, std::pair<int32_t, int32_t> cellCoords);
@@ -132,6 +138,12 @@ private:
 	std::map<uint32_t, std::shared_ptr<SpawnLocation> > m_widgetSpawnLocations;
 	std::map<uint32_t, std::shared_ptr<SpawnLocation> > m_signSpawnLocations;
 	std::map<uint32_t, std::shared_ptr<SpawnLocation> > m_groundspawnSpawnLocations;
+
+	// Spawn groups
+	std::map<uint32_t, std::map<uint32_t, uint32_t> > m_spawnGroupLocations;	// group_id, map<placement_location_id, spawn_location_id>
+	std::map<uint32_t, std::list<uint32_t> > m_spawnLocationGroups;				// placement_location_id, list<group_id>
+	std::map<uint32_t, float> m_spawnGroupChances;								// group_id, chance
+	std::map<uint32_t, std::set<uint32_t> > m_spawnGroupAssociations;			// group_id1, set<group_id2>
 
 	std::thread m_loadThread;
 

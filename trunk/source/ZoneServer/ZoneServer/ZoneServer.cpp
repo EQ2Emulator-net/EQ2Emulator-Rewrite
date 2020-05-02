@@ -439,33 +439,15 @@ void ZoneServer::ProcessSpawnLocations() {
 }
 
 void ZoneServer::ProcessSpawnLocations(SpawnEntryType type) {
-	std::map<uint32_t, std::shared_ptr<SpawnLocation> >* list = nullptr;
-	switch (type) {
-	case SpawnEntryType::ENPC:
-		list = &m_npcSpawnLocations;
-		break;
-	case SpawnEntryType::EOBJECT:
-		list = &m_objectSpawnLocations;
-		break;
-	case SpawnEntryType::EWIDGET:
-		list = &m_widgetSpawnLocations;
-		break;
-	case SpawnEntryType::ESIGN:
-		list = &m_signSpawnLocations;
-		break;
-	case SpawnEntryType::EGROUNDSPAWN:
-		list = &m_groundspawnSpawnLocations;
-		break;
-	}
-
+	std::map<uint32_t, std::shared_ptr<SpawnLocation> >* list = GetSpawnLocationList(type);
 	if (!list)
 		return;
 
 	// TODO: For instances load spawns that should be removed
 
-	std::map<uint32_t, bool> processed_spawn_locations;
+	std::map<uint32_t, bool> processed_spawn_locations; // placement_id, bool (true for processed)
 	for (std::pair<uint32_t, std::shared_ptr<SpawnLocation> > kvp : *list) {
-		std::shared_ptr<SpawnLocation> sl = kvp.second;
+		std::shared_ptr<SpawnLocation>& sl = kvp.second;
 		if (!sl)
 			continue;
 
@@ -474,19 +456,58 @@ void ZoneServer::ProcessSpawnLocations(SpawnEntryType type) {
 		if (processed_spawn_locations.count(sl->placement_id) > 0)
 			continue;
 
-		// TODO: Spawn group stuff
+		// Spawn group stuff
+		if (m_spawnLocationGroups.count(sl->placement_id) > 0) {
+			uint32_t group_id = CalculateSpawnGroup(sl, type);
+			if (group_id > 0) {
+				std::map<uint32_t, std::set<uint32_t> >::iterator sga_itr = m_spawnGroupAssociations.find(group_id);
+				if (sga_itr != m_spawnGroupAssociations.end()) {
 
-		// This should be in the else for the spawn group check (TODO above)
+					for (uint32_t id : sga_itr->second) {
+						std::map<uint32_t, std::map<uint32_t, uint32_t> >::iterator sgl_itr = m_spawnGroupLocations.find(id);
+						if (sgl_itr != m_spawnGroupLocations.end()) {
 
-		// TODO: instance check to prevent spawns from spawning in the instance
-
-		ProcessSpawnLocation(sl);
+							for (std::pair<uint32_t, uint32_t> kvp2 : sgl_itr->second) {
+								processed_spawn_locations[kvp2.first] = true;
+							}	
+						}
+					}
+				}
+			}
+		}
+		else {
+			// TODO: instance check to prevent spawns from spawning in the instance
+			ProcessSpawnLocation(sl);
+		}
 	}
 
 }
 
-void ZoneServer::ProcessSpawnLocation(std::shared_ptr<SpawnLocation> sl, bool respawn) {
+std::map<uint32_t, std::shared_ptr<SpawnLocation> >* ZoneServer::GetSpawnLocationList(SpawnEntryType type) {
+	std::map<uint32_t, std::shared_ptr<SpawnLocation> >* ret = nullptr;
+	switch (type) {
+	case SpawnEntryType::ENPC:
+		ret = &m_npcSpawnLocations;
+		break;
+	case SpawnEntryType::EOBJECT:
+		ret = &m_objectSpawnLocations;
+		break;
+	case SpawnEntryType::EWIDGET:
+		ret = &m_widgetSpawnLocations;
+		break;
+	case SpawnEntryType::ESIGN:
+		ret = &m_signSpawnLocations;
+		break;
+	case SpawnEntryType::EGROUNDSPAWN:
+		ret = &m_groundspawnSpawnLocations;
+		break;
+	}
 
+	return ret;
+}
+
+std::shared_ptr<Spawn> ZoneServer::ProcessSpawnLocation(std::shared_ptr<SpawnLocation> sl, bool respawn) {
+	std::shared_ptr<Spawn> ret = nullptr;
 	float rndNum = MakeRandom(0, sl->total_percentage);
 	for (std::shared_ptr<SpawnEntry> entry : sl->entries) {
 		if (entry->spawn_percentage == 0)
@@ -527,8 +548,15 @@ void ZoneServer::ProcessSpawnLocation(std::shared_ptr<SpawnLocation> sl, bool re
 			// TODO: set spawn script
 
 			// TODO: call spawn or respawn
+
+			ret = spawn;
+			break;
 		}
+		else
+			rndNum -= entry->spawn_percentage;
 	}
+
+	return ret;
 }
 
 std::shared_ptr<Entity> ZoneServer::AddNPCSpawn(std::shared_ptr<SpawnLocation> spawnLocation, std::shared_ptr<SpawnEntry> spawnEntry) {
@@ -710,6 +738,136 @@ void ZoneServer::AddSpawn(std::shared_ptr<Spawn> spawn, SpawnEntryType type) {
 	int32_t y = static_cast<int32_t>(std::floor(spawn->GetZ() / 100.f));
 	std::pair<int32_t, int32_t> cellCoords = std::make_pair(x, y);
 	AddSpawnToCell(spawn, cellCoords);
+}
+
+void ZoneServer::AddSpawnGroupLocation(uint32_t group_id, uint32_t placement_location_id, uint32_t spawn_location_id) {
+	m_spawnGroupLocations[group_id][placement_location_id] = spawn_location_id;
+	m_spawnLocationGroups[placement_location_id].push_back(group_id);
+	m_spawnGroupAssociations[group_id].insert(group_id);
+}
+
+void ZoneServer::AddSpawnGroupChance(uint32_t group_id, float percent) {
+	m_spawnGroupChances[group_id] = percent;
+}
+
+void ZoneServer::AddSpawnGroupAssociation(uint32_t group_id1, uint32_t group_id2) {
+	//Associate groups 1 and 2 now
+	std::set<uint32_t>& group_1 = m_spawnGroupAssociations[group_id1];
+	std::set<uint32_t>& group_2 = m_spawnGroupAssociations[group_id2];
+	group_1.insert(group_id2);
+	group_2.insert(group_id1);
+
+	//Associate the remaining groups together
+	for (uint32_t id : group_1) {
+		group_2.insert(id);
+		m_spawnGroupAssociations[id].insert(group_id2);
+	}
+
+	for (uint32_t id : group_2) {
+		group_1.insert(id);
+		m_spawnGroupAssociations[id].insert(group_id1);
+	}
+}
+
+uint32_t ZoneServer::CalculateSpawnGroup(std::shared_ptr<SpawnLocation> spawnLocation, SpawnEntryType type, bool respawn) {
+	uint32_t group = 0;
+	std::map<uint32_t, std::list<uint32_t> >::iterator slg_itr = m_spawnLocationGroups.find(spawnLocation->placement_id);
+	if (slg_itr == m_spawnLocationGroups.end())
+		return group;
+
+	float chance = 0;
+	float total_chance = 0;
+	std::map<uint32_t, float> tmp_chances; // group_id, chance
+	for (uint32_t id : slg_itr->second) {
+		if (tmp_chances.count(id) > 0)
+			continue;
+
+		std::map<uint32_t, std::set<uint32_t> >::iterator sga_itr = m_spawnGroupAssociations.find(id);
+		if (sga_itr != m_spawnGroupAssociations.end()) {
+
+			for (uint32_t group_id : sga_itr->second) {
+				std::map<uint32_t, float>::iterator sgc_itr = m_spawnGroupChances.find(group_id);
+				if (sgc_itr != m_spawnGroupChances.end()) {
+					chance = sgc_itr->second;
+					if (chance > 0) {
+						total_chance += chance;
+						tmp_chances[group_id] = chance;
+					}
+					else
+						tmp_chances[group_id] = 0;
+				}
+				else
+					tmp_chances[group_id] = 0;
+			}
+		}
+		else { //single group, no associations
+			std::map<uint32_t, float>::iterator sgc_itr = m_spawnGroupChances.find(id);
+			if (sgc_itr != m_spawnGroupChances.end()) {
+				chance = sgc_itr->second;
+				total_chance += chance;
+				tmp_chances[id] = chance;
+			}
+			else
+				tmp_chances[id] = 0;
+		}
+	}
+
+	if (tmp_chances.size() > 1) {
+		//set the default for any chances not set
+		for (std::pair<uint32_t, float> kvp : tmp_chances) {
+			if (kvp.second == 0) {
+				chance = (float)(100 / tmp_chances.size());
+				total_chance += chance;
+				tmp_chances[kvp.first] = chance;
+			}
+		}
+	}
+
+	if (tmp_chances.size() > 1) {
+		float roll = MakeRandom(0, total_chance);
+		for (std::pair<uint32_t, float> kvp : tmp_chances) {
+			if (kvp.second >= roll) {
+				group = kvp.first;
+				break;
+			}
+			else
+				roll -= kvp.second;
+		}
+	}
+	else if (tmp_chances.size() == 1)
+		group = tmp_chances.begin()->first;
+
+	if (group > 0) {
+		std::map<uint32_t, std::map<uint32_t, uint32_t> >::iterator sgl_itr = m_spawnGroupLocations.find(group);
+		if (sgl_itr != m_spawnGroupLocations.end()) {
+			std::shared_ptr<Spawn> spawn = nullptr;
+			std::shared_ptr<Spawn> leader = nullptr;
+
+			for (std::pair<uint32_t, uint32_t> locations : sgl_itr->second) {
+				std::map<uint32_t, std::shared_ptr<SpawnLocation> >* list = GetSpawnLocationList(type);
+				if (!list)
+					continue;
+
+				std::map<uint32_t, std::shared_ptr<SpawnLocation> >::iterator sl_itr = list->find(locations.second);
+				if (sl_itr != list->end()) {
+					spawn = ProcessSpawnLocation(sl_itr->second, respawn);
+					/*if (!leader && spawn)
+						leader = spawn;
+					if (leader)
+						leader->AddSpawnToGroup(spawn);
+					if (spawn) {
+						//if(spawn_group_map.count(group) == 0)
+						//	spawn_group_map.Put(group, new MutexList<Spawn*>());
+						MutexList<int32>* groupList = &spawn_group_map.Get(group);
+						groupList->Add(spawn->GetID());
+						spawn->SetSpawnGroupID(group);
+					}*/
+				}
+			}
+		}
+	}
+
+	return group;
 }
 
 std::shared_ptr<Cell> ZoneServer::GetCell(std::pair<int32_t, int32_t> coordinates) {
@@ -903,6 +1061,10 @@ void ZoneServer::LoadThread() {
 	LogInfo(LOG_NPC, 0, "-Loading GroundSpawn spawn location data...");
 	database.LoadGroundSpawnLocations(this);
 	LogInfo(LOG_NPC, 0, "-Load GroundSpawn spawn location data complete!");
+
+	database.LoadSpawnLocationGroups(this);
+	database.LoadSpawnGroupChances(this);
+	database.LoadSpawnLocationGroupAssociations(this);
 
 	// TODO: process spawn locations (put spawn in world)
 	ProcessSpawnLocations();
