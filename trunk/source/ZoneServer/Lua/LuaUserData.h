@@ -8,7 +8,13 @@
 
 //This is a simple wrapper to enable garbage collection and adding of other functions to Lua types bound to c++ objects
 
+#ifdef _WIN32
 #include "../../Lua/lua.hpp"
+#else
+#include "../../Lua/lua.h"
+#include "../../Lua/lualib.h"
+#include "../../Lua/lauxlib.h"
+#endif
 
 //Ensure the Lua stack is large enough to push another element onto
 #ifdef EQ2_DEBUG
