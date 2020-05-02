@@ -342,7 +342,7 @@ void Substruct_SpawnInfo::RegisterElements() {
 		if (version < 936) {
 			//These were all moved further in the packet
 			RegisterUInt8(adv_class);
-			RegisterUInt8(unknown4);
+			RegisterUInt8(orig_level);
 			RegisterUInt8(level);
 			RegisterUInt8(difficulty);
 			RegisterUInt8(unknown5);
@@ -365,7 +365,7 @@ void Substruct_SpawnInfo::RegisterElements() {
 			else {
 				RegisterUInt8(unknown6)->SetCount(2);
 			}
-			RegisterUInt8(unknown4);
+			RegisterUInt8(orig_level);
 			RegisterUInt8(level);
 			RegisterUInt8(unknown5);
 			if (version < 1096 || version >= 1188) {
@@ -642,7 +642,7 @@ void Substruct_SpawnInfo::RegisterElements() {
 		RegisterFloat(unknown600553);
 		RegisterUInt32(size_mod);
 		RegisterUInt8(unknown600553b);
-		RegisterUInt8(unknown4);
+		RegisterUInt8(orig_level);
 		if (version >= 67633) {
 			RescopeArrayElement(unknown67633);
 			RegisterUInt8(unknown67633)->SetCount(3);

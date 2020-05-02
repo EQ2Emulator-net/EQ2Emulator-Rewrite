@@ -89,6 +89,7 @@ bool ZoneDatabase::LoadCharacter(uint32_t char_id, uint32_t account_id, std::sha
 		entity->SetBodySize(result.GetUInt8(5), false);
 		entity->SetBodySizeUnknown(result.GetUInt8(6), false); // Not sure if this is actually the correct field for age
 		entity->SetLevel(result.GetUInt8(7), false);
+		entity->SetOrigLevel(entity->GetAdventureLevel(), false);
 		// Set Tradeskill Class
 		// Set Tradeskill Level
 		// Set SOGA Wing Type
@@ -156,6 +157,7 @@ bool ZoneDatabase::LoadNPCsForZone(ZoneServer* z) {
 		uint32_t i = ProcessSpawnTableFields(npc, result);
 
 		npc->SetLevel(result.GetUInt8(i++));
+		npc->SetOrigLevel(npc->GetAdventureLevel());
 		// TODO: min/max level
 		//npc->SetMinLevel(result.GetUInt8(i++));
 		i++;

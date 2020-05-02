@@ -262,10 +262,10 @@ struct SpawnInfoStruct {
 	uint8_t							unknown600554[10];
 	uint32_t						hp_remaining;
 	uint32_t						power_percent;
-	float							unknown600553;
+	float							unknown600553; // if set from 1.0 to -1.0 you shrink so small you can't see yourself
 	uint8_t							unknown600553b;
 	uint8_t							unknown600553c;
-	uint8_t							unknown4;
+	uint8_t							orig_level;  // This is the original level and should not change when the level value changes when mentoring
 	uint8_t							level;
 	uint8_t							unknown5;
 	uint16_t						heroic_flag;

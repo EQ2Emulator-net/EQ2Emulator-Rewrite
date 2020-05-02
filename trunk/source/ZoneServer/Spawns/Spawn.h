@@ -483,6 +483,10 @@ public:
 		uint8_t f = m_infoStruct.visual_flag & (~flags);
 		SetInfo(&m_infoStruct.visual_flag, f, bUpdateFlags);
 	}
+	void SetOrigLevel(uint8_t value, bool updateFlags = true) {
+		SetInfo(&m_infoStruct.orig_level, value, updateFlags);
+		IncrementVisUpdateTag();
+	}
 	void SetLevel(uint8_t value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.level, value, updateFlags);
 		IncrementVisUpdateTag();
@@ -692,6 +696,7 @@ public:
 	}
 
 	uint8_t GetAdventureLevel() { return m_infoStruct.level; }
+	uint8_t GetOrigAdventureLevel() { return m_infoStruct.orig_level; }
 
 	void SetSpawnGroupList(std::shared_ptr<SpawnGroupList> val) { m_spawnGroupList = val; }
 	std::shared_ptr<SpawnGroupList> GetSpawnGroupList() { return m_spawnGroupList; }
