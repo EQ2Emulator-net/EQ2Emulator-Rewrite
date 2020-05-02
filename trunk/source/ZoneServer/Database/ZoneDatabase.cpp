@@ -136,7 +136,6 @@ bool ZoneDatabase::LoadNPCsForZone(ZoneServer* z) {
 		"ON npc.spawn_id = le.spawn_id\n"
 		"INNER JOIN spawn_location_placement lp\n"
 		"ON le.spawn_location_id = lp.spawn_location_id\n"
-		"LEFT JOIN spawn_scripts ssc ON s.id = ssc.spawn_id\n"
 		"WHERE lp.zone_id = %u\n",
 		 GetSpawnTableFields(), z->GetID());
 	if (!ret)
@@ -295,7 +294,6 @@ bool ZoneDatabase::LoadObjectsForZone(ZoneServer* z) {
 		"ON so.spawn_id = le.spawn_id\n"
 		"INNER JOIN spawn_location_placement lp\n"
 		"ON le.spawn_location_id = lp.spawn_location_id\n"
-		"LEFT JOIN spawn_scripts ssc ON s.id = ssc.spawn_id\n"
 		"WHERE lp.zone_id = %u\n"
 		"GROUP BY s.id", GetSpawnTableFields(), z->GetID());
 
@@ -339,7 +337,6 @@ bool ZoneDatabase::LoadWidgetsForZone(ZoneServer* z) {
 		"ON sw.spawn_id = le.spawn_id\n"
 		"INNER JOIN spawn_location_placement lp\n"
 		"ON le.spawn_location_id = lp.spawn_location_id\n"
-		"LEFT JOIN spawn_scripts ssc ON s.id = ssc.spawn_id\n"
 		"WHERE lp.zone_id = %u\n"
 		"GROUP BY s.id", GetSpawnTableFields(), z->GetID());
 
@@ -408,7 +405,6 @@ bool ZoneDatabase::LoadSignsForZone(ZoneServer* z) {
 		"ON ss.spawn_id = le.spawn_id\n"
 		"INNER JOIN spawn_location_placement lp\n"
 		"ON le.spawn_location_id = lp.spawn_location_id\n"
-		"LEFT JOIN spawn_scripts ssc ON s.id = ssc.spawn_id\n"
 		"WHERE lp.zone_id = %u\n"
 		"GROUP BY s.id", GetSpawnTableFields(), z->GetID());
 
@@ -479,7 +475,6 @@ bool ZoneDatabase::LoadGroundSpawnsForZone(ZoneServer* z) {
 		"ON sg.spawn_id = le.spawn_id\n"
 		"INNER JOIN spawn_location_placement lp\n"
 		"ON le.spawn_location_id = lp.spawn_location_id\n"
-		"LEFT JOIN spawn_scripts ssc ON s.id = ssc.spawn_id\n"
 		"WHERE lp.zone_id = %u\n"
 		"GROUP BY s.id", GetSpawnTableFields(), z->GetID());
 
@@ -574,7 +569,7 @@ bool ZoneDatabase::CharacterUpdateBiography(uint32_t char_id, const char* bio) {
 constexpr const char* GetSpawnLocationFields() {
 	return "sln.id, sln.name,\n"
 		"slp.id, slp.x, slp.y, slp.z, slp.x_offset, slp.y_offset, slp.z_offset, slp.heading, slp.pitch, slp.roll, slp.respawn, slp.expire_timer, slp.expire_offset, slp.grid_id,"
-		"sle.id, sle.spawn_id, sle.spawnpercentage, sle.condition, sse.spawnentry_id, ssp.spawn_location_id\n";
+		"sle.id, sle.spawn_id, sle.spawnpercentage, sle.condition, sle.script_id, sln.script_id\n";
 }
 
 uint32_t ZoneDatabase::LoadSpawnLocation(std::string query, ZoneServer* z, SpawnEntryType type) {
@@ -683,8 +678,6 @@ bool ZoneDatabase::LoadNPCLocations(ZoneServer* z) {
 		"INNER JOIN spawn_location_name sln ON slp.spawn_location_id = sln.id\n"
 		"INNER JOIN spawn_location_entry sle ON sle.spawn_location_id = sln.id\n"
 		"INNER JOIN spawn_npcs sn ON sn.spawn_id = sle.spawn_id\n"
-		"LEFT JOIN spawn_scripts sse ON sse.spawnentry_id = sle.id\n"
-		"LEFT JOIN spawn_scripts ssp ON ssp.spawn_location_id = sln.id\n"
 		"WHERE slp.zone_id=%u ORDER BY sln.id, sle.id";
 
 	uint32_t count = LoadSpawnLocation(query, z, SpawnEntryType::ENPC);
@@ -698,8 +691,6 @@ bool ZoneDatabase::LoadObjectLocations(ZoneServer* z) {
 		"INNER JOIN spawn_location_name sln ON slp.spawn_location_id = sln.id\n"
 		"INNER JOIN spawn_location_entry sle ON sle.spawn_location_id = sln.id\n"
 		"INNER JOIN spawn_objects so ON so.spawn_id = sle.spawn_id\n"
-		"LEFT JOIN spawn_scripts sse ON sse.spawnentry_id = sle.id\n"
-		"LEFT JOIN spawn_scripts ssp ON ssp.spawn_location_id = sln.id\n"
 		"WHERE slp.zone_id=%u ORDER BY sln.id, sle.id";
 
 	uint32_t count = LoadSpawnLocation(query, z, SpawnEntryType::EOBJECT);
@@ -713,8 +704,6 @@ bool ZoneDatabase::LoadWidgetLocations(ZoneServer* z) {
 		"INNER JOIN spawn_location_name sln ON slp.spawn_location_id = sln.id\n"
 		"INNER JOIN spawn_location_entry sle ON sle.spawn_location_id = sln.id\n"
 		"INNER JOIN spawn_widgets sw ON sw.spawn_id = sle.spawn_id\n"
-		"LEFT JOIN spawn_scripts sse ON sse.spawnentry_id\n"
-		"LEFT JOIN spawn_scripts ssp ON ssp.spawn_location_id = sln.id\n"
 		"WHERE slp.zone_id=%u ORDER BY sln.id, sle.id";
 
 	uint32_t count = LoadSpawnLocation(query, z, SpawnEntryType::EWIDGET);
@@ -728,8 +717,6 @@ bool ZoneDatabase::LoadSignLocations(ZoneServer* z) {
 		"INNER JOIN spawn_location_name sln ON slp.spawn_location_id = sln.id\n"
 		"INNER JOIN spawn_location_entry sle ON sle.spawn_location_id = sln.id\n"
 		"INNER JOIN spawn_signs ss ON ss.spawn_id = sle.spawn_id\n"
-		"LEFT JOIN spawn_scripts sse ON sse.spawnentry_id = sle.id\n"
-		"LEFT JOIN spawn_scripts ssp ON ssp.spawn_location_id = sln.id\n"
 		"WHERE slp.zone_id=%u ORDER BY sln.id, sle.id";
 
 	uint32_t count = LoadSpawnLocation(query, z, SpawnEntryType::ESIGN);
@@ -743,8 +730,6 @@ bool ZoneDatabase::LoadGroundSpawnLocations(ZoneServer* z) {
 		"INNER JOIN spawn_location_name sln ON slp.spawn_location_id = sln.id\n"
 		"INNER JOIN spawn_location_entry sle ON sle.spawn_location_id = sln.id\n"
 		"INNER JOIN spawn_ground sg ON sg.spawn_id = sle.spawn_id\n"
-		"LEFT JOIN spawn_scripts sse ON sse.spawnentry_id = sle.id\n"
-		"LEFT JOIN spawn_scripts ssp ON ssp.spawn_location_id = sln.id\n"
 		"WHERE slp.zone_id=%u ORDER BY sln.id, sle.id";
 
 	uint32_t count = LoadSpawnLocation(query, z, SpawnEntryType::EGROUNDSPAWN);
@@ -755,7 +740,7 @@ bool ZoneDatabase::LoadGroundSpawnLocations(ZoneServer* z) {
 constexpr const char* GetSpawnTableFields() {
 	return "s.id, s.name,s.sub_title,s.prefix,s.suffix,s.last_name,s.race,s.model_type,s.size,s.size_offset,s.targetable,s.show_name,"
 		"s.command_primary,s.command_secondary,s.visual_state,s.attackable,s.show_level,s.show_command_icon,s.display_hand_icon,s.faction_id,"
-		"s.collision_radius,s.hp,s.power,s.savagery,s.dissonance,s.merchant_id,s.transport_id,s.merchant_type,ssc.script_id";
+		"s.collision_radius,s.hp,s.power,s.savagery,s.dissonance,s.merchant_id,s.transport_id,s.merchant_type";
 }
 
 uint32_t ZoneDatabase::ProcessSpawnTableFields(const std::shared_ptr<Spawn>& spawn, DatabaseResult& res) {
@@ -806,7 +791,6 @@ uint32_t ZoneDatabase::ProcessSpawnTableFields(const std::shared_ptr<Spawn>& spa
 	//Transport ID
 	res.GetUInt32(i++);
 	spawn->SetMerchantType(res.GetUInt32(i++));
-	spawn->SetScriptID(res.GetUInt32(i++));
 
 	spawn->SetEntityFlags(entityFlags);
 	spawn->PopUpdateFlags();

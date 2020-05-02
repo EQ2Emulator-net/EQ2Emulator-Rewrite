@@ -25,11 +25,12 @@ INSERT IGNORE INTO lua_scripts (`type`, `name`) SELECT DISTINCT 'Spell', lua_scr
 INSERT IGNORE INTO lua_scripts (`type`, `name`) SELECT DISTINCT 'Quest', lua_script FROM quests WHERE LENGTH(lua_script) > 0;
 
 /*Convert lua_script entries in various tables to reference the lua_scripts table*/;
+
+/*Spawns*/;
 ALTER TABLE `spawn_scripts`
 	ADD COLUMN `script_id` INT(10) UNSIGNED NULL AFTER `lua_script`,
 	ADD CONSTRAINT `FK_SpawnScripts_ScriptID` FOREIGN KEY (`script_id`) REFERENCES `lua_scripts` (`id`);
 	
-/*Spawns*/;
 UPDATE spawn_scripts ss
 	INNER JOIN lua_scripts ls ON ss.lua_script = ls.name
 	SET ss.script_id = ls.id
@@ -38,6 +39,46 @@ UPDATE spawn_scripts ss
 ALTER TABLE spawn_scripts 
 	DROP COLUMN lua_script,
 	CHANGE COLUMN `script_id` `script_id` INT(10) UNSIGNED NOT NULL AFTER `spawn_location_id`;
+
+/*This is to deal with dupe entries that existed*/;
+UPDATE spawn_scripts SET spawn_id = NULL WHERE spawnentry_id OR spawn_location_id;
+UPDATE spawn_scripts SET spawn_location_id = NULL WHERE spawnentry_id;
+DELETE FROM spawn_scripts WHERE spawn_id = 2490682 AND id = 74330;
+DELETE FROM spawn_scripts WHERE spawn_id = 4120016 AND id = 141530;
+DELETE FROM spawn_scripts WHERE spawnentry_id = 1001535 AND id = 74256;
+DELETE FROM spawn_scripts WHERE spawn_location_id = 1572706 AND id = 73850;
+DELETE FROM spawn_scripts WHERE spawn_location_id = 1572511 AND id = 73736;
+DELETE FROM spawn_scripts WHERE spawn_location_id = 360299 AND id = 106843;
+DELETE FROM spawn_scripts WHERE spawn_location_id = 298437 AND id = 140852;
+
+ALTER TABLE `spawn_location_name`
+	ADD COLUMN `script_id` INT UNSIGNED NULL DEFAULT NULL AFTER `name`,
+	ADD CONSTRAINT `FK_SpawnLocationName_ScriptID` FOREIGN KEY (`script_id`) REFERENCES `lua_scripts` (`id`);
+	
+ALTER TABLE `spawn_location_entry`
+	ADD COLUMN `script_id` INT(10) UNSIGNED NULL DEFAULT NULL AFTER `condition`,
+	ADD CONSTRAINT `FK_SpawnEntry_ScriptID` FOREIGN KEY (`script_id`) REFERENCES `lua_scripts` (`id`);
+	
+ALTER TABLE `spawn`
+	ADD COLUMN `script_id` INT UNSIGNED NULL DEFAULT NULL AFTER `merchant_type`,
+	ADD CONSTRAINT `FK_Spawn_ScriptID` FOREIGN KEY (`script_id`) REFERENCES `lua_scripts` (`id`);
+	
+UPDATE spawn s
+	INNER JOIN spawn_scripts ss ON ss.spawn_id = s.id
+	SET s.script_id = ss.script_id
+	WHERE 1;
+	
+UPDATE spawn_location_name sln
+	INNER JOIN spawn_scripts ss ON ss.spawn_location_id = sln.id
+	SET sln.script_id = ss.script_id
+	WHERE 1;
+	
+UPDATE spawn_location_entry sle
+	INNER JOIN spawn_scripts ss ON ss.spawnentry_id = sle.id
+	SET sle.script_id = ss.script_id
+	WHERE 1;
+
+DROP TABLE spawn_scripts;
 
 /*Items*/;
 ALTER TABLE `items`
