@@ -25,6 +25,10 @@ public:
 
 class LuaInterface {
 public:
+	LuaInterface() = default;
+	~LuaInterface() = default;
+
+	std::map<uint32_t, std::shared_ptr<EmuLuaState> > spawnStates;
 
 	static void RegisterFunctions(lua_State* state);
 

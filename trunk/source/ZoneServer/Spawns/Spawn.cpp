@@ -21,6 +21,7 @@ Spawn::Spawn() : m_updateFlagsByte(0) {
 	//Targetable by default
 	bShowLevel = true;
 	bShowCommandIcon = true;
+	m_scriptID = 0;
 }
 
 Spawn::Spawn(std::shared_ptr<Spawn> in) {
@@ -85,6 +86,7 @@ Spawn::Spawn(std::shared_ptr<Spawn> in) {
 
 	m_primaryCommandList = in->m_primaryCommandList;
 	m_secondaryCommandList = in->m_secondaryCommandList;
+	m_scriptID = in->m_scriptID;
 }
 
 Spawn::~Spawn() {

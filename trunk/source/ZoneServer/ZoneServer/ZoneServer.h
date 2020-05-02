@@ -9,6 +9,7 @@
 #include "../../common/timer.h"
 #include "../../common/Mutex.h"
 #include "../Chat/ZoneChat.h"
+#include "../Lua/LuaInterface.h"
 
 #include "../Spawns/SpawnLocation.h"
 

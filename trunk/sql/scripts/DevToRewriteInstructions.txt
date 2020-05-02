@@ -1,0 +1,7 @@
+To Use the conversion script:
+
+1. Back up your rewrite commands table
+2. Source in the lua_scripts table if you have not done so
+3. Source in the dev database dump
+4. Restore the commands table backup
+5. Execute devdb_to_rewrite.sql

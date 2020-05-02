@@ -192,6 +192,8 @@ private:
 	bool bShowCommandIcon;
 
 	std::shared_ptr<SpawnGroupList> m_spawnGroupList;
+	std::weak_ptr<class EmuLuaState> m_luaState;
+	uint32_t m_scriptID;
 
 public:
 	/* I put the template functions down here so they aren't cluttering up the rest of the class */
@@ -669,6 +671,7 @@ public:
 	float GetRoll() { return m_posStruct.desiredRoll; }
 	float GetCollisionRadius() { return m_posStruct.collisionRadius; }
 	float GetSize() { return m_posStruct.size; }
+	void SetScriptID(uint32_t id) { m_scriptID = id; }
 
 	std::pair<int32_t, int32_t> GetCellCoordinates() { return m_currentCellCoordinates; }
 	void UpdateCellCoordinates();

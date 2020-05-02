@@ -20,6 +20,7 @@ struct SpawnEntry {
 	uint32_t		spawn_id;
 	float			spawn_percentage;
 	uint32_t		condition;
+	uint32_t        scriptID;
 };
 
 class SpawnLocation {
@@ -41,6 +42,7 @@ public:
 		expire_offset = 0;
 		grid_id = 0;
 		total_percentage = 0;
+		scriptID = 0;
 	}
 
 	~SpawnLocation() {
@@ -68,4 +70,5 @@ public:
 	uint32_t	grid_id;
 	std::string	script;
 	float		total_percentage;
+	uint32_t    scriptID;
 };
