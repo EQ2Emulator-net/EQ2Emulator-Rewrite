@@ -53,7 +53,7 @@ static QueuedLock stdout_stream_lock;
 static const char *log_categories[] = {
 	"Init", "Signal", "TCP", "Packet", "CPI", "IO", "Config", "Database", "Thread",
 	"Net", "General", "Patch", "Console", "Rules", "Command", "Parser", "Chat", "Stats",
-    "Client", "Mutex", "Zone", "Player", "World", "NPC"
+    "Client", "Mutex", "Zone", "Player", "World", "NPC", "Lua"
 };
 static LogFiles log_files;
 static LogConfig config;

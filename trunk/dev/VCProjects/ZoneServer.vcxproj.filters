@@ -363,6 +363,24 @@
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\MasterZoneLookup.cpp">
       <Filter>source\ZoneServer</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Lua\LuaQuestFunctions.cpp">
+      <Filter>source\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Lua\LuaSpawnFunctions.cpp">
+      <Filter>source\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Lua\LuaSpellFunctions.cpp">
+      <Filter>source\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Lua\LuaZoneFunctions.cpp">
+      <Filter>source\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Lua\LuaFunctionRegister.cpp">
+      <Filter>source\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Lua\LuaItemFunctions.cpp">
+      <Filter>source\Lua</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h">

@@ -57,6 +57,7 @@ typedef enum {
 	LOG_PLAYER,
 	LOG_WORLD,
 	LOG_NPC,
+	LOG_LUA,
 	LOG_INVALID
 } LogCategory;
 

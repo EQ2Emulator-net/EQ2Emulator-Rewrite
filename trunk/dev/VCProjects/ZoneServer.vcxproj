@@ -163,8 +163,14 @@
     <ClCompile Include="..\..\source\ZoneServer\Controllers\BaseController.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Controllers\PlayerController.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Database\ZoneDatabase.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Lua\LuaFunctionRegister.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Lua\LuaInterface.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Lua\LuaItemFunctions.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Lua\LuaQuestFunctions.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Lua\LuaSpawnFunctions.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Lua\LuaSpellFunctions.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Lua\LuaUserData.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Lua\LuaZoneFunctions.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\main.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>

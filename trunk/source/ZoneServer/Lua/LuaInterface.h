@@ -6,8 +6,27 @@
 class Spawn;
 class ZoneServer;
 
+struct LuaScriptInfo {
+	std::string filename;
+	std::string text;
+};
+
+class EmuLuaState {
+private:
+	EmuLuaState(lua_State* state, const std::shared_ptr<LuaScriptInfo>& script);
+public:
+	~EmuLuaState();
+
+	static std::shared_ptr<EmuLuaState> Create(const std::shared_ptr<LuaScriptInfo>& script);
+
+	lua_State* state;
+	uint32_t nUsers;
+};
+
 class LuaInterface {
 public:
+
+	static void RegisterFunctions(lua_State* state);
 
 	//Primitive types
 	static void PushLuaNil(lua_State* state);
@@ -27,9 +46,13 @@ public:
 	static bool IsNoneOrNil(lua_State* state, int index);
 
 	//User data
+	static void PushLuaSpawn(lua_State* state, const std::shared_ptr<Spawn>& spawn);
+	static void PushLuaZone(lua_State* state, const std::shared_ptr<ZoneServer>& spawn);
+
 	static std::shared_ptr<Spawn> GetLuaSpawn(lua_State* state, int index);
 	static std::shared_ptr<ZoneServer> GetLuaZone(lua_State* state, int index);
 
-	static void PushLuaSpawn(lua_State* state, const std::shared_ptr<Spawn>& spawn);
-	static void PushLuaZone(lua_State* state, const std::shared_ptr<ZoneServer>& spawn);
+
+	//Script Functions
+	static int Emu_Lua_Say(lua_State* state);
 };

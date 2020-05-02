@@ -12,9 +12,9 @@
 
 //Ensure the Lua stack is large enough to push another element onto
 #ifdef EQ2_DEBUG
-#define Emu_CheckLuaStack(l) assert(lua_checkstack(l, 1))
+#define Emu_CheckLuaStack(l, n) assert(lua_checkstack((l), (n)))
 #else
-#define Emu_CheckLuaStack(l) (lua_checkstack(l, 1))
+#define Emu_CheckLuaStack(l, n) (lua_checkstack((l), (n)))
 #endif
 
 class LuaUserData {
@@ -33,33 +33,30 @@ template <typename T> class LuaDataFactory {
 	static_assert(std::is_base_of<LuaUserData, T>::value);
 public:
 	static void RegisterLuaClass(lua_State* state) {
-		Emu_CheckLuaStack(state);
+		Emu_CheckLuaStack(state, 3);
 		//Use this to get the class name and method table
 		static T staticRef;
 		//Create a new meta table
-		luaL_newmetatable(state, staticRef.GetTypeName());
-		//Get the table index
-		int metatable_index = lua_gettop(state);
+		if (luaL_newmetatable(state, staticRef.GetTypeName()) == 1) {
+			//Get the table index
+			int metatable_index = lua_gettop(state);
 
-		//Set the key value pair to assign the garbage collector function in Lua for this class
-		Emu_CheckLuaStack(state);
-		lua_pushstring(state, "__gc");
-		Emu_CheckLuaStack(state);
-		lua_pushcfunction(state, LuaDataFactory<T>::cpp_lua_gc);
-		lua_settable(state, metatable_index);
-
-		//Check for any additional functions for this class
-		for (auto& itr : staticRef.GetMethodMap()) {
-			Emu_CheckLuaStack(state);
-			lua_pushstring(state, itr.first.c_str());
-			Emu_CheckLuaStack(state);
-			lua_pushcfunction(state, itr.second);
+			//Set the key value pair to assign the garbage collector function in Lua for this class
+			lua_pushstring(state, "__gc");
+			lua_pushcfunction(state, LuaDataFactory<T>::cpp_lua_gc);
 			lua_settable(state, metatable_index);
+
+			//Check for any additional functions for this class
+			for (auto& itr : staticRef.GetMethodMap()) {
+				lua_pushstring(state, itr.first.c_str());
+				lua_pushcfunction(state, itr.second);
+				lua_settable(state, metatable_index);
+			}
 		}
 	}
 
 	static T* PushNew(lua_State* state) {
-		Emu_CheckLuaStack(state);
+		Emu_CheckLuaStack(state, 1);
 		//Allocate a block in Lua to hold a pointer to our object
 		T* obj = new T;
 		T** ptr = static_cast<T**>(lua_newuserdata(state, sizeof(T*)));

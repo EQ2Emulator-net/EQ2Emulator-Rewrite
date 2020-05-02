@@ -13,20 +13,20 @@ ZoneChat::ZoneChat(const std::map<uint32_t, std::weak_ptr<Client> >& clients, Zo
 hearSpawnDistance(0.f) {
 }
 
-void ZoneChat::HandleSay(const char* msg, const std::shared_ptr<Entity>& sender, uint8_t language, const std::shared_ptr<Spawn>& receiver) {
+void ZoneChat::HandleSay(const char* msg, const std::shared_ptr<Spawn>& sender, uint8_t language, const std::shared_ptr<Spawn>& receiver) {
 	HearChatParams params;
 	params.message = msg;
 	params.bFromNPC = sender->IsNPC();
 	params.bShowBubble = true;
 	params.fromName = sender->GetName();
-	params.chatFilterName = "Say";
+	params.chatFilterName = sender->IsNPC() ? "NPCSay" : "Say";
 	params.language = language;
 	params.toSpawnID = 0xFFFFFFFF;
 
 	HearChatClientsInRange(params, sender, receiver);
 }
 
-void ZoneChat::HandleShout(const char* msg, const std::shared_ptr<Entity>& sender, uint8_t language) {
+void ZoneChat::HandleShout(const char* msg, const std::shared_ptr<Spawn>& sender, uint8_t language) {
 	HearChatParams params;
 	params.message = msg;
 	params.bFromNPC = sender->IsNPC();
@@ -55,7 +55,7 @@ void ZoneChat::HandleShout(const char* msg, const std::shared_ptr<Entity>& sende
 }
 
 //This function checks the distance of clients and whether they understand the language if set before sending a message
-void ZoneChat::HearChatClientsInRange(HearChatParams& params, const std::shared_ptr<Entity>& sender, const std::shared_ptr<Spawn>& receiver) {
+void ZoneChat::HearChatClientsInRange(HearChatParams& params, const std::shared_ptr<Spawn>& sender, const std::shared_ptr<Spawn>& receiver) {
 	bool bSenderSent = false;
 	bool bReceiverSent = false;
 
@@ -113,7 +113,7 @@ void ZoneChat::HearChatClientsInRange(HearChatParams& params, const std::shared_
 	}
 }
 
-void ZoneChat::HandleEmoteChat(const char* msg, const std::shared_ptr<Entity>& sender) {
+void ZoneChat::HandleEmoteChat(const char* msg, const std::shared_ptr<Spawn>& sender) {
 	HearChatParams params;
 	params.message = msg;
 	params.bFromNPC = sender->IsNPC();
@@ -126,7 +126,7 @@ void ZoneChat::HandleEmoteChat(const char* msg, const std::shared_ptr<Entity>& s
 	HearChatClientsInRange(params, sender);
 }
 
-void ZoneChat::HandleOutOfCharacter(const char* msg, const std::shared_ptr<Entity>& sender) {
+void ZoneChat::HandleOutOfCharacter(const char* msg, const std::shared_ptr<Spawn>& sender) {
 	HearChatParams params;
 	params.message = msg;
 	params.bFromNPC = sender->IsNPC();
@@ -148,7 +148,7 @@ void ZoneChat::HandleOutOfCharacter(const char* msg, const std::shared_ptr<Entit
 	}
 }
 
-void ZoneChat::SendToPlayersInRange(const std::shared_ptr<Entity>& sender, EQ2Packet* p, float hearSpawnDistance, bool self) {
+void ZoneChat::SendToPlayersInRange(const std::shared_ptr<Spawn>& sender, EQ2Packet* p, float hearSpawnDistance, bool self) {
 	for (auto& itr : zoneClients) {
 		auto client = itr.second.lock();
 
