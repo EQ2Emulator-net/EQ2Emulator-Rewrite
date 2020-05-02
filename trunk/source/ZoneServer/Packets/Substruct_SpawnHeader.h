@@ -69,6 +69,12 @@ public:
 		pCmd.command_list_name = cmd.commandText;
 	}
 
+	void AddSpawnGroupID(uint32_t id) {
+		Substruct_Group g;
+		g.group_spawn_id = id;
+		group_array.push_back(g);
+	}
+
 	Substruct_SpawnHeader(uint32_t version) : PacketSubstruct(version) {
 		spawn_anim = 0;
 		group_size = 0;

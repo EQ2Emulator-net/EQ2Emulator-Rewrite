@@ -840,8 +840,7 @@ uint32_t ZoneServer::CalculateSpawnGroup(std::shared_ptr<SpawnLocation> spawnLoc
 	if (group > 0) {
 		std::map<uint32_t, std::map<uint32_t, uint32_t> >::iterator sgl_itr = m_spawnGroupLocations.find(group);
 		if (sgl_itr != m_spawnGroupLocations.end()) {
-			std::shared_ptr<Spawn> spawn = nullptr;
-			std::shared_ptr<Spawn> leader = nullptr;
+			std::shared_ptr<SpawnGroupList> group_list = std::make_shared<SpawnGroupList>();
 
 			for (std::pair<uint32_t, uint32_t> locations : sgl_itr->second) {
 				std::map<uint32_t, std::shared_ptr<SpawnLocation> >* list = GetSpawnLocationList(type);
@@ -850,18 +849,12 @@ uint32_t ZoneServer::CalculateSpawnGroup(std::shared_ptr<SpawnLocation> spawnLoc
 
 				std::map<uint32_t, std::shared_ptr<SpawnLocation> >::iterator sl_itr = list->find(locations.second);
 				if (sl_itr != list->end()) {
-					spawn = ProcessSpawnLocation(sl_itr->second, respawn);
-					/*if (!leader && spawn)
-						leader = spawn;
-					if (leader)
-						leader->AddSpawnToGroup(spawn);
+					std::shared_ptr<Spawn> spawn = ProcessSpawnLocation(sl_itr->second, respawn);
 					if (spawn) {
-						//if(spawn_group_map.count(group) == 0)
-						//	spawn_group_map.Put(group, new MutexList<Spawn*>());
-						MutexList<int32>* groupList = &spawn_group_map.Get(group);
-						groupList->Add(spawn->GetID());
 						spawn->SetSpawnGroupID(group);
-					}*/
+						group_list->AddSpawn(spawn);
+						spawn->SetSpawnGroupList(group_list);
+					}
 				}
 			}
 		}

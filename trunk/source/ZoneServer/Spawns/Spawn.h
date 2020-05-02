@@ -7,6 +7,7 @@
 #include "Widget.h"
 #include "Sign.h"
 #include "EntityCommands.h"
+#include "SpawnGroupList.h"
 
 //EntityFlagValues
 const uint32_t EntityFlagAlive = 1;
@@ -189,6 +190,8 @@ private:
 	bool bShowName;
 	bool bShowLevel;
 	bool bShowCommandIcon;
+
+	std::shared_ptr<SpawnGroupList> m_spawnGroupList;
 
 public:
 	/* I put the template functions down here so they aren't cluttering up the rest of the class */
@@ -686,4 +689,7 @@ public:
 	}
 
 	uint8_t GetAdventureLevel() { return m_infoStruct.level; }
+
+	void SetSpawnGroupList(std::shared_ptr<SpawnGroupList> val) { m_spawnGroupList = val; }
+	std::shared_ptr<SpawnGroupList> GetSpawnGroupList() { return m_spawnGroupList; }
 };

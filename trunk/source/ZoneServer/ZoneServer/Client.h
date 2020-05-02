@@ -51,6 +51,7 @@ public:
 	void RemoveSpawnFromIndexMap(const std::shared_ptr<Spawn>& spawn);
 	uint16_t GetIndexForSpawn(std::shared_ptr<Spawn> spawn);
 	std::shared_ptr<Spawn> GetSpawnByIndex(uint16_t spawn_index);
+	uint32_t AddSpawnToIDMap(const std::shared_ptr<Spawn>& spawn);
 	uint32_t GetIDForSpawn(const std::shared_ptr<Spawn>& spawn);
 	std::shared_ptr<Spawn> GetSpawnByID(uint32_t id);
 	std::shared_ptr<PlayerController> GetController();

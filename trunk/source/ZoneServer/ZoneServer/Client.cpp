@@ -127,11 +127,14 @@ uint16_t Client::AddSpawnToIndexMap(const std::shared_ptr<Spawn>& spawn) {
 	}
 	else index = m_nextSpawnIndex++;
 
-	uint32_t spawnID = m_nextSpawnID++;
+	
 
 	m_spawnIndexMap[spawn] = index;
 	m_spawnIndexLookupMap[index] = spawn;
-	m_spawnIDMap[spawn] = spawnID;
+
+	uint32_t spawnID = GetIDForSpawn(spawn);
+	if (spawnID == 0)
+		AddSpawnToIDMap(spawn);
 	return index;
 }
 
@@ -164,6 +167,12 @@ std::shared_ptr<Spawn> Client::GetSpawnByIndex(uint16_t spawn_index) {
 	}
 
 	return std::shared_ptr<Spawn>();
+}
+
+uint32_t Client::AddSpawnToIDMap(const std::shared_ptr<Spawn>& spawn) {
+	uint32_t spawnID = m_nextSpawnID++;
+	m_spawnIDMap[spawn] = spawnID;
+	return spawnID;
 }
 
 uint32_t Client::GetIDForSpawn(const std::shared_ptr<Spawn>& spawn) {

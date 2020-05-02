@@ -29,14 +29,14 @@ public:
 	}
 
 	virtual void InsertSpawnData(const std::shared_ptr<Client>& client, const std::shared_ptr<Spawn>& spawn, uint16_t index) {
-		SetHeaderData(spawn, index, client->GetIDForSpawn(spawn));
+		SetHeaderData(client, spawn, index, client->GetIDForSpawn(spawn));
 		static_cast<SpawnPositionStruct&>(pos) = *spawn->GetPosStruct();
 		static_cast<SpawnInfoStruct&>(info) = *spawn->GetInfoStruct();
 		vis.DetermineForClient(client, spawn);
 		SetFooterData(spawn);
 	}
 
-	void SetHeaderData(const std::shared_ptr<Spawn>& spawn, uint16_t index, uint32_t id) {
+	void SetHeaderData(const std::shared_ptr<Client>& client, const std::shared_ptr<Spawn>& spawn, uint16_t index, uint32_t id) {
 		header.index = index;
 		header.spawn_id = id;
 		header.spawn_anim = 0xFFFFFFFF;
@@ -60,6 +60,23 @@ public:
 				header.AddEntityCommand(cmd);
 			}
 		}
+
+
+		std::shared_ptr<SpawnGroupList> group = spawn->GetSpawnGroupList();
+		if (group) {
+			std::vector<std::weak_ptr<Spawn> >* group_spawns = group->GetSpawnList();
+			for (std::weak_ptr<Spawn> s : *group_spawns) {
+				std::shared_ptr<Spawn> s2 = s.lock();
+				if (s2) {
+					uint32_t id = client->GetIDForSpawn(s2);
+					if (id == 0)
+						id = client->AddSpawnToIDMap(s2);
+					
+					header.AddSpawnGroupID(id);
+				}
+			}
+		}
+		
 	}
 
 	void SetFooterData(const std::shared_ptr<Spawn>& spawn) {

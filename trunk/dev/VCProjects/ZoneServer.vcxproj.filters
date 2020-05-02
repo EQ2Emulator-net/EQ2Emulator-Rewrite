@@ -959,5 +959,8 @@
     <ClInclude Include="..\..\source\ZoneServer\ZoneServer\MasterZoneLookup.h">
       <Filter>source\ZoneServer</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Spawns\SpawnGroupList.h">
+      <Filter>source\Spawns</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
