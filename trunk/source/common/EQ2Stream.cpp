@@ -1051,12 +1051,10 @@ void EQ2Stream::ProcessFragmentedData(ProtocolPacket* p) {
 		memcpy(oversize_buffer + oversize_offset, p->buffer + 2, p->Size - 2);
 		oversize_offset += p->Size - 2;
 		if (oversize_offset == oversize_length) {
-			if (oversize_buffer[0] == 0x00 && oversize_buffer[1] == 0x19) {
-				ProtocolPacket* subp = new OP_AppCombined_Packet(oversize_buffer + 2, oversize_length - 2);
-				ProcessPacket(subp);
-				delete subp;
+			if (oversize_buffer[0] == 0 && oversize_buffer[1] == 0) {
+				LogWarn(LOG_PACKET, 0, "Got a fragmented packet with 00 00 for the first bytes!");
 			}
-			else {
+			if (!HandleEmbeddedPacket(oversize_buffer, oversize_length)) {
 				if (crypto.isEncrypted() && p && p->Size > 2) {
 					EQ2Packet* p2 = ProcessEncryptedData(oversize_buffer, oversize_offset);
 					if (p2) {
@@ -1064,6 +1062,19 @@ void EQ2Stream::ProcessFragmentedData(ProtocolPacket* p) {
 					}
 				}
 			}
+			//if (oversize_buffer[0] == 0x00 && oversize_buffer[1] == 0x19) {
+			//	ProtocolPacket* subp = new OP_AppCombined_Packet(oversize_buffer + 2, oversize_length - 2);
+			//	ProcessPacket(subp);
+			//	delete subp;
+			//}
+			//else {
+			//	if (crypto.isEncrypted() && p && p->Size > 2) {
+			//		EQ2Packet* p2 = ProcessEncryptedData(oversize_buffer, oversize_offset);
+			//		if (p2) {
+			//			InboundQueuePush(p2);
+			//		}
+			//	}
+			//}
 			delete[] oversize_buffer;
 			oversize_buffer = nullptr;
 			oversize_offset = 0;
