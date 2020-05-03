@@ -39,6 +39,8 @@ void CommandProcess::RegisterCommands() {
 	RegisterCommandHandler(6, CommandAFK);
 	RegisterCommandHandler(17, CommandTell);
 	RegisterCommandHandler(224, CommandSpawnDetails);
+	RegisterCommandHandler(244, CommandDepop);
+	RegisterCommandHandler(245, CommandRepop);
 }
 
 void CommandProcess::RegisterCommandHandler(uint32_t handler_id, CommandHandler_t handler) {
@@ -464,4 +466,28 @@ void CommandProcess::CommandTell(const std::shared_ptr<Client>& client, Separato
 		reciever_client->chat.HearChat(params);
 		client->chat.HearChat(params);
 	}
+}
+
+void CommandProcess::CommandDepop(const std::shared_ptr<Client>& client, Separator& sep) {
+	std::shared_ptr<ZoneServer> zone = client->GetZone();
+	if (!zone)
+		return;
+
+	client->chat.DisplayText("MOTD", "Zone depop starting...", 0xff, false, "");
+	zone->Depop();
+	client->chat.DisplayText("MOTD", "Zone depop finished!", 0xff, false, "");
+}
+
+void CommandProcess::CommandRepop(const std::shared_ptr<Client>& client, Separator& sep) {
+	std::shared_ptr<ZoneServer> zone = client->GetZone();
+	if (!zone)
+		return;
+
+	client->chat.DisplayText("MOTD", "Zone depop starting...", 0xff, false, "");
+	zone->Depop();
+	client->chat.DisplayText("MOTD", "Zone depop finished!", 0xff, false, "");
+
+	client->chat.DisplayText("MOTD", "Zone repop starting...", 0xff, false, "");
+	zone->ProcessSpawnLocations();
+	client->chat.DisplayText("MOTD", "Zone repop finished!", 0xff, false, "");
 }

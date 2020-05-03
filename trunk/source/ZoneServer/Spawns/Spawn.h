@@ -84,6 +84,12 @@ public:
 	bool IsImmunityRemaining() { return (GetInfoStruct()->entityFlags & EntityFlagImmunityRemaining) != 0; }
 	bool ShouldShowCommandIcon() { return bShowCommandIcon; }
 	bool IsNPC() { return (GetInfoStruct()->entityFlags & EntityIsNpc) != 0; }
+	bool IsPlayer() { return m_titleStruct.isPlayer; }
+	bool IsGlobalSpawn() { return m_globalSpawn; }
+	bool IsSign() { return signData != nullptr; }
+	bool IsWidget() { return widgetData != nullptr; }
+	virtual bool IsObject() { return false; }
+	virtual bool IsGroundSpawn() { return false; }
 
 	float GetX() const { return m_posStruct.x; }
 	float GetY() const { return m_posStruct.y; }
@@ -154,6 +160,9 @@ private:
 	uint32_t movementTimestamp;
 
 	float m_sizeOffset;
+	uint8_t m_minLevel;
+	uint8_t m_maxLevel;
+	uint8_t m_encounterOffset;
 	uint32_t m_factionID;
 	// These may need to be changed
 	uint32_t m_hp;
@@ -162,7 +171,7 @@ private:
 	uint32_t m_dissonance;
 	uint32_t m_merchantID;
 	uint32_t m_merchantType;
-
+	bool m_globalSpawn;
 	uint32_t m_spawnLocationID;
 	uint32_t m_spawnEntryID;
 	uint32_t m_groupID;
@@ -703,4 +712,11 @@ public:
 
 	void SetSpawnGroupList(std::shared_ptr<SpawnGroupList> val) { m_spawnGroupList = val; }
 	std::shared_ptr<SpawnGroupList> GetSpawnGroupList() { return m_spawnGroupList; }
+	void SetGlobalSpawn(bool val) { m_globalSpawn = val; }
+	void SetMinLevel(uint8_t val) { m_minLevel = val; }
+	uint8_t GetMinLevel() { return m_minLevel; }
+	void SetMaxLevel(uint8_t val) { m_maxLevel = val; }
+	uint8_t GetMaxLevel() { return m_maxLevel; }
+	void SetDifficultyOffset(uint8_t val) { m_encounterOffset = val; }
+	uint8_t GetDifficultyOffset() { return m_encounterOffset; }
 };

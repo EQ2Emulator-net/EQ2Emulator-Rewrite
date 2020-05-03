@@ -128,7 +128,7 @@ bool ZoneDatabase::LoadCharacter(uint32_t char_id, uint32_t account_id, std::sha
 
 bool ZoneDatabase::LoadNPCsForZone(ZoneServer* z) {
 	DatabaseResult result;
-	bool ret = Select(&result, "SELECT %s, npc.min_level, npc.max_level, npc.enc_level, npc.class_, npc.gender, npc.min_group_size, npc.max_group_size, npc.hair_type_id, npc.facial_hair_type_id, npc.wing_type_id, npc.chest_type_id, npc.legs_type_id, npc.soga_hair_type_id, npc.soga_facial_hair_type_id, npc.action_state, npc.mood_state, npc.initial_state, npc.activity_status, npc.attack_type, npc.ai_strategy+0, npc.spell_list_id, npc.secondary_spell_list_id, npc.skill_list_id, npc.secondary_skill_list_id, npc.equipment_list_id, npc.str, npc.sta, npc.wis, npc.intel, npc.agi, npc.heat, npc.cold, npc.magic, npc.mental, npc.divine, npc.disease, npc.poison, npc.aggro_radius, npc.cast_percentage, npc.randomize, npc.soga_model_type, npc.heroic_flag, npc.alignment, npc.elemental, npc.arcane, npc.noxious, npc.hide_hood, npc.emote_state \n"
+	bool ret = Select(&result, "SELECT %s, npc.min_level, npc.max_level, npc.enc_level, npc.enc_level_offset, npc.class_, npc.gender, npc.min_group_size, npc.max_group_size, npc.hair_type_id, npc.facial_hair_type_id, npc.wing_type_id, npc.chest_type_id, npc.legs_type_id, npc.soga_hair_type_id, npc.soga_facial_hair_type_id, npc.action_state, npc.mood_state, npc.initial_state, npc.activity_status, npc.attack_type, npc.ai_strategy+0, npc.spell_list_id, npc.secondary_spell_list_id, npc.skill_list_id, npc.secondary_skill_list_id, npc.equipment_list_id, npc.str, npc.sta, npc.wis, npc.intel, npc.agi, npc.heat, npc.cold, npc.magic, npc.mental, npc.divine, npc.disease, npc.poison, npc.aggro_radius, npc.cast_percentage, npc.randomize, npc.soga_model_type, npc.heroic_flag, npc.alignment, npc.elemental, npc.arcane, npc.noxious, npc.hide_hood, npc.emote_state \n"
 		"FROM spawn s\n"
 		"INNER JOIN spawn_npcs npc\n"
 		"ON s.id = npc.spawn_id\n"
@@ -157,11 +157,10 @@ bool ZoneDatabase::LoadNPCsForZone(ZoneServer* z) {
 
 		npc->SetLevel(result.GetUInt8(i++));
 		npc->SetOrigLevel(npc->GetAdventureLevel());
-		// TODO: min/max level
-		//npc->SetMinLevel(result.GetUInt8(i++));
-		i++;
-		//npc->SetMaxLevel(result.GetUInt8(i++));
+		npc->SetMinLevel(npc->GetAdventureLevel());
+		npc->SetMaxLevel(result.GetUInt8(i++));
 		npc->SetDifficulty(result.GetUInt8(i++));
+		npc->SetDifficultyOffset(result.GetUInt8(i++));
 		npc->SetAdventureClass(result.GetUInt8(i++));
 		npc->SetGender(result.GetUInt8(i++));
 		// min_group_size, no clue what this is for

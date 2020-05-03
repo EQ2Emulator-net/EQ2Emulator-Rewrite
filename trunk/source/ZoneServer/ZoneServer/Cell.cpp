@@ -74,3 +74,7 @@ void Cell::DeactivateCell() {
 	bIsActive = false;
 	LogDebug(LOG_ZONE, 0, "Deactivating cell (%i, %i)", m_cellCoordinates.first, m_cellCoordinates.second);
 }
+
+void Cell::ClearSpawnList() {
+	m_spawnList.clear();
+}

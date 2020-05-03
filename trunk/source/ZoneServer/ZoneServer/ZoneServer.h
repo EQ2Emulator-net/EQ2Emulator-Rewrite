@@ -54,6 +54,7 @@ public:
 	std::shared_ptr<Spawn> GetWidgetFromMasterList(uint32_t databaseID);
 	void AddGroundSpawnToMasterList(std::shared_ptr<GroundSpawn> groundSpawn);
 	std::shared_ptr<GroundSpawn> GetGroundSpawnFromMasterList(uint32_t databaseID);
+	std::shared_ptr<Spawn> GetSpawnFromMasterList(uint32_t databaseID);
 
 	void AddNPCSpawnLocation(uint32_t id, std::shared_ptr<SpawnLocation> location);
 	void AddObjectSpawnLocation(uint32_t id, std::shared_ptr<SpawnLocation> location);
@@ -96,6 +97,8 @@ public:
 
 	std::shared_ptr<Client> GetClientForSpawn(std::shared_ptr<Spawn> spawn);
 	std::shared_ptr<Entity> GetPlayerEntityByName(std::string player);
+	void Depop();
+
 	void LoadThread();
 
 	ZoneChat chat;
@@ -133,14 +136,14 @@ private:
 	std::map<uint32_t, std::shared_ptr<Spawn> > m_masterWidgetList;
 	std::map<uint32_t, std::shared_ptr<Spawn> > m_masterSignList;
 
-	// Lists for spawn locations
+	// Lists for spawn locations, loaded from the DB
 	std::map<uint32_t, std::shared_ptr<SpawnLocation> > m_npcSpawnLocations;
 	std::map<uint32_t, std::shared_ptr<SpawnLocation> > m_objectSpawnLocations;
 	std::map<uint32_t, std::shared_ptr<SpawnLocation> > m_widgetSpawnLocations;
 	std::map<uint32_t, std::shared_ptr<SpawnLocation> > m_signSpawnLocations;
 	std::map<uint32_t, std::shared_ptr<SpawnLocation> > m_groundspawnSpawnLocations;
 
-	// Spawn groups
+	// Spawn groups, loaded from the DB
 	std::map<uint32_t, std::map<uint32_t, uint32_t> > m_spawnGroupLocations;	// group_id, map<placement_location_id, spawn_location_id>
 	std::map<uint32_t, std::list<uint32_t> > m_spawnLocationGroups;				// placement_location_id, list<group_id>
 	std::map<uint32_t, float> m_spawnGroupChances;								// group_id, chance

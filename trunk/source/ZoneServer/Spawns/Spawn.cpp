@@ -22,6 +22,9 @@ Spawn::Spawn() : m_updateFlagsByte(0) {
 	bShowLevel = true;
 	bShowCommandIcon = true;
 	m_scriptID = 0;
+	m_minLevel = 0;
+	m_maxLevel = 0;
+	m_encounterOffset = 0;
 }
 
 Spawn::Spawn(std::shared_ptr<Spawn> in) {
@@ -62,8 +65,11 @@ Spawn::Spawn(std::shared_ptr<Spawn> in) {
 	m_origHeading = 0.0f;
 	m_origPitch = 0.0f;
 	m_origRoll = 0.0f;
-
 	m_posStruct.movementMode = 2;
+
+	m_minLevel = in->GetMinLevel();
+	m_maxLevel = in->GetMaxLevel();
+	m_encounterOffset = in->GetDifficultyOffset();
 
 	if (m_posStruct.collisionRadius == 0.0f)
 		m_posStruct.collisionRadius = 1.0f;
@@ -76,6 +82,12 @@ Spawn::Spawn(std::shared_ptr<Spawn> in) {
 	
 	if (m_sizeOffset > 0.0f)
 		m_posStruct.size = MakeRandom(m_posStruct.size, m_posStruct.size + m_sizeOffset);
+
+	if (m_maxLevel > m_minLevel)
+		m_infoStruct.level = static_cast<uint8_t>(MakeRandomInt(m_minLevel, m_maxLevel));
+
+	if (m_encounterOffset > 0)
+		m_infoStruct.difficulty = static_cast<uint8_t>(MakeRandomInt(m_infoStruct.difficulty, m_infoStruct.difficulty + m_encounterOffset));
 
 	bAttackable = in->bAttackable;
 	bShowName = in->bShowName;

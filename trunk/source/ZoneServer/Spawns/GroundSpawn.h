@@ -21,6 +21,7 @@ public:
 		SetState(in->GetPosStruct()->positionState, false);
 	}
 
+	bool IsGroundSpawn() override { return true; }
 	void SetGroundSpawnDatabaseID(uint32_t val) { m_groundSpawnDatabaseID = val; }
 	uint32_t GetGroundSpawnDatabaseID() { return m_groundSpawnDatabaseID; }
 	void SetNumberOfHarvests(uint8_t val) { m_numberOfHarvests = val; }

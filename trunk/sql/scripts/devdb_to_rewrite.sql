@@ -80,6 +80,9 @@ UPDATE spawn_location_entry sle
 
 DROP TABLE spawn_scripts;
 
+ALTER TABLE `spawn_npcs`
+	ADD COLUMN `enc_level_offset` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0' AFTER `enc_level`;
+
 /*Items*/;
 ALTER TABLE `items`
 	ADD COLUMN `script_id` INT(10) UNSIGNED NULL AFTER `lua_script`,

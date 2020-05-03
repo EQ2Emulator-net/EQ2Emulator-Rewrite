@@ -7,6 +7,9 @@
 #include "../Spawns/Spawn.h"
 #include "../Spawns/Entity.h"
 #include "../Controllers/PlayerController.h"
+#include "../ZoneServer/ZoneServer.h"
+
+#define SpawnSet(target, master, action) if(master) { master->action; } target->action
 
 void CommandProcess::CommandSpawnSet(const std::shared_ptr<Client>& client, Separator& sep) {
 	if (sep.GetSize() < 2) {
@@ -22,12 +25,14 @@ void CommandProcess::CommandSpawnSet(const std::shared_ptr<Client>& client, Sepa
 	if (!target)
 		return;
 
+	std::shared_ptr<Spawn> masterSpawn = client->GetZone()->GetSpawnFromMasterList(target->GetDatabaseID());
+
 	// Title struct
 	std::string cmd = sep.GetString(0);
 	std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::tolower);
 
 	if (cmd == "name") {
-		target->SetName(sep.GetString(1));
+		SpawnSet(target, masterSpawn, SetName(sep.GetString(1)));
 	}
 
 	if (cmd == "lastname") {
@@ -54,6 +59,13 @@ void CommandProcess::CommandSpawnSet(const std::shared_ptr<Client>& client, Sepa
 	if (cmd == "visual_state") {
 		target->SetVisualState(sep.GetUInt32(1));
 	}
+
+	if (cmd == "difficulty_offset") {
+		if (sep.IsNumber(1))
+			SpawnSet(target, masterSpawn, SetDifficultyOffset(sep.GetUInt32(1)));
+	}
+
+	
 
 	// Vis struct
 
@@ -102,7 +114,7 @@ void CommandProcess::CommandSpawnDetails(const std::shared_ptr<Client>& client, 
 	text = "Last Name: " + spawn->GetLastName() + ", Guild: " + spawn->GetGuildTitle() + ", Prefix: " + spawn->GetPrefixTitle() + ", Suffix: " + spawn->GetSuffixTitle();
 	client->chat.DisplayText("MOTD", text, 0xff, false, "");
 
-	text = "Spawn Location ID: " + to_string(spawn->GetSpawnLocationID()) + ", Spawn Group ID: Not Used Yet"; // + to_string(spawn->GetSpawnGroupID());
+	text = "Spawn Location ID: " + to_string(spawn->GetSpawnLocationID()) + ", Spawn Group ID: " + to_string(spawn->GetSpawnGroupID());
 	client->chat.DisplayText("MOTD", text, 0xff, false, "");
 
 	text = "Faction ID: " + to_string(spawn->GetFactionID()) + ", Merchant ID: " + to_string(spawn->GetMerchantID()) + ", Transporter ID: Not Used Yet"; //+ to_string(spawn->GetTransporterID());

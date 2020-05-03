@@ -18,6 +18,7 @@ public:
 	void ActivateCell(std::shared_ptr<Client> client);
 	void SendRemoveSpawnsForClient(std::shared_ptr<Client> client);
 	void DeactivateCell();
+	void ClearSpawnList();
 
 private:
 	std::pair<int32_t, int32_t> m_cellCoordinates;
