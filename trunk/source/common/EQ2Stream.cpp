@@ -211,6 +211,10 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 			DumpBytes(p->buffer, p->Size);
 		}
 		if (CheckSequencedPacket(p)) {
+			if (oversize_buffer) {
+				LogError(LOG_PACKET, 0, "Received an in-sequence packet while building a fragmented packet! Tell Foof!");
+			}
+
 			if (HandleEmbeddedPacket(p->buffer + 2, p->Size - 2)) {
 				break;
 			}
