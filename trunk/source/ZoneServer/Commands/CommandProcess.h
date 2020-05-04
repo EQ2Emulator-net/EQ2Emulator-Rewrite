@@ -59,4 +59,5 @@ private:
 	// CommandSpawn.cpp
 	static void CommandSpawnSet(const std::shared_ptr<Client>& client, Separator& sep);
 	static void CommandSpawnDetails(const std::shared_ptr<Client>& client, Separator& sep);
+	static void CommandSpawn(const std::shared_ptr<Client>& client, Separator& sep);
 };

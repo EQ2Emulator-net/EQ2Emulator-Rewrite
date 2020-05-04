@@ -36,33 +36,32 @@ void CommandProcess::CommandSpawnSet(const std::shared_ptr<Client>& client, Sepa
 	}
 
 	if (cmd == "lastname") {
-		target->SetLastName(sep.GetString(1));
+		SpawnSet(target, masterSpawn, SetLastName(sep.GetString(1)));
 	}
 
 	if (cmd == "suffixtitle") {
-		target->SetSuffixTitle(sep.GetString(1));
+		SpawnSet(target, masterSpawn, SetSuffixTitle(sep.GetString(1)));
 	}
 
 	if (cmd == "prefixtitle") {
-		target->SetPrefixTitle(sep.GetString(1));
+		SpawnSet(target, masterSpawn, SetPrefixTitle(sep.GetString(1)));
 	}
 
 	if (cmd == "pvptitle") {
-		target->SetPvPTitle(sep.GetString(1));
+		SpawnSet(target, masterSpawn, SetPvPTitle(sep.GetString(1)));
 	}
 
 	if (cmd == "guild") {
-		target->SetGuild(sep.GetString(1));
+		SpawnSet(target, masterSpawn, SetGuild(sep.GetString(1)));
 	}
 
 	// Info struct
-	if (cmd == "visual_state") {
-		target->SetVisualState(sep.GetUInt32(1));
+	if (cmd == "visual_state" && sep.IsNumber(1)) {
+		SpawnSet(target, masterSpawn, SetVisualState(sep.GetUInt32(1)));
 	}
 
-	if (cmd == "difficulty_offset") {
-		if (sep.IsNumber(1))
-			SpawnSet(target, masterSpawn, SetDifficultyOffset(sep.GetUInt32(1)));
+	if (cmd == "difficulty_offset" && sep.IsNumber(1)) {
+		SpawnSet(target, masterSpawn, SetDifficultyOffset(sep.GetUInt32(1)));
 	}
 
 	
@@ -168,4 +167,23 @@ void CommandProcess::CommandSpawnDetails(const std::shared_ptr<Client>& client, 
 
 	text = "=========================================================";
 	client->chat.DisplayText("MOTD", text, 0xff, false, "");
+}
+
+void CommandProcess::CommandSpawn(const std::shared_ptr<Client>& client, Separator& sep) {
+	if (sep.GetSize() == 0 || !sep.IsNumber(0))
+		return; // syntax error
+
+	std::shared_ptr<ZoneServer> zone = client->GetZone();
+	std::shared_ptr<Entity> player = client->GetController()->GetControlled();
+	std::shared_ptr<Spawn> spawn = zone->GetNewSpawnFromMasterList(sep.GetUInt32(0));
+	if (spawn) {
+		spawn->SetX(player->GetX(), false);
+		spawn->SetY(player->GetY(), false);
+		spawn->SetZ(player->GetZ(), false);
+		spawn->SetGridID(player->GetGridID(), false);
+		spawn->SetHeading(player->GetHeading(), false);
+		client->chat.DisplayText("MOTD", "Adding spawn", 0xff, false, "");
+		zone->AddSpawn(spawn, SpawnEntryType::ENPC);
+		zone->SendSpawnToClient(spawn, client);
+	}
 }

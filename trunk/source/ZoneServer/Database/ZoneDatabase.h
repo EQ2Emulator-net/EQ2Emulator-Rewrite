@@ -19,11 +19,19 @@ public:
 	bool LoadCommands(CommandProcess& process);
 	bool LoadCharacter(uint32_t char_id, uint32_t account_id, std::shared_ptr<Entity> entity);
 
+	// Loads all spawns with a location in the given zone
 	bool LoadNPCsForZone(ZoneServer* z);
 	bool LoadObjectsForZone(ZoneServer* z);
 	bool LoadWidgetsForZone(ZoneServer* z);
 	bool LoadSignsForZone(ZoneServer* z);
 	bool LoadGroundSpawnsForZone(ZoneServer* z);
+
+	// Loads a specific spawn into a zone despite its location
+	bool LoadNPC(ZoneServer* z, uint32_t id);
+	bool LoadObject(ZoneServer* z, uint32_t id);
+	bool LoadWidget(ZoneServer* z, uint32_t id);
+	bool LoadSign(ZoneServer* z, uint32_t id);
+	bool LoadGroundSpawn(ZoneServer* z, uint32_t id);
 
 	bool LoadSpawnLocationGroups(ZoneServer* z);
 	bool LoadSpawnGroupChances(ZoneServer* z);

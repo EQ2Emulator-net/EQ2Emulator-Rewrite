@@ -41,6 +41,7 @@ void CommandProcess::RegisterCommands() {
 	RegisterCommandHandler(224, CommandSpawnDetails);
 	RegisterCommandHandler(244, CommandDepop);
 	RegisterCommandHandler(245, CommandRepop);
+	RegisterCommandHandler(199, CommandSpawn);
 }
 
 void CommandProcess::RegisterCommandHandler(uint32_t handler_id, CommandHandler_t handler) {

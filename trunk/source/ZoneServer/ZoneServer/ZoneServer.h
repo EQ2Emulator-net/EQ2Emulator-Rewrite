@@ -55,6 +55,7 @@ public:
 	void AddGroundSpawnToMasterList(std::shared_ptr<GroundSpawn> groundSpawn);
 	std::shared_ptr<GroundSpawn> GetGroundSpawnFromMasterList(uint32_t databaseID);
 	std::shared_ptr<Spawn> GetSpawnFromMasterList(uint32_t databaseID);
+	std::shared_ptr<Spawn> GetNewSpawnFromMasterList(uint32_t databaseID);
 
 	void AddNPCSpawnLocation(uint32_t id, std::shared_ptr<SpawnLocation> location);
 	void AddObjectSpawnLocation(uint32_t id, std::shared_ptr<SpawnLocation> location);

@@ -509,6 +509,164 @@ bool ZoneDatabase::LoadGroundSpawnsForZone(ZoneServer* z) {
 	return ret;
 }
 
+bool ZoneDatabase::LoadNPC(ZoneServer* z, uint32_t id) {
+	DatabaseResult result;
+	bool ret = Select(&result, "SELECT %s, npc.min_level, npc.max_level, npc.enc_level, npc.enc_level_offset, npc.class_, npc.gender, npc.min_group_size, npc.max_group_size, npc.hair_type_id, npc.facial_hair_type_id, npc.wing_type_id, npc.chest_type_id, npc.legs_type_id, npc.soga_hair_type_id, npc.soga_facial_hair_type_id, npc.action_state, npc.mood_state, npc.initial_state, npc.activity_status, npc.attack_type, npc.ai_strategy+0, npc.spell_list_id, npc.secondary_spell_list_id, npc.skill_list_id, npc.secondary_skill_list_id, npc.equipment_list_id, npc.str, npc.sta, npc.wis, npc.intel, npc.agi, npc.heat, npc.cold, npc.magic, npc.mental, npc.divine, npc.disease, npc.poison, npc.aggro_radius, npc.cast_percentage, npc.randomize, npc.soga_model_type, npc.heroic_flag, npc.alignment, npc.elemental, npc.arcane, npc.noxious, npc.hide_hood, npc.emote_state \n"
+		"FROM spawn s\n"
+		"INNER JOIN spawn_npcs npc\n"
+		"ON s.id = npc.spawn_id\n"
+		"WHERE s.id = %u\n",
+		GetSpawnTableFields(), id);
+	if (!ret)
+		return ret;
+
+	std::unordered_map<uint32_t, std::shared_ptr<Spawn> > npcs;
+	npcs.reserve(result.GetNumRows());
+
+	if (result.Next()) {
+		uint32_t id = result.GetUInt32(0);
+		if (z->GetNPCFromMasterList(id))
+			return false;
+
+		std::shared_ptr<Entity> npc = std::make_shared<Entity>();
+
+		//Base spawn data
+		uint32_t i = ProcessSpawnTableFields(npc, result);
+
+		npc->SetLevel(result.GetUInt8(i++));
+		npc->SetOrigLevel(npc->GetAdventureLevel());
+		npc->SetMinLevel(npc->GetAdventureLevel());
+		npc->SetMaxLevel(result.GetUInt8(i++));
+		npc->SetDifficulty(result.GetUInt8(i++));
+		npc->SetDifficultyOffset(result.GetUInt8(i++));
+		npc->SetAdventureClass(result.GetUInt8(i++));
+		npc->SetGender(result.GetUInt8(i++));
+		// min_group_size, no clue what this is for
+		// max_group_size, no clue what this is for
+		i += 2;
+		npc->SetHairType(result.GetUInt32(i++));
+		npc->SetFacialHairType(result.GetUInt32(i++));
+		npc->SetWingType(result.GetUInt32(i++));
+		npc->SetChestType(result.GetUInt32(i++));
+		npc->SetLegsType(result.GetUInt32(i++));
+		npc->SetSogaHairType(result.GetUInt32(i++));
+		npc->SetSogaFacialHairType(result.GetUInt32(i++));
+		npc->SetActionState(result.GetUInt32(i++));
+		npc->SetMoodState(result.GetUInt32(i++));
+		npc->SetState(result.GetUInt32(i++));
+		//Activity status..think we already put these flags into EntityFlags via query
+		i++;
+		// Attack Type
+		i++;
+		// AI Strategy
+		i++;
+		// Primary Spell List
+		i++;
+		// Secondary Spell List
+		i++;
+		// Primary Skill List
+		i++;
+		// Secondary Skill List
+		i++;
+		// Equipment List ID
+		i++;
+		// Base Str
+		i++;
+		// Base Sta
+		i++;
+		// Base Wis
+		i++;
+		// Base Int
+		i++;
+		// Base Agi
+		i++;
+		// Base Heat
+		i++;
+		// Base Cold
+		i++;
+		// Base Magic
+		i++;
+		// Base Mental
+		i++;
+		// Base Divine
+		i++;
+		// Base Disease
+		i++;
+		// Base Poison
+		i++;
+		// Aggro Radius
+		i++;
+		// Cast Percentage 
+		i++;
+		// randomize
+		i++;
+		npc->SetSogaModelType(result.GetUInt32(i++));
+		npc->SetHeroicFlag(result.GetUInt8(i++));
+		// Alignment
+		i++;
+		// Base Elemental
+		i++;
+		// Base Arcane
+		i++;
+		// Base Noxious
+		i++;
+		//Hide hood
+		if (result.GetBool(i++)) {
+			npc->EnableInfoVisFlags(INFO_VIS_FLAG_HIDE_HOOD);
+		}
+		else {
+			npc->DisableInfoVisFlags(INFO_VIS_FLAG_HIDE_HOOD);
+		}
+		npc->SetEmoteState(result.GetUInt32(i++));
+
+		npcs[npc->GetDatabaseID()] = npc;
+
+		LogDebug(LOG_NPC, 0, "Loaded NPC: '%s' (%u)", npc->GetName().c_str(), id);
+	}
+
+	LogInfo(LOG_NPC, 0, "Loading NPC Appearances for npc (%u).", id);
+	result.Clear();
+	ret = Select(&result,
+		"SELECT na.spawn_id, na.`type`, na.red, na.green, na.blue\n"
+		"FROM npc_appearance na\n"
+		"WHERE na.spawn_id = %u\n", id);
+
+	if (ret) {
+		ProcessEntityColors(result, npcs);
+
+		result.Clear();
+
+		ret = Select(&result, "SELECT na.spawn_id, na.slot_id, na.equip_type, na.red, na.green, na.blue, na.highlight_red, na.highlight_green, na.highlight_blue\n"
+			"FROM npc_appearance_equip na\n"
+			"WHERE na.spawn_id = %u\n", id);
+
+		ProcessNpcAppearanceEquipment(result, npcs);
+	}
+
+	for (auto& itr : npcs) {
+		itr.second->PopUpdateFlags();
+		z->AddNPCToMasterList(std::static_pointer_cast<Entity>(itr.second));
+	}
+
+	return ret;
+}
+
+bool ZoneDatabase::LoadObject(ZoneServer* z, uint32_t id) {
+	return false;
+}
+
+bool ZoneDatabase::LoadWidget(ZoneServer* z, uint32_t id) {
+	return false;
+}
+
+bool ZoneDatabase::LoadSign(ZoneServer* z, uint32_t id) {
+	return false;
+}
+
+bool ZoneDatabase::LoadGroundSpawn(ZoneServer* z, uint32_t id) {
+	return false;
+}
+
 bool ZoneDatabase::LoadSpawnLocationGroups(ZoneServer* z) {
 	DatabaseResult result;
 	bool ret = Select(&result, "SELECT slg.group_id, slg.placement_id, slp.spawn_location_id FROM spawn_location_group slg, spawn_location_placement slp WHERE slg.placement_id = slp.id and slp.zone_id = %u", z->GetID());
