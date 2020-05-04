@@ -1114,8 +1114,6 @@ void ZoneServer::Depop() {
 
 void ZoneServer::LoadThread() {
 
-	// TODO: Entity Commands (Global?)
-
 	LogInfo(LOG_NPC, 0, "-Loading NPC data...");
 	database.LoadNPCsForZone(this);
 	LogInfo(LOG_NPC, 0, "-Load NPC data complete!");
@@ -1160,7 +1158,6 @@ void ZoneServer::LoadThread() {
 	database.LoadSpawnGroupChances(this);
 	database.LoadSpawnLocationGroupAssociations(this);
 
-	// TODO: process spawn locations (put spawn in world)
 	ProcessSpawnLocations();
 
 	LoadScript();
@@ -1216,6 +1213,7 @@ void ZoneServer::CallScript(const char* function, const std::shared_ptr<Spawn>& 
 		//We're calling this script recursively. Load a new copy of the state
 		recursiveState = LuaInterface::LoadZoneScript(scriptID);
 		if (!recursiveState) {
+			--m_luaState->nUsers;
 			return;
 		}
 

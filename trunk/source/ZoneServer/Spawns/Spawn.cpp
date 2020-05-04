@@ -369,6 +369,7 @@ void Spawn::CallScript(const char* function, const std::shared_ptr<Spawn>& spawn
 		//We're calling this script recursively. Load a new copy of the state
 		recursiveState = LuaInterface::LoadSpawnScript(m_scriptID);
 		if (!recursiveState) {
+			--script->nUsers;
 			return;
 		}
 

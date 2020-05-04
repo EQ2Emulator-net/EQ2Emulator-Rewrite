@@ -3,6 +3,7 @@
 #include "LuaInterface.h"
 #include "LuaGlobals.h"
 #include "../../common/log.h"
+#include "LuaFunctions.h"
 
 extern LuaGlobals g_luaGlobals;
 
@@ -105,6 +106,14 @@ std::shared_ptr<ZoneServer> LuaInterface::GetLuaZone(lua_State* state, int index
 	return ret;
 }
 
+LuaConversation* LuaInterface::PushLuaConversation(lua_State* state) {
+	return LuaDataFactory<LuaConversation>::PushNew(state);
+}
+
+LuaConversation* LuaInterface::GetLuaConversation(lua_State* state, int index) {
+	return LuaDataFactory<LuaConversation>::GetUserData(state, index);
+}
+
 static int emu_lua_panic(lua_State* state) {
 	const char* err = lua_isstring(state, -1) ? lua_tostring(state, -1) : "";
 	LogError(LOG_LUA, 0, "Lua is panicking! error: %s", err);
@@ -118,7 +127,7 @@ EmuLuaState::EmuLuaState(lua_State* in_state, const std::shared_ptr<LuaScriptInf
 	lua_atpanic(state, emu_lua_panic);
 	luaL_openlibs(state);
 	lua_checkstack(state, 50);
-	LuaInterface::RegisterFunctions(state);
+	LuaFunctions::RegisterFunctions(state);
 	lua_pushstring(state, script->filename.c_str());
 	lua_setglobal(state, "GLuaScriptName");
 }

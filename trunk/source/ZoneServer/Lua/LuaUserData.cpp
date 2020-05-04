@@ -38,3 +38,13 @@ const std::map<std::string, lua_CFunction>& LuaZone::GetMethodMap() {
 	static const MyFunctionMap myMap;
 	return myMap;
 }
+
+const std::map<std::string, lua_CFunction>& LuaConversation::GetMethodMap() {
+	struct MyFunctionMap : public std::map<std::string, lua_CFunction> {
+		MyFunctionMap() {
+		}
+	};
+
+	static const MyFunctionMap myMap;
+	return myMap;
+}

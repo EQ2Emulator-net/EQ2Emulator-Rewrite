@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include <memory>
+#include <vector>
 
 //This is a simple wrapper to enable garbage collection and adding of other functions to Lua types bound to c++ objects
 
@@ -62,7 +63,7 @@ public:
 	}
 
 	static T* PushNew(lua_State* state) {
-		Emu_CheckLuaStack(state, 1);
+		Emu_CheckLuaStack(state, 2);
 		//Allocate a block in Lua to hold a pointer to our object
 		T* obj = new T;
 		T** ptr = static_cast<T**>(lua_newuserdata(state, sizeof(T*)));
@@ -121,6 +122,25 @@ public:
 	}
 
 	static int LuaEqOverride(lua_State * state);
+
+	const std::map<std::string, lua_CFunction>& GetMethodMap();
+};
+
+struct ConversationOption {
+	std::string option;
+	std::string function;
+};
+
+class LuaConversation : public LuaUserData {
+public:
+	LuaConversation() = default;
+	~LuaConversation() = default;
+
+	std::vector<ConversationOption> options;
+
+	const char* GetTypeName() override {
+		return "Conversation";
+	}
 
 	const std::map<std::string, lua_CFunction>& GetMethodMap();
 };
