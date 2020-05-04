@@ -344,6 +344,8 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_CreateWidgetCmd_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DefaultGroupOptionsMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DefaultGroupOptionsRequestMsg_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DialogCloseMsg_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DialogSelectMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DisplayTextCmd_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DoneLoadingEntityResourcesMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DoneLoadingZoneResourcesMsg_Packet.h" />

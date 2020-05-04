@@ -516,7 +516,7 @@ void CommandProcess::CommandHail(const std::shared_ptr<Client>& client, Separato
 
 	//Format the hail message
 	ostringstream hailMsg;
-	hailMsg << "Hail, " << player->GetName();
+	hailMsg << "Hail, " << target->GetName();
 	zone->chat.HandleSay(hailMsg.str().c_str(), player);
 
 	//Check if the hailed target is a player, if so we're done. Otherwise try to call the spawn's script

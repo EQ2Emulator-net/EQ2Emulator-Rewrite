@@ -46,9 +46,6 @@
     <Filter Include="common\Packets\EmuPackets">
       <UniqueIdentifier>{6126a519-f13f-411d-8f73-dc2676eeac3a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\Commands">
-      <UniqueIdentifier>{296eac1b-8f2b-49e6-b21c-aed066f677d3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="source\Controllers">
       <UniqueIdentifier>{776d95f2-7c71-4faa-ad61-02499462b13c}</UniqueIdentifier>
     </Filter>
@@ -60,6 +57,9 @@
     </Filter>
     <Filter Include="source\Lua">
       <UniqueIdentifier>{028d56a8-6869-470a-a912-b245e332aafc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Commands">
+      <UniqueIdentifier>{296eac1b-8f2b-49e6-b21c-aed066f677d3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -979,6 +979,12 @@
     </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\Lua\LuaSpawnFunctions.h">
       <Filter>source\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DialogCloseMsg_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DialogSelectMsg_Packet.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

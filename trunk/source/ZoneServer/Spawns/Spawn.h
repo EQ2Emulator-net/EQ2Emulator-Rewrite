@@ -204,6 +204,8 @@ private:
 	std::weak_ptr<class EmuLuaState> m_luaState;
 	uint32_t m_scriptID;
 
+	uint32_t m_lastFaceTargetTime;
+
 public:
 	/* I put the template functions down here so they aren't cluttering up the rest of the class */
 	template <typename Field, typename Value>
@@ -721,4 +723,7 @@ public:
 	uint8_t GetDifficultyOffset() { return m_encounterOffset; }
 
 	void CallScript(const char* function, const std::shared_ptr<Spawn>& spawnArg = std::shared_ptr<Spawn>(), const char* stringArg = nullptr);
+	//TODO: move this to the controller?
+	void FaceSpawn(const std::shared_ptr<Spawn>& spawn);
+	void FaceLocation(float x, float z);
 };

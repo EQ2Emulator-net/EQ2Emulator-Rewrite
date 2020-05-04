@@ -3,6 +3,9 @@
 #include "ClientChatFilters.h"
 #include <string>
 #include "../../common/Packets/PacketElements/PacketEQ2Color.h"
+#include "../Lua/LuaUserData.h"
+
+class Spawn;
 
 struct HearChatParams {
 	HearChatParams() : language(0), bFromNPC(false), bShowBubble(false), bUnderstood(true),
@@ -22,6 +25,15 @@ struct HearChatParams {
 	const char* chatFilterName;
 };
 
+struct OpenDialogParams {
+	std::shared_ptr<Spawn> scriptSpawn;
+	std::string text;
+	std::vector<ConversationOption> options;
+	std::string mp3;
+	uint32_t key1;
+	uint32_t key2;
+};
+
 class ClientChat {
 public:
 	ClientChat(class Client& client);
@@ -34,6 +46,10 @@ public:
 	void DisplayText(const char* filter, const std::string& message, uint8_t onscreenMsgType = 0xff, bool bOnscreen = false, const std::string& unkString = "");
 	
 	void SendSimpleGameMessage(const char* msg);
+
+	//Conversations
+	void DisplaySpawnDialog(const OpenDialogParams& params, uint8_t type);
+	void HandleDialogSelection(uint32_t conversationID, uint32_t selection);
 
 private:
 	Client& client;
@@ -49,4 +65,13 @@ private:
 	uint8_t outOfCharacterFilter;
 	uint8_t tellFilter;
 	uint8_t customChannelFilter;
+
+	struct CurrentDialog {
+		std::vector<std::string> choiceFunctions;
+		std::weak_ptr<Spawn> scriptSpawn;
+	};
+
+	//Dialog/Conversations
+	uint32_t nextConversationID;
+	std::map<uint32_t, CurrentDialog> conversations;
 };

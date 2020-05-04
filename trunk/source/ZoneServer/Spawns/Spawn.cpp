@@ -29,6 +29,7 @@ Spawn::Spawn() : m_updateFlagsByte(0) {
 	m_minLevel = 0;
 	m_maxLevel = 0;
 	m_encounterOffset = 0;
+	m_lastFaceTargetTime = 0;
 }
 
 Spawn::Spawn(std::shared_ptr<Spawn> in) {
@@ -113,6 +114,12 @@ Spawn::~Spawn() {
 
 void Spawn::Process() {
 	// m_controller->Process();
+
+	//TODO: move to controller and add a rule for the amount of time?
+	if (m_lastFaceTargetTime != 0 && Timer::GetServerTime() - m_lastFaceTargetTime >= 30000) {
+		SetHeading(GetOrigHeading());
+		m_lastFaceTargetTime = 0;
+	}
 
 	bool bCheckVisUpdate;
 	if (bCheckVisUpdate = visUpdateTag != lastVisUpdateSent) {
@@ -395,4 +402,45 @@ void Spawn::CallScript(const char* function, const std::shared_ptr<Spawn>& spawn
 	lua_settop(state, 0);
 
 	--script->nUsers;
+}
+
+void Spawn::FaceSpawn(const std::shared_ptr<Spawn>& spawn) {
+	FaceLocation(spawn->GetX(), spawn->GetZ());
+}
+
+//Taken from old code
+void Spawn::FaceLocation(float x, float z) {
+	double angle;
+
+	double diff_x = x - GetX();
+	double diff_z = z - GetZ();
+
+	//If we're very close to the same spot don't bother changing heading
+	if (sqrt(diff_x * diff_x * diff_z * diff_z) < .1) {
+		return;
+	}
+
+	if (diff_z == 0) {
+		if (diff_x > 0)
+			angle = 90;
+		else
+			angle = 270;
+	}
+	else
+		angle = ((std::atan(diff_x / diff_z)) * 180) / 3.14159265358979323846;
+
+	if (angle < 0)
+		angle = angle + 360;
+	else
+		angle = angle + 180;
+
+	if (diff_x < 0)
+		angle = angle + 180;
+
+	SetHeading(static_cast<float>(angle));
+
+	if (!IsInCombat()) {
+		//TODO: Should we add a temporary action state?
+		m_lastFaceTargetTime = Timer::GetServerTime();
+	}
 }

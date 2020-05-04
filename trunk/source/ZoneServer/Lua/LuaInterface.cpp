@@ -196,7 +196,8 @@ std::shared_ptr<EmuLuaState> LuaInterface::LoadZoneScript(uint32_t id) {
 }
 
 void LuaInterface::PrintStateError(lua_State* state) {
+	std::string err = lua_tostring(state, -1);
 	lua_getglobal(state, "GLuaScriptName");
-	LuaErrorF("Lua script error in script %s:\n%s", lua_tostring(state, lua_gettop(state)), lua_tostring(state, -1));
+	LuaErrorF("Lua script error in script %s:\n%s", lua_tostring(state, lua_gettop(state)), err.c_str());
 	lua_pop(state, 1);
 }
