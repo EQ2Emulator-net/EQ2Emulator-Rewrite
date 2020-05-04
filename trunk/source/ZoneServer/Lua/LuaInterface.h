@@ -25,13 +25,6 @@ public:
 
 class LuaInterface {
 public:
-	LuaInterface() = default;
-	~LuaInterface() = default;
-
-	std::map<uint32_t, std::shared_ptr<EmuLuaState> > spawnStates;
-
-	static void RegisterFunctions(lua_State* state);
-
 	//Primitive types
 	static void PushLuaNil(lua_State* state);
 	static void PushLuaString(lua_State* state, const char* str);
@@ -48,6 +41,12 @@ public:
 		
 	//Misc
 	static bool IsNoneOrNil(lua_State* state, int index);
+	static void LuaError(const char* err);
+	static void LuaErrorF(const char* fmt, ...);
+	static void RegisterFunctions(lua_State* state);
+	static std::shared_ptr<EmuLuaState> LoadSpawnScript(uint32_t id);
+	static std::shared_ptr<EmuLuaState> LoadZoneScript(uint32_t id);
+	static void PrintStateError(lua_State* state);
 
 	//User data
 	static void PushLuaSpawn(lua_State* state, const std::shared_ptr<Spawn>& spawn);
@@ -55,7 +54,6 @@ public:
 
 	static std::shared_ptr<Spawn> GetLuaSpawn(lua_State* state, int index);
 	static std::shared_ptr<ZoneServer> GetLuaZone(lua_State* state, int index);
-
 
 	//Script Functions
 	static int Emu_Lua_Say(lua_State* state);

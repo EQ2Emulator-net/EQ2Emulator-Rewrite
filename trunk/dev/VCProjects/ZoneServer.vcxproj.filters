@@ -381,6 +381,9 @@
     <ClCompile Include="..\..\source\ZoneServer\Lua\LuaItemFunctions.cpp">
       <Filter>source\Lua</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Lua\LuaGlobals.cpp">
+      <Filter>source\Lua</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h">
@@ -961,6 +964,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\Spawns\SpawnGroupList.h">
       <Filter>source\Spawns</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Lua\LuaGlobals.h">
+      <Filter>source\Lua</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

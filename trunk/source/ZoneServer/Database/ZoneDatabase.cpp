@@ -63,7 +63,7 @@ bool ZoneDatabase::LoadZoneInfo(ZoneServer* z) {
 		z->SetDefaultResetTime(result.GetUInt32(23));
 		z->SetDefaultLockoutTime(result.GetUInt32(24));
 		z->SetForceGroupToZone(result.GetUInt16(25));
-		z->SetLuaScript(result.GetString(26));
+		z->SetScriptID(result.GetUInt32(26));
 		z->SetShutdownTimer(result.GetUInt32(27));
 		z->SetZoneMOTD(result.GetString(28));
 		z->SetRulesetID(result.GetUInt32(29));

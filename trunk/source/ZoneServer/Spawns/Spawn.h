@@ -719,4 +719,6 @@ public:
 	uint8_t GetMaxLevel() { return m_maxLevel; }
 	void SetDifficultyOffset(uint8_t val) { m_encounterOffset = val; }
 	uint8_t GetDifficultyOffset() { return m_encounterOffset; }
+
+	void CallScript(const char* function, const std::shared_ptr<Spawn>& spawnArg = std::shared_ptr<Spawn>(), const char* stringArg = nullptr);
 };

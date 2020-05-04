@@ -10,6 +10,10 @@
 // Packets
 #include "../Packets/OP_UpdateSpawnCmdMsg.h"
 #include "../Packets/OP_UpdateTitleCmd_Packet.h"
+#include "../Lua/LuaGlobals.h"
+#include "../Lua/LuaInterface.h"
+
+extern LuaGlobals g_luaGlobals;
 
 Spawn::Spawn() : m_updateFlagsByte(0) {
 	m_spawnID = GetNextID();
@@ -327,4 +331,65 @@ EConsiderDifficulty Spawn::GetConsiderDifficulty(uint8_t considererLevel, uint8_
 	else //if(diff < 0)
 		color = EConsiderDifficulty::BLUE;
 	return color;
+}
+
+void Spawn::CallScript(const char* function, const std::shared_ptr<Spawn>& spawnArg, const char* stringArg) {
+	auto script = m_luaState.lock();
+	if (!script) {
+		if (m_scriptID != 0) {
+			auto zone = GetZone();
+			if (zone) {
+				script = zone->LoadSpawnState(m_scriptID);
+			}
+		}
+
+		if (!script) {
+			return;
+		}
+
+		//Cache this script for later
+		m_luaState = script;
+	}
+
+	std::shared_ptr<EmuLuaState> recursiveState;
+	lua_State* state = script->state;
+
+	lua_getglobal(state, function);
+
+	if (!lua_isfunction(state, lua_gettop(state))) {
+		//This function does not exist in the script, we don't need to spam an error here just return
+		lua_pop(state, 1);
+		return;
+	}
+
+	//NOTE: If we ever have more than one thread that could access this at once we'll need a recursive mutex on the EmuLuaState
+	if (script->nUsers++) {
+		lua_pop(state, 1);
+
+		//We're calling this script recursively. Load a new copy of the state
+		recursiveState = LuaInterface::LoadSpawnScript(m_scriptID);
+		if (!recursiveState) {
+			return;
+		}
+
+		state = recursiveState->state;
+	}
+
+	LuaInterface::PushLuaSpawn(state, shared_from_this());
+	int32_t nArgs = 1;
+	if (spawnArg) {
+		LuaInterface::PushLuaSpawn(state, spawnArg);
+		++nArgs;
+	}
+
+	if (stringArg) {
+		LuaInterface::PushLuaString(state, stringArg);
+		++nArgs;
+	}
+
+	if (lua_pcall(state, nArgs, 0, 0) != LUA_OK) {
+		LuaInterface::PrintStateError(state);
+	}
+
+	--script->nUsers;
 }

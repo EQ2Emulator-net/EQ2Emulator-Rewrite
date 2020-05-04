@@ -14,6 +14,7 @@
 #include "Chat/ChatFilterLookup.h"
 #include "Spawns/EntityCommands.h"
 #include "ZoneServer/MasterZoneLookup.h"
+#include "Lua/LuaGlobals.h"
 
 ZoneDatabase database;
 Classes classes;
@@ -23,6 +24,7 @@ RuleManager g_ruleManager;
 ChatFilterLookup g_chatFilterLookup;
 MasterEntityCommandList g_masterEntityCommandList;
 MasterZoneLookup g_masterZoneLookup;
+LuaGlobals g_luaGlobals;
 
 int main() {
 	bool looping = true;
@@ -73,6 +75,16 @@ int main() {
 	if (success) {
 		LogDebug(LOG_DATABASE, 0, "Loading master zone list...");
 		success = database.LoadMasterZoneList(g_masterZoneLookup);
+	}
+
+	if (success) {
+		LogDebug(LOG_DATABASE, 0, "Loading spawn scripts...");
+		success = database.LoadSpawnScripts(g_luaGlobals);
+	}
+
+	if (success) {
+		LogDebug(LOG_DATABASE, 0, "Loading zone scripts...");
+		success = database.LoadZoneScripts(g_luaGlobals);
 	}
 
 	if (success)

@@ -55,6 +55,7 @@ private:
 	static void CommandTell(const std::shared_ptr<Client>& client, Separator& sep);
 	static void CommandDepop(const std::shared_ptr<Client>& client, Separator& sep);
 	static void CommandRepop(const std::shared_ptr<Client>& client, Separator& sep);
+	static void CommandHail(const std::shared_ptr<Client>& client, Separator& sep);
 
 	// CommandSpawn.cpp
 	static void CommandSpawnSet(const std::shared_ptr<Client>& client, Separator& sep);

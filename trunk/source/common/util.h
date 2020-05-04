@@ -55,3 +55,5 @@ public:
 		return strcmp(myVal, rhs) == 0;
 	}
 };
+
+bool GetFileAsString(std::string& out, const char* fileName);

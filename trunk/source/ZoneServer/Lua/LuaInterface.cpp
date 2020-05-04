@@ -1,7 +1,10 @@
 #include "stdafx.h"
 
 #include "LuaInterface.h"
+#include "LuaGlobals.h"
 #include "../../common/log.h"
+
+extern LuaGlobals g_luaGlobals;
 
 void LuaInterface::PushLuaNil(lua_State* state) {
 	Emu_CheckLuaStack(state, 1);
@@ -131,4 +134,60 @@ std::shared_ptr<EmuLuaState> EmuLuaState::Create(const std::shared_ptr<LuaScript
 	}
 
 	return std::shared_ptr<EmuLuaState>(new EmuLuaState(state, script));
+}
+
+void LuaInterface::LuaError(const char* err) {
+	LogError(LOG_LUA, 0, err);
+
+	//TODO: Push errors to in-game chat
+}
+
+void LuaInterface::LuaErrorF(const char* fmt, ...) {
+	char buf[1024];
+
+	va_list argptr;
+
+	va_start(argptr, fmt);
+	int size;
+	if ((size = vsnprintf(buf, sizeof(buf), fmt, argptr)) >= sizeof(buf)) {
+		std::unique_ptr<char[]> dynamicBuf;
+		//This message will not fit in our stack buf, allocate a larger one
+		dynamicBuf.reset(new char[size + 1]);
+		vsnprintf(dynamicBuf.get(), size + 1, fmt, argptr);
+		LuaError(dynamicBuf.get());
+	}
+	else {
+		LuaError(buf);
+	}
+	va_end(argptr);
+}
+
+std::shared_ptr<EmuLuaState> LuaInterface::LoadSpawnScript(uint32_t id) {
+	std::shared_ptr<EmuLuaState> ret;
+
+	auto scriptInfo = g_luaGlobals.GetSpawnScript(id);
+
+	if (!scriptInfo) {
+		return ret;
+	}
+
+	return EmuLuaState::Create(scriptInfo);
+}
+
+std::shared_ptr<EmuLuaState> LuaInterface::LoadZoneScript(uint32_t id) {
+	std::shared_ptr<EmuLuaState> ret;
+
+	auto scriptInfo = g_luaGlobals.GetZoneScript(id);
+
+	if (!scriptInfo) {
+		return ret;
+	}
+
+	return EmuLuaState::Create(scriptInfo);
+}
+
+void LuaInterface::PrintStateError(lua_State* state) {
+	lua_getglobal(state, "GLuaScriptName");
+	LuaErrorF("Lua script error in script %s:\n%s", lua_tostring(state, lua_gettop(state)), lua_tostring(state, -1));
+	lua_pop(state, 1);
 }

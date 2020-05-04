@@ -492,3 +492,36 @@ void CommandProcess::CommandRepop(const std::shared_ptr<Client>& client, Separat
 	zone->ProcessSpawnLocations();
 	client->chat.DisplayText("MOTD", "Zone repop finished!", 0xff, false, "");
 }
+
+void CommandProcess::CommandHail(const std::shared_ptr<Client>& client, Separator& sep) {
+	auto zone = client->GetZone();
+	if (!zone) {
+		return;
+	}
+
+	auto controller = client->GetController();
+
+	auto player = controller->GetControlled();
+	if (!player) {
+		return;
+	}
+
+	auto target = controller->GetTarget();
+
+	if (!target) {
+		zone->chat.HandleSay("Hail", player);
+		return;
+	}
+
+	//Format the hail message
+	ostringstream hailMsg;
+	hailMsg << "Hail, " << player->GetName();
+	zone->chat.HandleSay(hailMsg.str().c_str(), player);
+
+	//Check if the hailed target is a player, if so we're done. Otherwise try to call the spawn's script
+	if (target->IsPlayer()) {
+		return;
+	}
+
+	target->CallScript("hailed", player);
+}

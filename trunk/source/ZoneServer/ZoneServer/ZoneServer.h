@@ -9,7 +9,6 @@
 #include "../../common/timer.h"
 #include "../../common/Mutex.h"
 #include "../Chat/ZoneChat.h"
-#include "../Lua/LuaInterface.h"
 
 #include "../Spawns/SpawnLocation.h"
 
@@ -19,6 +18,7 @@ class Entity;
 class Object;
 class GroundSpawn;
 class Cell;
+class EmuLuaState;
 
 // This will be where every thing happens
 class ZoneServer : public std::enable_shared_from_this<ZoneServer> {
@@ -184,6 +184,11 @@ private:
 	uint32_t shutdownTimer;
 	std::string zoneMOTD;
 	uint32_t rulesetID;
+	uint32_t scriptID;
+
+
+	std::shared_ptr<EmuLuaState> m_luaState;
+	std::map<uint32_t, std::shared_ptr<EmuLuaState> > m_spawnStates;
 
 	void OnClientRemoval(const std::shared_ptr<Client>& client);
 
@@ -242,7 +247,7 @@ public:
 	uint32_t GetDefaultLockoutTime() { return defaultLockoutTime; }
 	void SetForceGroupToZone(uint16_t val) { forceGroupToZone = val; }
 	uint16_t GetForceGroupToZone() { return forceGroupToZone; }
-	void SetLuaScript(std::string val) { luaScript = val; }
+	void SetScriptID(uint32_t id) { scriptID = id; }
 	std::string GetLuaScript() { return luaScript; }
 	void SetShutdownTimer(uint32_t val) { shutdownTimer = val; }
 	uint32_t GetShutdownTimer() { return shutdownTimer; }
@@ -250,5 +255,7 @@ public:
 	std::string GetZoneMOTD() { return zoneMOTD; }
 	void SetRulesetID(uint32_t val) { rulesetID = val; }
 	uint32_t GetRulesetID() { return rulesetID; }
-
+	std::shared_ptr<EmuLuaState> LoadSpawnState(uint32_t id);
+	void LoadScript();
+	void CallScript(const char* function, const std::shared_ptr<Spawn>& spawnArg = std::shared_ptr<Spawn>(), uint32_t gridID = 0);
 };

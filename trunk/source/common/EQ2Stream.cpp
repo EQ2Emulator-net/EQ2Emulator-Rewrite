@@ -166,45 +166,6 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 	}
 
 	switch (p->GetOpcode()) {
-	case OP_SessionRequest: {
-		auto request = static_cast<OP_SessionRequest_Packet*>(p);
-
-		if (Session != 0 && ntohl(request->Session) != Session) {
-			bNeedNewClient = true;
-			return;
-		}
-
-		Session = ntohl(request->Session);
-		MaxLength = ntohl(request->MaxLength);
-		//Setting the sequence to 0 may be a bad idea in case we get multiple of these packets
-		//NextInSeq = 0;
-		Key = 0x33624702;
-		LogDebug(LOG_NET, 3, "OP_SessionRequest Protocol Version: %u, Session: %u, MaxLength: %u", ntohl(request->ProtocolVersion), Session, MaxLength);
-
-		SendSessionResponse();
-		SetState(EQStreamState::ESTABLISHED);
-		break;
-	}
-	case OP_SessionDisconnect: {
-		auto disconnect = static_cast<OP_SessionDisconnect_Packet*>(p);
-		LogDebug(LOG_NET, 0, "Client from %s is disconnecting with reason: %s", ToString().c_str(), GetDisconnectReasonString(disconnect->Reason));
-		SendDisconnect(disconnect->Reason);
-		break;
-	}
-	case OP_KeepAlive: {
-		SendKeepAlive();
-		break;
-	}
-	case OP_ClientSessionUpdate: {
-		auto update = static_cast<OP_ClientSessionUpdate_Packet*>(p);
-		AdjustRates(ntohl(update->AverageDelta));
-		SendServerSessionUpdate(update->RequestID);
-		if (!crypto.isEncrypted() && !bSentKeyRequest) {
-			SendKeyRequest();
-			bSentKeyRequest = true;
-		}
-		break;
-	}
 	case OP_Packet: {
 		if (NetDebugEnabled()) {
 			LogDebug(LOG_PACKET, 0, "OP_Packet_Packet Dump");
@@ -336,6 +297,45 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 				break;
 			}
 		}
+		break;
+	}
+	case OP_KeepAlive: {
+		SendKeepAlive();
+		break;
+	}
+	case OP_ClientSessionUpdate: {
+		auto update = static_cast<OP_ClientSessionUpdate_Packet*>(p);
+		AdjustRates(ntohl(update->AverageDelta));
+		SendServerSessionUpdate(update->RequestID);
+		if (!crypto.isEncrypted() && !bSentKeyRequest) {
+			SendKeyRequest();
+			bSentKeyRequest = true;
+		}
+		break;
+	}
+	case OP_SessionRequest: {
+		auto request = static_cast<OP_SessionRequest_Packet*>(p);
+
+		if (Session != 0 && ntohl(request->Session) != Session) {
+			bNeedNewClient = true;
+			return;
+		}
+
+		Session = ntohl(request->Session);
+		MaxLength = ntohl(request->MaxLength);
+		//Setting the sequence to 0 may be a bad idea in case we get multiple of these packets
+		//NextInSeq = 0;
+		Key = 0x33624702;
+		LogDebug(LOG_NET, 3, "OP_SessionRequest Protocol Version: %u, Session: %u, MaxLength: %u", ntohl(request->ProtocolVersion), Session, MaxLength);
+
+		SendSessionResponse();
+		SetState(EQStreamState::ESTABLISHED);
+		break;
+	}
+	case OP_SessionDisconnect: {
+		auto disconnect = static_cast<OP_SessionDisconnect_Packet*>(p);
+		LogDebug(LOG_NET, 0, "Client from %s is disconnecting with reason: %s", ToString().c_str(), GetDisconnectReasonString(disconnect->Reason));
+		SendDisconnect(disconnect->Reason);
 		break;
 	}
 	case OP_OutOfSession: {
@@ -1051,30 +1051,13 @@ void EQ2Stream::ProcessFragmentedData(ProtocolPacket* p) {
 		memcpy(oversize_buffer + oversize_offset, p->buffer + 2, p->Size - 2);
 		oversize_offset += p->Size - 2;
 		if (oversize_offset == oversize_length) {
-			if (oversize_buffer[0] == 0 && oversize_buffer[1] == 0) {
-				LogWarn(LOG_PACKET, 0, "Got a fragmented packet with 00 00 for the first bytes!");
-			}
 			if (!HandleEmbeddedPacket(oversize_buffer, oversize_length)) {
 				if (crypto.isEncrypted() && p && p->Size > 2) {
-					EQ2Packet* p2 = ProcessEncryptedData(oversize_buffer, oversize_offset);
-					if (p2) {
+					if (EQ2Packet* p2 = ProcessEncryptedData(oversize_buffer, oversize_offset)) {
 						InboundQueuePush(p2);
 					}
 				}
 			}
-			//if (oversize_buffer[0] == 0x00 && oversize_buffer[1] == 0x19) {
-			//	ProtocolPacket* subp = new OP_AppCombined_Packet(oversize_buffer + 2, oversize_length - 2);
-			//	ProcessPacket(subp);
-			//	delete subp;
-			//}
-			//else {
-			//	if (crypto.isEncrypted() && p && p->Size > 2) {
-			//		EQ2Packet* p2 = ProcessEncryptedData(oversize_buffer, oversize_offset);
-			//		if (p2) {
-			//			InboundQueuePush(p2);
-			//		}
-			//	}
-			//}
 			delete[] oversize_buffer;
 			oversize_buffer = nullptr;
 			oversize_offset = 0;

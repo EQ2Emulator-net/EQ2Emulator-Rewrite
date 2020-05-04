@@ -7,6 +7,7 @@ class ZoneServer;
 class Entity;
 class CommandProcess;
 class DatabaseResult;
+class LuaGlobals;
 
 class ZoneDatabase : public CommonDatabase {
 public:
@@ -51,6 +52,9 @@ public:
 	bool LoadEntityCommands(class MasterEntityCommandList& masterList);
 
 	bool LoadMasterZoneList(class MasterZoneLookup& lookup);
+
+	bool LoadSpawnScripts(LuaGlobals& globals);
+	bool LoadZoneScripts(LuaGlobals& globals);
 
 private:
 	//The return value is the next indice in the query result

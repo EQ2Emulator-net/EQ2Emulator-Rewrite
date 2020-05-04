@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <random>
 #include <utility>
+#include <fstream>
 
 /**
 * @brief Sleeps for the given number of milliseconds.
@@ -302,4 +303,15 @@ uint32_t MakeRandomNumber() {
 	std::uniform_int_distribution<uint32_t> dist(0, 0xFFFFFFFF);
 
 	return dist(GetRandMT());
+}
+
+bool GetFileAsString(std::string& out, const char* file_name) {
+	std::ifstream reader(file_name);
+	if (!reader)
+		return false;
+
+	std::ostringstream bufstream;
+	bufstream << reader.rdbuf();
+	out = std::move(bufstream.str());
+	return true;
 }

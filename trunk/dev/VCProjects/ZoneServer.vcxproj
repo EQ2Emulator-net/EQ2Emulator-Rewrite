@@ -164,6 +164,7 @@
     <ClCompile Include="..\..\source\ZoneServer\Controllers\PlayerController.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Database\ZoneDatabase.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Lua\LuaFunctionRegister.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Lua\LuaGlobals.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Lua\LuaInterface.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Lua\LuaItemFunctions.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Lua\LuaQuestFunctions.cpp" />
@@ -324,6 +325,7 @@
     <ClInclude Include="..\..\source\ZoneServer\Controllers\PetController.h" />
     <ClInclude Include="..\..\source\ZoneServer\Controllers\PlayerController.h" />
     <ClInclude Include="..\..\source\ZoneServer\Database\ZoneDatabase.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Lua\LuaGlobals.h" />
     <ClInclude Include="..\..\source\ZoneServer\Lua\LuaInterface.h" />
     <ClInclude Include="..\..\source\ZoneServer\Lua\LuaUserData.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\EncodedPackets.h" />

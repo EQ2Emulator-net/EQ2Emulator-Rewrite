@@ -10,6 +10,8 @@
 #include "../Commands/CommandProcess.h"
 #include "Cell.h"
 #include "../../common/string.h"
+#include "../Lua/LuaInterface.h"
+#include "../Lua/LuaGlobals.h"
 
 // Packets
 #include "../Packets/OP_ZoneInfoMsg_Packet.h"
@@ -30,6 +32,7 @@
 extern ZoneDatabase database;
 extern ZoneOperator g_zoneOperator;
 extern CommandProcess g_commandProcess;
+extern LuaGlobals g_luaGlobals;
 
 ZoneServer::ZoneServer(uint32_t zone_id):  chat(Clients, *this) {
 	id = zone_id;
@@ -757,7 +760,6 @@ void ZoneServer::AddSpawn(std::shared_ptr<Spawn> spawn, SpawnEntryType type) {
 	spawn->SetZone(shared_from_this());
 	spawn->PopUpdateFlags();
 
-	// TODO: check for type to push to the correct list
 	switch (type) {
 	case SpawnEntryType::ENPC:
 		m_entityList.push_back(std::static_pointer_cast<Entity>(spawn));
@@ -781,6 +783,8 @@ void ZoneServer::AddSpawn(std::shared_ptr<Spawn> spawn, SpawnEntryType type) {
 	int32_t y = static_cast<int32_t>(std::floor(spawn->GetZ() / 100.f));
 	std::pair<int32_t, int32_t> cellCoords = std::make_pair(x, y);
 	AddSpawnToCell(spawn, cellCoords);
+
+	spawn->CallScript("spawn");
 }
 
 void ZoneServer::AddSpawnGroupLocation(uint32_t group_id, uint32_t placement_location_id, uint32_t spawn_location_id) {
@@ -1152,4 +1156,80 @@ void ZoneServer::LoadThread() {
 
 	// TODO: process spawn locations (put spawn in world)
 	ProcessSpawnLocations();
+
+	CallScript("init_zone_script");
+}
+
+std::shared_ptr<EmuLuaState> ZoneServer::LoadSpawnState(uint32_t id) {
+	auto itr = m_spawnStates.find(id);
+	if (itr != m_spawnStates.end()) {
+		//We have already loaded this script, return it
+		return itr->second;
+	}
+
+	//We need to load this script, cache it for later as well
+	auto state = LuaInterface::LoadSpawnScript(id);
+	if (state) {
+		m_spawnStates[id] = state;
+	}
+
+	return state;
+}
+
+void ZoneServer::LoadScript() {
+	m_luaState.reset();
+
+	if (scriptID == 0) {
+		return;
+	}
+
+	m_luaState = LuaInterface::LoadZoneScript(scriptID);
+}
+
+void ZoneServer::CallScript(const char* function, const std::shared_ptr<Spawn>& spawnArg, uint32_t gridID) {
+	if (!m_luaState) {
+		return;
+	}
+
+	std::shared_ptr<EmuLuaState> recursiveState;
+	lua_State* state = m_luaState->state;
+
+	lua_getglobal(state, function);
+
+	if (!lua_isfunction(state, lua_gettop(state))) {
+		//This function does not exist in the script, we don't need to spam an error here just return
+		lua_pop(state, 1);
+		return;
+	}
+
+	//NOTE: If we ever have more than one thread that could access this at once we'll need a recursive mutex on the EmuLuaState
+	if (m_luaState->nUsers++) {
+		lua_pop(state, 1);
+
+		//We're calling this script recursively. Load a new copy of the state
+		recursiveState = LuaInterface::LoadZoneScript(scriptID);
+		if (!recursiveState) {
+			return;
+		}
+
+		state = recursiveState->state;
+	}
+
+	LuaInterface::PushLuaZone(state, shared_from_this());
+	int32_t nArgs = 1;
+	if (spawnArg) {
+		LuaInterface::PushLuaSpawn(state, spawnArg);
+		++nArgs;
+	}
+
+	if (gridID > 0) {
+		LuaInterface::PushLuaUInt32(state, gridID);
+		++nArgs;
+	}
+
+	if (lua_pcall(state, nArgs, 0, 0) != LUA_OK) {
+		LuaInterface::PrintStateError(state);
+	}
+
+	--m_luaState->nUsers;
 }
