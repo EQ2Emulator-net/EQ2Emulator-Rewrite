@@ -897,7 +897,7 @@ bool ZoneDatabase::LoadGroundSpawnLocations(ZoneServer* z) {
 constexpr const char* GetSpawnTableFields() {
 	return "s.id, s.name,s.sub_title,s.prefix,s.suffix,s.last_name,s.race,s.model_type,s.size,s.size_offset,s.targetable,s.show_name,"
 		"s.command_primary,s.command_secondary,s.visual_state,s.attackable,s.show_level,s.show_command_icon,s.display_hand_icon,s.faction_id,"
-		"s.collision_radius,s.hp,s.power,s.savagery,s.dissonance,s.merchant_id,s.transport_id,s.merchant_type";
+		"s.collision_radius,s.hp,s.power,s.savagery,s.dissonance,s.merchant_id,s.transport_id,s.merchant_type,s.script_id";
 }
 
 uint32_t ZoneDatabase::ProcessSpawnTableFields(const std::shared_ptr<Spawn>& spawn, DatabaseResult& res) {
@@ -948,6 +948,7 @@ uint32_t ZoneDatabase::ProcessSpawnTableFields(const std::shared_ptr<Spawn>& spa
 	//Transport ID
 	res.GetUInt32(i++);
 	spawn->SetMerchantType(res.GetUInt32(i++));
+	spawn->SetScriptID(res.GetUInt32(i++));
 
 	spawn->SetEntityFlags(entityFlags);
 	spawn->PopUpdateFlags();

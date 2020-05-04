@@ -391,5 +391,7 @@ void Spawn::CallScript(const char* function, const std::shared_ptr<Spawn>& spawn
 		LuaInterface::PrintStateError(state);
 	}
 
+	lua_settop(state, 0);
+
 	--script->nUsers;
 }

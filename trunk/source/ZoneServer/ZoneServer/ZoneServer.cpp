@@ -616,6 +616,12 @@ std::shared_ptr<Entity> ZoneServer::AddNPCSpawn(std::shared_ptr<SpawnLocation> s
 		//if (spawnLocation->expire_time > 0)
 			//AddSpawnExpireTimer(npc, spawnLocation->expire_time, spawnLocation->expire_offset);
 		//AddLoot(npc);
+		if (spawnEntry->scriptID != 0) {
+			npc->SetScriptID(spawnEntry->scriptID);
+		}
+		else if (spawnLocation->scriptID != 0) {
+			npc->SetScriptID(spawnLocation->scriptID);
+		}
 		AddSpawn(npc, SpawnEntryType::ENPC);
 	}
 
@@ -1231,6 +1237,8 @@ void ZoneServer::CallScript(const char* function, const std::shared_ptr<Spawn>& 
 	if (lua_pcall(state, nArgs, 0, 0) != LUA_OK) {
 		LuaInterface::PrintStateError(state);
 	}
+
+	lua_settop(state, 0);
 
 	--m_luaState->nUsers;
 }
