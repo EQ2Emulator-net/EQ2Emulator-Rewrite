@@ -83,8 +83,10 @@ Spawn::Spawn(std::shared_ptr<Spawn> in) {
 	if (m_sizeOffset > 0.0f)
 		m_posStruct.size = MakeRandom(m_posStruct.size, m_posStruct.size + m_sizeOffset);
 
-	if (m_maxLevel > m_minLevel)
+	if (m_maxLevel > m_minLevel) {
 		m_infoStruct.level = static_cast<uint8_t>(MakeRandomInt(m_minLevel, m_maxLevel));
+		SetOrigLevel(m_infoStruct.level, false);
+	}
 
 	if (m_encounterOffset > 0)
 		m_infoStruct.difficulty = static_cast<uint8_t>(MakeRandomInt(m_infoStruct.difficulty, m_infoStruct.difficulty + m_encounterOffset));
