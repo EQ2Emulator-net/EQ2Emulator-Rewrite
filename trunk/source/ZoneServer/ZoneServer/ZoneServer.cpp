@@ -1157,6 +1157,7 @@ void ZoneServer::LoadThread() {
 	// TODO: process spawn locations (put spawn in world)
 	ProcessSpawnLocations();
 
+	LoadScript();
 	CallScript("init_zone_script");
 }
 
