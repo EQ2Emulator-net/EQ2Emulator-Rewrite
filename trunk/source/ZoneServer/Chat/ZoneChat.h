@@ -18,6 +18,7 @@ public:
 	void HandleShout(const char* msg, const std::shared_ptr<Spawn>& sender, uint8_t language = 0);
 	void HandleEmoteChat(const char* msg, const std::shared_ptr<Spawn>& sender);
 	void HandleOutOfCharacter(const char* msg, const std::shared_ptr<Spawn>& sender);
+	void HandlePlayFlavor(struct PlayFlavorParams& params, const std::shared_ptr<Spawn>& sender, const std::shared_ptr<Spawn>& target = std::shared_ptr<Spawn>());
 	void SendToPlayersInRange(const std::shared_ptr<Spawn>& sender, EQ2Packet* p, float hearSpawnDistance = 0.f, bool self = false);
 
 private:
@@ -26,4 +27,5 @@ private:
 	float hearSpawnDistance;
 
 	void HearChatClientsInRange(struct HearChatParams& params, const std::shared_ptr<Spawn>& sender, const std::shared_ptr<Spawn>& receiver = std::shared_ptr<Spawn>());
+	void HearPlayFlavorClientsInRange(struct PlayFlavorParams& params, const std::shared_ptr<Spawn>& sender, const std::shared_ptr<Spawn>& target = std::shared_ptr<Spawn>());
 };

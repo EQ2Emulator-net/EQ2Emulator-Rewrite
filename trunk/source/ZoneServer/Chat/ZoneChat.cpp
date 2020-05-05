@@ -181,3 +181,49 @@ void ZoneChat::SendToPlayersInRange(const std::shared_ptr<Spawn>& sender, EQ2Pac
 
 	delete p;
 }
+
+void ZoneChat::HandlePlayFlavor(PlayFlavorParams& params, const std::shared_ptr<Spawn>& sender, const std::shared_ptr<Spawn>& target) {
+	HearPlayFlavorClientsInRange(params, sender, target);
+}
+
+void ZoneChat::HearPlayFlavorClientsInRange(PlayFlavorParams& params, const std::shared_ptr<Spawn>& sender, const std::shared_ptr<Spawn>& target) {
+	LogWarn(LOG_CHAT, 0, "Check if the receiver understands a language in ZoneChat::HearPlayFlavorClientsInRange to get rid of this spam!");
+	params.bUnderstood = true;
+
+	for (auto& itr : zoneClients) {
+		auto client = itr.second.lock();
+
+		if (!client) {
+			continue;
+		}
+
+		if (uint32_t spawnID = client->GetIDForSpawn(sender)) {
+			params.fromSpawnID = spawnID;
+		}
+		else {
+			params.fromSpawnID = 0xFFFFFFFF;
+		}
+
+		auto entity = client->GetController()->GetControlled();
+		if (!entity) {
+			continue;
+		}
+
+		if (sender == entity) {
+			client->chat.HearPlayFlavor(params);
+		}
+		else {
+			if (hearSpawnDistance == 0.f) {
+				hearSpawnDistance = g_ruleManager.GetZoneRule(zone.GetID(), ERuleCategory::R_Zone, ERuleType::HearChatDistance)->GetFloat();
+			}
+
+			float distance = sender->GetDistance(entity);
+
+			if (distance > hearSpawnDistance) {
+				continue;
+			}
+
+			client->chat.HearPlayFlavor(params);
+		}
+	}
+}

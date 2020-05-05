@@ -6,9 +6,10 @@
 #include "../Packets/OP_OnscreenMsgMsg_Packet.h"
 #include "../Packets/OP_DisplayTextCmd_Packet.h"
 #include "../ZoneServer/Client.h"
-#include "../Packets/OP_OpenDialogCmd_Packet.h"
+#include "../Packets/OP_DialogOpenCmd_Packet.h"
 #include "../Spawns/Entity.h"
 #include "../Controllers/PlayerController.h"
+#include "../Packets/OP_HearPlayFlavorCmd_Packet.h"
 
 extern ChatFilterLookup g_chatFilterLookup;
 
@@ -101,7 +102,7 @@ void ClientChat::SendSimpleGameMessage(const char* msg) {
 }
 
 void ClientChat::DisplaySpawnDialog(const OpenDialogParams& params, uint8_t type) {
-	OP_OpenDialogCmd_Packet p(client.GetVersion());
+	OP_DialogOpenCmd_Packet p(client.GetVersion());
 	p.conversationID = nextConversationID++;
 	p.bCloseable = true;
 	p.message = params.text;
@@ -161,8 +162,8 @@ void ClientChat::DisplaySpawnDialog(const OpenDialogParams& params, uint8_t type
 void ClientChat::HandleDialogSelection(uint32_t conversationID, uint32_t selection) {
 	auto itr = conversations.find(conversationID);
 	if (itr != conversations.end()) {
-		CurrentDialog& dialog = itr->second;
-
+		CurrentDialog dialog = std::move(itr->second);
+		conversations.erase(itr);
 		if (selection < dialog.choiceFunctions.size()) {
 			auto spawn = dialog.scriptSpawn.lock();
 			auto player = client.GetController()->GetControlled();
@@ -170,7 +171,23 @@ void ClientChat::HandleDialogSelection(uint32_t conversationID, uint32_t selecti
 				spawn->CallScript(dialog.choiceFunctions[selection].c_str(), player);
 			}
 		}
-
-		conversations.erase(itr);
 	}
+}
+
+void ClientChat::HearPlayFlavor(const PlayFlavorParams& params) {
+	OP_HearPlayFlavorCmd_Packet p(client.GetVersion());
+	p.emote = params.emote;
+	p.emoteText = params.emoteText;
+	p.mp3 = params.mp3;
+	if (!p.mp3.empty()) {
+		p.key1 = params.key1;
+		p.key2 = params.key2;
+	}
+	p.text = params.text;
+	p.targetName = params.targetName;
+	p.targetID = params.toSpawnID;
+	p.spawnID = params.fromSpawnID;
+	p.speakerName = params.speakerName;
+	p.bUnderstood = params.bUnderstood;
+	client.QueuePacket(p);
 }

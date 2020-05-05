@@ -17,6 +17,7 @@ public:
 		RegisterUInt32(spawnID);
 		RegisterUInt32(targetID);
 		Register16String(mp3);
+		Register16String(speakerName);
 		Register16String(targetName);
 		Register16String(text);
 		Register16String(emoteText);
@@ -24,6 +25,7 @@ public:
 		RegisterUInt32(key1);
 		RegisterUInt32(key2);
 		RegisterUInt8(language);
+		//bShowBubble maybe?
 		RegisterUInt8(unknown4);
 		RegisterBool(bUnderstood);
 		//These are probably the same 10 bytes that are unknown in other chat packets(a 1 byte followed by 4 byte, then another 1 another 4)

@@ -31,7 +31,7 @@
 #include "OP_DisplayTextCmd_Packet.h"
 #include "OP_HearChatCmd_Packet.h"
 #include "OP_OnscreenMsgMsg_Packet.h"
-#include "OP_OpenDialogCmd_Packet.h"
+#include "OP_DialogOpenCmd_Packet.h"
 #include "OP_RequestCampMsg.h"
 #include "OP_CampStartedMsg_Packet.h"
 #include "OP_StoodMsg_Packet.h"
@@ -41,6 +41,7 @@
 #include "OP_EqCannedEmoteCmd_Packet.h"
 #include "OP_DialogCloseMsg_Packet.h"
 #include "OP_DialogSelectMsg_Packet.h"
+#include "OP_HearPlayFlavorCmd_Packet.h"
 
 // Server to Client
 RegisterZoneStruct("OP_ZoneInfoMsg", OP_ZoneInfoMsg_Packet, 283, 284, 942, 957, 959, 1067, 1096, 1142, 1193, 63119, 63182);
@@ -64,12 +65,13 @@ RegisterZoneStruct("OP_ChangeServerControlFlagMsg", OP_ChangeServerControlFlagMs
 RegisterZoneStruct("OP_EqDisplayTextCmd", OP_DisplayTextCmd_Packet, 1, 284);
 RegisterZoneStruct("OP_EqHearChatCmd", OP_HearChatCmd_Packet, 1, 284, 57080, 67650);
 RegisterZoneStruct("OP_OnscreenMsgMsg", OP_OnscreenMsgMsg_Packet, 1, 284);
-RegisterZoneStruct("OP_EqOpenDialogCmd", OP_OpenDialogCmd_Packet, 1, 1096);
+RegisterZoneStruct("OP_EqDialogOpenCmd", OP_DialogOpenCmd_Packet, 1, 1096);
 RegisterZoneStruct("OP_CampStartedMsg", OP_CampStartedMsg_Packet, 1, 284, 1153);
 RegisterZoneStruct("OP_CampAbortedMsg", OP_CampAbortedMsg_Packet, 1);
 RegisterZoneStruct("OP_UpdateTitleCmd", OP_UpdateTitleCmd_Packet, 1, 1153);
 RegisterZoneStruct("OP_EqCannedEmoteCmd", OP_EqCannedEmoteCmd_Packet, 1, 57080);
 RegisterZoneStruct("OP_DialogCloseMsg", OP_DialogCloseMsg_Packet, 1);
+RegisterZoneStruct("OP_EqHearPlayFlavorCmd", OP_HearPlayFlavorCmd_Packet, 1);
 
 // Client to Server
 RegisterZoneStruct("OP_LoginByNumRequestMsg", OP_LoginByNumRequestMsg_Packet, 1, 1212);

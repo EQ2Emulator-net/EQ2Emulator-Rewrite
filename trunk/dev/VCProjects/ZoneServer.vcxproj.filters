@@ -824,9 +824,6 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_OnscreenMsgMsg_Packet.h">
       <Filter>source\Packets\Server-&gt;Client</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_OpenDialogCmd_Packet.h">
-      <Filter>source\Packets\Server-&gt;Client</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\Chat\ChatFilterLookup.h">
       <Filter>source\Chat</Filter>
     </ClInclude>
@@ -986,7 +983,10 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DialogSelectMsg_Packet.h">
       <Filter>source\Packets\Client-&gt;Server</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_HearPlayFlavorCmd_Packet - Copy.h">
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_HearPlayFlavorCmd_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DialogOpenCmd_Packet.h">
       <Filter>source\Packets\Server-&gt;Client</Filter>
     </ClInclude>
   </ItemGroup>

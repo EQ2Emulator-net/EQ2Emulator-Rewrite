@@ -3,9 +3,9 @@
 #include "../Packets/OP_ClientCmdMsg_Packet.h"
 #include <string>
 
-class OP_OpenDialogCmd_Packet : public OP_ClientCmdMsg_Packet {
+class OP_DialogOpenCmd_Packet : public OP_ClientCmdMsg_Packet {
 public:
-	OP_OpenDialogCmd_Packet(uint32_t ver) : OP_ClientCmdMsg_Packet(ver) {
+	OP_DialogOpenCmd_Packet(uint32_t ver) : OP_ClientCmdMsg_Packet(ver) {
 		RegisterElements();
 
 		conversationID = 0;

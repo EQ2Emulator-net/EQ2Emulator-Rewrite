@@ -354,6 +354,9 @@ bool ZoneDatabase::LoadWidgetsForZone(ZoneServer* z) {
 		// Spawn base info
 		index = ProcessSpawnTableFields(spawn, result);
 
+		//Default widgets to be solid
+		spawn->EnableEntityFlags(EntityFlagSolid);
+
 		// Widget Info starts here
 		std::unique_ptr<Widget>& wd = spawn->GetWidgetData();
 		if (!wd)
@@ -444,6 +447,9 @@ bool ZoneDatabase::LoadSignsForZone(ZoneServer* z) {
 			std::unique_ptr<Widget>& widget = spawn->GetWidgetData();
 			if (!widget)
 				widget = std::make_unique<Widget>();
+
+			//Default widgets to be solid
+			spawn->EnableEntityFlags(EntityFlagSolid);
 
 			widget->SetWidgetID(widget_id);
 			widget->SetWidgetX(result.GetFloat(index++));

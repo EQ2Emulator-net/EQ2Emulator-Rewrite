@@ -25,6 +25,22 @@ struct HearChatParams {
 	const char* chatFilterName;
 };
 
+struct PlayFlavorParams {
+	PlayFlavorParams() : key1(0), key2(0), language(0), bUnderstood(true), fromSpawnID(0xFFFFFFFF), toSpawnID(0xFFFFFFFF) {}
+	uint32_t fromSpawnID;
+	uint32_t toSpawnID;
+	std::string mp3;
+	uint32_t key1;
+	uint32_t key2;
+	std::string speakerName;
+	std::string targetName;
+	std::string text;
+	std::string emoteText;
+	std::string emote;
+	uint8_t language;
+	bool bUnderstood;
+};
+
 struct OpenDialogParams {
 	std::shared_ptr<Spawn> scriptSpawn;
 	std::string text;
@@ -44,6 +60,7 @@ public:
 	void HearChat(const HearChatParams& params);
 	void OnScreenMessage(uint8_t msgType, const std::string& message, const std::string& sound, float durationSecs, EQ2Color color);
 	void DisplayText(const char* filter, const std::string& message, uint8_t onscreenMsgType = 0xff, bool bOnscreen = false, const std::string& unkString = "");
+	void HearPlayFlavor(const PlayFlavorParams& params);
 	
 	void SendSimpleGameMessage(const char* msg);
 

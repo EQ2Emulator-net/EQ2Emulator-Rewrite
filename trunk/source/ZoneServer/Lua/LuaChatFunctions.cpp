@@ -175,5 +175,39 @@ int LuaChatFunctions::Emu_Lua_StartDialogConversation(lua_State* state) {
 }
 
 int LuaChatFunctions::Emu_Lua_PlayFlavor(lua_State* state) {
+	auto speaker = GetLuaSpawn(state, 1);
+	if (!speaker) {
+		LuaError("Lua PlayFlavor command error: speaker is invalid");
+		return 0;
+	}
+
+	PlayFlavorParams params;
+
+	params.mp3 = GetLuaString(state, 2);
+	params.text = GetLuaString(state, 3);
+	params.emote = GetLuaString(state, 4);
+	params.key1 = GetLuaUInt32(state, 5);
+	params.key2 = GetLuaUInt32(state, 6);
+	auto player = GetLuaSpawn(state, 7);
+	params.language = static_cast<uint8_t>(GetLuaUInt32(state, 8));
+
+	auto zone = speaker->GetZone();
+	if (!zone) {
+		return 0;
+	}
+
+	if (player) {
+		//TODO: Check if this player knows this language and set the understood bool!!
+		//Send this PlayFlavor exclusively to this player
+		auto client = zone->GetClientForSpawn(player);
+		if (client) {
+			params.fromSpawnID = client->GetIDForSpawn(speaker);
+			client->chat.HearPlayFlavor(params);
+		}
+	}
+	else {
+		zone->chat.HandlePlayFlavor(params, speaker);
+	}
+
 	return 0;
 }
