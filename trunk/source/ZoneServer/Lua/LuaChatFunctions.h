@@ -11,4 +11,5 @@ private:
 	static int Emu_Lua_CloseConversation(lua_State* state);
 	static int Emu_Lua_StartConversation(lua_State* state);
 	static int Emu_Lua_StartDialogConversation(lua_State* state);
+	static int Emu_Lua_PlayFlavor(lua_State* state);
 };

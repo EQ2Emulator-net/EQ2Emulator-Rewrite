@@ -12,6 +12,7 @@ void LuaChatFunctions::RegisterFunctions(lua_State* state) {
 	lua_register(state, "CloseConversation", Emu_Lua_CloseConversation);
 	lua_register(state, "StartConversation", Emu_Lua_StartConversation);
 	lua_register(state, "StartDialogConversation", Emu_Lua_StartDialogConversation);
+	lua_register(state, "PlayFlavor", Emu_Lua_PlayFlavor);
 }
 
 int LuaChatFunctions::Emu_Lua_Say(lua_State* state) {
@@ -170,5 +171,9 @@ int LuaChatFunctions::Emu_Lua_StartDialogConversation(lua_State* state) {
 	p.key2 = GetLuaUInt32(state, 8);
 
 	client->chat.DisplaySpawnDialog(p, type);
+	return 0;
+}
+
+int LuaChatFunctions::Emu_Lua_PlayFlavor(lua_State* state) {
 	return 0;
 }

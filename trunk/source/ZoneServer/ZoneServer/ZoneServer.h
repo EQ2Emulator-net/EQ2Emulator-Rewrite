@@ -100,7 +100,16 @@ public:
 	std::shared_ptr<Entity> GetPlayerEntityByName(std::string player);
 	void Depop();
 
-	void LoadThread();
+	void LoadSpawns();
+
+	struct ZoneLoadFlags {
+		bool bNeedsSpawnLoad : 1;
+	};
+
+	union {
+		ZoneLoadFlags m_loadFlags;
+		uint8_t m_loadFlagsByte;
+	};
 
 	ZoneChat chat;
 private:
@@ -150,8 +159,6 @@ private:
 	std::map<uint32_t, float> m_spawnGroupChances;								// group_id, chance
 	std::map<uint32_t, std::set<uint32_t> > m_spawnGroupAssociations;			// group_id1, set<group_id2>
 
-	std::thread m_loadThread;
-
 	// following is info from `zones` table in the DB
 	uint32_t id;
 	uint32_t instanceID;
@@ -186,11 +193,11 @@ private:
 	uint32_t rulesetID;
 	uint32_t scriptID;
 
-
 	std::shared_ptr<EmuLuaState> m_luaState;
 	std::map<uint32_t, std::shared_ptr<EmuLuaState> > m_spawnStates;
 
 	void OnClientRemoval(const std::shared_ptr<Client>& client);
+	void CheckNeededLoads();
 
 public:
 	//void SetID(uint32_t val) { id = val; }

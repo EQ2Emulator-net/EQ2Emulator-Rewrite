@@ -69,6 +69,7 @@ ZoneServer::ZoneServer(uint32_t zone_id):  chat(Clients, *this) {
 	isRunning = true;
 	pendingClientAdd_lock.SetName("ZoneServer::pendingClientAdd");
 	pendingClientRemoval_lock.SetName("ZoneServer::pendingClientRemoval");
+	m_loadFlagsByte = 0xFF;
 }
 
 ZoneServer::~ZoneServer() {
@@ -91,7 +92,6 @@ bool ZoneServer::Init() {
 	LogDebug(LOG_ZONE, 0, "Zone %u (%s) started", id, description.c_str());
 
 	process_thread = ThreadManager::ThreadStart("ZoneServer::Process", std::bind(&ZoneServer::Process, this));
-	m_loadThread = ThreadManager::ThreadStart("ZoneServer::LoadThread", std::bind(&ZoneServer::LoadThread, this));
 
 	return ret;
 }
@@ -100,6 +100,10 @@ void ZoneServer::Process() {
 
 	while (isRunning) {
 		{
+			if (m_loadFlagsByte) {
+				CheckNeededLoads();
+			}
+
 			//Check if we should remove any clients
 			WriteLocker lock(pendingClientRemoval_lock);
 			for (auto& client : pendingClientRemoval) {
@@ -1112,27 +1116,31 @@ void ZoneServer::Depop() {
 	m_groundspawnList.clear();
 }
 
-void ZoneServer::LoadThread() {
+void ZoneServer::LoadSpawns() {
+	auto SpawnInfoLoading = [this] {
+		LogInfo(LOG_NPC, 0, "-Loading NPC data...");
+		database.LoadNPCsForZone(this);
+		LogInfo(LOG_NPC, 0, "-Load NPC data complete!");
 
-	LogInfo(LOG_NPC, 0, "-Loading NPC data...");
-	database.LoadNPCsForZone(this);
-	LogInfo(LOG_NPC, 0, "-Load NPC data complete!");
+		LogInfo(LOG_NPC, 0, "-Loading Object data...");
+		database.LoadObjectsForZone(this);
+		LogInfo(LOG_NPC, 0, "-Load Object data complete!");
 
-	LogInfo(LOG_NPC, 0, "-Loading Object data...");
-	database.LoadObjectsForZone(this);
-	LogInfo(LOG_NPC, 0, "-Load Object data complete!");
+		LogInfo(LOG_NPC, 0, "-Loading Widget data...");
+		database.LoadWidgetsForZone(this);
+		LogInfo(LOG_NPC, 0, "-Load Widget data complete!");
 
-	LogInfo(LOG_NPC, 0, "-Loading Widget data...");
-	database.LoadWidgetsForZone(this);
-	LogInfo(LOG_NPC, 0, "-Load Widget data complete!");
+		LogInfo(LOG_NPC, 0, "-Loading Sign data...");
+		database.LoadSignsForZone(this);
+		LogInfo(LOG_NPC, 0, "-Load Sign data complete!");
 
-	LogInfo(LOG_NPC, 0, "-Loading Sign data...");
-	database.LoadSignsForZone(this);
-	LogInfo(LOG_NPC, 0, "-Load Sign data complete!");
+		LogInfo(LOG_NPC, 0, "-Loading GroundSpawn data...");
+		database.LoadGroundSpawnsForZone(this);
+		LogInfo(LOG_NPC, 0, "-Load GroundSpawn data complete!");
+	};
 
-	LogInfo(LOG_NPC, 0, "-Loading GroundSpawn data...");
-	database.LoadGroundSpawnsForZone(this);
-	LogInfo(LOG_NPC, 0, "-Load GroundSpawn data complete!");
+	//Launch a child thread to help split up the work
+	std::thread loadHelper = ThreadManager::ThreadStart("ZoneServer::LoadSpawnsHelper", std::bind(SpawnInfoLoading));
 
 	LogInfo(LOG_NPC, 0, "-Loading NPC spawn location data...");
 	database.LoadNPCLocations(this);
@@ -1158,6 +1166,9 @@ void ZoneServer::LoadThread() {
 	database.LoadSpawnGroupChances(this);
 	database.LoadSpawnLocationGroupAssociations(this);
 
+	loadHelper.join();
+
+	//Now that the static info is loaded, populate the zone
 	ProcessSpawnLocations();
 
 	LoadScript();
@@ -1239,4 +1250,21 @@ void ZoneServer::CallScript(const char* function, const std::shared_ptr<Spawn>& 
 	lua_settop(state, 0);
 
 	--m_luaState->nUsers;
+}
+
+void ZoneServer::CheckNeededLoads() {
+	ZoneLoadFlags flags = m_loadFlags;
+	m_loadFlagsByte = 0;
+
+	std::optional<std::thread> spawnThread;
+
+	auto OptionalJoin = [](std::optional<std::thread>& t) {
+		if (t) t->join();
+	};
+
+	if (flags.bNeedsSpawnLoad) {
+		spawnThread = ThreadManager::ThreadStart("ZoneServer::LoadSpawns", std::bind(&ZoneServer::LoadSpawns, this));
+	}
+
+	OptionalJoin(spawnThread);
 }
