@@ -59,4 +59,5 @@ public:
 	void SendBiography(uint32_t characterID);
 
 	ClientChat chat;
+	bool bDevMode;
 };

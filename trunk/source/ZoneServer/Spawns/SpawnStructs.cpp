@@ -37,6 +37,9 @@ void SpawnVisualizationStruct::SetVisualFlags(const std::shared_ptr<Client>& cli
 	if (spawn->IsAttackable()) {
 		vis_flags |= VIS_FLAG_ATTACKABLE;
 	}
+	if (client->bDevMode) {
+		vis_flags |= VIS_FLAG_DISPLAY_NAME | VIS_FLAG_SHOW_COMMAND_ICON | VIS_FLAG_TARGETABLE;
+	}
 }
 
 void SpawnVisualizationStruct::DetermineForClient(const std::shared_ptr<Client>& client, const std::shared_ptr<Spawn>& spawn) {

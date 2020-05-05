@@ -260,16 +260,11 @@ void ZoneServer::SendSpawnToClient(std::shared_ptr<Spawn> spawn, std::shared_ptr
 		sign->signData.distance = spawn->GetSignData()->GetDistance();
 		sign->signData.show = true;
 		// language...
-		if (spawn->GetWidgetData()) {
-			OP_CreateWidgetCmd_Packet* widget = static_cast<OP_CreateWidgetCmd_Packet*>(ghost);
-			widget->widgetData.widgetID = spawn->GetWidgetData()->GetWidgetID();
-			widget->widgetData.widgetX = spawn->GetWidgetData()->GetWidgetX();
-			widget->widgetData.widgetY = spawn->GetWidgetData()->GetWidgetY();
-			widget->widgetData.widgetZ = spawn->GetWidgetData()->GetWidgetZ();
-		}
 	}
-	else if (spawn->GetWidgetData()) {
-		ghost = new OP_CreateWidgetCmd_Packet(client->GetVersion());
+	if (spawn->GetWidgetData()) {
+		if (!ghost) {
+			ghost = new OP_CreateWidgetCmd_Packet(client->GetVersion());
+		}
 		OP_CreateWidgetCmd_Packet* widget = static_cast<OP_CreateWidgetCmd_Packet*>(ghost);
 		widget->widgetData.widgetID = spawn->GetWidgetData()->GetWidgetID();
 		widget->widgetData.widgetX = spawn->GetWidgetData()->GetWidgetX();

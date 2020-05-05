@@ -134,11 +134,11 @@ public:
 	void SetPrimaryCommandList(const std::shared_ptr<const EntityCommandList>& cmds) {	m_primaryCommandList = cmds; }
 	void SetSecondaryCommandList(const std::shared_ptr<const EntityCommandList>& cmds) { m_secondaryCommandList = cmds; }
 
-private:
-	static uint32_t GetNextID();
-
 	//Call this every time something changes that may affect the spawn vis struct
 	void IncrementVisUpdateTag() { ++visUpdateTag; }
+
+private:
+	static uint32_t GetNextID();
 
 	std::weak_ptr<ZoneServer> m_zone;
 

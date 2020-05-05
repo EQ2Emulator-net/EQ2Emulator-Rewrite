@@ -43,6 +43,7 @@ void CommandProcess::RegisterCommands() {
 	RegisterCommandHandler(245, CommandRepop);
 	RegisterCommandHandler(199, CommandSpawn);
 	RegisterCommandHandler(66, CommandHail);
+	RegisterCommandHandler(522, CommandDevMode);
 }
 
 void CommandProcess::RegisterCommandHandler(uint32_t handler_id, CommandHandler_t handler) {
@@ -525,4 +526,34 @@ void CommandProcess::CommandHail(const std::shared_ptr<Client>& client, Separato
 	}
 
 	target->CallScript("hailed", player);
+}
+
+//This command shows all spawns as targetable/show name and show command icon for just this client
+void CommandProcess::CommandDevMode(const std::shared_ptr<Client>& client, Separator& sep) {
+	if (!sep.IsNumber(0)) {
+		client->chat.SendSimpleGameMessage("\\#FF0000 syntax error: Please provide either 1 or 0.");
+		return;
+	}
+
+	bool bEnabled = sep.GetUInt32(0) != 0;
+
+	if (bEnabled == client->bDevMode) {
+		return;
+	}
+
+	client->bDevMode = bEnabled;
+
+	auto zone = client->GetZone();
+	if (!zone) {
+		return;
+	}
+
+	auto controller = client->GetController();
+
+	auto player = controller->GetControlled();
+	if (!player) {
+		return;
+	}
+
+	player->IncrementVisUpdateTag();
 }

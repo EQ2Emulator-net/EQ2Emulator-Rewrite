@@ -34,6 +34,18 @@ public:
 		static_cast<SpawnInfoStruct&>(info) = *spawn->GetInfoStruct();
 		vis.DetermineForClient(client, spawn);
 		SetFooterData(spawn);
+
+		if (auto& widget = spawn->GetWidgetData()) {
+			if (!widget->GetIncludeHeading()) {
+				pos.heading = 0.f;
+				pos.desiredHeading = 0.f;
+			}
+			if (!widget->GetIncludeLocation()) {
+				pos.x = 0.f;
+				pos.y = 0.f;
+				pos.z = 0.f;
+			}
+		}
 	}
 
 	void SetHeaderData(const std::shared_ptr<Client>& client, const std::shared_ptr<Spawn>& spawn, uint16_t index, uint32_t id) {

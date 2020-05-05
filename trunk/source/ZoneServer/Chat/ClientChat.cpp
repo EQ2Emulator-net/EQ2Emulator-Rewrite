@@ -168,7 +168,10 @@ void ClientChat::HandleDialogSelection(uint32_t conversationID, uint32_t selecti
 			auto spawn = dialog.scriptSpawn.lock();
 			auto player = client.GetController()->GetControlled();
 			if (spawn && player) {
-				spawn->CallScript(dialog.choiceFunctions[selection].c_str(), player);
+				const std::string& function = dialog.choiceFunctions[selection];
+				if (!function.empty()) {
+					spawn->CallScript(function.c_str(), player);
+				}
 			}
 		}
 	}

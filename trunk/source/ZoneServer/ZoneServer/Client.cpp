@@ -18,6 +18,7 @@ Client::Client(unsigned int ip, unsigned short port) : EQ2Stream(ip, port), chat
 	account_id = 0;
 	character_id = 0;
 	m_controller = std::make_shared<PlayerController>();
+	bDevMode = false;
 }
 
 void Client::Process() {

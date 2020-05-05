@@ -230,7 +230,7 @@ void Spawn::Process() {
 			packet->info.spawnIndex = 0;
 
 		if (update.m_posChanged && client->GetController()->GetControlled().get() != this)
-			packet->InsertSpawnPosData(*GetPosStruct(), index, true, movementTimestamp);
+			packet->InsertSpawnPosData(shared_from_this(), index, true, movementTimestamp);
 		else
 			packet->pos.spawnIndex = 0;
 
