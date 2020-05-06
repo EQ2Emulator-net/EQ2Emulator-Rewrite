@@ -262,15 +262,23 @@ void ZoneServer::SendSpawnToClient(std::shared_ptr<Spawn> spawn, std::shared_ptr
 		// language...
 	}
 	if (spawn->GetWidgetData()) {
-		OP_CreateWidgetCmd_Packet* widget = new OP_CreateWidgetCmd_Packet(client->GetVersion());
-		ghost = widget;
+		OP_CreateWidgetCmd_Packet* widget;
+		if (ghost) {
+			widget = static_cast<OP_CreateWidgetCmd_Packet*>(ghost);		
+		}
+		else {
+			widget = new OP_CreateWidgetCmd_Packet(client->GetVersion());
+			ghost = widget;
+		}
 		widget->widgetData.widgetID = spawn->GetWidgetData()->GetWidgetID();
 		widget->widgetData.widgetX = spawn->GetWidgetData()->GetWidgetX();
 		widget->widgetData.widgetY = spawn->GetWidgetData()->GetWidgetY();
 		widget->widgetData.widgetZ = spawn->GetWidgetData()->GetWidgetZ();
 	}
-	else
+	
+	if (!ghost) {
 		ghost = new OP_CreateGhostCmd_Packet(client->GetVersion());
+	}
 
 	ghost->InsertSpawnData(client, spawn, client->AddSpawnToIndexMap(spawn));
 	ghost->SetEncodedBuffers(client, ghost->header.index);

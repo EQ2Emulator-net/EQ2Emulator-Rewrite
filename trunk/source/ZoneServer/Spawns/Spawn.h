@@ -600,7 +600,7 @@ public:
 	void SetUnknown1(uint8_t value, bool updateFlags = true) {
 		SetTitle(&m_titleStruct.unknown1, value, updateFlags);
 	}
-	void SetIsPlayer(uint8_t value, bool updateFlags = true) {
+	void SetIsPlayer(bool value, bool updateFlags = true) {
 		SetTitle(&m_titleStruct.isPlayer, value, updateFlags);
 	}
 	void SetLastName(std::string value, bool updateFlags = true) {

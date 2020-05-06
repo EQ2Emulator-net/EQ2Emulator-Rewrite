@@ -5,6 +5,8 @@
 #include "../ZoneServer/Client.h"
 #include "../ZoneServer/ZoneServer.h"
 #include "../../common/log.h"
+#include "../Controllers/PlayerController.h"
+#include "../Spawns/Entity.h"
 
 Cell::Cell(std::pair<int32_t, int32_t> cellCoordinates) {
 	m_cellCoordinates = cellCoordinates;
@@ -62,7 +64,7 @@ void Cell::ActivateCell(std::shared_ptr<Client> client) {
 void Cell::SendRemoveSpawnsForClient(std::shared_ptr<Client> client) {
 	for (std::weak_ptr<Spawn> s : m_spawnList) {
 		std::shared_ptr<Spawn> spawn = s.lock();
-		if (spawn) {
+		if (spawn && spawn != client->GetController()->GetControlled()) {
 			std::shared_ptr<ZoneServer> zone = client->GetZone();
 			if (zone)
 				zone->RemoveSpawnFromClient(spawn, client);
