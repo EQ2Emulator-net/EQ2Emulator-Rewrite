@@ -34,6 +34,10 @@ void Stream::Process(const unsigned char* buffer, unsigned int length) {
 void Stream::WritePacket(SOCKET socket, const unsigned char* buffer, int length) {
 	SentPackets++;
 
+	if (NetDebugEnabled()) {
+		DumpBytes(buffer, length, "WritePacket");
+	}
+
 	if (sendto(socket, reinterpret_cast<const char*>(buffer), length, 0, reinterpret_cast<const sockaddr*>(&address), sizeof(address)) == SOCKET_ERROR) {
 		LogError(LOG_NET, 0, "sendto error: %s", NetUtil::SocketError().c_str());
 	}

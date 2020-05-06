@@ -40,7 +40,7 @@ public:
 	EWidgetType GetWidgetType() { return m_widgetType; }
 	uint32_t GetWidgetID() { return m_widgetID; }
 	uint32_t GetActionSpawnID() { return m_actionSpawnID; }
-	uint32_t GetLinkedSpawnID() { m_linkedSpawnID; }
+	uint32_t GetLinkedSpawnID() { return m_linkedSpawnID; }
 	uint32_t GetHouseID() { return m_houseID; }
 	uint32_t GetOpenDuration() { return m_openDuration; }
 	float GetWidgetX() { return m_widgetX; }

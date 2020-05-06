@@ -75,6 +75,7 @@ ProtocolPacket* ProtocolPacket::Copy() {
 	ret->bBufferSet = bBufferSet;
 	ret->sequence = sequence;
 	ret->SentTime = SentTime;
+	ret->HasCRC = HasCRC;
 	return ret;
 }
 

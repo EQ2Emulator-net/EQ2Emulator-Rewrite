@@ -22,7 +22,7 @@ bool IsUInt(const char *str);
 //TODO: move this to some game time module or something
 const char * GetElapsedTime(time_t seconds, char *dst, unsigned int size);
 
-void DumpBytes(const unsigned char *bytes, unsigned int len);
+void DumpBytes(const unsigned char *bytes, unsigned int len, const char* header = nullptr);
 void DumpBytes(const char *bytes, unsigned int len);
 
 void PrintWelcomeHeader(const char *name, int version_major, int version_minor, const char *version_phase, const char *url);

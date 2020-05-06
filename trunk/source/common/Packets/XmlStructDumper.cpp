@@ -260,7 +260,7 @@ std::deque<xml_node<>*> XmlStructDumper::PacketStructToXml(xml_document<>& doc, 
 		std::unique_ptr<EQ2Packet> ps(pa->Create(itr));
 
 #ifdef EQ2_ZONE
-		if (auto ccmd = dynamic_cast<OP_ClientCmdMsg_Packet*>(ps.get())) {
+		if (dynamic_cast<OP_ClientCmdMsg_Packet*>(ps.get())) {
 			if (strcmp(pa->opName, "OP_ClientCmdMsg") != 0) {
 				structNode->append_attribute(doc.allocate_attribute("OpcodeName", "OP_ClientCmdMsg"));
 				structNode->append_attribute(doc.allocate_attribute("OpcodeType", pa->opName));

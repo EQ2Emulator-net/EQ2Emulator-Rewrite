@@ -30,6 +30,7 @@ Spawn::Spawn() : m_updateFlagsByte(0) {
 	m_maxLevel = 0;
 	m_encounterOffset = 0;
 	m_lastFaceTargetTime = 0;
+	m_globalSpawn = false;
 }
 
 Spawn::Spawn(std::shared_ptr<Spawn> in) {
@@ -71,6 +72,7 @@ Spawn::Spawn(std::shared_ptr<Spawn> in) {
 	m_origPitch = 0.0f;
 	m_origRoll = 0.0f;
 	m_posStruct.movementMode = 2;
+	m_lastFaceTargetTime = 0;
 
 	m_minLevel = in->GetMinLevel();
 	m_maxLevel = in->GetMaxLevel();
@@ -106,6 +108,7 @@ Spawn::Spawn(std::shared_ptr<Spawn> in) {
 	m_primaryCommandList = in->m_primaryCommandList;
 	m_secondaryCommandList = in->m_secondaryCommandList;
 	m_scriptID = in->m_scriptID;
+	m_globalSpawn = false;
 }
 
 Spawn::~Spawn() {

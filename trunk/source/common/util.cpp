@@ -86,8 +86,11 @@ const char * GetElapsedTime(time_t seconds, char *dst, unsigned int size) {
 
 #define IS_PRINTABLE(c) ((c) >= 32 && (c) <= 126)
 
-void DumpBytes(const unsigned char* bytes, unsigned int size) {
+void DumpBytes(const unsigned char* bytes, unsigned int size, const char* header) {
 	std::ostringstream ss;
+	if (header) {
+		ss << header << "\n";
+	}
 	unsigned int i, j;
 	for (i = 0; i < size; i += 16) {
 		ss << std::setfill('0') << std::setw(4) << std::hex << i << std::setw(1) << ": ";

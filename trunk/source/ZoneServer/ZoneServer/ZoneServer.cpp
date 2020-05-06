@@ -253,8 +253,8 @@ void ZoneServer::SendSpawnToClient(std::shared_ptr<Spawn> spawn, std::shared_ptr
 
 	OP_CreateGhostCmd_Packet* ghost = nullptr;
 	if (spawn->GetSignData()) {
-		ghost = new OP_CreateSignWidgetCmd_Packet(client->GetVersion());
-		OP_CreateSignWidgetCmd_Packet* sign = static_cast<OP_CreateSignWidgetCmd_Packet*>(ghost);
+		OP_CreateSignWidgetCmd_Packet* sign = new OP_CreateSignWidgetCmd_Packet(client->GetVersion());
+		ghost = sign;
 		sign->signData.title = spawn->GetSignData()->GetTitle();
 		sign->signData.description = spawn->GetSignData()->GetDescription();
 		sign->signData.distance = spawn->GetSignData()->GetDistance();
@@ -262,10 +262,8 @@ void ZoneServer::SendSpawnToClient(std::shared_ptr<Spawn> spawn, std::shared_ptr
 		// language...
 	}
 	if (spawn->GetWidgetData()) {
-		if (!ghost) {
-			ghost = new OP_CreateWidgetCmd_Packet(client->GetVersion());
-		}
-		OP_CreateWidgetCmd_Packet* widget = static_cast<OP_CreateWidgetCmd_Packet*>(ghost);
+		OP_CreateWidgetCmd_Packet* widget = new OP_CreateWidgetCmd_Packet(client->GetVersion());
+		ghost = widget;
 		widget->widgetData.widgetID = spawn->GetWidgetData()->GetWidgetID();
 		widget->widgetData.widgetX = spawn->GetWidgetData()->GetWidgetX();
 		widget->widgetData.widgetY = spawn->GetWidgetData()->GetWidgetY();
