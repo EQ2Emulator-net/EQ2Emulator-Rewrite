@@ -119,7 +119,7 @@ void Spawn::Process() {
 	// m_controller->Process();
 
 	//TODO: move to controller and add a rule for the amount of time?
-	if (m_lastFaceTargetTime != 0 && Timer::GetServerTime() - m_lastFaceTargetTime >= 30000) {
+	if (m_lastFaceTargetTime != 0 && Timer::GetServerTime() - m_lastFaceTargetTime >= 20000) {
 		SetHeading(GetOrigHeading());
 		m_lastFaceTargetTime = 0;
 	}

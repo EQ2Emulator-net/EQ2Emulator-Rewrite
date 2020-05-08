@@ -37,8 +37,8 @@ public:
 
 		if (auto& widget = spawn->GetWidgetData()) {
 			if (!widget->GetIncludeHeading()) {
-				pos.heading = 0.f;
-				pos.desiredHeading = 0.f;
+				pos.heading = 180.f;
+				pos.desiredHeading = 180.f;
 			}
 			if (!widget->GetIncludeLocation()) {
 				pos.x = 0.f;
