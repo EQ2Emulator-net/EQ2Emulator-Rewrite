@@ -726,4 +726,7 @@ public:
 	//TODO: move this to the controller?
 	void FaceSpawn(const std::shared_ptr<Spawn>& spawn);
 	void FaceLocation(float x, float z);
+	bool EntityCommandPrecheck(const std::string& command, const std::shared_ptr<Client>& client);
+	void HandleEntityCommand(const std::string& command, const std::shared_ptr<Client>& client);
+	void Hail(const std::shared_ptr<Spawn>& target);
 };

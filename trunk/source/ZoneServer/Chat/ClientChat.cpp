@@ -10,6 +10,7 @@
 #include "../Spawns/Entity.h"
 #include "../Controllers/PlayerController.h"
 #include "../Packets/OP_HearPlayFlavorCmd_Packet.h"
+#include "../Packets/OP_DialogCloseMsg_Packet.h"
 
 extern ChatFilterLookup g_chatFilterLookup;
 
@@ -193,4 +194,16 @@ void ClientChat::HearPlayFlavor(const PlayFlavorParams& params) {
 	p.speakerName = params.speakerName;
 	p.bUnderstood = params.bUnderstood;
 	client.QueuePacket(p);
+}
+
+void ClientChat::CloseSpawnDialog(const std::shared_ptr<Spawn>& dialogSpawn) {
+	for (auto itr = conversations.rbegin(); itr != conversations.rend(); itr++) {
+		if (EmuWeakCmp(itr->second.scriptSpawn, dialogSpawn)) {
+			OP_DialogCloseMsg_Packet p(client.GetVersion());
+			p.conversationID = itr->first;
+			client.QueuePacket(p);
+			conversations.erase(std::next(itr).base());
+			break;
+		}
+	}
 }

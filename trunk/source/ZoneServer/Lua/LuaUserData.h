@@ -43,8 +43,11 @@ public:
 		Emu_CheckLuaStack(state, 3);
 		//Use this to get the class name and method table
 		static T staticRef;
+		static const char* clsName = staticRef.GetTypeName();
+		static const std::map<std::string, lua_CFunction>& methodMap = staticRef.GetMethodMap();
+
 		//Create a new meta table
-		if (luaL_newmetatable(state, staticRef.GetTypeName()) == 1) {
+		if (luaL_newmetatable(state, clsName) == 1) {
 			//Get the table index
 			int metatable_index = lua_gettop(state);
 
@@ -54,12 +57,14 @@ public:
 			lua_settable(state, metatable_index);
 
 			//Check for any additional functions for this class
-			for (auto& itr : staticRef.GetMethodMap()) {
+			for (auto& itr : methodMap) {
 				lua_pushstring(state, itr.first.c_str());
 				lua_pushcfunction(state, itr.second);
 				lua_settable(state, metatable_index);
 			}
 		}
+		//Pop the table off the stack
+		lua_pop(state, 1);
 	}
 
 	static T* PushNew(lua_State* state) {
@@ -69,12 +74,8 @@ public:
 		T** ptr = static_cast<T**>(lua_newuserdata(state, sizeof(T*)));
 		*ptr = obj;
 
-		//Get the index of the newly created object on the Lua stack
-		int obj_index = lua_gettop(state);
-		//Now get our registered metatable for this class
-		luaL_getmetatable(state, obj->GetTypeName());
 		//Assign this metatable to the object so that we can use garbage collection
-		lua_setmetatable(state, obj_index);
+		luaL_setmetatable(state, obj->GetTypeName());
 		return obj;
 	}
 

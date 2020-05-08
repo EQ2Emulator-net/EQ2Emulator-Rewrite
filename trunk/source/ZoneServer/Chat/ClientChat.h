@@ -67,6 +67,7 @@ public:
 	//Conversations
 	void DisplaySpawnDialog(const OpenDialogParams& params, uint8_t type);
 	void HandleDialogSelection(uint32_t conversationID, uint32_t selection);
+	void CloseSpawnDialog(const std::shared_ptr<Spawn>& dialogSpawn);
 
 private:
 	Client& client;

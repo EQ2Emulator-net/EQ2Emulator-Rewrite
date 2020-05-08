@@ -542,7 +542,8 @@ INSERT INTO `commands` (`id`, `command`, `parent_command`, `required_status`, `s
 	(518, 'remove_aa', NULL, NULL, NULL),
 	(519, 'switch_aa_profile', NULL, NULL, NULL),
 	(520, 'cancel_aa_profile', NULL, NULL, NULL),
-	(521, 'save_aa_profile', NULL, NULL, NULL);
+	(521, 'save_aa_profile', NULL, NULL, NULL),
+	(522, 'devmode', NULL, NULL, NULL);
 /*!40000 ALTER TABLE `commands` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

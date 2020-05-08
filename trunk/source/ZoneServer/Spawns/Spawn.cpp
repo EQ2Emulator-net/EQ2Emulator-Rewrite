@@ -384,6 +384,7 @@ void Spawn::CallScript(const char* function, const std::shared_ptr<Spawn>& spawn
 		}
 
 		state = recursiveState->state;
+		lua_getglobal(state, function);
 	}
 
 	LuaInterface::PushLuaSpawn(state, shared_from_this());
@@ -446,4 +447,130 @@ void Spawn::FaceLocation(float x, float z) {
 		//TODO: Should we add a temporary action state?
 		m_lastFaceTargetTime = Timer::GetServerTime();
 	}
+}
+
+bool Spawn::EntityCommandPrecheck(const std::string& command, const std::shared_ptr<Client>& client) {
+	auto script = m_luaState.lock();
+	if (!script) {
+		if (m_scriptID != 0) {
+			auto zone = GetZone();
+			if (zone) {
+				script = zone->LoadSpawnState(m_scriptID);
+			}
+		}
+
+		if (!script) {
+			return true;
+		}
+
+		//Cache this script for later
+		m_luaState = script;
+	}
+
+	auto player = client->GetController()->GetControlled();
+	if (!player) {
+		return true;
+	}
+
+	std::shared_ptr<EmuLuaState> recursiveState;
+	lua_State* state = script->state;
+
+	lua_getglobal(state, "can_use_command");
+
+	if (!lua_isfunction(state, lua_gettop(state))) {
+		//This function does not exist in the script, we don't need to spam an error here just return
+		lua_pop(state, 1);
+		return true;
+	}
+
+	//NOTE: If we ever have more than one thread that could access this at once we'll need a recursive mutex on the EmuLuaState
+	if (script->nUsers++) {
+		lua_pop(state, 1);
+
+		//We're calling this script recursively. Load a new copy of the state
+		recursiveState = LuaInterface::LoadSpawnScript(m_scriptID);
+		if (!recursiveState) {
+			--script->nUsers;
+			return true;
+		}
+
+		state = recursiveState->state;
+		lua_getglobal(state, "can_use_command");
+	}
+
+	LuaInterface::PushLuaSpawn(state, shared_from_this());
+	LuaInterface::PushLuaSpawn(state, player);
+	LuaInterface::PushLuaString(state, command.c_str());
+
+	bool ret = true;
+
+	if (lua_pcall(state, 3, 1, 0) != LUA_OK) {
+		LuaInterface::PrintStateError(state);
+	}
+	else {
+		ret = LuaInterface::GetLuaBool(state, lua_gettop(state));
+	}
+
+	lua_settop(state, 0);
+
+	--script->nUsers;
+
+	return ret;
+}
+
+void Spawn::HandleEntityCommand(const std::string& command, const std::shared_ptr<Client>& client) {
+	auto player = client->GetController()->GetControlled();
+	if (!player) {
+		return;
+	}
+
+	if (!EntityCommandPrecheck(command, client)) {
+		return;
+	}
+
+	//TODO: Add more commands and add cast timers when we have spells
+	if (command == "hail") {
+		player->Hail(shared_from_this());
+	}
+	else if (command == "frommerchant") {
+		//This will also open the merchant window later
+		player->Hail(shared_from_this());
+	}
+	else if (command == "bank") {
+		//This will also open the banker window later
+		player->Hail(shared_from_this());
+	}
+	else if (command == "repair") {
+		//This will also open the mender window later
+		player->Hail(shared_from_this());
+	}
+
+	//I know "casted_on" isn't proper english but that is what was used in old code
+	CallScript("casted_on", player, command.c_str());
+}
+
+void Spawn::Hail(const std::shared_ptr<Spawn>& target) {
+	auto zone = GetZone();
+	if (!zone) {
+		return;
+	}
+
+	auto _this = shared_from_this();
+
+	if (!target) {
+		zone->chat.HandleSay("Hail", _this);
+		return;
+	}
+
+	//Format the hail message
+	ostringstream hailMsg;
+	hailMsg << "Hail, " << target->GetName();
+	zone->chat.HandleSay(hailMsg.str().c_str(), _this);
+
+	//Check if the hailed target is a player, if so we're done. Otherwise try to call the spawn's script
+	if (target->IsPlayer()) {
+		return;
+	}
+
+	target->CallScript("hailed", _this);
 }

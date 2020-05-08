@@ -360,24 +360,19 @@ void CommandProcess::CommandAFK(const std::shared_ptr<Client>& client, Separator
 
 	player->ToggleEntityFlags(EntityFlagAfk);
 
-	OP_EqCannedEmoteCmd_Packet* packet = new OP_EqCannedEmoteCmd_Packet(client->GetVersion());
 	if (player->IsAFK()) {
 		std::shared_ptr<Spawn> target = client->GetController()->GetTarget();
 
-		packet->spawn_id = client->GetIDForSpawn(player);
+		std::string emote_msg;
 
-		if (target) {
-			packet->emote_msg = player->GetName() + " tells " + target->GetName() + " that " + (player->GetGender() == 1 ? "he" : "she") + " is going afk.";
+		if (target && target != player) {
+			emote_msg = player->GetName() + " tells " + target->GetName() + " that " + (player->GetGender() == 1 ? "he" : "she") + " is going afk.";
 		}
 		else {
-			packet->emote_msg = player->GetName() + " is going afk.";
+			emote_msg = player->GetName() + " is going afk.";
 		}
 
-		packet->anim_type = 13229;
-		packet->unknown = 0;
-
-		// Send to everyone
-		zone->chat.SendToPlayersInRange(player, packet, 30.f, true);
+		zone->chat.HandleCannedEmote(13229, emote_msg.c_str(), player);
 	}
 
 	std::string afk_message = player->IsAFK()? "You are now afk." : "You are no longer afk.";
@@ -496,11 +491,6 @@ void CommandProcess::CommandRepop(const std::shared_ptr<Client>& client, Separat
 }
 
 void CommandProcess::CommandHail(const std::shared_ptr<Client>& client, Separator& sep) {
-	auto zone = client->GetZone();
-	if (!zone) {
-		return;
-	}
-
 	auto controller = client->GetController();
 
 	auto player = controller->GetControlled();
@@ -510,22 +500,7 @@ void CommandProcess::CommandHail(const std::shared_ptr<Client>& client, Separato
 
 	auto target = controller->GetTarget();
 
-	if (!target) {
-		zone->chat.HandleSay("Hail", player);
-		return;
-	}
-
-	//Format the hail message
-	ostringstream hailMsg;
-	hailMsg << "Hail, " << target->GetName();
-	zone->chat.HandleSay(hailMsg.str().c_str(), player);
-
-	//Check if the hailed target is a player, if so we're done. Otherwise try to call the spawn's script
-	if (target->IsPlayer()) {
-		return;
-	}
-
-	target->CallScript("hailed", player);
+	player->Hail(target);
 }
 
 //This command shows all spawns as targetable/show name and show command icon for just this client

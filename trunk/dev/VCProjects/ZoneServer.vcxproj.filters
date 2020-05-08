@@ -989,5 +989,8 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DialogOpenCmd_Packet.h">
       <Filter>source\Packets\Server-&gt;Client</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_EntityVerbsVerbMsg_Packet.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
