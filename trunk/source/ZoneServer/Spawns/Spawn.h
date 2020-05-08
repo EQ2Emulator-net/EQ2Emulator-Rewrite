@@ -536,9 +536,10 @@ public:
 		UpdateCellCoordinates();
 	}
 	void SetLocation(float x, float y, float z, bool updateFlags = true) {
-		SetX(x, false);
-		SetY(y, false);
-		SetZ(z, updateFlags);
+		SetPos(&m_posStruct.x, x, updateFlags);
+		SetPos(&m_posStruct.y, y, updateFlags);
+		SetPos(&m_posStruct.z, z, updateFlags);
+		UpdateCellCoordinates();
 	}
 	void SetHeading(float heading, bool updateFlags = true) {
 		m_posStruct.heading = heading;

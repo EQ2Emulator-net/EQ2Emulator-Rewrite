@@ -209,9 +209,7 @@ void ZoneServer::SendCharacterInfo(std::shared_ptr<Client> client) {
 	entity->SetCollisionRadius(28, false);
 	entity->SetSizeRatio(1.0f, false);
 	entity->SetInteractionFlag(12, false);
-	entity->SetX(GetSafeX(), false);
-	entity->SetY(GetSafeY(), false);
-	entity->SetZ(GetSafeZ(), false);
+	entity->SetLocation(GetSafeX(), GetSafeY(), GetSafeZ(), false);
 	entity->SetMovementMode(0, false);
 
 	m_playerClientList[entity->GetServerID()] = client;
