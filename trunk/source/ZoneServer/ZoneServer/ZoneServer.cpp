@@ -199,6 +199,9 @@ void ZoneServer::SendCharacterInfo(std::shared_ptr<Client> client) {
 	std::shared_ptr<Entity> entity = std::make_shared<Entity>();
 	database.LoadCharacter(client->GetCharacterID(), client->GetAccountID(), entity);
 	entity->SetZone(shared_from_this());
+	std::shared_ptr<PlayerController> controller = client->GetController();
+	controller->SetControlled(entity);
+	entity->SetIsPlayer(true, false);
 
 	// Set this in the spawn constructor
 	entity->SetState(16512, false);
@@ -209,23 +212,16 @@ void ZoneServer::SendCharacterInfo(std::shared_ptr<Client> client) {
 	entity->SetX(GetSafeX(), false);
 	entity->SetY(GetSafeY(), false);
 	entity->SetZ(GetSafeZ(), false);
-	entity->SetIsPlayer(true, false);
 	entity->SetMovementMode(0, false);
-	
-	m_playerClientList[entity->GetServerID()] = client;
 
+	m_playerClientList[entity->GetServerID()] = client;
 	std::pair<int32_t, int32_t> cellCoords = entity->GetCellCoordinates();
 	LogWarn(LOG_PLAYER, 0, "New player in cell (%i, %i) player loc = (%f, %f, %f)", cellCoords.first, cellCoords.second, entity->GetX(), entity->GetY(), entity->GetZ());
-
 	cellCoords = GetCellCoordinatesForSpawn(entity);
 	LogWarn(LOG_PLAYER, 0, "Cell coords check 2 (%i, %i)", cellCoords.first, cellCoords.second);
 
-	std::shared_ptr<PlayerController> controller = client->GetController();
-	controller->SetControlled(entity);
 	SendSpawnToClient(entity, client);
-
 	AddPlayer(entity);
-
 	SendPlayersToNewClient(client);
 	ActivateCellsForClient(client);
 }
@@ -933,6 +929,11 @@ std::shared_ptr<Cell> ZoneServer::GetCell(std::pair<int32_t, int32_t> coordinate
 }
 
 void ZoneServer::AddSpawnToCell(std::shared_ptr<Spawn> spawn, std::pair<int32_t, int32_t> cellCoords) {
+	if (spawn->IsPlayer() || spawn->IsGlobalSpawn()) {
+		LogError(LOG_ZONE, 0, "Tried to add a player or global spawn to a cell.");
+		return;
+	}
+
 	std::shared_ptr<Cell> cell = GetCell(cellCoords);
 	if (cell)
 		cell->AddSpawn(spawn);
@@ -1021,43 +1022,43 @@ uint32_t ZoneServer::GetCellDistance(std::pair<int32_t, int32_t> coord1, std::pa
 }
 
 void ZoneServer::ChangeSpawnCell(std::shared_ptr<Spawn> spawn, std::pair<int32_t, int32_t> oldCellCoord) {
-	//// If Player deactivate old cells and activate new
-	//if (spawn->IsPlayer()) {
-	//	std::shared_ptr<Client> client = GetClientForSpawn(spawn);
-	//	if (client) {
-	//		ActivateCellsForClient(client);
-	//		TryDeactivateCellsForClient(client, oldCellCoord);
-	//	}
-	//}
+	// If Player deactivate old cells and activate new
+	if (spawn->IsPlayer()) {
+		std::shared_ptr<Client> client = GetClientForSpawn(spawn);
+		if (client) {
+			ActivateCellsForClient(client);
+			TryDeactivateCellsForClient(client, oldCellCoord);
+		}
+	}
 
-	//// If not a player and not a global spawn move the spawn to the new cell
-	//if (!spawn->IsPlayer() && !spawn->IsGlobalSpawn()) {
-	//	std::shared_ptr<Cell> newCell = GetCell(spawn->GetCellCoordinates());
-	//	std::shared_ptr<Cell> oldCell = GetCell(oldCellCoord);
+	// If not a player and not a global spawn move the spawn to the new cell
+	if (!spawn->IsPlayer() && !spawn->IsGlobalSpawn()) {
+		std::shared_ptr<Cell> newCell = GetCell(spawn->GetCellCoordinates());
+		std::shared_ptr<Cell> oldCell = GetCell(oldCellCoord);
 
-	//	newCell->AddSpawn(spawn);
-	//	oldCell->RemoveSpawn(spawn);
+		AddSpawnToCell(spawn, newCell->GetCellCoordinates());
+		oldCell->RemoveSpawn(spawn);
 
-	//	// loop to send or remove spawn from client depending on the distance
-	//	for (std::pair<uint32_t, std::weak_ptr<Client> > kvp : Clients) {
-	//		std::shared_ptr<Client> client = kvp.second.lock();
-	//		if (client) {
-	//			// send destroy if now out of range of a client
-	//			if (client->WasSentSpawn(spawn)) {
-	//				if (GetCellDistance(client->GetController()->GetControlled()->GetCellCoordinates(), newCell->GetCellCoordinates()) >= 2)
-	//					SendDestroyGhost(client, spawn);
-	//			}
+		// loop to send or remove spawn from client depending on the distance
+		for (std::pair<uint32_t, std::weak_ptr<Client> > kvp : Clients) {
+			std::shared_ptr<Client> client = kvp.second.lock();
+			if (client) {
+				// send destroy if now out of range of a client
+				if (client->WasSentSpawn(spawn)) {
+					if (GetCellDistance(client->GetController()->GetControlled()->GetCellCoordinates(), newCell->GetCellCoordinates()) >= 2)
+						SendDestroyGhost(client, spawn);
+				}
 
-	//			// if new cell is active send it to players that need it
-	//			if (newCell->IsActive()) {
-	//				if (!client->WasSentSpawn(spawn)) {
-	//					if (GetCellDistance(client->GetController()->GetControlled()->GetCellCoordinates(), newCell->GetCellCoordinates()) < 2)
-	//						SendSpawnToClient(spawn, client);
-	//				}
-	//			}
-	//		}
-	//	}
-	//}
+				// if new cell is active send it to players that need it
+				if (newCell->IsActive()) {
+					if (!client->WasSentSpawn(spawn)) {
+						if (GetCellDistance(client->GetController()->GetControlled()->GetCellCoordinates(), newCell->GetCellCoordinates()) < 2)
+							SendSpawnToClient(spawn, client);
+					}
+				}
+			}
+		}
+	}
 }
 
 void ZoneServer::TryDeactivateCellsForClient(std::shared_ptr<Client> client, std::pair<int32_t, int32_t> cellCoord) {

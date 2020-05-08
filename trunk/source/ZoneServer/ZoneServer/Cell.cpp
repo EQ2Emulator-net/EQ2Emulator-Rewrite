@@ -64,7 +64,7 @@ void Cell::ActivateCell(std::shared_ptr<Client> client) {
 void Cell::SendRemoveSpawnsForClient(std::shared_ptr<Client> client) {
 	for (std::weak_ptr<Spawn> s : m_spawnList) {
 		std::shared_ptr<Spawn> spawn = s.lock();
-		if (spawn && spawn != client->GetController()->GetControlled()) {
+		if (spawn) {
 			std::shared_ptr<ZoneServer> zone = client->GetZone();
 			if (zone)
 				zone->RemoveSpawnFromClient(spawn, client);
