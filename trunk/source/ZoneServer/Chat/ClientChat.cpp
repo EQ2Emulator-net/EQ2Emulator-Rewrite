@@ -124,6 +124,12 @@ void ClientChat::DisplaySpawnDialog(const OpenDialogParams& params, uint8_t type
 					break;
 				}
 			}
+
+			if (params.scriptSpawn->ShouldFaceOnHail()) {
+				if (auto player = client.GetController()->GetControlled()) {
+					params.scriptSpawn->FaceSpawn(player);
+				}
+			}
 		}
 		else {
 			return;

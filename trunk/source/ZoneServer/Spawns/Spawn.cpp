@@ -31,6 +31,8 @@ Spawn::Spawn() : m_updateFlagsByte(0) {
 	m_encounterOffset = 0;
 	m_lastFaceTargetTime = 0;
 	m_globalSpawn = false;
+	m_bFaceOnHail = false;
+	m_bDisableLoot = false;
 }
 
 Spawn::Spawn(std::shared_ptr<Spawn> in) {
@@ -109,6 +111,8 @@ Spawn::Spawn(std::shared_ptr<Spawn> in) {
 	m_secondaryCommandList = in->m_secondaryCommandList;
 	m_scriptID = in->m_scriptID;
 	m_globalSpawn = false;
+	m_bFaceOnHail = in->m_bFaceOnHail;
+	m_bDisableLoot = in->m_bDisableLoot;
 }
 
 Spawn::~Spawn() {
@@ -573,4 +577,8 @@ void Spawn::Hail(const std::shared_ptr<Spawn>& target) {
 	}
 
 	target->CallScript("hailed", _this);
+
+	if (target != _this && target->ShouldFaceOnHail()) {
+		target->FaceSpawn(_this);
+	}
 }

@@ -6,6 +6,20 @@
 #include "../../common/Packets/PacketElements/PacketElements.h"
 #include "../../common/Packets/PacketElements/PacketEncodedData.h"
 
+//Position state bitflags
+const uint32_t POS_STATE_FLYMODE = 1;
+const uint32_t POS_STATE_FLYMODE_NO_COLLIDE = 1 << 1;
+const uint32_t POS_STATE_NO_MOVEMENT = 1 << 3;
+const uint32_t POS_STATE_NO_TURNING = 1 << 4;
+const uint32_t POS_STATE_GLIDE = 1 << 5;
+const uint32_t POS_STATE_SITTING = 1 << 6;
+const uint32_t POS_STATE_ON_GROUND = 1 << 7;
+const uint32_t POS_STATE_ON_TRANSPORT = 1 << 8;
+const uint32_t POS_STATE_CROUCHING = 1 << 9;
+//Not sure what this is but *most* npcs have it
+const uint32_t POS_STATE_UNKNOWN = 1 << 14;
+const uint32_t POS_STATE_DISABLE_GRAVITY = 1 << 15;
+
 ///<summary>Packet struct containing the spawns position information</summary>
 struct SpawnPositionStruct {
 	SpawnPositionStruct();

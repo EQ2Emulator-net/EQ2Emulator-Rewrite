@@ -79,7 +79,7 @@ public:
 	bool IsLFW() { return (GetInfoStruct()->entityFlags & EntityFlagLFW) != 0; }
 	bool IsSolid() { return (GetInfoStruct()->entityFlags & EntityFlagSolid) != 0; }
 	bool IsMentoring() { return (GetInfoStruct()->entityFlags & EntityFlagMentoring) != 0; }
-	bool IsWeaponsEquipped() { return (GetInfoStruct()->entityFlags & EntityFlagWeaponsEquipped) != 0; }
+	bool AreWeaponsEquipped() { return (GetInfoStruct()->entityFlags & EntityFlagWeaponsEquipped) != 0; }
 	bool IsImmunityGained() { return (GetInfoStruct()->entityFlags & EntityFlagImmunityGained) != 0; }
 	bool IsImmunityRemaining() { return (GetInfoStruct()->entityFlags & EntityFlagImmunityRemaining) != 0; }
 	bool ShouldShowCommandIcon() { return bShowCommandIcon; }
@@ -172,6 +172,8 @@ private:
 	uint32_t m_merchantID;
 	uint32_t m_merchantType;
 	bool m_globalSpawn;
+	bool m_bFaceOnHail;
+	bool m_bDisableLoot;
 	uint32_t m_spawnLocationID;
 	uint32_t m_spawnEntryID;
 	uint32_t m_groupID;
@@ -551,6 +553,12 @@ public:
 	void SetState(uint32_t state, bool updateFlags = true) {
 		SetPos(&m_posStruct.positionState, state, updateFlags);
 	}
+	void EnablePositionState(uint32_t flags, bool updateFlags = true) {
+		SetState(m_posStruct.positionState | flags, updateFlags);
+	}
+	void DisablePositionState(uint32_t flags, bool updateFlags = true) {
+		SetState(m_posStruct.positionState & ~flags, updateFlags);
+	}
 	void SetDestX(float x, bool updateFlags = true) {
 		SetPos(&m_posStruct.destLocX, x, updateFlags);
 	}
@@ -591,6 +599,35 @@ public:
 	void SetRoll(float roll, bool updateFlags = true) {
 		m_posStruct.roll = roll;
 		SetPos(&m_posStruct.desiredRoll, roll, updateFlags);
+	}
+	void SetGravityDisabled(bool bGravityDisabled) {
+		if (bGravityDisabled) {
+			EnablePositionState(POS_STATE_DISABLE_GRAVITY, false);
+			DisablePositionState(POS_STATE_ON_GROUND, true);
+		}
+		else {
+			//This is really just for entities
+			if ((m_posStruct.positionState & ~POS_STATE_DISABLE_GRAVITY) != 0) {
+				EnablePositionState(POS_STATE_ON_GROUND, false);
+			}
+			DisablePositionState(POS_STATE_DISABLE_GRAVITY, true);
+		}
+	}
+	void SetCrouching(bool val) {
+		if (val) {
+			EnablePositionState(POS_STATE_CROUCHING);
+		}
+		else {
+			DisablePositionState(POS_STATE_CROUCHING);
+		}
+	}
+	void SetSitting(bool val) {
+		if (val) {
+			EnablePositionState(POS_STATE_SITTING);
+		}
+		else {
+			DisablePositionState(POS_STATE_SITTING);
+		}
 	}
 	void SetActivityTimer(uint32_t timestamp, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.activity_timer, timestamp, updateFlags);
@@ -634,6 +671,7 @@ public:
 	uint32_t GetSecondaryCommandListID() { return m_secondaryCommandListID; }
 	void SetFactionID(uint32_t id) { m_factionID = id; }
 	uint32_t GetFactionID() { return m_factionID; }
+	
 
 	// These may need to be changed
 	void SetHP(uint32_t val) { m_hp = val; }
@@ -690,7 +728,9 @@ public:
 	float GetRoll() { return m_posStruct.desiredRoll; }
 	float GetCollisionRadius() { return m_posStruct.collisionRadius; }
 	float GetSize() { return m_posStruct.size; }
+	bool ShouldFaceOnHail() { return m_bFaceOnHail; }
 	void SetScriptID(uint32_t id) { m_scriptID = id; }
+	void SetFaceOnHail(bool val) {	m_bFaceOnHail = val; }
 
 	std::pair<int32_t, int32_t> GetCellCoordinates() { return m_currentCellCoordinates; }
 	void UpdateCellCoordinates();
@@ -722,6 +762,8 @@ public:
 	uint8_t GetMaxLevel() { return m_maxLevel; }
 	void SetDifficultyOffset(uint8_t val) { m_encounterOffset = val; }
 	uint8_t GetDifficultyOffset() { return m_encounterOffset; }
+	void SetLootDisabled(bool val) { m_bDisableLoot = true; }
+	bool IsLootDisabled() { return m_bDisableLoot; }
 
 	void CallScript(const char* function, const std::shared_ptr<Spawn>& spawnArg = std::shared_ptr<Spawn>(), const char* stringArg = nullptr);
 	//TODO: move this to the controller?

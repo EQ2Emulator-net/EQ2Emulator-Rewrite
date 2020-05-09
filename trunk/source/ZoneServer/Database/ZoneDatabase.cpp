@@ -13,6 +13,7 @@ extern MasterEntityCommandList g_masterEntityCommandList;
 
 constexpr const char* GetSpawnTableFields();
 constexpr const char* GetSpawnLocationFields();
+constexpr const char* GetNpcTableFields();
 
 ZoneDatabase::ZoneDatabase() {
 
@@ -126,9 +127,110 @@ bool ZoneDatabase::LoadCharacter(uint32_t char_id, uint32_t account_id, std::sha
 	return ret;
 }
 
+constexpr const char* GetNpcTableFields() {
+	return "npc.min_level, npc.max_level, npc.enc_level, npc.enc_level_offset, npc.class_, npc.gender, npc.min_group_size, npc.max_group_size, npc.hair_type_id, npc.facial_hair_type_id, npc.wing_type_id, npc.chest_type_id, npc.legs_type_id, npc.soga_hair_type_id, npc.soga_facial_hair_type_id, npc.action_state, npc.mood_state, npc.attack_type, npc.ai_strategy+0, npc.spell_list_id, npc.secondary_spell_list_id, npc.skill_list_id, npc.secondary_skill_list_id, npc.equipment_list_id, npc.str, npc.sta, npc.wis, npc.intel, npc.agi, npc.heat, npc.cold, npc.magic, npc.mental, npc.divine, npc.disease, npc.poison, npc.aggro_radius, npc.cast_percentage, npc.randomize, npc.soga_model_type, npc.heroic_flag, npc.alignment, npc.elemental, npc.arcane, npc.noxious, npc.hide_hood, npc.emote_state, npc.is_crouching, npc.is_sitting, npc.disable_loot, npc.weapons_equipped";
+}
+
+void ZoneDatabase::ProcessNpcResult(DatabaseResult& result, const std::shared_ptr<Entity>& npc) {
+	//Base spawn data
+	uint32_t i = ProcessSpawnTableFields(npc, result);
+
+	//Default for most npcs
+	npc->EnablePositionState(POS_STATE_UNKNOWN | ((npc->GetPosStruct()->positionState & POS_STATE_DISABLE_GRAVITY) ? 0 : POS_STATE_ON_GROUND) );
+
+	npc->SetLevel(result.GetUInt8(i++));
+	npc->SetOrigLevel(npc->GetAdventureLevel());
+	npc->SetMinLevel(npc->GetAdventureLevel());
+	npc->SetMaxLevel(result.GetUInt8(i++));
+	npc->SetDifficulty(result.GetUInt8(i++));
+	npc->SetDifficultyOffset(result.GetUInt8(i++));
+	npc->SetAdventureClass(result.GetUInt8(i++));
+	npc->SetGender(result.GetUInt8(i++));
+	// min_group_size, no clue what this is for
+	// max_group_size, no clue what this is for
+	i += 2;
+	npc->SetHairType(result.GetUInt32(i++));
+	npc->SetFacialHairType(result.GetUInt32(i++));
+	npc->SetWingType(result.GetUInt32(i++));
+	npc->SetChestType(result.GetUInt32(i++));
+	npc->SetLegsType(result.GetUInt32(i++));
+	npc->SetSogaHairType(result.GetUInt32(i++));
+	npc->SetSogaFacialHairType(result.GetUInt32(i++));
+	npc->SetActionState(result.GetUInt32(i++));
+	npc->SetMoodState(result.GetUInt32(i++));
+	// Attack Type
+	i++;
+	// AI Strategy
+	i++;
+	// Primary Spell List
+	i++;
+	// Secondary Spell List
+	i++;
+	// Primary Skill List
+	i++;
+	// Secondary Skill List
+	i++;
+	// Equipment List ID
+	i++;
+	// Base Str
+	i++;
+	// Base Sta
+	i++;
+	// Base Wis
+	i++;
+	// Base Int
+	i++;
+	// Base Agi
+	i++;
+	// Base Heat
+	i++;
+	// Base Cold
+	i++;
+	// Base Magic
+	i++;
+	// Base Mental
+	i++;
+	// Base Divine
+	i++;
+	// Base Disease
+	i++;
+	// Base Poison
+	i++;
+	// Aggro Radius
+	i++;
+	// Cast Percentage 
+	i++;
+	// randomize
+	i++;
+	npc->SetSogaModelType(result.GetUInt32(i++));
+	npc->SetHeroicFlag(result.GetUInt8(i++));
+	// Alignment
+	i++;
+	// Base Elemental
+	i++;
+	// Base Arcane
+	i++;
+	// Base Noxious
+	i++;
+	//Hide hood
+	if (result.GetBool(i++)) {
+		npc->EnableInfoVisFlags(INFO_VIS_FLAG_HIDE_HOOD);
+	}
+	else {
+		npc->DisableInfoVisFlags(INFO_VIS_FLAG_HIDE_HOOD);
+	}
+	npc->SetEmoteState(result.GetUInt32(i++));
+	npc->SetCrouching(result.GetBool(i++));
+	npc->SetSitting(result.GetBool(i++));
+	npc->SetLootDisabled(result.GetBool(i++));
+	if (result.GetBool(i++)) {
+		npc->EnableEntityFlags(EntityFlagWeaponsEquipped);
+	}
+}
+
 bool ZoneDatabase::LoadNPCsForZone(ZoneServer* z) {
 	DatabaseResult result;
-	bool ret = Select(&result, "SELECT %s, npc.min_level, npc.max_level, npc.enc_level, npc.enc_level_offset, npc.class_, npc.gender, npc.min_group_size, npc.max_group_size, npc.hair_type_id, npc.facial_hair_type_id, npc.wing_type_id, npc.chest_type_id, npc.legs_type_id, npc.soga_hair_type_id, npc.soga_facial_hair_type_id, npc.action_state, npc.mood_state, npc.initial_state, npc.activity_status, npc.attack_type, npc.ai_strategy+0, npc.spell_list_id, npc.secondary_spell_list_id, npc.skill_list_id, npc.secondary_skill_list_id, npc.equipment_list_id, npc.str, npc.sta, npc.wis, npc.intel, npc.agi, npc.heat, npc.cold, npc.magic, npc.mental, npc.divine, npc.disease, npc.poison, npc.aggro_radius, npc.cast_percentage, npc.randomize, npc.soga_model_type, npc.heroic_flag, npc.alignment, npc.elemental, npc.arcane, npc.noxious, npc.hide_hood, npc.emote_state \n"
+	bool ret = Select(&result, "SELECT %s, %s\n"
 		"FROM spawn s\n"
 		"INNER JOIN spawn_npcs npc\n"
 		"ON s.id = npc.spawn_id\n"
@@ -137,7 +239,7 @@ bool ZoneDatabase::LoadNPCsForZone(ZoneServer* z) {
 		"INNER JOIN spawn_location_placement lp\n"
 		"ON le.spawn_location_id = lp.spawn_location_id\n"
 		"WHERE lp.zone_id = %u\n",
-		 GetSpawnTableFields(), z->GetID());
+		 GetSpawnTableFields(), GetNpcTableFields(), z->GetID());
 	if (!ret)
 		return ret;
 
@@ -152,94 +254,7 @@ bool ZoneDatabase::LoadNPCsForZone(ZoneServer* z) {
 
 		std::shared_ptr<Entity> npc = std::make_shared<Entity>();
 
-		//Base spawn data
-		uint32_t i = ProcessSpawnTableFields(npc, result);
-
-		npc->SetLevel(result.GetUInt8(i++));
-		npc->SetOrigLevel(npc->GetAdventureLevel());
-		npc->SetMinLevel(npc->GetAdventureLevel());
-		npc->SetMaxLevel(result.GetUInt8(i++));
-		npc->SetDifficulty(result.GetUInt8(i++));
-		npc->SetDifficultyOffset(result.GetUInt8(i++));
-		npc->SetAdventureClass(result.GetUInt8(i++));
-		npc->SetGender(result.GetUInt8(i++));
-		// min_group_size, no clue what this is for
-		// max_group_size, no clue what this is for
-		i += 2;
-		npc->SetHairType(result.GetUInt32(i++));
-		npc->SetFacialHairType(result.GetUInt32(i++));
-		npc->SetWingType(result.GetUInt32(i++));
-		npc->SetChestType(result.GetUInt32(i++));
-		npc->SetLegsType(result.GetUInt32(i++));
-		npc->SetSogaHairType(result.GetUInt32(i++));
-		npc->SetSogaFacialHairType(result.GetUInt32(i++));
-		npc->SetActionState(result.GetUInt32(i++));
-		npc->SetMoodState(result.GetUInt32(i++));
-		npc->SetState(result.GetUInt32(i++));
-		//Activity status..think we already put these flags into EntityFlags via query
-		i++;
-		// Attack Type
-		i++;
-		// AI Strategy
-		i++;
-		// Primary Spell List
-		i++;
-		// Secondary Spell List
-		i++;
-		// Primary Skill List
-		i++;
-		// Secondary Skill List
-		i++;
-		// Equipment List ID
-		i++;
-		// Base Str
-		i++;
-		// Base Sta
-		i++;
-		// Base Wis
-		i++;
-		// Base Int
-		i++;
-		// Base Agi
-		i++;
-		// Base Heat
-		i++;
-		// Base Cold
-		i++;
-		// Base Magic
-		i++;
-		// Base Mental
-		i++;
-		// Base Divine
-		i++;
-		// Base Disease
-		i++;
-		// Base Poison
-		i++;
-		// Aggro Radius
-		i++;
-		// Cast Percentage 
-		i++;
-		// randomize
-		i++;
-		npc->SetSogaModelType(result.GetUInt32(i++));
-		npc->SetHeroicFlag(result.GetUInt8(i++));
-		// Alignment
-		i++;
-		// Base Elemental
-		i++;
-		// Base Arcane
-		i++;
-		// Base Noxious
-		i++;
-		//Hide hood
-		if (result.GetBool(i++)) {
-			npc->EnableInfoVisFlags(INFO_VIS_FLAG_HIDE_HOOD);
-		}
-		else {
-			npc->DisableInfoVisFlags(INFO_VIS_FLAG_HIDE_HOOD);
-		}
-		npc->SetEmoteState(result.GetUInt32(i++));
+		ProcessNpcResult(result, npc);
 
 		npcs[npc->GetDatabaseID()] = npc;
 
@@ -354,9 +369,6 @@ bool ZoneDatabase::LoadWidgetsForZone(ZoneServer* z) {
 		// Spawn base info
 		index = ProcessSpawnTableFields(spawn, result);
 
-		//Default widgets to be solid
-		spawn->EnableEntityFlags(EntityFlagSolid);
-
 		// Widget Info starts here
 		std::unique_ptr<Widget>& wd = spawn->GetWidgetData();
 		if (!wd)
@@ -448,9 +460,6 @@ bool ZoneDatabase::LoadSignsForZone(ZoneServer* z) {
 			if (!widget)
 				widget = std::make_unique<Widget>();
 
-			//Default widgets to be solid
-			spawn->EnableEntityFlags(EntityFlagSolid);
-
 			widget->SetWidgetID(widget_id);
 			widget->SetWidgetX(result.GetFloat(index++));
 			widget->SetWidgetY(result.GetFloat(index++));
@@ -517,12 +526,12 @@ bool ZoneDatabase::LoadGroundSpawnsForZone(ZoneServer* z) {
 
 bool ZoneDatabase::LoadNPC(ZoneServer* z, uint32_t id) {
 	DatabaseResult result;
-	bool ret = Select(&result, "SELECT %s, npc.min_level, npc.max_level, npc.enc_level, npc.enc_level_offset, npc.class_, npc.gender, npc.min_group_size, npc.max_group_size, npc.hair_type_id, npc.facial_hair_type_id, npc.wing_type_id, npc.chest_type_id, npc.legs_type_id, npc.soga_hair_type_id, npc.soga_facial_hair_type_id, npc.action_state, npc.mood_state, npc.initial_state, npc.activity_status, npc.attack_type, npc.ai_strategy+0, npc.spell_list_id, npc.secondary_spell_list_id, npc.skill_list_id, npc.secondary_skill_list_id, npc.equipment_list_id, npc.str, npc.sta, npc.wis, npc.intel, npc.agi, npc.heat, npc.cold, npc.magic, npc.mental, npc.divine, npc.disease, npc.poison, npc.aggro_radius, npc.cast_percentage, npc.randomize, npc.soga_model_type, npc.heroic_flag, npc.alignment, npc.elemental, npc.arcane, npc.noxious, npc.hide_hood, npc.emote_state \n"
+	bool ret = Select(&result, "SELECT %s, %s\n"
 		"FROM spawn s\n"
 		"INNER JOIN spawn_npcs npc\n"
 		"ON s.id = npc.spawn_id\n"
 		"WHERE s.id = %u\n",
-		GetSpawnTableFields(), id);
+		GetSpawnTableFields(), GetNpcTableFields(), id);
 	if (!ret)
 		return ret;
 
@@ -536,94 +545,7 @@ bool ZoneDatabase::LoadNPC(ZoneServer* z, uint32_t id) {
 
 		std::shared_ptr<Entity> npc = std::make_shared<Entity>();
 
-		//Base spawn data
-		uint32_t i = ProcessSpawnTableFields(npc, result);
-
-		npc->SetLevel(result.GetUInt8(i++));
-		npc->SetOrigLevel(npc->GetAdventureLevel());
-		npc->SetMinLevel(npc->GetAdventureLevel());
-		npc->SetMaxLevel(result.GetUInt8(i++));
-		npc->SetDifficulty(result.GetUInt8(i++));
-		npc->SetDifficultyOffset(result.GetUInt8(i++));
-		npc->SetAdventureClass(result.GetUInt8(i++));
-		npc->SetGender(result.GetUInt8(i++));
-		// min_group_size, no clue what this is for
-		// max_group_size, no clue what this is for
-		i += 2;
-		npc->SetHairType(result.GetUInt32(i++));
-		npc->SetFacialHairType(result.GetUInt32(i++));
-		npc->SetWingType(result.GetUInt32(i++));
-		npc->SetChestType(result.GetUInt32(i++));
-		npc->SetLegsType(result.GetUInt32(i++));
-		npc->SetSogaHairType(result.GetUInt32(i++));
-		npc->SetSogaFacialHairType(result.GetUInt32(i++));
-		npc->SetActionState(result.GetUInt32(i++));
-		npc->SetMoodState(result.GetUInt32(i++));
-		npc->SetState(result.GetUInt32(i++));
-		//Activity status..think we already put these flags into EntityFlags via query
-		i++;
-		// Attack Type
-		i++;
-		// AI Strategy
-		i++;
-		// Primary Spell List
-		i++;
-		// Secondary Spell List
-		i++;
-		// Primary Skill List
-		i++;
-		// Secondary Skill List
-		i++;
-		// Equipment List ID
-		i++;
-		// Base Str
-		i++;
-		// Base Sta
-		i++;
-		// Base Wis
-		i++;
-		// Base Int
-		i++;
-		// Base Agi
-		i++;
-		// Base Heat
-		i++;
-		// Base Cold
-		i++;
-		// Base Magic
-		i++;
-		// Base Mental
-		i++;
-		// Base Divine
-		i++;
-		// Base Disease
-		i++;
-		// Base Poison
-		i++;
-		// Aggro Radius
-		i++;
-		// Cast Percentage 
-		i++;
-		// randomize
-		i++;
-		npc->SetSogaModelType(result.GetUInt32(i++));
-		npc->SetHeroicFlag(result.GetUInt8(i++));
-		// Alignment
-		i++;
-		// Base Elemental
-		i++;
-		// Base Arcane
-		i++;
-		// Base Noxious
-		i++;
-		//Hide hood
-		if (result.GetBool(i++)) {
-			npc->EnableInfoVisFlags(INFO_VIS_FLAG_HIDE_HOOD);
-		}
-		else {
-			npc->DisableInfoVisFlags(INFO_VIS_FLAG_HIDE_HOOD);
-		}
-		npc->SetEmoteState(result.GetUInt32(i++));
+		ProcessNpcResult(result, npc);
 
 		npcs[npc->GetDatabaseID()] = npc;
 
@@ -903,7 +825,8 @@ bool ZoneDatabase::LoadGroundSpawnLocations(ZoneServer* z) {
 constexpr const char* GetSpawnTableFields() {
 	return "s.id, s.name,s.sub_title,s.prefix,s.suffix,s.last_name,s.race,s.model_type,s.size,s.size_offset,s.targetable,s.show_name,"
 		"s.command_primary,s.command_secondary,s.visual_state,s.attackable,s.show_level,s.show_command_icon,s.display_hand_icon,s.faction_id,"
-		"s.collision_radius,s.hp,s.power,s.savagery,s.dissonance,s.merchant_id,s.transport_id,s.merchant_type,s.script_id";
+		"s.collision_radius,s.hp,s.power,s.savagery,s.dissonance,s.merchant_id,s.transport_id,s.merchant_type,s.script_id,s.is_solid,"
+		"s.is_transport,s.face_on_hail,s.disable_gravity,s.is_global_spawn";
 }
 
 uint32_t ZoneDatabase::ProcessSpawnTableFields(const std::shared_ptr<Spawn>& spawn, DatabaseResult& res) {
@@ -949,12 +872,22 @@ uint32_t ZoneDatabase::ProcessSpawnTableFields(const std::shared_ptr<Spawn>& spa
 	spawn->SetDissonance(res.GetUInt32(i++));
 	spawn->SetMerchantID(res.GetUInt32(i++));
 	if (spawn->GetMerchantID() > 0) {
-		spawn->EnableEntityFlags(EntityFlagMerchant);
+		entityFlags |= EntityFlagMerchant;
 	}
 	//Transport ID
 	res.GetUInt32(i++);
 	spawn->SetMerchantType(res.GetUInt32(i++));
 	spawn->SetScriptID(res.GetUInt32(i++));
+	if (res.GetBool(i++)) {
+		entityFlags |= EntityFlagSolid;
+	}
+	if (res.GetBool(i++)) {
+		entityFlags |= EntityFlagIsTransport;
+	}
+	spawn->SetFaceOnHail(res.GetBool(i++));
+	spawn->SetGravityDisabled(res.GetBool(i++));
+	spawn->SetGlobalSpawn(res.GetBool(i++));
+
 
 	spawn->SetEntityFlags(entityFlags);
 	spawn->PopUpdateFlags();

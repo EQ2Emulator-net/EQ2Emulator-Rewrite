@@ -141,9 +141,45 @@ ALTER TABLE zones
 ALTER TABLE `spawn`
 	CHANGE COLUMN `size` `size` FLOAT NOT NULL DEFAULT '1.0' AFTER `model_type`,
 	CHANGE COLUMN `size_offset` `size_offset` FLOAT NOT NULL DEFAULT '0' AFTER `size`,
-	CHANGE COLUMN `collision_radius` `collision_radius` FLOAT NOT NULL DEFAULT '0' AFTER `faction_id`;
-
+	CHANGE COLUMN `collision_radius` `collision_radius` FLOAT NOT NULL DEFAULT '0' AFTER `faction_id`,
+	ADD COLUMN `is_solid` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `display_hand_icon`,
+	ADD COLUMN `is_transport` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `is_solid`,
+	ADD COLUMN `face_on_hail` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `is_transport`,
+	ADD COLUMN `disable_gravity` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `face_on_hail`,
+	ADD COLUMN `is_global_spawn` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `script_id`;
+	
 UPDATE spawn SET `size` = `size` / 32.0, 
 	size_offset = size_offset / 32.0,
  	collision_radius = collision_radius / 32.0
 	WHERE 1;
+	
+UPDATE spawn s
+	INNER JOIN spawn_signs ss ON ss.spawn_id = s.id AND ss.widget_id != 0
+	SET s.is_solid = 1
+	WHERE 1;
+	
+UPDATE spawn s
+	INNER JOIN spawn_widgets sw ON sw.spawn_id = s.id
+	SET s.is_solid = 1
+	WHERE 1;
+	
+UPDATE spawn s
+	INNER JOIN spawn_npcs sn ON sn.spawn_id = s.id
+	SET s.face_on_hail = 1
+	WHERE 1;
+	
+UPDATE spawn s
+	INNER JOIN spawn_npcs sn ON sn.spawn_id = s.id AND (sn.initial_state & 32768) > 0
+	SET s.disable_gravity = 1
+	WHERE 1;
+	
+UPDATE spawn s
+	INNER JOIN spawn_widgets sw ON sw.spawn_id = s.id AND sw.`type` = 'Lift'
+	SET s.is_transport = 1
+	WHERE 1;
+	
+ALTER TABLE `spawn_npcs`
+	ADD COLUMN `is_crouching` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `initial_state`,
+	ADD COLUMN `is_sitting` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `is_crouching`,
+	ADD COLUMN `weapons_equipped` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `is_sitting`,
+	ADD COLUMN `disable_loot` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `weapons_equipped`;

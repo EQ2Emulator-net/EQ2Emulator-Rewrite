@@ -27,6 +27,8 @@ public:
 	bool LoadSignsForZone(ZoneServer* z);
 	bool LoadGroundSpawnsForZone(ZoneServer* z);
 
+	void ProcessNpcResult(DatabaseResult& res, const std::shared_ptr<Entity>& npc);
+
 	// Loads a specific spawn into a zone despite its location
 	bool LoadNPC(ZoneServer* z, uint32_t id);
 	bool LoadObject(ZoneServer* z, uint32_t id);
