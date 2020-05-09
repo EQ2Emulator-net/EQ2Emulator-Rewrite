@@ -23,52 +23,52 @@ const uint32_t POS_STATE_DISABLE_GRAVITY = 1 << 15;
 ///<summary>Packet struct containing the spawns position information</summary>
 struct SpawnPositionStruct {
 	SpawnPositionStruct();
-	uint32_t positionState;
-	uint32_t positionState2;
-	float desiredHeading;
+	uint32_t positionState; //confirmed
+	uint32_t positionState2; //confirmed
+	float desiredHeading; //confirmed
 	float desiredHeadingVelocity;
 	float desiredRoll;
 	float desiredRollVelocity;
-	float desiredPitch;
+	float desiredPitch; //confirmed
 	float desiredPitchVelocity;
 	float unusedUnknown;
-	uint32_t grid_id;
-	float x;
-	float y;
-	float z;
-	uint8_t movementMode;
+	uint32_t grid_id; //confirmed
+	float x; //confirmed
+	float y; //confirmed
+	float z; //confirmed
+	uint8_t movementMode; //confirmed
 	uint8_t unkByte;
 	int16_t unk72;
-	float heading;
-	float pitch;
-	float roll;
-	float destLocX;
-	float destLocY;
-	float destLocZ;
-	float destLocX2;
-	float destLocY2;
-	float destLocZ2;
+	float heading; //confirmed
+	float pitch; //confirmed
+	float roll; //confirmed
+	float destLocX; //confirmed
+	float destLocY; //confirmed
+	float destLocZ; //confirmed
+	float destLocX2; //confirmed
+	float destLocY2; //confirmed
+	float destLocZ2; //confirmed
 	//I think collision radius is like the base scale
 	float collisionRadius;
 	//I think this is a "temp" scale but in reality mostly permanent
 	float size;
 	float sizeRatio;
-	uint32_t faceActorID;
+	uint32_t faceActorID; //confirmed although not sure what it does yet
 	float baseLocX;
 	float baseLocY;
 	float baseLocZ;
 	float desiredForwardSpeed;
-	float speedModifier;
-	float airSpeed;
+	float speedModifier; //confirmed
+	float airSpeed; //confirmed
 	float unkSpeed3;
 	float desiredVertSpeed;
 	float desiredStrafeSpeed;
-	float velocityX;
-	float velocityY;
-	float velocityZ;
-	float swimmingSpeedMultiplier;
+	float velocityX; //confirmed
+	float velocityY; //confirmed
+	float velocityZ; //confirmed
+	float swimmingSpeedMultiplier; //confirmed
 	float sizeUnknown;
-	float actorStopRange;
+	float actorStopRange; //semi confirmed but not sure what it does yet
 	float unk70;
 };
 

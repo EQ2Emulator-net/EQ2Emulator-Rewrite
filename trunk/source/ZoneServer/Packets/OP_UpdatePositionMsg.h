@@ -19,6 +19,9 @@ struct Substruct_MovementData : public PacketEncodedData, public SpawnPositionSt
 		if (GetVersion() > 283) {
 			RegisterUInt32(positionState2);
 		}
+		else {
+			RegisterUInt8(movementMode);
+		}
 		RegisterFloat(desiredHeading);
 		RegisterFloat(desiredPitch);
 		if (GetVersion() > 283) {
@@ -30,17 +33,21 @@ struct Substruct_MovementData : public PacketEncodedData, public SpawnPositionSt
 		RegisterFloat(size);
 		RegisterFloat(sizeRatio);
 		RegisterFloat(speedModifier);
-		RegisterFloat(airSpeed);
-		RegisterFloat(desiredStrafeSpeed);
-		RegisterFloat(desiredVertSpeed);
 		if (GetVersion() > 283) {
+			RegisterFloat(airSpeed);
+			RegisterFloat(desiredStrafeSpeed);
+			RegisterFloat(desiredVertSpeed);
 			RegisterFloat(unkSpeed3);
-			RegisterFloat(swimmingSpeedMultiplier);
 		}
+		RegisterFloat(swimmingSpeedMultiplier);
 		RegisterFloat(desiredForwardSpeed);
 		if (GetVersion() > 283) {
 			RegisterFloat(desiredRoll);
 			RegisterFloat(desiredRollVelocity);
+		}
+		else {
+			RegisterFloat(desiredStrafeSpeed);
+			RegisterFloat(desiredVertSpeed);
 		}
 		RegisterFloat(destLocX);
 		RegisterFloat(destLocY);

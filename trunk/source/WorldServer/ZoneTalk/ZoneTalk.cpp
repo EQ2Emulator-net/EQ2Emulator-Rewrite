@@ -32,6 +32,15 @@ bool ZoneTalk::Process() {
 
 void ZoneTalk::StreamDisconnected(std::shared_ptr<Stream> stream) {
 	g_characterList.FlagCharactersOnZoneServerOffline(std::static_pointer_cast<ZoneStream>(stream));
+
+	for (auto itr = pendingZones.begin(); itr != pendingZones.end();) {
+		if (EmuWeakCmp(stream, itr->second)) {
+			itr = pendingZones.erase(itr);
+			continue;
+		}
+
+		++itr;
+	}
 }
 
 std::shared_ptr<ZoneStream> ZoneTalk::GetAvailableZone(uint32_t zone_id) {
@@ -50,12 +59,12 @@ std::shared_ptr<ZoneStream> ZoneTalk::GetAvailableZone(uint32_t zone_id) {
 		// No zone found lets send a request to start it up
 		// and add the client to a list to wait for the zone
 
-		pendingZones.insert(zone_id);
 		if (!Streams.empty()) {
 			std::shared_ptr<ZoneStream> zs = std::static_pointer_cast<ZoneStream>(Streams.begin()->second);
 			Emu_RequestZone_Packet* request = new Emu_RequestZone_Packet();
 			request->zone_id = zone_id;
 			zs->QueuePacket(request);
+			pendingZones[zone_id] = zs;
 		}
 	}
 

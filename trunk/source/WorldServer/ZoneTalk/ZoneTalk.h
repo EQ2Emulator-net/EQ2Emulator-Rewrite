@@ -44,7 +44,7 @@ public:
 	void AddPendingZoneClient(uint32_t zoneID, const std::shared_ptr<Client>& client);
 
 private:
-	std::set<uint32_t> pendingZones;
+	std::map<uint32_t, std::weak_ptr<ZoneStream> > pendingZones;
 	std::map<uint32_t, std::vector<std::weak_ptr<Client> > > pendingZoneClients;
 
 	struct PendingZoneTransfer {
