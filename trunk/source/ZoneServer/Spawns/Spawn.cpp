@@ -44,11 +44,11 @@ Spawn::Spawn(std::shared_ptr<Spawn> in) {
 	m_updateFlagsByte = 0;
 	if (in->GetSignData() != nullptr) {
 		signData = std::make_unique<Sign>(*in->GetSignData());
-		m_posStruct.moveType = 0.34375f;
+		m_posStruct.swimmingSpeedMultiplier = 0.34375f;
 	}
 	if (in->GetWidgetData() != nullptr) {
 		widgetData = std::make_unique<Widget>(*in->GetWidgetData());
-		m_posStruct.moveType = 0.34375f;
+		m_posStruct.swimmingSpeedMultiplier = 0.34375f;
 	}
 	m_spawnID = GetNextID();
 	m_spawnDatabaseID = in->GetDatabaseID();

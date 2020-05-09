@@ -79,7 +79,7 @@ RegisterZoneStruct("OP_LoginByNumRequestMsg", OP_LoginByNumRequestMsg_Packet, 1,
 RegisterZoneStruct("OP_DoneLoadingZoneResourcesMsg", OP_DoneLoadingZoneResourcesMsg_Packet, 1);
 RegisterZoneStruct("OP_DoneLoadingEntityResourcesMsg", OP_DoneLoadingEntityResourcesMsg_Packet, 1);
 RegisterZoneStruct("OP_DefaultGroupOptionsRequestMsg", OP_DefaultGroupOptionsRequestMsg_Packet, 1);
-RegisterZoneStruct("OP_UpdatePositionMsg", OP_UpdatePositionMsg, 1);
+RegisterZoneStruct("OP_UpdatePositionMsg", OP_UpdatePositionMsg, 1, 284);
 RegisterZoneStruct("OP_RemoteCmdMsg", OP_RemoteCmdMsg_Packet, 1);
 RegisterZoneStruct("OP_PaperdollImage", OP_PaperdollImage_Packet, 1, 60000);
 RegisterZoneStruct("OP_UpdateTargetMsg", OP_UpdateTargetMsg_Packet, 1);

@@ -136,11 +136,11 @@ void Substruct_SpawnPosition::CompressData() {
 	desiredHeadingVelocity_compressed = CompressFloat(desiredHeadingVelocity, 32);
 	collisionRadius_compressed = CompressFloat(collisionRadius, 32);
 	speedModifier_compressed = CompressFloat(speedModifier, 32);
-	swimmingSpeedModifier_compressed = CompressFloat(swimmingSpeedModifier, 32);
+	airSpeed_compressed = CompressFloat(airSpeed, 32);
 	unkSpeed3_compressed = CompressFloat(unkSpeed3, 32);
 	desiredVertSpeed_compressed = CompressFloat(desiredVertSpeed, 32);
 	desiredStrafeSpeed_compressed = CompressFloat(desiredStrafeSpeed, 32);
-	moveType_compressed = CompressFloat(moveType, 32);
+	swimmingSpeedMultiplier_compressed = CompressFloat(swimmingSpeedMultiplier, 32);
 	desiredForwardSpeed_compressed = CompressFloat(desiredForwardSpeed, 256);
 	desiredRoll_compressed = CompressFloat(desiredRoll, 256);
 	desiredRollVelocity_compressed = CompressFloat(desiredRollVelocity, 256);
@@ -173,11 +173,11 @@ void Substruct_SpawnPosition::DecompressData() {
 	desiredRollVelocity = ExpandFloat(desiredRollVelocity_compressed, 32);
 	collisionRadius = ExpandFloat(collisionRadius_compressed, 32);
 	speedModifier = ExpandFloat(speedModifier_compressed, 32);
-	swimmingSpeedModifier = ExpandFloat(swimmingSpeedModifier_compressed, 32);
+	airSpeed = ExpandFloat(airSpeed_compressed, 32);
 	unkSpeed3 = ExpandFloat(unkSpeed3_compressed, 32);
 	desiredVertSpeed = ExpandFloat(desiredVertSpeed_compressed, 32);
 	desiredStrafeSpeed = ExpandFloat(desiredStrafeSpeed_compressed, 32);
-	moveType = ExpandFloat(moveType_compressed, 32);
+	swimmingSpeedMultiplier = ExpandFloat(swimmingSpeedMultiplier_compressed, 32);
 	desiredForwardSpeed = ExpandFloat(desiredForwardSpeed_compressed, 256);
 	desiredRoll = ExpandFloat(desiredRoll_compressed, 256);
 	desiredRollVelocity = ExpandFloat(desiredRollVelocity_compressed, 256);
@@ -230,10 +230,10 @@ void Substruct_SpawnPosition::RegisterElements() {
 	}
 	RegisterInt16(desiredHeadingVelocity_compressed);
 	RegisterInt16(speedModifier_compressed);
-	RegisterInt16(swimmingSpeedModifier_compressed);
 	if (GetVersion() > 283) {
-		RegisterInt16(moveType_compressed);
+		RegisterInt16(airSpeed_compressed);
 	}
+	RegisterInt16(swimmingSpeedMultiplier_compressed);
 	RegisterInt16(desiredStrafeSpeed_compressed);
 	RegisterInt16(desiredVertSpeed_compressed);
 	RegisterInt16(unkSpeed3_compressed);

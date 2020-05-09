@@ -17,7 +17,7 @@ public:
 		m_numberOfHarvests = in->GetNumberOfHarvests();
 		m_numberAttemptsPerHarvest = in->GetNumberAttemptsPerHarvest();
 		m_groundSpawnID = in->GetGroundSpawnID();
-		SetMoveType(0.5f, false);
+		SetSwimmingSpeedMultiplier(0.5f, false);
 		SetState(in->GetPosStruct()->positionState, false);
 	}
 

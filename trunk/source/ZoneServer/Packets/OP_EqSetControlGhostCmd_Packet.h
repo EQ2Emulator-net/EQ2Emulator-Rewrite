@@ -10,16 +10,16 @@ public:
 		RegisterElements();
 		spawn_id = 0xFFFFFFFF;
 		speed = 0;
-		air_speed = 0;
-		size = 0;
+		airSpeed = 0;
+		swimmingSpeedMultiplier;
 		unknown2 = 0;
 		memset(unknown, 0, sizeof(unknown));
 	}
 
 	uint32_t spawn_id;
 	float speed;
-	float air_speed; // 1096
-	float size;
+	float airSpeed; // 1096
+	float swimmingSpeedMultiplier;
 	uint8_t unknown2;
 	uint8_t unknown[13]; // 1119 = 12, 1193 = 13
 
@@ -29,8 +29,8 @@ private:
 		RegisterFloat(speed);
 		if (GetVersion() > 283) {
 			if (GetVersion() >= 1096)
-				RegisterFloat(air_speed);
-			RegisterFloat(size);
+				RegisterFloat(airSpeed);
+			RegisterFloat(swimmingSpeedMultiplier);
 		}
 		RegisterUInt8(unknown2);
 		if (GetVersion() >= 1119) {

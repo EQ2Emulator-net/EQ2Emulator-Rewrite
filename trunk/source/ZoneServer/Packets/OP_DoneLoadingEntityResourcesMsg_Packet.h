@@ -37,15 +37,15 @@ public:
 
 			OP_EqSetControlGhostCmd_Packet* control = new OP_EqSetControlGhostCmd_Packet(client->GetVersion());
 			control->speed = 5;
-			control->air_speed = 5;
-			control->size = 0.8f;
+			control->airSpeed = 5;
+			control->swimmingSpeedMultiplier = 0.8f;
 			control->spawn_id = 0xFFFFFFFF;
 			client->QueuePacket(control);
 
 			control = new OP_EqSetControlGhostCmd_Packet(client->GetVersion());
 			control->speed = 5;
-			control->air_speed = 5;
-			control->size = 0.8f;
+			control->airSpeed = 5;
+			control->swimmingSpeedMultiplier = 0.8f;
 			control->spawn_id = id;
 			control->unknown2 = 0xFF;
 			client->QueuePacket(control);

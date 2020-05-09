@@ -30,12 +30,12 @@ struct Substruct_MovementData : public PacketEncodedData, public SpawnPositionSt
 		RegisterFloat(size);
 		RegisterFloat(sizeRatio);
 		RegisterFloat(speedModifier);
-		RegisterFloat(swimmingSpeedModifier);
+		RegisterFloat(airSpeed);
 		RegisterFloat(desiredStrafeSpeed);
 		RegisterFloat(desiredVertSpeed);
 		if (GetVersion() > 283) {
 			RegisterFloat(unkSpeed3);
-			RegisterFloat(moveType);
+			RegisterFloat(swimmingSpeedMultiplier);
 		}
 		RegisterFloat(desiredForwardSpeed);
 		if (GetVersion() > 283) {
@@ -109,6 +109,22 @@ public:
 		}
 		if (movement.desiredHeading >= 360.f) {
 			movement.desiredHeading -= 360.f;
+		}
+
+		if (movement.positionState & POS_STATE_ON_TRANSPORT) {
+			auto transportSpawn = client->GetSpawnByID(movement.grid_id);
+			if (!transportSpawn) {
+				return;
+			}
+			movement.grid_id = transportSpawn->GetGridID();
+
+			movement.x = transportSpawn->GetX() - movement.x;
+			movement.y = transportSpawn->GetY() - movement.y;
+			movement.z = transportSpawn->GetZ() - movement.z;
+			movement.heading = transportSpawn->GetHeading() - movement.heading;
+			movement.desiredHeading = movement.heading;
+
+			//TODO: Save transport spawn to the player's spawn
 		}
 		
 		controller->ApplyPredictionUpdate(timestamp, static_cast<const SpawnPositionStruct&>(movement));

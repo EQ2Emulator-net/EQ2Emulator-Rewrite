@@ -152,8 +152,8 @@ void CommandProcess::CommandSpeed(const std::shared_ptr<Client>& client, Separat
 	OP_EqSetControlGhostCmd_Packet packet(client->GetVersion());
 	packet.spawn_id = 0xFFFFFFFF;
 	packet.speed = speed;
-	packet.air_speed = speed;
-	packet.size = 0.8f;
+	packet.airSpeed = speed;
+	packet.swimmingSpeedMultiplier = 0.8f;
 	client->QueuePacket(packet);
 }
 

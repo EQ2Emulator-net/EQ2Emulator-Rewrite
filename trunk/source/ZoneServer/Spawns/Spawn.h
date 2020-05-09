@@ -580,8 +580,8 @@ public:
 	void SetMovementMode(uint8_t value, bool updateFlags = true) {
 		SetPos(&m_posStruct.movementMode, value, updateFlags);
 	}
-	void SetMoveType(float value, bool updateFlags = true) {
-		SetPos(&m_posStruct.moveType, value, updateFlags);
+	void SetSwimmingSpeedMultiplier(float value, bool updateFlags = true) {
+		SetPos(&m_posStruct.swimmingSpeedMultiplier, value, updateFlags);
 	}
 	void SetPitch(float pitch, bool updateFlags = true) {
 		m_posStruct.pitch = pitch;

@@ -59,14 +59,14 @@ struct SpawnPositionStruct {
 	float baseLocZ;
 	float desiredForwardSpeed;
 	float speedModifier;
-	float swimmingSpeedModifier;
+	float airSpeed;
 	float unkSpeed3;
 	float desiredVertSpeed;
 	float desiredStrafeSpeed;
 	float velocityX;
 	float velocityY;
 	float velocityZ;
-	float moveType;
+	float swimmingSpeedMultiplier;
 	float sizeUnknown;
 	float actorStopRange;
 	float unk70;
@@ -86,8 +86,8 @@ struct CompressedSpawnPositionData {
 	int16_t desiredForwardSpeed_compressed;
 	int16_t desiredHeadingVelocity_compressed;
 	int16_t speedModifier_compressed;
-	int16_t swimmingSpeedModifier_compressed;
-	int16_t moveType_compressed;
+	int16_t airSpeed_compressed;
+	int16_t swimmingSpeedMultiplier_compressed;
 	int16_t desiredStrafeSpeed_compressed;
 	int16_t desiredVertSpeed_compressed;
 	int16_t unkSpeed3_compressed;
