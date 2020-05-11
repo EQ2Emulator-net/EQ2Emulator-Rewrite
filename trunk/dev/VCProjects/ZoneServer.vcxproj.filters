@@ -992,5 +992,11 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_EntityVerbsVerbMsg_Packet.h">
       <Filter>source\Packets\Client-&gt;Server</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_MapFogDataUpdateMsg_Packet.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_MapFogDataInitMsg_Packet.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

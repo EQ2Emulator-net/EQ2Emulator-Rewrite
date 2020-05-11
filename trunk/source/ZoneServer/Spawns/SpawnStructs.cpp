@@ -117,6 +117,21 @@ SpawnPositionStruct::SpawnPositionStruct() {
 	faceActorID = 0xFFFFFFFF;
 }
 
+void SpawnPositionStruct::InsertSpawnData(const std::shared_ptr<Client>& client, const std::shared_ptr<Spawn>& spawn) {
+	*this = *spawn->GetPosStruct();
+	if (auto& widget = spawn->GetWidgetData()) {
+		if (!widget->GetIncludeHeading()) {
+			heading = 0.f;
+			desiredHeading = 0.f;
+		}
+		if (!widget->GetIncludeLocation()) {
+			x = 0.f;
+			y = 0.f;
+			z = 0.f;
+		}
+	}
+}
+
 //Many elements in this packet are compressed from a float (4 bytes) to a short (2 bytes). Handle those conversions here
 void Substruct_SpawnPosition::CompressData() {
 	heading_compressed = CompressFloat(heading, 64);

@@ -30,22 +30,10 @@ public:
 
 	virtual void InsertSpawnData(const std::shared_ptr<Client>& client, const std::shared_ptr<Spawn>& spawn, uint16_t index) {
 		SetHeaderData(client, spawn, index, client->GetIDForSpawn(spawn));
-		static_cast<SpawnPositionStruct&>(pos) = *spawn->GetPosStruct();
+		pos.InsertSpawnData(client, spawn);
 		static_cast<SpawnInfoStruct&>(info) = *spawn->GetInfoStruct();
 		vis.DetermineForClient(client, spawn);
 		SetFooterData(spawn);
-
-		if (auto& widget = spawn->GetWidgetData()) {
-			if (!widget->GetIncludeHeading()) {
-				pos.heading = 180.f;
-				pos.desiredHeading = 180.f;
-			}
-			if (!widget->GetIncludeLocation()) {
-				pos.x = 0.f;
-				pos.y = 0.f;
-				pos.z = 0.f;
-			}
-		}
 	}
 
 	void SetHeaderData(const std::shared_ptr<Client>& client, const std::shared_ptr<Spawn>& spawn, uint16_t index, uint32_t id) {

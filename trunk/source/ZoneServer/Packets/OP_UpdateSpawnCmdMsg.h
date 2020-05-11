@@ -114,22 +114,11 @@ public:
 		static_cast<SpawnInfoStruct&>(info.data) = spawn_info;
 	}
 
-	void InsertSpawnPosData(const std::shared_ptr<Spawn>& spawn, uint16_t index, bool overrideTimestamp, uint32_t timestamp) {
+	void InsertSpawnPosData(const std::shared_ptr<Client>& client, const std::shared_ptr<Spawn>& spawn, uint16_t index, bool overrideTimestamp, uint32_t timestamp) {
 		pos.spawnIndex = index;
 		pos.coeHasTimestamp = overrideTimestamp;
-		pos.coeTimestamp = timestamp;
-		static_cast<SpawnPositionStruct&>(pos.data) = *spawn->GetPosStruct();
-		if (auto& widget = spawn->GetWidgetData()) {
-			if (!widget->GetIncludeHeading()) {
-				pos.data.heading = 0.f;
-				pos.data.desiredHeading = 0.f;
-			}
-			if (!widget->GetIncludeLocation()) {
-				pos.data.x = 0.f;
-				pos.data.y = 0.f;
-				pos.data.z = 0.f;
-			}
-		}
+		pos.coeTimestamp = timestamp;		
+		pos.data.InsertSpawnData(client, spawn);
 	}
 
 	void InsertSpawnVisData(const SpawnVisualizationStruct& spawn_vis, uint16_t index) {

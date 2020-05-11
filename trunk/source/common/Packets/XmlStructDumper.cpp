@@ -133,6 +133,7 @@ void XmlStructDumper::ElementToXml(PacketElement* e, xml_document<>& doc, xml_no
 		}
 	}
 	else if (auto pa = dynamic_cast<PacketArrayBase*>(e)) {
+		dataNode->append_attribute(doc.allocate_attribute("ElementName", doc.allocate_string(e->name)));
 		dataNode->append_attribute(doc.allocate_attribute("Type", "Array"));
 		dataNode->append_attribute(doc.allocate_attribute("ArraySizeVariable", pa->arraySizeName));
 		std::unique_ptr<PacketSubstruct> arrayType = pa->GetArraySubstruct();

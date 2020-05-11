@@ -23,6 +23,10 @@ const uint32_t POS_STATE_DISABLE_GRAVITY = 1 << 15;
 ///<summary>Packet struct containing the spawns position information</summary>
 struct SpawnPositionStruct {
 	SpawnPositionStruct();
+
+	//We need the client unless we figure out a way to resend the same spawn ID
+	void InsertSpawnData(const std::shared_ptr<class Client>& client, const std::shared_ptr<class Spawn>& spawn);
+
 	uint32_t positionState; //confirmed
 	uint32_t positionState2; //confirmed
 	float desiredHeading; //confirmed

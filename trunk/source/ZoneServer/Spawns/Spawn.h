@@ -41,6 +41,12 @@ const uint8_t INFO_VIS_FLAG_HIDE_HOOD = 1 << 1;
 const uint8_t INFO_VIS_FLAG_MOUNTED = 1 << 2;
 const uint8_t INFO_VIS_FLAG_CROUCH = 1 << 3;
 
+struct vec3 {
+	float x;
+	float y;
+	float z;
+};
+
 enum class EConsiderDifficulty : uint8_t {
 	GRAY = 0,
 	GREEN = 1,

@@ -360,6 +360,8 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_HearChatCmd_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_HearPlayFlavorCmd_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_LoginByNumRequestMsg_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_MapFogDataInitMsg_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_MapFogDataUpdateMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_MoveableObjectPlacementCriteri_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_OnscreenMsgMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DialogOpenCmd_Packet.h" />

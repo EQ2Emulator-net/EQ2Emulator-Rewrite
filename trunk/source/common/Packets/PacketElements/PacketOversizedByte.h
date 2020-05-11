@@ -3,7 +3,7 @@
 #include "../PacketElement.h"
 #include "../../util.h"
 
-class PacketOversizedByte : public PacketElement, public NetOrderElement {
+class PacketOversizedByte : public PacketElement, public NetOrderElement, public PacketArraySize {
 public:
 	PacketOversizedByte(uint16_t& element) {
 		bSigned = false;
@@ -58,15 +58,26 @@ public:
 			}
 		}
 
+		//Array size handling
+		if (myArray) {
+			myArray->SetArraySize(element[0]);
+		}
+
 		return true;
 	}
 
 	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
+		//Array size handling
+		if (myArray) {
+			element[0] = myArray->GetArraySize();
+		}
+
 		for (int i = 0; i < count; i++) {
 			union {
 				uint16_t val;
 				int16_t  sval;
 			};
+
 			val = element[i];
 			bool oversized = (bSigned ? sval >= 0x7f : val >= 0xff);
 

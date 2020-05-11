@@ -20,6 +20,13 @@ public:
 		}
 		//Save the unmodified input for our next encode
 		memcpy(inputBuf.data(), data, n);
+		if (buffer.size() > n) {
+			if (inputBuf.size() < buffer.size()) {
+				inputBuf.resize(buffer.size());
+			}
+			//Copy over any "Extra" data in the buffer we aren't dealing with on this XOR (for packets that vary in size)
+			memcpy(inputBuf.data() + n, buffer.data() + n, buffer.size() - n);
+		}
 
 		//Align the buf to 4 bytes for quicker XORing
 		uint32_t notAligned = (n % 4);
