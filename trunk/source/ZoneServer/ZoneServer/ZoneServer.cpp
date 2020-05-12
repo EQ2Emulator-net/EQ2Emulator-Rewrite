@@ -12,6 +12,7 @@
 #include "../../common/string.h"
 #include "../Lua/LuaInterface.h"
 #include "../Lua/LuaGlobals.h"
+#include "MasterZoneLookup.h"
 
 // Packets
 #include "../Packets/OP_ZoneInfoMsg_Packet.h"
@@ -20,6 +21,7 @@
 #include "../Packets/OP_CreateSignWidgetCmd_Packet.h"
 #include "../Packets/OP_CreateWidgetCmd_Packet.h"
 #include "../Packets/OP_EqDestroyGhostCmd_Packet.h"
+#include "../Packets/OP_MapFogDataInitMsg_Packet.h"
 
 // Spawns
 #include "../Spawns/Spawn.h"
@@ -33,6 +35,7 @@ extern ZoneDatabase database;
 extern ZoneOperator g_zoneOperator;
 extern CommandProcess g_commandProcess;
 extern LuaGlobals g_luaGlobals;
+extern MasterZoneLookup g_masterZoneLookup;
 
 ZoneServer::ZoneServer(uint32_t zone_id):  chat(Clients, *this) {
 	id = zone_id;
@@ -191,6 +194,15 @@ bool ZoneServer::AddClient(std::shared_ptr<Client> c) {
 
 	c->QueuePacket(zone);
 	g_commandProcess.SendCommandList(c);
+
+	//Send any map data we may have for this zone
+	if (auto info = g_masterZoneLookup.GetZoneInfoByID(GetID())) {	
+		if (info->mapData) {
+			OP_MapFogDataInitMsg_Packet p(c->GetVersion());
+			p.InsertMapData(*info->mapData);
+			c->QueuePacket(p);
+		}
+	}
 
 	return true;
 }

@@ -5,6 +5,29 @@
 #include <string>
 #include "../../common/Mutex.h"
 
+struct ZoneMapFile {
+	std::string fileName;
+	std::string exploredMapName;
+	std::string unexploredMapName;
+	float boundsX1;
+	float boundsZ1;
+	float boundsX2;
+	float boundsZ2;
+	float boundsX3;
+	float boundsZ3;
+	float boundsX4;
+	float boundsZ4;
+	uint64_t exploredKey;
+	uint64_t unexploredKey;
+};
+
+struct ZoneMapData {
+	uint32_t mapID;
+	float lowestZ;
+	float highestZ;
+	std::vector<ZoneMapFile> files;
+};
+
 struct MasterZoneDetails {
 	uint32_t id;
 	uint8_t expansionID;
@@ -36,6 +59,7 @@ struct MasterZoneDetails {
 	uint32_t shutdownTimer;
 	std::string zoneMOTD;
 	uint32_t rulesetID;
+	std::unique_ptr<ZoneMapData> mapData;
 };
 
 class MasterZoneLookup {
@@ -43,12 +67,13 @@ public:
 	MasterZoneLookup() = default;
 	~MasterZoneLookup() = default;
 
-	uint32_t AddZoneDetails(MasterZoneDetails* details_entry);
-	MasterZoneDetails* GetZoneInfoByID(uint32_t id);
-	MasterZoneDetails* GetZoneInfoByName(std::string name);
+	void SetZoneDetails(std::map<uint32_t, std::shared_ptr<MasterZoneDetails> >& details);
+	std::shared_ptr<const MasterZoneDetails> GetZoneInfoByID(uint32_t id);
+	std::shared_ptr<const MasterZoneDetails> GetZoneInfoByName(std::string name);
+	std::shared_ptr<const MasterZoneDetails> GetZoneInfoByFileName(const std::string& name);
 
 private:
 
 	Mutex masterList_lock;
-	std::map<uint32_t, MasterZoneDetails*> masterList;
+	std::map<uint32_t, std::shared_ptr<MasterZoneDetails> > masterList;
 };

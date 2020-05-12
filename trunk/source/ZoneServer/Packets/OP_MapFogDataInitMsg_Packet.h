@@ -4,25 +4,38 @@
 #include "../../common/Packets/PacketElements/PacketElements.h"
 #include "../ZoneServer/Client.h"
 #include "OP_MapFogDataUpdateMsg_Packet.h"
+#include "../ZoneServer/MasterZoneLookup.h"
 
 class Substruct_MapData : public PacketSubstruct {
 public:
-	Substruct_MapData(uint32_t ver = 0) : PacketSubstruct(ver, true) { }
+	Substruct_MapData(uint32_t ver = 0) : PacketSubstruct(ver, true) {
+		memset(unknown6, 0, sizeof(unknown6));
+		unknown7 = 1600;
+		unknown8 = 1200;
+		unknown = 0;
+		memset(unknown9, 0, sizeof(unknown9));
+	}
 
-	class Substruct_SubArray : public PacketSubstruct {
+	class Substruct_POI : public PacketSubstruct {
 	public:
-		Substruct_SubArray(uint32_t ver = 0) : PacketSubstruct(ver, true) {}
+		Substruct_POI(uint32_t ver = 0) : PacketSubstruct(ver, true) { }
 
 		void RegisterElements() override {
 			RegisterUInt8(unkByte);
-			Register16String(unkString);
+			Register16String(poiName);
+			RegisterFloat(poiX);
+			RegisterFloat(poiY);
+			RegisterFloat(poiZ);
 			RescopeArrayElement(unkData);
-			RegisterInt32(unkData)->SetCount(8);
+			RegisterInt32(unkData)->SetCount(5);
 		}
 
 		uint8_t unkByte;
-		std::string unkString;
-		int32_t unkData[8];
+		std::string poiName;
+		float poiX;
+		float poiY;
+		float poiZ;
+		int32_t unkData[5];
 	};
 
 	void RegisterElements() override {
@@ -46,8 +59,8 @@ public:
 		RegisterOversizedByte(unknown);
 		RegisterUInt64(explored_key);
 		RegisterUInt64(unexplored_key);
-		auto e = RegisterOversizedByte(unkArraySize);
-		e->SetMyArray(RegisterArray(unkArray, Substruct_SubArray));
+		auto e = RegisterOversizedByte(poiArraySize);
+		e->SetMyArray(RegisterArray(poiArray, Substruct_POI));
 	}
 
 	std::string zone_name;
@@ -68,14 +81,17 @@ public:
 	uint16_t unknown;
 	uint64_t explored_key;
 	uint64_t unexplored_key;
-	uint16_t unkArraySize;
-	std::vector<Substruct_SubArray> unkArray;
+	uint16_t poiArraySize;
+	std::vector<Substruct_POI> poiArray;
 };
 
-class OP_MapForDataInitMsg_Packet : public EQ2Packet {
+class OP_MapFogDataInitMsg_Packet : public EQ2Packet {
 public:
-	OP_MapForDataInitMsg_Packet(uint32_t version) : EQ2Packet(version) {
+	OP_MapFogDataInitMsg_Packet(uint32_t version) : EQ2Packet(version) {
 		RegisterElements();
+		unknown3 = 0;
+		unknown4 = 0;
+		unknown1 = 0;
 	}
 
 	uint8_t unknown1;
@@ -104,6 +120,34 @@ public:
 		e->SetMyArray(RegisterArray(fogArray, Substruct_MapFogData));
 		e = RegisterUInt8(map2Count);
 		e->SetMyArray(RegisterArray(map2Array, Substruct_MapData));
+	}
+
+	void InsertMapData(const ZoneMapData& zd) {
+		mapID = zd.mapID;
+		lowest_z = zd.lowestZ;
+		highest_z = zd.highestZ;
+
+		map2Array.reserve(zd.files.size());
+		map2Array.clear();
+
+		for (auto& map : zd.files) {
+			map2Array.emplace_back(GetVersion());
+			Substruct_MapData& md = map2Array.back();
+
+			md.zone_name = map.fileName;
+			md.explored_map_name = map.exploredMapName;
+			md.unexplored_map_name = map.unexploredMapName;
+			md.boundsX1 = map.boundsX1;
+			md.boundsX2 = map.boundsX2;
+			md.boundsX3 = map.boundsX3;
+			md.boundsX4 = map.boundsX4;
+			md.boundsZ1 = map.boundsZ1;
+			md.boundsZ2 = map.boundsZ2;
+			md.boundsZ3 = map.boundsZ3;
+			md.boundsZ4 = map.boundsZ4;
+			md.explored_key = map.exploredKey;
+			md.unexplored_key = map.unexploredKey;
+		}
 	}
 
 	void HandlePacket(std::shared_ptr<Client> client) override {

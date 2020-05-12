@@ -45,6 +45,7 @@
 #include "OP_EntityVerbsVerbMsg_Packet.h"
 #include "OP_MapFogDataUpdateMsg_Packet.h"
 #include "OP_MapFogDataInitMsg_Packet.h"
+#include "OP_MapRequest_Packet.h"
 
 // Server to Client
 RegisterZoneStruct("OP_ZoneInfoMsg", OP_ZoneInfoMsg_Packet, 283, 284, 942, 957, 959, 1067, 1096, 1142, 1193, 63119, 63182);
@@ -75,7 +76,7 @@ RegisterZoneStruct("OP_UpdateTitleCmd", OP_UpdateTitleCmd_Packet, 1, 1153);
 RegisterZoneStruct("OP_EqCannedEmoteCmd", OP_EqCannedEmoteCmd_Packet, 1, 57080);
 RegisterZoneStruct("OP_DialogCloseMsg", OP_DialogCloseMsg_Packet, 1);
 RegisterZoneStruct("OP_EqHearPlayFlavorCmd", OP_HearPlayFlavorCmd_Packet, 1);
-RegisterZoneStruct("OP_MapFogDataInitMsg", OP_MapForDataInitMsg_Packet, 60114);
+RegisterZoneStruct("OP_MapFogDataInitMsg", OP_MapFogDataInitMsg_Packet, 1188);
 
 // Client to Server
 RegisterZoneStruct("OP_LoginByNumRequestMsg", OP_LoginByNumRequestMsg_Packet, 1, 1212);
@@ -92,7 +93,8 @@ RegisterZoneStruct("OP_RequestCampMsg", OP_RequestCampMsg_Packet, 1, 284, 1153);
 RegisterZoneStruct("OP_StoodMsg", OP_StoodMsg_Packet, 1);
 RegisterZoneStruct("OP_DialogSelectMsg", OP_DialogSelectMsg_Packet, 1);
 RegisterZoneStruct("OP_EntityVerbsVerbMsg", OP_EntityVerbsVerbMsg_Packet, 1);
-RegisterZoneStruct("OP_MapFogDataUpdateMsg", OP_MapForDataUpdateMsg_Packet, 1);
+RegisterZoneStruct("OP_MapFogDataUpdateMsg", OP_MapFogDataUpdateMsg_Packet, 1188);
+RegisterZoneStruct("OP_MapRequest", OP_MapRequest_Packet, 1);
 
 //Bidirectional
 RegisterZoneStruct("OP_PredictionUpdateMsg", OP_PredictionUpdateMsg_Packet, 1);

@@ -5,3 +5,4 @@ To Use the conversion script:
 3. Source in the dev database dump
 4. Restore the commands table backup
 5. Execute devdb_to_rewrite.sql
+6. Source in the zone_maps.sql, zone_map_files.sql, and zones.sql files in the rewrite `sql` folder.

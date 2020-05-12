@@ -201,12 +201,12 @@ void CommandProcess::CommandTest(const std::shared_ptr<Client>& client, Separato
 void CommandProcess::CommandZone(const std::shared_ptr<Client>& client, Separator& sep) {
 	//Add more checks/syntax for this, like instance ids
 	uint32_t zone_id = 0;
-	std::string zone_name = "";
+	std::string zone_name;
 
 	if (sep.IsNumber(0)) {
 		zone_id = sep.GetUInt32(0);
 
-		MasterZoneDetails* details = g_masterZoneLookup.GetZoneInfoByID(zone_id);
+		std::shared_ptr<const MasterZoneDetails> details = g_masterZoneLookup.GetZoneInfoByID(zone_id);
 		if (!details) {
 			std::string message = "\\#FF0000 Unable to locate zone ID: " + to_string(zone_id);
 			client->chat.SendSimpleGameMessage(message.c_str());
@@ -216,7 +216,7 @@ void CommandProcess::CommandZone(const std::shared_ptr<Client>& client, Separato
 	else {
 		zone_name = sep.GetString(0);
 
-		MasterZoneDetails* details = g_masterZoneLookup.GetZoneInfoByName(zone_name);
+		std::shared_ptr<const MasterZoneDetails> details = g_masterZoneLookup.GetZoneInfoByName(zone_name);
 		if (!details) {
 			std::string message = "\\#FF0000 Unable to locate zone name: " + zone_name;
 			client->chat.SendSimpleGameMessage(message.c_str());

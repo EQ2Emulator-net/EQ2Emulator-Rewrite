@@ -998,5 +998,8 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_MapFogDataInitMsg_Packet.h">
       <Filter>source\Packets\Client-&gt;Server</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_MapRequest_Packet.h">
+      <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

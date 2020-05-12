@@ -44,9 +44,9 @@ public:
 	std::vector<Substruct_Byte> compressedData;
 };
 
-class OP_MapForDataUpdateMsg_Packet : public EQ2Packet {
+class OP_MapFogDataUpdateMsg_Packet : public EQ2Packet {
 public:
-	OP_MapForDataUpdateMsg_Packet(uint32_t version) : EQ2Packet(version) {
+	OP_MapFogDataUpdateMsg_Packet(uint32_t version) : EQ2Packet(version) {
 		RegisterElements();
 	}
 
