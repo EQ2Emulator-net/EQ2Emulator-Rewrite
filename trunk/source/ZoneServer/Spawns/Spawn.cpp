@@ -17,7 +17,9 @@ extern LuaGlobals g_luaGlobals;
 
 Spawn::Spawn() : m_updateFlagsByte(0) {
 	m_spawnID = GetNextID();
+	m_spawnDatabaseID = 0;
 	movementTimestamp = Timer::GetServerTime();
+	m_sizeOffset = 0.0f;
 	bShowName = true;
 	bAttackable = false;
 	visUpdateTag = 0;
@@ -29,10 +31,31 @@ Spawn::Spawn() : m_updateFlagsByte(0) {
 	m_minLevel = 0;
 	m_maxLevel = 0;
 	m_encounterOffset = 0;
+	m_factionID = 0;
+	m_hp = 0;
+	m_power = 0;
+	m_savagery = 0;
+	m_dissonance = 0;
+	m_merchantID = 0;
+	m_merchantType = 0;
 	m_lastFaceTargetTime = 0;
 	m_globalSpawn = false;
 	m_bFaceOnHail = false;
 	m_bDisableLoot = false;
+	m_spawnLocationID = 0;
+	m_spawnEntryID = 0;
+	m_groupID = 0;
+	m_respawnTime = 0;
+	m_expireTime = 0;
+	m_spawnLocationPlacementID = 0;
+	m_origX = 0.0f;
+	m_origY = 0.0f;
+	m_origZ = 0.0f;
+	m_origHeading = 0.0f;
+	m_origPitch = 0.0f;
+	m_origRoll = 0.0f;
+	m_primaryCommandListID = 0;
+	m_secondaryCommandListID = 0;
 }
 
 Spawn::Spawn(std::shared_ptr<Spawn> in) {
@@ -64,6 +87,7 @@ Spawn::Spawn(std::shared_ptr<Spawn> in) {
 	m_merchantType = in->GetMerchantType();
 	m_spawnLocationID = 0;
 	m_spawnEntryID = 0;
+	m_groupID = 0;
 	m_respawnTime = 0;
 	m_expireTime = 0;
 	m_spawnLocationPlacementID = 0;

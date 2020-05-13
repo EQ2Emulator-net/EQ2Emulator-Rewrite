@@ -177,13 +177,24 @@ void CommandProcess::CommandSpawn(const std::shared_ptr<Client>& client, Separat
 	std::shared_ptr<Entity> player = client->GetController()->GetControlled();
 	std::shared_ptr<Spawn> spawn = zone->GetNewSpawnFromMasterList(sep.GetUInt32(0));
 	if (spawn) {
-		spawn->SetX(player->GetX(), false);
-		spawn->SetY(player->GetY(), false);
-		spawn->SetZ(player->GetZ(), false);
+		spawn->SetLocation(player->GetX(), player->GetY(), player->GetZ(), false);
 		spawn->SetGridID(player->GetGridID(), false);
 		spawn->SetHeading(player->GetHeading(), false);
 		client->chat.DisplayText("MOTD", "Adding spawn", 0xff, false, "");
-		zone->AddSpawn(spawn, SpawnEntryType::ENPC);
+
+		SpawnEntryType type;
+		if (spawn->IsSign())
+			type = SpawnEntryType::ESIGN;
+		else if (spawn->IsWidget())
+			type = SpawnEntryType::EWIDGET;
+		else if (spawn->IsGroundSpawn())
+			type = SpawnEntryType::EGROUNDSPAWN;
+		else if (spawn->IsObject())
+			type = SpawnEntryType::EOBJECT;
+		else
+			type = SpawnEntryType::ENPC;
+
+		zone->AddSpawn(spawn, type);
 		zone->SendSpawnToClient(spawn, client);
 	}
 }
