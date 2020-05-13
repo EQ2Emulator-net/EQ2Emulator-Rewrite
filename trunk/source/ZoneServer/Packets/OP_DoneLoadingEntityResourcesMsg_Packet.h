@@ -66,6 +66,10 @@ public:
 			char_sheet->base_power = 50;
 			char_sheet->current_power = 50;
 			char_sheet->max_power = 50;
+
+			strcpy(char_sheet->bind_zone, "test zone");
+	
+
 			client->QueuePacket(char_sheet);
 		}
 	}

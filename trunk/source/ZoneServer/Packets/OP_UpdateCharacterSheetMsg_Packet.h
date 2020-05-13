@@ -313,8 +313,9 @@ struct CharacterSheetData {
 	float hate_mod;
 	float adventure_effects_bonus;
 	float tradeskill_effects_bonus;
-	float unknown130;
+	float aa_effects_bonus;
 	float unknown131;
+	float unknown131A;
 	float dps;
 	float unknown132;
 	float unknown133;
@@ -362,8 +363,8 @@ struct CharacterSheetData {
 	float accuracy;
 	float unknown161;
 	float unknown162;
-	float unknown163;
-	float unknown164;
+	float wdb;
+	float spell_wdb;
 	float unknown165;
 	float unknown166;
 	float unknown167;
@@ -374,7 +375,6 @@ struct CharacterSheetData {
 	float unknown172;
 	float unknown173;
 	float pvp_crit_mit;
-	float unknown174;
 	float unknown175;
 	float unknown200;
 	float unknown201;
@@ -419,14 +419,14 @@ struct CharacterSheetData {
 	float unknown240;
 	float unknown241;
 	float unknown242;
-	float uncontested_riposte_gear_cap;
-	float uncontested_dodge_gear_cap;
-	float uncontested_parry_gear_cap;
+	float unknown243;
+	float unknown244;
+	float unknown245;
 	float unknown246;
 	float unknown247;
-	float unknown248;
-	float unknown249;
-	float unknown250;
+	float uncontested_riposte_gear_cap;
+	float uncontested_parry_gear_cap;
+	float uncontested_dodge_gear_cap;
 	float unknown251;
 	float unknown252;
 	float unknown253;
@@ -545,9 +545,9 @@ struct CharacterSheetData {
 	float unknown360;
 	float unknown361;
 	float unknown362;
-	float unknown363;
-	float unknown364;
-	float unknown365;
+	float adventure_effects_bonus_2;
+	float tradeskill_effects_bonus_2;
+	float aa_effects_bonus_2;
 	float unknown366;
 	float unknown367;
 	float loot_coin_pvp;
@@ -581,17 +581,30 @@ struct CharacterSheetData {
 	float unknown396;
 	float unknown397;
 	float unknown398;
+	float unknown399;
+	float unknown400;
+	float unknown401;
+	float unknown402;
+	float unknown403;
+	float unknown404;
+	float unknown405;
+	float unknown406;
+	float unknown407;
+	float unknown408;
+	float unknown409;
+	float unknown410;
 	float durability_mod;
 	float durability_add;
 	float progress_mod;
 	float progress_add;
 	float success_mod;
 	float crit_success_mod;
-	float unknown177;
+	float unknown417;
 	float rare_harvest_chance;
 	float max_crafting;
 	float component_refund;
-	float unknown178;
+	float unknown421;
+	float refine_quality_mod;
 	float ex_durability_mod;
 	float ex_durability_add;
 	float ex_crit_success_mod;
@@ -599,19 +612,6 @@ struct CharacterSheetData {
 	float ex_progress_mod;
 	float ex_progress_add;
 	float ex_success_mod;
-	float unknown417;
-	float unknown418;
-	float unknown419;
-	float unknown420;
-	float unknown421;
-	float unknown422;
-	float unknown423;
-	float unknown424;
-	float unknown425;
-	float unknown426;
-	float unknown427;
-	float unknown428;
-	float unknown429;
 	float unknown430;
 	float unknown431;
 	float unknown432;
@@ -632,19 +632,19 @@ struct CharacterSheetData {
 	float unknown443;
 	float unknown444;
 	float unknown445;
-	float unknown446;
+	uint32_t hate_2;
 	float unknown447;
 	float unknown448;
 	float unknown449;
 	float unknown450;
 	float unknown451;
-	float unknown452;
+	uint32_t hate_mod_2;
 	float unknown453;
 	float unknown454;
 	float unknown455;
 	float unknown456;
 	float unknown457;
-	float unknown458;
+	uint32_t dps_2;
 	float unknown459;
 	float unknown460;
 	float unknown461;
@@ -653,25 +653,25 @@ struct CharacterSheetData {
 	float unknown464;
 	float unknown465;
 	float unknown466;
-	float unknown467;
+	uint32_t ae_autoattack_2;
 	float unknown468;
-	float unknown469;
-	float unknown470;
+	uint32_t spell_doublecast_2;
+	uint32_t flurry_2;
 	float unknown471;
-	float unknown472;
-	float unknown473;
+	uint32_t bountiful_harvest_2;
+	uint32_t block_chance_2;
 	float unknown474;
 	float unknown475;
-	float unknown476;
+	uint32_t crit_chance_2;
 	float unknown477;
 	float unknown478;
-	float unknown479;
+	uint32_t crit_bonus_2;
 	float unknown480;
 	float unknown481;
-	float unknown482;
-	float unknown483;
-	float unknown484;
-	float unknown485;
+	uint32_t reuse_speed_2;
+	uint32_t recovery_speed_2;
+	uint32_t casting_speed_2;
+	uint32_t spell_reuse_speed_2;
 	float unknown486;
 	float unknown487;
 	float unknown488;
@@ -686,13 +686,13 @@ struct CharacterSheetData {
 	float unknown497;
 	float unknown498;
 	float unknown499;
-	float unknown500;
+	uint32_t strikethrough_2;
 	float unknown501;
-	float unknown502;
+	uint32_t accuracy_2;
 	float unknown503;
 	float unknown504;
-	float unknown505;
-	float unknown506;
+	uint32_t wdb_2;
+	uint32_t spell_wdb_2;
 	float unknown507;
 	float unknown508;
 	float unknown509;
@@ -713,9 +713,13 @@ struct CharacterSheetData {
 	uint8_t unknown550;
 	uint16_t vision;
 	uint8_t unknown551;
-	uint8_t unknown525[1062];
+	uint8_t unknown552[24];
+	float adventure_effects_cap;
+	float tradeskill_effects_cap;
+	float aa_effects_cap;
+	uint8_t unknown525[1026];
 	uint16_t unknown182;
-	uint8_t unknown183[462];
+	uint8_t unknown183[456];
 	uint32_t pet_id;
 	char pet_name[32];
 	uint8_t unknown184[9];
@@ -738,12 +742,12 @@ struct CharacterSheetData {
 	uint8_t merc_unknown21cc[4];
 	float rain;
 	float rain2;
-	uint8_t unknown527[9];
-	uint8_t unknown526[132];
+	uint8_t unknown527[4];
 	uint32_t status_points;
 	uint32_t guild_status;
+	uint8_t unknown526[141];
 	uint8_t unknown187[11];
-	uint8_t unknown188[52];
+	uint8_t unknown188[55];
 };
 
 class UpdateCharacterSheetMsgData : public CharacterSheetData, public PacketEncodedData {
@@ -1109,8 +1113,9 @@ private:
 		RegisterFloat(hate_mod);
 		RegisterFloat(adventure_effects_bonus);
 		RegisterFloat(tradeskill_effects_bonus);
-		RegisterFloat(unknown130);
+		RegisterFloat(aa_effects_bonus);
 		RegisterFloat(unknown131);
+		RegisterFloat(unknown131A);
 		RegisterFloat(dps);
 		RegisterFloat(unknown132);
 		RegisterFloat(unknown133);
@@ -1158,8 +1163,8 @@ private:
 		RegisterFloat(accuracy);
 		RegisterFloat(unknown161);
 		RegisterFloat(unknown162);
-		RegisterFloat(unknown163);
-		RegisterFloat(unknown164);
+		RegisterFloat(wdb);
+		RegisterFloat(spell_wdb);
 		RegisterFloat(unknown165);
 		RegisterFloat(unknown166);
 		RegisterFloat(unknown167);
@@ -1170,7 +1175,6 @@ private:
 		RegisterFloat(unknown172);
 		RegisterFloat(unknown173);
 		RegisterFloat(pvp_crit_mit);
-		RegisterFloat(unknown174);
 		RegisterFloat(unknown175);
 		RegisterFloat(unknown200);
 		RegisterFloat(unknown201);
@@ -1215,14 +1219,14 @@ private:
 		RegisterFloat(unknown240);
 		RegisterFloat(unknown241);
 		RegisterFloat(unknown242);
-		RegisterFloat(uncontested_riposte_gear_cap);
-		RegisterFloat(uncontested_dodge_gear_cap);
-		RegisterFloat(uncontested_parry_gear_cap);
+		RegisterFloat(unknown243);
+		RegisterFloat(unknown244);
+		RegisterFloat(unknown245);
 		RegisterFloat(unknown246);
 		RegisterFloat(unknown247);
-		RegisterFloat(unknown248);
-		RegisterFloat(unknown249);
-		RegisterFloat(unknown250);
+		RegisterFloat(uncontested_riposte_gear_cap);
+		RegisterFloat(uncontested_parry_gear_cap);
+		RegisterFloat(uncontested_dodge_gear_cap);
 		RegisterFloat(unknown251);
 		RegisterFloat(unknown252);
 		RegisterFloat(unknown253);
@@ -1341,9 +1345,9 @@ private:
 		RegisterFloat(unknown360);
 		RegisterFloat(unknown361);
 		RegisterFloat(unknown362);
-		RegisterFloat(unknown363);
-		RegisterFloat(unknown364);
-		RegisterFloat(unknown365);
+		RegisterFloat(adventure_effects_bonus_2);
+		RegisterFloat(tradeskill_effects_bonus_2);
+		RegisterFloat(aa_effects_bonus_2);
 		RegisterFloat(unknown366);
 		RegisterFloat(unknown367);
 		RegisterFloat(loot_coin_pvp);
@@ -1377,37 +1381,37 @@ private:
 		RegisterFloat(unknown396);
 		RegisterFloat(unknown397);
 		RegisterFloat(unknown398);
+		RegisterFloat(unknown399);
+		RegisterFloat(unknown400);
+		RegisterFloat(unknown401);
+		RegisterFloat(unknown402);
+		RegisterFloat(unknown403);
+		RegisterFloat(unknown404);
+		RegisterFloat(unknown405);
+		RegisterFloat(unknown406);
+		RegisterFloat(unknown407);
+		RegisterFloat(unknown408);
+		RegisterFloat(unknown409);
+		RegisterFloat(unknown410);
 		RegisterFloat(durability_mod);
 		RegisterFloat(durability_add);
 		RegisterFloat(progress_mod);
 		RegisterFloat(progress_add);
 		RegisterFloat(success_mod);
 		RegisterFloat(crit_success_mod);
-		RegisterFloat(unknown177);
+		RegisterFloat(unknown417);
 		RegisterFloat(rare_harvest_chance);
 		RegisterFloat(max_crafting);
 		RegisterFloat(component_refund);
-		RegisterFloat(unknown178);
+		RegisterFloat(unknown421);
+		RegisterFloat(refine_quality_mod);
 		RegisterFloat(ex_durability_mod);
 		RegisterFloat(ex_durability_add);
 		RegisterFloat(ex_crit_success_mod);
 		RegisterFloat(ex_crit_failure_mod);
 		RegisterFloat(ex_progress_mod);
 		RegisterFloat(ex_progress_add);
-		RegisterFloat(ex_success_mod);
-		RegisterFloat(unknown417);
-		RegisterFloat(unknown418);
-		RegisterFloat(unknown419);
-		RegisterFloat(unknown420);
-		RegisterFloat(unknown421);
-		RegisterFloat(unknown422);
-		RegisterFloat(unknown423);
-		RegisterFloat(unknown424);
-		RegisterFloat(unknown425);
-		RegisterFloat(unknown426);
-		RegisterFloat(unknown427);
-		RegisterFloat(unknown428);
-		RegisterFloat(unknown429);
+		RegisterFloat(ex_success_mod);;
 		RegisterFloat(unknown430);
 		RegisterFloat(unknown431);
 		RegisterFloat(unknown432);
@@ -1428,19 +1432,19 @@ private:
 		RegisterFloat(unknown443);
 		RegisterFloat(unknown444);
 		RegisterFloat(unknown445);
-		RegisterFloat(unknown446);
+		RegisterUInt32(hate_2);
 		RegisterFloat(unknown447);
 		RegisterFloat(unknown448);
 		RegisterFloat(unknown449);
 		RegisterFloat(unknown450);
 		RegisterFloat(unknown451);
-		RegisterFloat(unknown452);
+		RegisterUInt32(hate_mod_2);
 		RegisterFloat(unknown453);
 		RegisterFloat(unknown454);
 		RegisterFloat(unknown455);
 		RegisterFloat(unknown456);
 		RegisterFloat(unknown457);
-		RegisterFloat(unknown458);
+		RegisterUInt32(dps_2);
 		RegisterFloat(unknown459);
 		RegisterFloat(unknown460);
 		RegisterFloat(unknown461);
@@ -1449,25 +1453,25 @@ private:
 		RegisterFloat(unknown464);
 		RegisterFloat(unknown465);
 		RegisterFloat(unknown466);
-		RegisterFloat(unknown467);
+		RegisterUInt32(ae_autoattack_2);
 		RegisterFloat(unknown468);
-		RegisterFloat(unknown469);
-		RegisterFloat(unknown470);
+		RegisterUInt32(spell_doublecast_2);
+		RegisterUInt32(flurry_2);
 		RegisterFloat(unknown471);
-		RegisterFloat(unknown472);
-		RegisterFloat(unknown473);
+		RegisterUInt32(bountiful_harvest_2);
+		RegisterUInt32(block_chance_2);
 		RegisterFloat(unknown474);
 		RegisterFloat(unknown475);
-		RegisterFloat(unknown476);
+		RegisterUInt32(crit_chance_2);
 		RegisterFloat(unknown477);
 		RegisterFloat(unknown478);
-		RegisterFloat(unknown479);
+		RegisterUInt32(crit_bonus_2);
 		RegisterFloat(unknown480);
 		RegisterFloat(unknown481);
-		RegisterFloat(unknown482);
-		RegisterFloat(unknown483);
-		RegisterFloat(unknown484);
-		RegisterFloat(unknown485);
+		RegisterUInt32(reuse_speed_2);
+		RegisterUInt32(recovery_speed_2);
+		RegisterUInt32(casting_speed_2);
+		RegisterUInt32(spell_reuse_speed_2);
 		RegisterFloat(unknown486);
 		RegisterFloat(unknown487);
 		RegisterFloat(unknown488);
@@ -1482,13 +1486,13 @@ private:
 		RegisterFloat(unknown497);
 		RegisterFloat(unknown498);
 		RegisterFloat(unknown499);
-		RegisterFloat(unknown500);
+		RegisterUInt32(strikethrough_2);
 		RegisterFloat(unknown501);
-		RegisterFloat(unknown502);
+		RegisterUInt32(accuracy_2);
 		RegisterFloat(unknown503);
 		RegisterFloat(unknown504);
-		RegisterFloat(unknown505);
-		RegisterFloat(unknown506);
+		RegisterUInt32(wdb_2);
+		RegisterUInt32(spell_wdb_2);
 		RegisterFloat(unknown507);
 		RegisterFloat(unknown508);
 		RegisterFloat(unknown509);
@@ -1510,13 +1514,20 @@ private:
 		RegisterUInt16(vision);
 		RegisterUInt8(unknown551);
 
+		uint8_t& Unknown552 = unknown552[0];
+		RegisterUInt8(Unknown552)->SetCount(24);
+
+		RegisterFloat(adventure_effects_cap);
+		RegisterFloat(tradeskill_effects_cap);
+		RegisterFloat(aa_effects_cap);
+
 		uint8_t& Unknown525 = unknown525[0];
-		RegisterUInt8(Unknown525)->SetCount(1062);
+		RegisterUInt8(Unknown525)->SetCount(1026);
 		
 		RegisterSubstruct(groupSheet);
 
 		uint8_t& Unknown183 = unknown183[0];
-		RegisterUInt8(Unknown183)->SetCount(460);
+		RegisterUInt8(Unknown183)->SetCount(456);
 		
 		RegisterUInt32(pet_id);
 		char& Pet_name = pet_name[0];
@@ -1559,16 +1570,16 @@ private:
 		RegisterFloat(rain2);
 
 		uint8_t& Unknown527 = unknown527[0];
-		RegisterUInt8(Unknown527)->SetCount(9);
+		RegisterUInt8(Unknown527)->SetCount(4);
+
+		RegisterUInt32(status_points);
+		RegisterUInt32(guild_status);
 		
 		char& House_zone = house_zone[0];
 		RegisterChar(House_zone)->SetCount(48);
 		
 		uint8_t& Unknown526 = unknown526[0];
-		RegisterUInt8(Unknown526)->SetCount(132);
-		
-		RegisterUInt32(status_points);
-		RegisterUInt32(guild_status);
+		RegisterUInt8(Unknown526)->SetCount(141);
 
 		uint8_t& Unknown187 = unknown187[0];
 		RegisterUInt8(Unknown187)->SetCount(11);
@@ -1577,7 +1588,7 @@ private:
 		RegisterChar(Bind_zone)->SetCount(32);
 		
 		uint8_t& Unknown188 = unknown188[0];
-		RegisterUInt8(Unknown188)->SetCount(52);
+		RegisterUInt8(Unknown188)->SetCount(55);
 	}
 
 };
@@ -1899,7 +1910,7 @@ public:
 <Data ElementName="hate_mod" Type="float" Size="1" />
 <Data ElementName="adventure_effects_bonus" Type="float" Size="1" />
 <Data ElementName="tradeskill_effects_bonus" Type="float" Size="1" />
-<Data ElementName="unknown130" Type="float" Size="1" />
+<Data ElementName="aa_effects_bonus" Type="float" Size="1" />
 <Data ElementName="unknown131" Type="float" Size="1" />
 <Data ElementName="dps" Type="float" Size="1" />
 <Data ElementName="unknown132" Type="float" Size="1" />
