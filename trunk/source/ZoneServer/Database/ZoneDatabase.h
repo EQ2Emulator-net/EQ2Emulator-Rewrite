@@ -4,7 +4,10 @@
 #include "../Spawns/SpawnLocation.h"
 
 class ZoneServer;
+class Spawn;
+class Object;
 class Entity;
+class GroundSpawn;
 class CommandProcess;
 class DatabaseResult;
 class LuaGlobals;
@@ -28,6 +31,10 @@ public:
 	bool LoadGroundSpawnsForZone(ZoneServer* z);
 
 	void ProcessNpcResult(DatabaseResult& res, const std::shared_ptr<Entity>& npc);
+	void ProcessObjectResult(DatabaseResult& res, const std::shared_ptr<Object>& spawn);
+	void ProcessWidgetResult(DatabaseResult& res, const std::shared_ptr<Spawn>& spawn);
+	void ProcessSignResult(DatabaseResult& res, const std::shared_ptr<Spawn>& spawn);
+	void ProcessGroundSpawnResult(DatabaseResult& res, const std::shared_ptr<GroundSpawn>& spawn);
 
 	// Loads a specific spawn into a zone despite its location
 	bool LoadNPC(ZoneServer* z, uint32_t id);

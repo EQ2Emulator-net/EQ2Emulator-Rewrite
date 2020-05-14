@@ -297,10 +297,22 @@ bool ZoneDatabase::LoadNPCsForZone(ZoneServer* z) {
 	return ret;
 }
 
+constexpr const char* GetObjectTableFields() {
+	return "so.id, so.device_id";
+}
+
+void ZoneDatabase::ProcessObjectResult(DatabaseResult& result, const std::shared_ptr<Object>& spawn) {
+	//Base spawn data
+	uint32_t i = ProcessSpawnTableFields(spawn, result);
+
+	// Object Info starts here
+	spawn->SetObjectDatabaseID(result.GetUInt32(i++));
+	spawn->SetDeviceID(result.GetUInt8(i++));
+}
+
 bool ZoneDatabase::LoadObjectsForZone(ZoneServer* z) {
 	DatabaseResult result;
-	bool ret = Select(&result, "SELECT %s,\n"
-		"so.id, so.device_id\n"
+	bool ret = Select(&result, "SELECT %s, %s\n"
 		"FROM spawn s\n"
 		"INNER JOIN spawn_objects so\n"
 		"ON s.id = so.spawn_id\n"
@@ -309,27 +321,19 @@ bool ZoneDatabase::LoadObjectsForZone(ZoneServer* z) {
 		"INNER JOIN spawn_location_placement lp\n"
 		"ON le.spawn_location_id = lp.spawn_location_id\n"
 		"WHERE lp.zone_id = %u\n"
-		"GROUP BY s.id", GetSpawnTableFields(), z->GetID());
+		"GROUP BY s.id", GetSpawnTableFields(), GetObjectTableFields(), z->GetID());
 
 	if (!ret)
 		return ret;
 
 	uint32_t count = 0;
 	while (result.Next()) {
-		uint32_t index = 0;
-		uint32_t id = result.GetUInt32(index++);
+		uint32_t id = result.GetUInt32(0);
 		if (z->GetNPCFromMasterList(id))
 			continue;
 
 		std::shared_ptr<Object> spawn = std::make_shared<Object>();
-
-		// Spawn base info
-		index = ProcessSpawnTableFields(spawn, result);
-
-		// Object Info starts here
-		spawn->SetObjectDatabaseID(result.GetUInt32(index++));
-		spawn->SetDeviceID(result.GetUInt8(index++));
-
+		ProcessObjectResult(result, spawn);
 		count++;
 
 		z->AddObjectToMasterList(spawn);
@@ -340,10 +344,46 @@ bool ZoneDatabase::LoadObjectsForZone(ZoneServer* z) {
 	return ret;
 }
 
+constexpr const char* GetWidgetTableFields() {
+	return "sw.id, sw.widget_id, sw.widget_x, sw.widget_y, sw.widget_z, sw.include_heading, sw.include_location, sw.type+0, sw.open_heading, sw.closed_heading, sw.open_x, sw.open_y, sw.open_z, sw.action_spawn_id, sw.open_sound_file, sw.close_sound_file, sw.open_duration, sw.close_x, sw.close_y, sw.close_z, sw.linked_spawn_id, sw.house_id";
+}
+
+void ZoneDatabase::ProcessWidgetResult(DatabaseResult& result, const std::shared_ptr<Spawn>& spawn) {
+	// Base spawn data
+	uint32_t index = ProcessSpawnTableFields(spawn, result);
+
+	// Widget Info starts here
+	std::unique_ptr<Widget>& wd = spawn->GetWidgetData();
+	if (!wd)
+		wd = std::make_unique<Widget>();
+
+	wd->SetWidgetDatabaseID(result.GetUInt32(index++));
+	wd->SetWidgetID(result.GetUInt32(index++));
+	wd->SetWidgetX(result.GetFloat(index++));
+	wd->SetWidgetY(result.GetFloat(index++));
+	wd->SetWidgetZ(result.GetFloat(index++));
+	wd->SetIncludeHeading(result.GetBool(index++));
+	wd->SetIncludeLocation(result.GetBool(index++));
+	wd->SetWidgetType((EWidgetType)result.GetUInt8(index++));
+	wd->SetOpenHeading(result.GetFloat(index++));
+	wd->SetCloseHeading(result.GetFloat(index++));
+	wd->SetOpenX(result.GetFloat(index++));
+	wd->SetOpenY(result.GetFloat(index++));
+	wd->SetOpenZ(result.GetFloat(index++));
+	wd->SetActionID(result.GetUInt32(index++));
+	wd->SetOpenSoundFile(result.GetString(index++));
+	wd->SetCloseSoundFile(result.GetString(index++));
+	wd->SetOpenDuration(result.GetUInt32(index++));
+	wd->SetCloseX(result.GetFloat(index++));
+	wd->SetCloseY(result.GetFloat(index++));
+	wd->SetCloseZ(result.GetFloat(index++));
+	wd->SetLinkedSpawnID(result.GetUInt32(index++));
+	wd->SetHouseID(result.GetUInt32(index++));
+}
+
 bool ZoneDatabase::LoadWidgetsForZone(ZoneServer* z) {
 	DatabaseResult result;
-	bool ret = Select(&result, "SELECT %s,\n"
-		"sw.id, sw.widget_id, sw.widget_x, sw.widget_y, sw.widget_z, sw.include_heading, sw.include_location, sw.type+0, sw.open_heading, sw.closed_heading, sw.open_x, sw.open_y, sw.open_z, sw.action_spawn_id, sw.open_sound_file, sw.close_sound_file, sw.open_duration, sw.close_x, sw.close_y, sw.close_z, sw.linked_spawn_id, sw.house_id\n"
+	bool ret = Select(&result, "SELECT %s, %s\n"
 		"FROM spawn s\n"
 		"INNER JOIN spawn_widgets sw\n"
 		"ON s.id = sw.spawn_id\n"
@@ -352,51 +392,19 @@ bool ZoneDatabase::LoadWidgetsForZone(ZoneServer* z) {
 		"INNER JOIN spawn_location_placement lp\n"
 		"ON le.spawn_location_id = lp.spawn_location_id\n"
 		"WHERE lp.zone_id = %u\n"
-		"GROUP BY s.id", GetSpawnTableFields(), z->GetID());
+		"GROUP BY s.id", GetSpawnTableFields(), GetWidgetTableFields(), z->GetID());
 
 	if (!ret)
 		return ret;
 
 	uint32_t count = 0;
 	while (result.Next()) {
-		uint32_t index = 0;
-		uint32_t id = result.GetUInt32(index++);
+		uint32_t id = result.GetUInt32(0);
 		if (z->GetWidgetFromMasterList(id))
 			continue;
 
 		std::shared_ptr<Spawn> spawn = std::make_shared<Spawn>();
-
-		// Spawn base info
-		index = ProcessSpawnTableFields(spawn, result);
-
-		// Widget Info starts here
-		std::unique_ptr<Widget>& wd = spawn->GetWidgetData();
-		if (!wd)
-			wd = std::make_unique<Widget>();
-
-		wd->SetWidgetDatabaseID(result.GetUInt32(index++));
-		wd->SetWidgetID(result.GetUInt32(index++));
-		wd->SetWidgetX(result.GetFloat(index++));
-		wd->SetWidgetY(result.GetFloat(index++));
-		wd->SetWidgetZ(result.GetFloat(index++));
-		wd->SetIncludeHeading(result.GetBool(index++));
-		wd->SetIncludeLocation(result.GetBool(index++));
-		wd->SetWidgetType((EWidgetType)result.GetUInt8(index++));
-		wd->SetOpenHeading(result.GetFloat(index++));
-		wd->SetCloseHeading(result.GetFloat(index++));
-		wd->SetOpenX(result.GetFloat(index++));
-		wd->SetOpenY(result.GetFloat(index++));
-		wd->SetOpenZ(result.GetFloat(index++));
-		wd->SetActionID(result.GetUInt32(index++));
-		wd->SetOpenSoundFile(result.GetString(index++));
-		wd->SetCloseSoundFile(result.GetString(index++));
-		wd->SetOpenDuration(result.GetUInt32(index++));
-		wd->SetCloseX(result.GetFloat(index++));
-		wd->SetCloseY(result.GetFloat(index++));
-		wd->SetCloseZ(result.GetFloat(index++));
-		wd->SetLinkedSpawnID(result.GetUInt32(index++));
-		wd->SetHouseID(result.GetUInt32(index++));
-
+		ProcessWidgetResult(result, spawn);
 		count++;
 
 		z->AddWidgetToMasterList(spawn);
@@ -407,11 +415,49 @@ bool ZoneDatabase::LoadWidgetsForZone(ZoneServer* z) {
 	return ret;
 }
 
+constexpr const char* GetSignTableFields() {
+	return "ss.id, ss.type+0, ss.zone_id, ss.title, ss.description, ss.sign_distance, ss.zone_x, ss.zone_y, ss.zone_z, ss.zone_heading, ss.widget_id, ss.widget_x, ss.widget_y, ss.widget_z, ss.include_heading, ss.include_location";
+}
+
+void ZoneDatabase::ProcessSignResult(DatabaseResult& result, const std::shared_ptr<Spawn>& spawn) {
+	// Spawn base info
+	uint32_t index = ProcessSpawnTableFields(spawn, result);
+
+	// Sign info starts here
+	std::unique_ptr<Sign>& sign = spawn->GetSignData();
+	if (!sign)
+		sign = std::make_unique<Sign>();
+
+	sign->SetSignDatabseID(result.GetUInt32(index++));
+	sign->SetSignType((ESignType)result.GetUInt8(index++));
+	sign->SetZoneID(result.GetUInt32(index++));
+	sign->SetTitle(result.GetString(index++));
+	sign->SetDescription(result.GetString(index++));
+	sign->SetDistance(result.GetFloat(index++));
+	sign->SetZoneX(result.GetFloat(index++));
+	sign->SetZoneY(result.GetFloat(index++));
+	sign->SetZoneZ(result.GetFloat(index++));
+	sign->SetZoneHeading(result.GetFloat(index++));
+
+	// Widget info starts here
+	uint32_t widget_id = result.GetUInt32(index++);
+	if (widget_id != 0) {
+		std::unique_ptr<Widget>& widget = spawn->GetWidgetData();
+		if (!widget)
+			widget = std::make_unique<Widget>();
+
+		widget->SetWidgetID(widget_id);
+		widget->SetWidgetX(result.GetFloat(index++));
+		widget->SetWidgetY(result.GetFloat(index++));
+		widget->SetWidgetZ(result.GetFloat(index++));
+		widget->SetIncludeHeading(result.GetBool(index++));
+		widget->SetIncludeLocation(result.GetBool(index++));
+	}
+}
+
 bool ZoneDatabase::LoadSignsForZone(ZoneServer* z) {
 	DatabaseResult result;
-	bool ret = Select(&result, "SELECT %s,\n"
-		"ss.id, ss.type+0, ss.zone_id, ss.title, ss.description, ss.sign_distance, ss.zone_x, ss.zone_y, ss.zone_z, ss.zone_heading,\n"
-		"ss.widget_id, ss.widget_x, ss.widget_y, ss.widget_z, ss.include_heading, ss.include_location\n"
+	bool ret = Select(&result, "SELECT %s, %s\n"
 		"FROM spawn s\n"
 		"INNER JOIN spawn_signs ss\n"
 		"ON s.id = ss.spawn_id\n"
@@ -420,54 +466,19 @@ bool ZoneDatabase::LoadSignsForZone(ZoneServer* z) {
 		"INNER JOIN spawn_location_placement lp\n"
 		"ON le.spawn_location_id = lp.spawn_location_id\n"
 		"WHERE lp.zone_id = %u\n"
-		"GROUP BY s.id", GetSpawnTableFields(), z->GetID());
+		"GROUP BY s.id", GetSpawnTableFields(), GetSignTableFields(), z->GetID());
 
 	if (!ret)
 		return ret;
 
 	uint32_t count = 0;
 	while (result.Next()) {
-		uint32_t index = 0;
-		uint32_t id = result.GetUInt32(index++);
+		uint32_t id = result.GetUInt32(0);
 		if (z->GetSignFromMasterList(id))
 			continue;
 
 		std::shared_ptr<Spawn> spawn = std::make_shared<Spawn>();
-
-		// Spawn base info
-		index = ProcessSpawnTableFields(spawn, result);
-
-		// Sign info starts here
-		std::unique_ptr<Sign>& sign = spawn->GetSignData();
-		if (!sign)
-			sign = std::make_unique<Sign>();
-
-		sign->SetSignDatabseID(result.GetUInt32(index++));
-		sign->SetSignType((ESignType)result.GetUInt8(index++));
-		sign->SetZoneID(result.GetUInt32(index++));
-		sign->SetTitle(result.GetString(index++));
-		sign->SetDescription(result.GetString(index++));
-		sign->SetDistance(result.GetFloat(index++));
-		sign->SetZoneX(result.GetFloat(index++));
-		sign->SetZoneY(result.GetFloat(index++));
-		sign->SetZoneZ(result.GetFloat(index++));
-		sign->SetZoneHeading(result.GetFloat(index++));
-
-		// Widget info starts here
-		uint32_t widget_id = result.GetUInt32(index++);
-		if (widget_id != 0) {
-			std::unique_ptr<Widget>& widget = spawn->GetWidgetData();
-			if (!widget)
-				widget = std::make_unique<Widget>();
-
-			widget->SetWidgetID(widget_id);
-			widget->SetWidgetX(result.GetFloat(index++));
-			widget->SetWidgetY(result.GetFloat(index++));
-			widget->SetWidgetZ(result.GetFloat(index++));
-			widget->SetIncludeHeading(result.GetBool(index++));
-			widget->SetIncludeLocation(result.GetBool(index++));
-		}
-
+		ProcessSignResult(result, spawn);
 		count++;
 
 		z->AddSignToMasterList(spawn);
@@ -478,10 +489,25 @@ bool ZoneDatabase::LoadSignsForZone(ZoneServer* z) {
 	return ret;
 }
 
+constexpr const char* GetGroundSpawnTableFields() {
+	return "sg.id, sg.number_harvests, sg.num_attempts_per_harvest, sg.groundspawn_id, sg.collection_skill";
+}
+
+void ZoneDatabase::ProcessGroundSpawnResult(DatabaseResult& result, const std::shared_ptr<GroundSpawn>& spawn) {
+	// Spawn base info
+	uint32_t index = ProcessSpawnTableFields(spawn, result);
+
+	// GroundSpawn info starts here
+	spawn->SetGroundSpawnDatabaseID(result.GetUInt32(index++));
+	spawn->SetNumberOfHarvests(result.GetUInt8(index++));
+	spawn->SetNumberAttemptsPerHarvets(result.GetUInt8(index++));
+	spawn->SetGroundSpawnID(result.GetUInt32(index++));
+	spawn->SetCollectionSkill(result.GetString(index++));
+}
+
 bool ZoneDatabase::LoadGroundSpawnsForZone(ZoneServer* z) {
 	DatabaseResult result;
-	bool ret = Select(&result, "SELECT %s,\n"
-		"sg.id, sg.number_harvests, sg.num_attempts_per_harvest, sg.groundspawn_id, sg.collection_skill\n"
+	bool ret = Select(&result, "SELECT %s, %s\n"
 		"FROM spawn s\n"
 		"INNER JOIN spawn_ground sg\n"
 		"ON s.id = sg.spawn_id\n"
@@ -490,30 +516,19 @@ bool ZoneDatabase::LoadGroundSpawnsForZone(ZoneServer* z) {
 		"INNER JOIN spawn_location_placement lp\n"
 		"ON le.spawn_location_id = lp.spawn_location_id\n"
 		"WHERE lp.zone_id = %u\n"
-		"GROUP BY s.id", GetSpawnTableFields(), z->GetID());
+		"GROUP BY s.id", GetSpawnTableFields(), GetGroundSpawnTableFields(), z->GetID());
 
 	if (!ret)
 		return ret;
 
 	uint32_t count = 0;
 	while (result.Next()) {
-		uint32_t index = 0;
-		uint32_t id = result.GetUInt32(index++);
+		uint32_t id = result.GetUInt32(0);
 		if (z->GetGroundSpawnFromMasterList(id))
 			continue;
 
 		std::shared_ptr<GroundSpawn> spawn = std::make_shared<GroundSpawn>();
-
-		// Spawn base info
-		index = ProcessSpawnTableFields(spawn, result);
-
-		// GroundSpawn info starts here
-		spawn->SetGroundSpawnDatabaseID(result.GetUInt32(index++));
-		spawn->SetNumberOfHarvests(result.GetUInt8(index++));
-		spawn->SetNumberAttemptsPerHarvets(result.GetUInt8(index++));
-		spawn->SetGroundSpawnID(result.GetUInt32(index++));
-		spawn->SetCollectionSkill(result.GetString(index++));
-
+		ProcessGroundSpawnResult(result, spawn);
 		count++;
 
 		z->AddGroundSpawnToMasterList(spawn);
@@ -550,49 +565,142 @@ bool ZoneDatabase::LoadNPC(ZoneServer* z, uint32_t id) {
 		npcs[npc->GetDatabaseID()] = npc;
 
 		LogDebug(LOG_NPC, 0, "Loaded NPC: '%s' (%u)", npc->GetName().c_str(), id);
-	}
 
-	LogInfo(LOG_NPC, 0, "Loading NPC Appearances for npc (%u).", id);
-	result.Clear();
-	ret = Select(&result,
-		"SELECT na.spawn_id, na.`type`, na.red, na.green, na.blue\n"
-		"FROM npc_appearance na\n"
-		"WHERE na.spawn_id = %u\n", id);
 
-	if (ret) {
-		ProcessEntityColors(result, npcs);
-
+		LogInfo(LOG_NPC, 0, "Loading NPC Appearances for npc (%u).", id);
 		result.Clear();
-
-		ret = Select(&result, "SELECT na.spawn_id, na.slot_id, na.equip_type, na.red, na.green, na.blue, na.highlight_red, na.highlight_green, na.highlight_blue\n"
-			"FROM npc_appearance_equip na\n"
+		ret = Select(&result,
+			"SELECT na.spawn_id, na.`type`, na.red, na.green, na.blue\n"
+			"FROM npc_appearance na\n"
 			"WHERE na.spawn_id = %u\n", id);
 
-		ProcessNpcAppearanceEquipment(result, npcs);
-	}
+		if (ret) {
+			ProcessEntityColors(result, npcs);
 
-	for (auto& itr : npcs) {
-		itr.second->PopUpdateFlags();
-		z->AddNPCToMasterList(std::static_pointer_cast<Entity>(itr.second));
+			result.Clear();
+
+			ret = Select(&result, "SELECT na.spawn_id, na.slot_id, na.equip_type, na.red, na.green, na.blue, na.highlight_red, na.highlight_green, na.highlight_blue\n"
+				"FROM npc_appearance_equip na\n"
+				"WHERE na.spawn_id = %u\n", id);
+
+			ProcessNpcAppearanceEquipment(result, npcs);
+		}
+
+		for (auto& itr : npcs) {
+			itr.second->PopUpdateFlags();
+			z->AddNPCToMasterList(std::static_pointer_cast<Entity>(itr.second));
+		}
 	}
 
 	return ret;
 }
 
 bool ZoneDatabase::LoadObject(ZoneServer* z, uint32_t id) {
-	return false;
+	DatabaseResult result;
+	bool ret = Select(&result, "SELECT %s, %s\n"
+		"FROM spawn s\n"
+		"INNER JOIN spawn_objects so\n"
+		"ON s.id = so.spawn_id\n"
+		"WHERE s.id = %u",
+		GetSpawnTableFields(), GetObjectTableFields(), id);
+
+	if (!ret)
+		return ret;
+
+	if (result.Next()) {
+		uint32_t id = result.GetUInt32(0);
+		if (z->GetObjectFromMasterList(id))
+			return false;
+
+		std::shared_ptr<Object> spawn = std::make_shared<Object>();
+		ProcessObjectResult(result, spawn);
+
+		z->AddObjectToMasterList(spawn);
+		LogDebug(LOG_NPC, 0, "Loaded Object: '%s' (%u)", spawn->GetName().c_str(), id);
+	}
+
+	return ret;
 }
 
 bool ZoneDatabase::LoadWidget(ZoneServer* z, uint32_t id) {
-	return false;
+	DatabaseResult result;
+	bool ret = Select(&result, "SELECT %s, %s\n"
+		"FROM spawn s\n"
+		"INNER JOIN spawn_widgets sw\n"
+		"ON s.id = sw.spawn_id\n"
+		"WHERE s.id = %u",
+		GetSpawnTableFields(), GetWidgetTableFields(), id);
+
+	if (!ret)
+		return ret;
+
+	if (result.Next()) {
+		uint32_t id = result.GetUInt32(0);
+		if (z->GetWidgetFromMasterList(id))
+			return false;
+
+		std::shared_ptr<Spawn> spawn = std::make_shared<Spawn>();
+		ProcessWidgetResult(result, spawn);
+
+		z->AddWidgetToMasterList(spawn);
+		LogDebug(LOG_NPC, 0, "Loaded Widget: '%s' (%u)", spawn->GetName().c_str(), id);
+	}
+
+	return ret;
 }
 
 bool ZoneDatabase::LoadSign(ZoneServer* z, uint32_t id) {
-	return false;
+	DatabaseResult result;
+	bool ret = Select(&result, "SELECT %s, %s\n"
+		"FROM spawn s\n"
+		"INNER JOIN spawn_signs ss\n"
+		"ON s.id = ss.spawn_id\n"
+		"WHERE s.id = %u",
+		GetSpawnTableFields(), GetSignTableFields(), id);
+
+	if (!ret)
+		return ret;
+
+	if (result.Next()) {
+		uint32_t id = result.GetUInt32(0);
+		if (z->GetSignFromMasterList(id))
+			return false;
+
+		std::shared_ptr<Spawn> spawn = std::make_shared<Spawn>();
+		ProcessSignResult(result, spawn);
+
+		z->AddSignToMasterList(spawn);
+		LogDebug(LOG_NPC, 0, "Loaded Sign: '%s' (%u)", spawn->GetName().c_str(), id);
+	}
+
+	return ret;
 }
 
 bool ZoneDatabase::LoadGroundSpawn(ZoneServer* z, uint32_t id) {
-	return false;
+	DatabaseResult result;
+	bool ret = Select(&result, "SELECT %s, %s\n"
+		"FROM spawn s\n"
+		"INNER JOIN spawn_ground sg\n"
+		"ON s.id = sg.spawn_id\n"
+		"WHERE s.id = %u",
+		GetSpawnTableFields(), GetGroundSpawnTableFields(), id);
+
+	if (!ret)
+		return ret;
+
+	if (result.Next()) {
+		uint32_t id = result.GetUInt32(0);
+		if (z->GetGroundSpawnFromMasterList(id))
+			return false;
+
+		std::shared_ptr<GroundSpawn> spawn = std::make_shared<GroundSpawn>();
+		ProcessGroundSpawnResult(result, spawn);
+
+		z->AddGroundSpawnToMasterList(spawn);
+		LogDebug(LOG_NPC, 0, "Loaded GroundSpawn: '%s' (%u)", spawn->GetName().c_str(), id);
+	}
+
+	return ret;
 }
 
 bool ZoneDatabase::LoadSpawnLocationGroups(ZoneServer* z) {

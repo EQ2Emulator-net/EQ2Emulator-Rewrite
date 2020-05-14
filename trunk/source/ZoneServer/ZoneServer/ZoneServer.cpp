@@ -442,6 +442,26 @@ std::shared_ptr<Spawn> ZoneServer::GetNewSpawnFromMasterList(uint32_t databaseID
 			ret = GetNewNPC(databaseID);
 	}
 
+	if (!ret) {
+		if (database.LoadObject(this, databaseID))
+			ret = GetNewObject(databaseID);
+	}
+
+	if (!ret) {
+		if (database.LoadWidget(this, databaseID))
+			ret = GetNewWidget(databaseID);
+	}
+
+	if (!ret) {
+		if (database.LoadSign(this, databaseID))
+			ret = GetNewSign(databaseID);
+	}
+
+	if (!ret) {
+		if (database.LoadGroundSpawn(this, databaseID))
+			ret = GetNewGroundSpawn(databaseID);
+	}
+
 	return ret;
 }
 
