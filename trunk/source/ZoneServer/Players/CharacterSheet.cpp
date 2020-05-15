@@ -13,6 +13,8 @@ void UpdateCharacterSheetMsgData::WriteElement(unsigned char* outbuf, uint32_t& 
 	tsExpNextLevel = experience.nextTsLevelExp;
 	tsVitality = experience.tsVitality;
 	hp = attributes->hp.currentValue;
+	maxHp = attributes->hp.maxValue;
+	baseHp = attributes->hp.baseValue;
 
 	auto stringToChar = [](const std::string& str, char* out, size_t outsize) {
 		if (str.empty()) {
