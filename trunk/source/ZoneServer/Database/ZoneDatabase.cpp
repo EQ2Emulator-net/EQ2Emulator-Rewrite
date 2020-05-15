@@ -224,13 +224,10 @@ bool ZoneDatabase::LoadCharacter(uint32_t char_id, uint32_t account_id, std::sha
 	result.NextResultSet();
 
 	//`char_colors`
-	if (result.Next()) {
-		//I know it looks stupid using a map for 1 entity but this lets us reuse the same code for characters and npcs
-		std::unordered_map<uint32_t, std::shared_ptr<Spawn> > colorLoadMap;
-		colorLoadMap[char_id] = entity;
-
-		ProcessEntityColors(result, colorLoadMap);
-	}
+	//I know it looks stupid using a map for 1 entity but this lets us reuse the same code for characters and npcs
+	std::unordered_map<uint32_t, std::shared_ptr<Spawn> > colorLoadMap;
+	colorLoadMap[char_id] = entity;
+	ProcessEntityColors(result, colorLoadMap);
 
 	result.NextResultSet();
 

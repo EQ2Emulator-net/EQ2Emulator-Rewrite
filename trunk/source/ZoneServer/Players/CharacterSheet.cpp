@@ -5,13 +5,13 @@
 
 void UpdateCharacterSheetMsgData::WriteElement(unsigned char* outbuf, uint32_t& offset) {
 	//Convert data that is a different format in the packet vs what we use
-	advExp = experience.currentAdvExp;
-	advExpNextLevel = experience.nextAdvLevelExp;
-	advExpDebt = experience.advExpDebt;
-	advVitality = experience.advVitality;
-	tsExp = experience.currentTsExp;
-	tsExpNextLevel = experience.nextTsLevelExp;
-	tsVitality = experience.tsVitality;
+	advExp = static_cast<float>(experience.currentAdvExp);
+	advExpNextLevel = static_cast<float>(experience.nextAdvLevelExp);
+	advExpDebt = static_cast<float>(experience.advExpDebt);
+	advVitality = static_cast<float>(experience.advVitality);
+	tsExp = static_cast<float>(experience.currentTsExp);
+	tsExpNextLevel = static_cast<float>(experience.nextTsLevelExp);
+	tsVitality = static_cast<float>(experience.tsVitality);
 	hp = attributes->hp.currentValue;
 	maxHp = attributes->hp.maxValue;
 	baseHp = attributes->hp.baseValue;
