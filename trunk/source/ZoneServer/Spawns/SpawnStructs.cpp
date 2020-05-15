@@ -317,6 +317,9 @@ bool Substruct_SpawnPosition::ReadElement(const unsigned char* buf, uint32_t& of
 }
 
 void Substruct_SpawnInfo::RegisterElements() {
+	auto& orig_level = reinterpret_cast<uint8_t&>(this->orig_level);
+	auto& level = reinterpret_cast<uint8_t&>(this->level);
+
 	if (version < 60055) {
 		if (version < 1188) {
 			uint8_t& hp_remaining = reinterpret_cast<uint8_t&>(this->hp_remaining);

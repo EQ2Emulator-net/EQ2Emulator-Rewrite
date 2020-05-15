@@ -28,7 +28,9 @@ public:
 
 			zone->SendCharacterInfo(client);
 
-			auto spawn = client->GetController()->GetControlled();
+			auto controller = client->GetController();
+
+			auto spawn = controller->GetControlled();
 			uint32_t id = client->GetIDForSpawn(spawn);
 
 			OP_EqSetPOVGhostCmd_Packet* pov = new OP_EqSetPOVGhostCmd_Packet(client->GetVersion());
@@ -50,22 +52,8 @@ public:
 			control->unknown2 = 0xFF;
 			client->QueuePacket(control);
 
-			OP_UpdateCharacterSheetMsg_Packet* char_sheet = new OP_UpdateCharacterSheetMsg_Packet(client->GetVersion());
+			OP_UpdateCharacterSheetMsg_Packet* char_sheet = new OP_UpdateCharacterSheetMsg_Packet(client->GetVersion(), *controller->GetCharacterSheet());
 			char_sheet->SetEncodedBuffer(client->encoded_packets.GetBuffer(EEncoded_UpdateCharSheet));
-			strcpy(char_sheet->character_name, "Foof");
-			strcpy(char_sheet->character_name2, "Foof");
-			strcpy(char_sheet->character_name3, "Foof");
-			char_sheet->level = 1;
-			char_sheet->effective_level = 1;
-			char_sheet->flags = 871628879;
-			char_sheet->flags2 = 3219560;
-			char_sheet->base_hp = 100;
-			char_sheet->base_hp2 = 100;
-			char_sheet->current_hp = 100;
-			char_sheet->max_hp = 100;
-			char_sheet->base_power = 50;
-			char_sheet->current_power = 50;
-			char_sheet->max_power = 50;
 
 			strcpy(char_sheet->bind_zone, "test zone");
 	

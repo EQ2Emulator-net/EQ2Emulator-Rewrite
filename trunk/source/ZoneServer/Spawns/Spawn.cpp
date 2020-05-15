@@ -347,7 +347,7 @@ void Spawn::SetAppearanceEquipmentItem(uint8_t slotID, const EQ2EquipmentItem& i
 	SetInfo(&m_infoStruct.equipment_types[slotID], item.type, updateFlags);
 }
 
-EConsiderDifficulty Spawn::GetConsiderDifficulty(uint8_t considererLevel, uint8_t targetLevel) {
+EConsiderDifficulty Spawn::GetConsiderDifficulty(uint16_t considererLevel, uint16_t targetLevel) {
 	EConsiderDifficulty color;
 	int16_t diff = targetLevel - considererLevel;
 	if (considererLevel < 10)

@@ -209,10 +209,11 @@ bool ZoneServer::AddClient(std::shared_ptr<Client> c) {
 
 void ZoneServer::SendCharacterInfo(std::shared_ptr<Client> client) {
 	std::shared_ptr<Entity> entity = std::make_shared<Entity>();
-	database.LoadCharacter(client->GetCharacterID(), client->GetAccountID(), entity);
-	entity->SetZone(shared_from_this());
 	std::shared_ptr<PlayerController> controller = client->GetController();
 	controller->SetControlled(entity);
+	database.LoadCharacter(client->GetCharacterID(), client->GetAccountID(), entity, *controller->GetCharacterSheet());
+	entity->SetZone(shared_from_this());
+	
 	entity->SetIsPlayer(true, false);
 
 	// Set this in the spawn constructor

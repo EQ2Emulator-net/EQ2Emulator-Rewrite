@@ -221,23 +221,27 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 
 			uint32_t dataOffset = processed + offset;
 
-			if (crypto.getRC4Key() == 0 && p->Size >= 70) {
-				processRSAKey(p);
+			if (dataOffset + subpacket_length > p->Size) {
+				LogError(LOG_PACKET, 0, "An OP_AppCombined packet tried to read past the end of its buffer!");
+				//DumpBytes(p->buffer, p->Size);
+				return;
 			}
-			else if (crypto.isEncrypted()) {
-				if (dataOffset + subpacket_length > p->Size) {
-					LogError(LOG_PACKET, 0, "An OP_AppCombined packet tried to read past the end of its buffer!");
-					//DumpBytes(p->buffer, p->Size);
-					return;
-				}
-				unsigned char* dataPtr = p->buffer + dataOffset;
-				if (!HandleEmbeddedPacket(dataPtr, subpacket_length)) {
+
+			unsigned char* dataPtr = p->buffer + dataOffset;
+			if (crypto.getRC4Key() == 0 && subpacket_length >= 70) {
+				LogError(LOG_PACKET, 0, "Crypto key received in an App combine, let Foof know!");
+				ProtocolPacket cp(dataPtr, subpacket_length);
+				processRSAKey(&cp);
+			}
+			else if (!HandleEmbeddedPacket(dataPtr, subpacket_length, true)) {
+				if (crypto.isEncrypted()) {
 					newpacket = ProcessEncryptedData(dataPtr, subpacket_length);
 					if (newpacket) {
 						InboundQueuePush(newpacket);
 					}
 				}
 			}
+			
 			processed += subpacket_length + offset;
 		}
 		break;
@@ -824,12 +828,17 @@ uint16_t EQ2Stream::processRSAKey(ProtocolPacket* p) {
 	return 0;
 }
 
-bool EQ2Stream::HandleEmbeddedPacket(unsigned char* buffer, uint32_t length) {
-	if (length < 3) {
+bool EQ2Stream::HandleEmbeddedPacket(unsigned char* buffer, uint32_t length, bool bFromAppCombine) {
+	if (length < 3 || buffer[0] != 0) {
 		return false;
 	}
 
-	if (buffer[0] == 0 && buffer[1] == OP_AppCombined) {
+	if (buffer[1] == OP_AppCombined) {
+		if (bFromAppCombine) {
+			LogError(LOG_PACKET, 0, "Tried handling a packet as an app combine from another app combine! Let Foof know!");
+			return false;
+		}
+
 		ProtocolPacket* subp = new OP_AppCombined_Packet(buffer + 2, length - 2);
 		if (NetDebugEnabled()) {
 			LogDebug(LOG_PACKET, 0, "OP_AppCombine_Packet");
@@ -839,7 +848,7 @@ bool EQ2Stream::HandleEmbeddedPacket(unsigned char* buffer, uint32_t length) {
 		delete subp;
 		return true;
 	}
-	else if (buffer[0] == 0 && buffer[1] == 0) {
+	else if (buffer[1] == 0) {
 		EQ2Packet* newpacket = ProcessEncryptedData(buffer + 1, length - 1);
 		if (newpacket) {
 			if (NetDebugEnabled()) {

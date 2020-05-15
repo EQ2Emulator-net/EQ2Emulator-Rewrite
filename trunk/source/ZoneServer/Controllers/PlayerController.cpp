@@ -17,3 +17,14 @@ void PlayerController::ApplyPredictionUpdate(uint32_t deltaMS, const SpawnPositi
 
 	controlled->SetSpawnPositionData(update, deltaMS);
 }
+
+void PlayerController::SetControlled(const std::shared_ptr<Entity>& spawn) {
+	BaseController::SetControlled(spawn);
+
+	if (!charSheet) {
+		charSheet.emplace(spawn);
+	}
+	else {
+		charSheet->LinkToGhost(spawn);
+	}
+}

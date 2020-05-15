@@ -7,6 +7,8 @@
 #include "../Spawns/Entity.h"
 #include "../Spawns/Object.h"
 #include "../Spawns/GroundSpawn.h"
+#include "../Players/CharacterSheet.h"
+#include "../../common/Classes.h"
 
 extern ZoneOperator g_zoneOperator;
 extern MasterEntityCommandList g_masterEntityCommandList;
@@ -75,53 +77,166 @@ bool ZoneDatabase::LoadZoneInfo(ZoneServer* z) {
 	return true;
 }
 
-bool ZoneDatabase::LoadCharacter(uint32_t char_id, uint32_t account_id, std::shared_ptr<Entity> entity) {
+void ZoneDatabase::ProcessCharactersTableResult(DatabaseResult& result, const std::shared_ptr<Entity>& entity, CharacterSheet& charSheet) {
+	entity->SetName(result.GetString(0), false);
+	entity->SetRace(result.GetUInt8(1), false);
+	entity->SetAdventureClass(result.GetUInt8(2), false);
+	charSheet.advClass = entity->GetAdventureClass();
+	charSheet.advArchetype = Classes::GetBaseClass(charSheet.advClass);
+	charSheet.advBaseClass = Classes::GetSecondaryBaseClass(charSheet.advClass);
+	entity->SetGender(result.GetUInt8(3), false);
+	// Set Deity
+	entity->SetBodySize(result.GetUInt8(5), false);
+	entity->SetBodySizeUnknown(result.GetUInt8(6), false); // Not sure if this is actually the correct field for age
+	entity->SetLevel(result.GetUInt8(7), false);
+	entity->SetOrigLevel(entity->GetAdventureLevel(), false);
+	charSheet.tsClass = result.GetUInt32(8);
+	charSheet.tsArchetype = Classes::GetTSBaseClass(charSheet.tsClass);
+	charSheet.tsBaseClass = Classes::GetSecondaryTSBaseClass(charSheet.tsClass);
+	charSheet.tsLevel = result.GetUInt16(9);
+	// Set SOGA Wing Type
+	// Set SOGA Chest Type
+	// Set SOGA Legs Type
+	entity->SetSogaHairType(result.GetUInt16(13), false);
+	entity->SetSogaFacialHairType(result.GetUInt16(14), false);
+	entity->SetSogaModelType(result.GetUInt32(15), false);
+	entity->SetLegsType(result.GetUInt16(16), false);
+	entity->SetChestType(result.GetUInt16(17), false);
+	entity->SetWingType(result.GetUInt16(18), false);
+	entity->SetHairType(result.GetUInt16(19), false);
+	entity->SetFacialHairType(result.GetUInt16(20), false);
+	entity->SetModelType(result.GetUInt32(21), false);
+	entity->SetX(result.GetFloat(22), false);
+	entity->SetY(result.GetFloat(23), false);
+	entity->SetZ(result.GetFloat(24), false);
+	entity->SetHeading(result.GetFloat(25), false);
+	// Set Starting City
+	// Set Account Age
+}
+
+void ZoneDatabase::ProcessCharacterDetailsResult(DatabaseResult& res, const std::shared_ptr<Entity>& entity, CharacterSheet& sheet) {
+	//Skip id and char_id
+	uint32_t i = 2;
+
+	EntityAttributeSheet* attr = sheet.attributes;
+
+	attr->hp.Initialize(res.GetInt32(i++));
+	attr->power.Initialize(res.GetInt32(i++));
+	attr->savagery.Initialize(res.GetInt32(i++));
+	attr->dissonance.Initialize(res.GetInt32(i++));
+	attr->concentration.maxValue = res.GetInt32(i++);
+	//Attack?
+	i++;
+	attr->mitigation.Initialize(res.GetInt32(i++));
+	attr->avoidance.Initialize(res.GetInt32(i++));
+	//Skip some skill stats
+	i += 3;
+	attr->str.Initialize(res.GetInt32(i++));
+	attr->sta.Initialize(res.GetInt32(i++));
+	attr->agi.Initialize(res.GetInt32(i++));
+	attr->wis.Initialize(res.GetInt32(i++));
+	attr->intel.Initialize(res.GetInt32(i++));
+	attr->heat.Initialize(res.GetInt32(i++));
+	attr->cold.Initialize(res.GetInt32(i++));
+	attr->magic.Initialize(res.GetInt32(i++));
+	attr->mental.Initialize(res.GetInt32(i++));
+	attr->divine.Initialize(res.GetInt32(i++));
+	attr->disease.Initialize(res.GetInt32(i++));
+	attr->poison.Initialize(res.GetInt32(i++));
+	attr->elemental.Initialize(res.GetInt32(i++));
+	attr->arcane.Initialize(res.GetInt32(i++));
+	attr->noxious.Initialize(res.GetInt32(i++));
+	CharacterCurrency& cur = sheet.currency;
+	cur.copper = res.GetUInt32(i++);
+	cur.silver = res.GetUInt32(i++);
+	cur.gold = res.GetUInt32(i++);
+	cur.platinum = res.GetUInt32(i++);
+	sheet.petName = res.GetString(i++);
+	sheet.statusPoints = res.GetUInt32(i++);
+	attr->power.maxValue = res.GetInt32(i++);
+	attr->hp.maxValue = res.GetInt32(i++);
+	attr->savagery.maxValue = res.GetInt32(i++);
+	attr->dissonance.maxValue = res.GetInt32(i++);
+	
+	CharacterExperience& exp = sheet.experience;
+	exp.currentAdvExp = res.GetUInt32(i++);
+	exp.nextAdvLevelExp = res.GetUInt32(i++);
+	exp.advExpDebt = res.GetUInt32(i++);
+	exp.advVitality = res.GetUInt32(i++);
+	exp.currentTsExp = res.GetUInt32(i++);
+	exp.nextTsLevelExp = res.GetUInt32(i++);
+	//TS experience debt...?
+	i++;
+	exp.tsVitality = res.GetUInt32(i++);
+
+	cur.bankCopper = res.GetUInt32(i++);
+	cur.bankSilver = res.GetUInt32(i++);
+	cur.bankGold = res.GetUInt32(i++);
+	cur.bankPlatinum = res.GetUInt32(i++);
+	
+	sheet.bindZone = res.GetUInt32(i++);
+	sheet.bindLocation.x = res.GetFloat(i++);
+	sheet.bindLocation.y = res.GetFloat(i++);
+	sheet.bindLocation.z = res.GetFloat(i++);
+	sheet.bindHeading = res.GetFloat(i++);
+	sheet.houseZoneId = res.GetUInt32(i++);
+
+	entity->SetCombatVoice(res.GetUInt32(i++));
+	entity->SetEmoteVoice(res.GetUInt32(i++));
+	
+	sheet.biography = res.GetUInt32(i++);
+	sheet.flags = res.GetUInt32(i++);
+	sheet.flags2 = res.GetUInt32(i++);
+
+	//TODO: load titles
+	int32_t prefixID = res.GetInt32(i++);
+	int32_t suffixID = res.GetInt32(i++);
+
+	sheet.currentLanguage = res.GetUInt32(i++);
+	
+	entity->SetLastName(res.GetString(i++));
+	
+	//Skip aa fields
+	i += 8;
+}
+
+bool ZoneDatabase::LoadCharacter(uint32_t char_id, uint32_t account_id, std::shared_ptr<Entity> entity, CharacterSheet& charSheet) {
+	//First we need to set up the query
+	std::ostringstream query;
+	const char* characterSelect = "SELECT `name`, `race`, `class`, `gender`, `deity`, `body_size`, `body_age`, `level`, `tradeskill_class`, `tradeskill_level`, `soga_wing_type`, `soga_chest_type`, `soga_legs_type`, `soga_hair_type`, `soga_facial_hair_type`, `soga_model_type`, `legs_type`, `chest_type`, `wing_type`, `hair_type`, `facial_hair_type`, `model_type`, `x`, `y`, `z`, `heading`, `starting_city`, DATEDIFF(curdate(), `created_date`) as accage FROM characters ";
+	//`characters`
+	query << characterSelect << "WHERE id = " << char_id << " AND account_id = " << account_id << " AND deleted = 0;\n";
+	//`char_colors`
+	query << "SELECT char_id, type, red, green, blue FROM char_colors WHERE char_id = " << char_id << ";\n";
+	//`character_details`
+	query << "SELECT * FROM `character_details` WHERE char_id = " << char_id << ";\n";
+
 	DatabaseResult result;
-	bool ret = Select(&result, "SELECT `name`, `race`, `class`, `gender`, `deity`, `body_size`, `body_age`, `level`, `tradeskill_class`, `tradeskill_level`, `soga_wing_type`, `soga_chest_type`, `soga_legs_type`, `soga_hair_type`, `soga_facial_hair_type`, `soga_model_type`, `legs_type`, `chest_type`, `wing_type`, `hair_type`, `facial_hair_type`, `model_type`, `x`, `y`, `z`, `heading`, `starting_city`, DATEDIFF(curdate(), `created_date`) as accage FROM characters WHERE id = %u AND account_id = %u AND deleted = 0", char_id, account_id);
+	bool ret = Select(&result, query.str().c_str());
 	if (!ret)
 		return ret;
 
+	//`characters` table
 	if (result.Next()) {
-		entity->SetName(result.GetString(0), false);
-		entity->SetRace(result.GetUInt8(1), false);
-		entity->SetAdventureClass(result.GetUInt8(2), false);
-		entity->SetGender(result.GetUInt8(3), false);
-		// Set Deity
-		entity->SetBodySize(result.GetUInt8(5), false);
-		entity->SetBodySizeUnknown(result.GetUInt8(6), false); // Not sure if this is actually the correct field for age
-		entity->SetLevel(result.GetUInt8(7), false);
-		entity->SetOrigLevel(entity->GetAdventureLevel(), false);
-		// Set Tradeskill Class
-		// Set Tradeskill Level
-		// Set SOGA Wing Type
-		// Set SOGA Chest Type
-		// Set SOGA Legs Type
-		entity->SetSogaHairType(result.GetUInt16(13), false);
-		entity->SetSogaFacialHairType(result.GetUInt16(14), false);
-		entity->SetSogaModelType(result.GetUInt32(15), false);
-		entity->SetLegsType(result.GetUInt16(16), false);
-		entity->SetChestType(result.GetUInt16(17), false);
-		entity->SetWingType(result.GetUInt16(18), false);
-		entity->SetHairType(result.GetUInt16(19), false);
-		entity->SetFacialHairType(result.GetUInt16(20), false);
-		entity->SetModelType(result.GetUInt32(21), false);
-		entity->SetX(result.GetFloat(22), false);
-		entity->SetY(result.GetFloat(23), false);
-		entity->SetZ(result.GetFloat(24), false);
-		entity->SetHeading(result.GetFloat(25), false);
-		// Set Starting City
-		// Set Account Age
+		ProcessCharactersTableResult(result, entity, charSheet);
+	}
 
-		DatabaseResult result2;
-		ret = Select(&result2, "SELECT char_id, type, red, green, blue FROM char_colors WHERE char_id = %u", char_id);
-		if (!ret)
-			return ret;
+	result.NextResultSet();
 
+	//`char_colors`
+	if (result.Next()) {
 		//I know it looks stupid using a map for 1 entity but this lets us reuse the same code for characters and npcs
 		std::unordered_map<uint32_t, std::shared_ptr<Spawn> > colorLoadMap;
 		colorLoadMap[char_id] = entity;
 
-		ProcessEntityColors(result2, colorLoadMap);
+		ProcessEntityColors(result, colorLoadMap);
+	}
+
+	result.NextResultSet();
+
+	//`character_details`
+	if (result.Next()) {
+		ProcessCharacterDetailsResult(result, entity, charSheet);
 	}
 
 	return ret;

@@ -62,6 +62,7 @@ class Client;
 
 class Spawn : public std::enable_shared_from_this<Spawn> {
 	friend struct SpawnVisualizationStruct;
+	friend struct CharacterDetails;
 public:
 	Spawn();
 	Spawn(std::shared_ptr<Spawn> in);
@@ -116,7 +117,7 @@ public:
 	const SpawnInfoStruct* GetInfoStruct() const;
 	const SpawnTitleStruct* GetTitleStruct() const;
 
-	static EConsiderDifficulty GetConsiderDifficulty(uint8_t considererLevel, uint8_t targetLevel);
+	static EConsiderDifficulty GetConsiderDifficulty(uint16_t considererLevel, uint16_t targetLevel);
 
 	struct UpdateFlags {
 		bool m_posChanged : 1;
@@ -166,8 +167,8 @@ private:
 	uint32_t movementTimestamp;
 
 	float m_sizeOffset;
-	uint8_t m_minLevel;
-	uint8_t m_maxLevel;
+	uint16_t m_minLevel;
+	uint16_t m_maxLevel;
 	uint8_t m_encounterOffset;
 	uint32_t m_factionID;
 	// These may need to be changed
@@ -502,7 +503,7 @@ public:
 		uint8_t f = m_infoStruct.visual_flag & (~flags);
 		SetInfo(&m_infoStruct.visual_flag, f, bUpdateFlags);
 	}
-	void SetOrigLevel(uint8_t value, bool updateFlags = true) {
+	void SetOrigLevel(uint16_t value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.orig_level, value, updateFlags);
 		IncrementVisUpdateTag();
 	}
@@ -756,16 +757,16 @@ public:
 		IncrementVisUpdateTag(); 
 	}
 
-	uint8_t GetAdventureLevel() { return m_infoStruct.level; }
-	uint8_t GetOrigAdventureLevel() { return m_infoStruct.orig_level; }
+	uint16_t GetAdventureLevel() { return m_infoStruct.level; }
+	uint16_t GetOrigAdventureLevel() { return m_infoStruct.orig_level; }
 
 	void SetSpawnGroupList(std::shared_ptr<SpawnGroupList> val) { m_spawnGroupList = val; }
 	std::shared_ptr<SpawnGroupList> GetSpawnGroupList() { return m_spawnGroupList; }
 	void SetGlobalSpawn(bool val) { m_globalSpawn = val; }
-	void SetMinLevel(uint8_t val) { m_minLevel = val; }
-	uint8_t GetMinLevel() { return m_minLevel; }
-	void SetMaxLevel(uint8_t val) { m_maxLevel = val; }
-	uint8_t GetMaxLevel() { return m_maxLevel; }
+	void SetMinLevel(uint16_t val) { m_minLevel = val; }
+	uint16_t GetMinLevel() { return m_minLevel; }
+	void SetMaxLevel(uint16_t val) { m_maxLevel = val; }
+	uint16_t GetMaxLevel() { return m_maxLevel; }
 	void SetDifficultyOffset(uint8_t val) { m_encounterOffset = val; }
 	uint8_t GetDifficultyOffset() { return m_encounterOffset; }
 	void SetLootDisabled(bool val) { m_bDisableLoot = true; }

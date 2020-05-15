@@ -13,7 +13,7 @@ public:
 	virtual void UnPossess() = 0;
 
 	virtual std::shared_ptr<Entity> GetControlled() { return controlled.lock(); }
-	void SetControlled(const std::shared_ptr<Entity>& spawn) { controlled = spawn; }
+	virtual void SetControlled(const std::shared_ptr<Entity>& spawn) { controlled = spawn; }
 	virtual void ClearTarget(bool bUpdateClient = true);
 	virtual void SetTarget(const std::shared_ptr<class Spawn>& spawn, bool bUpdateClient = true);
 	std::shared_ptr<class Spawn> GetTarget();

@@ -385,7 +385,7 @@ DatabaseConnection::DatabaseConnection(const char* host, unsigned int port, cons
 	unsigned int conn_timeout = 10;
 	mysql_options(mysql_con, MYSQL_OPT_CONNECT_TIMEOUT, &conn_timeout); // 10 seconds
 
-	if (mysql_real_connect(mysql_con, host, user, password, db, port, NULL, CLIENT_MULTI_STATEMENTS) == NULL) {
+	if (mysql_real_connect(mysql_con, host, user, password, db, port, nullptr, CLIENT_MULTI_STATEMENTS) == nullptr) {
 		LogError(LOG_DATABASE, 0, "Could not connect to MySQL server (%d): %s", mysql_errno(mysql_con), mysql_error(mysql_con));
 		bError = true;
 	}
@@ -448,7 +448,6 @@ bool Database::QueriesFromFile(const char* file) {
 
 	DatabaseConnection* con = GetPooledConnection();
 
-	mysql_set_server_option(con->mysql_con, MYSQL_OPTION_MULTI_STATEMENTS_ON);
 	ret = mysql_real_query(con->mysql_con, buf, static_cast<unsigned long>(size));
 	free(buf);
 
@@ -470,7 +469,6 @@ bool Database::QueriesFromFile(const char* file) {
 			}
 		} while (ret == 0);
 	}
-	mysql_set_server_option(con->mysql_con, MYSQL_OPTION_MULTI_STATEMENTS_OFF);
 
 	AddConnectionToPool(con);
 

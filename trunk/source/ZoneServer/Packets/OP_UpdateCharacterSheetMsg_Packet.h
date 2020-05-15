@@ -2,42 +2,41 @@
 
 #include "../../common/Packets/EQ2Packet.h"
 #include "../../common/Packets/PacketElements/PacketElements.h"
+#include "../../common/Packets/PacketElements/PacketPackedData.h"
 
 #include "Substruct_SpellEffects.h"
 #include "Substruct_PassiveEffects.h"
 #include "Substruct_MaintainedEffects.h"
 #include "Substruct_GroupMember.h"
+#include "../Players/CharacterSheet.h"
 
 //This is all the primitive data which can be zeroed
 //Need to make this crap less ridiculous at some point
-struct CharacterSheetData {
-	CharacterSheetData() {
+struct CharacterSheetMiscData {
+	CharacterSheetMiscData() {
 		memset(this, 0, sizeof(*this));
 	}
-	//Strings
+
+	//Some elements are a different format in the packet from what we use, convert them here
 	char character_name[40];
 	char deity[32];
 	char last_name[20];
-	char character_name2[40];
-	char character_name3[40];
 	char house_zone[48];
 	char bind_zone[32];
-
+	int64_t hp;
+	int64_t baseHp;
+	int64_t maxHp;
+	float advExp;
+	float advExpNextLevel;
+	float advExpDebt;
+	float advVitality;
+	float tsExp;
+	float tsExpNextLevel;
+	float tsExpDebt;
+	float tsVitality;
 
 
 	uint16_t unknown_1_1_MJ;
-	uint8_t race;
-	uint8_t gender;
-	uint8_t exiled;
-	uint32_t class1;
-	uint32_t class2;
-	uint32_t class3;
-	uint32_t tradeskill_class1;
-	uint32_t tradeskill_class2;
-	uint32_t tradeskill_class3;
-	uint16_t level;
-	uint16_t effective_level;
-	uint16_t tradeskill_level;
 	uint32_t unknown_1_2_MJ;
 	uint16_t account_age_base;
 	uint16_t account_age_bonus;
@@ -47,17 +46,6 @@ struct CharacterSheetData {
 	uint16_t character_name2_unknown;
 	
 	uint16_t character_name3_unknown;
-	int64_t current_hp;
-	uint64_t max_hp;
-	uint32_t base_hp;
-	uint32_t base_hp2;
-	int32_t current_power;
-	int32_t max_power;
-	uint32_t base_power;
-	uint8_t conc_used;
-	uint8_t conc_max;
-	int32_t savagery;
-	int32_t max_savagery;
 	uint32_t unknown4b;
 	uint32_t savagery_level;
 	uint32_t max_savagery_level;
@@ -96,24 +84,6 @@ struct CharacterSheetData {
 	uint16_t uncontested_riposte;
 	uint16_t uncontested_dodge;
 	uint16_t uncontested_parry;
-	uint32_t str;
-	uint32_t sta;
-	uint32_t agi;
-	uint32_t wis;
-	uint32_t intel;
-	uint32_t str_base;
-	uint32_t sta_base;
-	uint32_t agi_base;
-	uint32_t wis_base;
-	uint32_t int_base;
-	uint32_t mitigation_cur;
-	uint32_t elemental;
-	uint32_t noxious;
-	uint32_t arcane;
-	uint32_t mitigation_base;
-	uint32_t elemental_base;
-	uint32_t noxious_base;
-	uint32_t arcane_base;
 	uint16_t unknown14;
 	uint16_t elemental_absorb_pve;
 	uint16_t noxious_absorb_pve;
@@ -130,12 +100,6 @@ struct CharacterSheetData {
 	uint16_t elemental_dmg_reduction_pct;
 	uint16_t noxious_dmg_reduction_pct;
 	uint16_t arcane_dmg_reduction_pct;
-	float current_adv_xp;
-	float needed_adv_xp;
-	float debt_adv_xp;
-	float current_trade_xp;
-	float needed_trade_xp;
-	float debt_trade_xp;
 	uint16_t unknown18[6];
 	uint16_t server_bonus;
 	uint16_t adventure_vet_bonus;
@@ -182,10 +146,6 @@ struct CharacterSheetData {
 	uint16_t unknown31;
 	uint16_t unknown32;
 	uint16_t unknown33;
-	uint32_t coins_copper;
-	uint32_t coins_silver;
-	uint32_t coins_gold;
-	uint32_t coins_plat;
 	uint32_t unknown34[5];
 	
 	uint8_t unknown35[486];
@@ -221,8 +181,6 @@ struct CharacterSheetData {
 	float base_spell_crit;
 	float base_taunt_crit;
 	float base_heal_crit;
-	uint32_t flags;
-	uint32_t flags2;
 	float unknown45;
 	float unknown46;
 	float unknown47;
@@ -325,10 +283,7 @@ struct CharacterSheetData {
 	float uncontested_riposte_pve;
 	float uncontested_parry_pve;
 	float unknown139;
-	float melee_ae;
-	float multi_attack;
 	float spell_multi_attack;
-	float flurry;
 	float unknown140;
 	float bountiful_harvest;
 	float block_chance;
@@ -750,9 +705,9 @@ struct CharacterSheetData {
 	uint8_t unknown188[55];
 };
 
-class UpdateCharacterSheetMsgData : public CharacterSheetData, public PacketEncodedData {
+class UpdateCharacterSheetMsgData : public CharacterSheetMiscData, public CharacterSheet, public PacketEncodedData {
 public:
-	UpdateCharacterSheetMsgData(uint32_t version) : PacketEncodedData(version), groupSheet(version) {
+	UpdateCharacterSheetMsgData(uint32_t ver) : PacketEncodedData(ver), CharacterSheet(nullptr), groupSheet(ver) {
 		for (uint8_t i = 0; i < 45; i++)
 			spell_effects[i].ResetVersion(version);
 		for (uint8_t i = 0; i < 45; i++)
@@ -764,6 +719,20 @@ public:
 		RegisterElements();
 	}
 
+	UpdateCharacterSheetMsgData(uint32_t version, const CharacterSheet& sheet) : PacketEncodedData(version), CharacterSheet(sheet), groupSheet(version) {
+		for (uint8_t i = 0; i < 45; i++)
+			spell_effects[i].ResetVersion(version);
+		for (uint8_t i = 0; i < 45; i++)
+			detrimental_spell_effects[i].ResetVersion(version);
+		for (uint8_t i = 0; i < 100; i++)
+			passive_spell_effects[i].ResetVersion(version);
+		for (uint8_t i = 0; i < 30; i++)
+			maintained_effects[i].ResetVersion(version);
+		RegisterElements();
+	}
+
+	void WriteElement(unsigned char* outbuf, uint32_t& offset) override;
+
 	Substruct_SpellEffects spell_effects[45];
 	Substruct_SpellEffects detrimental_spell_effects[45];
 	Substruct_PassiveEffects passive_spell_effects[100];
@@ -772,21 +741,29 @@ public:
 
 private:
 	void RegisterElements() {
+		static EntityAttributeSheet structDumperHackSheet;
+
+		EntityAttributeSheet* attributes = this->attributes ? this->attributes : &structDumperHackSheet;
+
 		char& char_name = character_name[0];
 		RegisterChar(char_name)->SetCount(40);
 		RegisterUInt16(unknown_1_1_MJ);
+		uint8_t& race = *this->race;
 		RegisterUInt8(race);
+		uint8_t& gender = *this->gender;
 		RegisterUInt8(gender);
-		RegisterUInt8(exiled);
-		RegisterUInt32(class1);
-		RegisterUInt32(class2);
-		RegisterUInt32(class3);
-		RegisterUInt32(tradeskill_class1);
-		RegisterUInt32(tradeskill_class2);
-		RegisterUInt32(tradeskill_class3);
+		RegisterUInt8(alignment);
+		RegisterUInt32(advArchetype);
+		RegisterUInt32(advBaseClass);
+		RegisterUInt32(advClass);
+		RegisterUInt32(tsArchetype);
+		RegisterUInt32(tsBaseClass);
+		RegisterUInt32(tsClass);
+		uint16_t& level = *advOrigLevel;
+		uint16_t& effective_level = *advLevel;
 		RegisterUInt16(level);
 		RegisterUInt16(effective_level);
-		RegisterUInt16(tradeskill_level);
+		RegisterUInt16(tsLevel);
 		RegisterUInt32(unknown_1_2_MJ);
 		RegisterUInt16(account_age_base);
 		RegisterUInt16(account_age_bonus);
@@ -795,21 +772,30 @@ private:
 		char& Last_name = last_name[0];
 		RegisterChar(Last_name)->SetCount(20);
 		RegisterUInt8(unknown3);
-		char& char_name2 = character_name2[0];
+		char& char_name2 = character_name[0];
 		RegisterChar(char_name2)->SetCount(40);
 		RegisterUInt16(character_name2_unknown);
-		char& char_name3 = character_name3[0];
+		char& char_name3 = character_name[0];
 		RegisterChar(char_name3)->SetCount(40);
 		RegisterUInt16(character_name3_unknown);
-		RegisterInt64(current_hp);
-		RegisterUInt64(max_hp);
-		RegisterUInt32(base_hp);
-		RegisterUInt32(base_hp2);
+		RegisterInt64(hp);
+		RegisterInt64(maxHp);
+		RegisterInt64(baseHp);
+
+		int32_t current_power = attributes->power.currentValue;
+		int32_t max_power = attributes->power.maxValue;
+		int32_t base_power = attributes->power.baseValue;
 		RegisterInt32(current_power);
 		RegisterInt32(max_power);
-		RegisterUInt32(base_power);
+		RegisterInt32(base_power);
+
+		auto& conc_used = reinterpret_cast<uint8_t&>(attributes->concentration.currentValue);
+		auto& conc_max = reinterpret_cast<uint8_t&>(attributes->concentration.maxValue);
 		RegisterUInt8(conc_used);
 		RegisterUInt8(conc_max);
+
+		int32_t& savagery = attributes->savagery.currentValue;
+		int32_t& max_savagery = attributes->savagery.maxValue;
 		RegisterInt32(savagery);
 		RegisterInt32(max_savagery);
 		RegisterUInt32(unknown4b);
@@ -863,24 +849,44 @@ private:
 		RegisterUInt16(uncontested_riposte);
 		RegisterUInt16(uncontested_dodge);
 		RegisterUInt16(uncontested_parry);
-		RegisterUInt32(str);
-		RegisterUInt32(sta);
-		RegisterUInt32(agi);
-		RegisterUInt32(wis);
-		RegisterUInt32(intel);
-		RegisterUInt32(str_base);
-		RegisterUInt32(sta_base);
-		RegisterUInt32(agi_base);
-		RegisterUInt32(wis_base);
-		RegisterUInt32(int_base);
-		RegisterUInt32(mitigation_cur);
-		RegisterUInt32(elemental);
-		RegisterUInt32(noxious);
-		RegisterUInt32(arcane);
-		RegisterUInt32(mitigation_base);
-		RegisterUInt32(elemental_base);
-		RegisterUInt32(noxious_base);
-		RegisterUInt32(arcane_base);
+		int32_t& str = attributes->str.currentValue;
+		int32_t& sta = attributes->sta.currentValue;
+		int32_t& agi = attributes->agi.currentValue;
+		int32_t& wis = attributes->wis.currentValue;
+		int32_t& intel = attributes->intel.currentValue;
+		RegisterInt32(str);
+		RegisterInt32(sta);
+		RegisterInt32(agi);
+		RegisterInt32(wis);
+		RegisterInt32(intel);
+		int32_t& str_base = attributes->str.baseValue;
+		int32_t& sta_base = attributes->sta.baseValue;
+		int32_t& agi_base = attributes->agi.baseValue;
+		int32_t& wis_base = attributes->wis.baseValue;
+		int32_t& intel_base = attributes->intel.baseValue;
+		RegisterInt32(str_base);
+		RegisterInt32(sta_base);
+		RegisterInt32(agi_base);
+		RegisterInt32(wis_base);
+		RegisterInt32(intel_base);
+		int32_t& mitigation_cur = attributes->mitigation.currentValue;
+		RegisterInt32(mitigation_cur);
+
+		int32_t noxious = attributes->noxious.currentValue;
+		int32_t elemental = attributes->elemental.currentValue;
+		int32_t arcane = attributes->arcane.currentValue;
+		RegisterInt32(elemental);
+		RegisterInt32(noxious);
+		RegisterInt32(arcane);
+		int32_t& mitigation_base = attributes->mitigation.baseValue;
+		RegisterInt32(mitigation_base);
+		int32_t noxious_base = attributes->noxious.baseValue;
+		int32_t elemental_base = attributes->elemental.baseValue;
+		int32_t arcane_base = attributes->arcane.baseValue;
+		RegisterInt32(elemental_base);
+		RegisterInt32(noxious_base);
+		RegisterInt32(arcane_base);
+
 		RegisterUInt16(unknown14);
 		RegisterUInt16(elemental_absorb_pve);
 		RegisterUInt16(noxious_absorb_pve);
@@ -897,12 +903,13 @@ private:
 		RegisterUInt16(elemental_dmg_reduction_pct);
 		RegisterUInt16(noxious_dmg_reduction_pct);
 		RegisterUInt16(arcane_dmg_reduction_pct);
-		RegisterFloat(current_adv_xp);
-		RegisterFloat(needed_adv_xp);
-		RegisterFloat(debt_adv_xp);
-		RegisterFloat(current_trade_xp);
-		RegisterFloat(needed_trade_xp);
-		RegisterFloat(debt_trade_xp);
+		
+		RegisterFloat(advExp);
+		RegisterFloat(advExpNextLevel);
+		RegisterFloat(advExpDebt);
+		RegisterFloat(tsExp);
+		RegisterFloat(tsExpNextLevel);
+		RegisterFloat(tsExpDebt);
 
 		if (GetVersion() < 60114) {
 			RescopeArrayElement(unknown18);
@@ -962,6 +969,11 @@ private:
 		RegisterUInt16(unknown31);
 		RegisterUInt16(unknown32);
 		RegisterUInt16(unknown33);
+
+		uint32_t& coins_copper = currency.copper;
+		uint32_t& coins_silver = currency.silver;
+		uint32_t& coins_gold = currency.gold;
+		uint32_t& coins_plat = currency.platinum;
 		RegisterUInt32(coins_copper);
 		RegisterUInt32(coins_silver);
 		RegisterUInt32(coins_gold);
@@ -1125,9 +1137,12 @@ private:
 		RegisterFloat(uncontested_riposte_pve);
 		RegisterFloat(uncontested_parry_pve);
 		RegisterFloat(unknown139);
+		float& melee_ae = attributes->aeAttackChance.currentValue;
 		RegisterFloat(melee_ae);
+		float& multi_attack = attributes->multiAttackChance.baseValue;
 		RegisterFloat(multi_attack);
 		RegisterFloat(spell_multi_attack);
+		float& flurry = attributes->flurryChance.baseValue;
 		RegisterFloat(flurry);
 		RegisterFloat(unknown140);
 		RegisterFloat(bountiful_harvest);
@@ -1595,7 +1610,11 @@ private:
 
 class OP_UpdateCharacterSheetMsg_Packet : public UpdateCharacterSheetMsgData, public EQ2Packet {
 public:
-	OP_UpdateCharacterSheetMsg_Packet(uint32_t version) : UpdateCharacterSheetMsgData(version), EQ2Packet(version), packedData(version <= 283) {
+	OP_UpdateCharacterSheetMsg_Packet(uint32_t version) : EQ2Packet(version), packedData(version <= 283), UpdateCharacterSheetMsgData(version) {
+		//NOTE this is not used, it is just used to prevent compiler errors for reading packets and the struct dumper
+	}
+
+	OP_UpdateCharacterSheetMsg_Packet(uint32_t version, const CharacterSheet& sheet) : UpdateCharacterSheetMsgData(version, sheet), EQ2Packet(version), packedData(version <= 283) {
 		packedData.LinkSubstruct(*static_cast<UpdateCharacterSheetMsgData*>(this), "packed_data");
 		//RegisterSubstruct(packedData);
 		//Can't use the macro while inheriting from both PacketSubstruct and EQ2Packet

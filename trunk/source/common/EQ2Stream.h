@@ -95,7 +95,7 @@ private:
 	void SetLastAckSent(int32_t seq);
 	void AdjustRates(uint32_t average_delta);
 	uint16_t processRSAKey(ProtocolPacket* p);
-	bool HandleEmbeddedPacket(unsigned char* p, uint32_t length);
+	bool HandleEmbeddedPacket(unsigned char* p, uint32_t length, bool bFromAppCombine = false);
 	EQ2Packet* ProcessEncryptedData(unsigned char* data, uint32_t size);
 	EQ2Packet* ProcessEncryptedPacket(ProtocolPacket *p);
 	void InboundQueuePush(EQ2Packet* p);

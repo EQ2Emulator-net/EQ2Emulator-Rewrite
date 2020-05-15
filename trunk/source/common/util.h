@@ -57,3 +57,10 @@ public:
 };
 
 bool GetFileAsString(std::string& out, const char* fileName);
+
+//This is a copy of boost::hash_combine
+template<typename T>
+void CombineHash(uint32_t& seed, const T& v) {
+	static const std::hash<T> hasher;
+	seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+}

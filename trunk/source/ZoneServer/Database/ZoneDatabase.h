@@ -21,7 +21,11 @@ public:
 
 	bool LoadZoneInfo(ZoneServer* z);
 	bool LoadCommands(CommandProcess& process);
-	bool LoadCharacter(uint32_t char_id, uint32_t account_id, std::shared_ptr<Entity> entity);
+
+	//Character loading
+	bool LoadCharacter(uint32_t char_id, uint32_t account_id, std::shared_ptr<Entity> entity, class CharacterSheet& charSheet);
+	void ProcessCharactersTableResult(DatabaseResult& res, const std::shared_ptr<Entity>& entity, class CharacterSheet& charSheet);
+	void ProcessCharacterDetailsResult(DatabaseResult& res, const std::shared_ptr<Entity>& entity, CharacterSheet& charSheet);
 
 	// Loads all spawns with a location in the given zone
 	bool LoadNPCsForZone(ZoneServer* z);

@@ -251,7 +251,6 @@ struct SpawnInfoStruct {
 	uint32_t						chest_type_id;
 	uint32_t						legs_type_id;
 	uint32_t						unknown_new_type_id;
-	//uint32_t                        unknown_new_type_id2;
 	uint32_t						soga_hair_type_id;
 	uint32_t						soga_facial_hair_type_id;
 	uint32_t						mount_type;
@@ -283,8 +282,8 @@ struct SpawnInfoStruct {
 	float							unknown600553; // if set from 1.0 to -1.0 you shrink so small you can't see yourself
 	uint8_t							unknown600553b;
 	uint8_t							unknown600553c;
-	uint8_t							orig_level;  // This is the original level and should not change when the level value changes when mentoring
-	uint8_t							level;
+	uint16_t						orig_level;  // This is the original level and should not change when the level value changes when mentoring
+	uint16_t						level;
 	uint8_t							unknown5;
 	uint16_t						heroic_flag;
 	uint16_t    					unknown7;

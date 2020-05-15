@@ -1,6 +1,8 @@
 #pragma once
 
 #include "BaseController.h"
+#include "../Players/CharacterSheet.h"
+#include <optional>
 
 class PlayerController : public BaseController {
 public:
@@ -12,7 +14,10 @@ public:
 	
 	bool CheckPredictionCrc(uint32_t crc);
 	void ApplyPredictionUpdate(uint32_t deltaMS, const struct SpawnPositionStruct& update);
+	void SetControlled(const std::shared_ptr<Entity>& spawn) override;
+	CharacterSheet* GetCharacterSheet() { return &charSheet.value(); }
 
 private:
 	uint32_t predictionCRC;
+	std::optional<CharacterSheet> charSheet;
 };

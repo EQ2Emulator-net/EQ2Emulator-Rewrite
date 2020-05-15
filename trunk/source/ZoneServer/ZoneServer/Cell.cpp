@@ -50,7 +50,7 @@ void Cell::RemoveSpawn(std::shared_ptr<Spawn> spawn) {
 void Cell::ActivateCell(std::shared_ptr<Client> client) {
 	bIsActive = true;
 
-	LogDebug(LOG_ZONE, 0, "Activating cell (%i, %i) for client (%u)", m_cellCoordinates.first, m_cellCoordinates.second, client->GetAccountID());
+	LogDebug(LOG_ZONE, 5, "Activating cell (%i, %i) for client (%u)", m_cellCoordinates.first, m_cellCoordinates.second, client->GetAccountID());
 	for (std::weak_ptr<Spawn> s : m_spawnList) {
 		std::shared_ptr<Spawn> spawn = s.lock();
 		if (spawn) {
@@ -74,7 +74,7 @@ void Cell::SendRemoveSpawnsForClient(std::shared_ptr<Client> client) {
 
 void Cell::DeactivateCell() {
 	bIsActive = false;
-	LogDebug(LOG_ZONE, 0, "Deactivating cell (%i, %i)", m_cellCoordinates.first, m_cellCoordinates.second);
+	LogDebug(LOG_ZONE, 5, "Deactivating cell (%i, %i)", m_cellCoordinates.first, m_cellCoordinates.second);
 }
 
 void Cell::ClearSpawnList() {
