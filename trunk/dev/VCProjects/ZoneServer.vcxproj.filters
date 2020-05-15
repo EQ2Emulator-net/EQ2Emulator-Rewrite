@@ -61,6 +61,9 @@
     <Filter Include="source\Commands">
       <UniqueIdentifier>{296eac1b-8f2b-49e6-b21c-aed066f677d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\Players">
+      <UniqueIdentifier>{af3e2848-6ea2-41b5-963c-0a317067a6fd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\ZoneServer\main.cpp">
@@ -386,6 +389,9 @@
     </ClCompile>
     <ClCompile Include="..\..\source\ZoneServer\Lua\LuaChatFunctions.cpp">
       <Filter>source\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Players\CharacterSheet.cpp">
+      <Filter>source\Players</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1000,6 +1006,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_MapRequest_Packet.h">
       <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Players\CharacterSheet.h">
+      <Filter>source\Players</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
