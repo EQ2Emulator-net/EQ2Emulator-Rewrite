@@ -197,4 +197,5 @@ void CommandProcess::CommandSpawn(const std::shared_ptr<Client>& client, Separat
 		zone->AddSpawn(spawn, type);
 		zone->SendSpawnToClient(spawn, client);
 	}
+
 }
