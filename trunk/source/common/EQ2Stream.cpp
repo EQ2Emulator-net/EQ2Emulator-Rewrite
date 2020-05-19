@@ -179,7 +179,8 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 			if (HandleEmbeddedPacket(p->buffer + 2, p->Size - 2)) {
 				break;
 			}
-			else if (crypto.getRC4Key() == 0 && p->Size >= 70) {
+			//Make sure the packet is atleast the size of the key + sequence size before using it as a key
+			else if (crypto.getRC4Key() == 0 && p->Size >= 10) {
 				processRSAKey(p);
 			}
 			else if (crypto.isEncrypted()) {
@@ -228,8 +229,7 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 			}
 
 			unsigned char* dataPtr = p->buffer + dataOffset;
-			if (crypto.getRC4Key() == 0 && subpacket_length >= 70) {
-				LogError(LOG_PACKET, 0, "Crypto key received in an App combine, let Foof know!");
+			if (crypto.getRC4Key() == 0 && subpacket_length >= 8) {
 				ProtocolPacket cp(dataPtr, subpacket_length);
 				processRSAKey(&cp);
 			}
@@ -821,10 +821,8 @@ void EQ2Stream::AdjustRates(uint32_t average_delta) {
 }
 
 uint16_t EQ2Stream::processRSAKey(ProtocolPacket* p) {
-	if (p->buffer[0] == 0)
-		crypto.setRC4Key(Crypto::RSADecrypt(p->buffer + 62, 8));
-	else
-		crypto.setRC4Key(Crypto::RSADecrypt(p->buffer + 61, 8));
+	//The key is the last 8 bytes in the packet
+	crypto.setRC4Key(Crypto::RSADecrypt((p->buffer + p->Size) - 8, 8));
 	return 0;
 }
 
