@@ -782,9 +782,9 @@ private:
 		RegisterInt64(maxHp);
 		RegisterInt64(baseHp);
 
-		int32_t current_power = attributes->power.currentValue;
-		int32_t max_power = attributes->power.maxValue;
-		int32_t base_power = attributes->power.baseValue;
+		int32_t& current_power = attributes->power.currentValue;
+		int32_t& max_power = attributes->power.maxValue;
+		int32_t& base_power = attributes->power.baseValue;
 		RegisterInt32(current_power);
 		RegisterInt32(max_power);
 		RegisterInt32(base_power);
@@ -866,17 +866,17 @@ private:
 		int32_t& mitigation_cur = attributes->mitigation.currentValue;
 		RegisterInt32(mitigation_cur);
 
-		int32_t noxious = attributes->noxious.currentValue;
-		int32_t elemental = attributes->elemental.currentValue;
-		int32_t arcane = attributes->arcane.currentValue;
+		int32_t& noxious = attributes->noxious.currentValue;
+		int32_t& elemental = attributes->elemental.currentValue;
+		int32_t& arcane = attributes->arcane.currentValue;
 		RegisterInt32(elemental);
 		RegisterInt32(noxious);
 		RegisterInt32(arcane);
 		int32_t& mitigation_base = attributes->mitigation.baseValue;
 		RegisterInt32(mitigation_base);
-		int32_t noxious_base = attributes->noxious.baseValue;
-		int32_t elemental_base = attributes->elemental.baseValue;
-		int32_t arcane_base = attributes->arcane.baseValue;
+		int32_t& noxious_base = attributes->noxious.baseValue;
+		int32_t& elemental_base = attributes->elemental.baseValue;
+		int32_t& arcane_base = attributes->arcane.baseValue;
 		RegisterInt32(elemental_base);
 		RegisterInt32(noxious_base);
 		RegisterInt32(arcane_base);

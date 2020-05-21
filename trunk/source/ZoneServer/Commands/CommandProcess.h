@@ -57,6 +57,8 @@ private:
 	static void CommandRepop(const std::shared_ptr<Client>& client, Separator& sep);
 	static void CommandHail(const std::shared_ptr<Client>& client, Separator& sep);
 	static void CommandDevMode(const std::shared_ptr<Client>& client, Separator& sep);
+	static void CommandSetEmoteVoice(const std::shared_ptr<Client>& client, Separator& sep);
+	static void CommandSetCombatVoice(const std::shared_ptr<Client>& client, Separator& sep);
 
 	// CommandSpawn.cpp
 	static void CommandSpawnSet(const std::shared_ptr<Client>& client, Separator& sep);

@@ -44,6 +44,8 @@ void CommandProcess::RegisterCommands() {
 	RegisterCommandHandler(199, CommandSpawn);
 	RegisterCommandHandler(66, CommandHail);
 	RegisterCommandHandler(522, CommandDevMode);
+	RegisterCommandHandler(340, CommandSetEmoteVoice);
+	RegisterCommandHandler(341, CommandSetCombatVoice);
 }
 
 void CommandProcess::RegisterCommandHandler(uint32_t handler_id, CommandHandler_t handler) {
@@ -531,4 +533,24 @@ void CommandProcess::CommandDevMode(const std::shared_ptr<Client>& client, Separ
 	}
 
 	player->IncrementVisUpdateTag();
+}
+
+void CommandProcess::CommandSetEmoteVoice(const std::shared_ptr<Client>& client, Separator& sep) {
+	if (!sep.IsNumber(0)) {
+		return;
+	}
+
+	if (auto player = client->GetController()->GetCharacterSheet()->entity) {
+		player->SetEmoteVoice(sep.GetUInt32(0));
+	}
+}
+
+void CommandProcess::CommandSetCombatVoice(const std::shared_ptr<Client>& client, Separator& sep) {
+	if (!sep.IsNumber(0)) {
+		return;
+	}
+
+	if (auto player = client->GetController()->GetCharacterSheet()->entity) {
+		player->SetCombatVoice(sep.GetUInt32(0));
+	}
 }

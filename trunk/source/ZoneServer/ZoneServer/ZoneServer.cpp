@@ -360,7 +360,9 @@ void ZoneServer::OnClientRemoval(const std::shared_ptr<Client>& client) {
 		RemovePlayer(player);
 		//If the player disconnected from zoning we have already saved it so let the new zone take over
 		if (!client->bZoningDisconnect) {
-			database.SaveSingleCharacter(*controller->GetCharacterSheet());
+			if (auto charSheet = controller->GetCharacterSheet()) {
+				database.SaveSingleCharacter(*charSheet);
+			}
 		}
 	}
 }
@@ -1341,6 +1343,10 @@ void ZoneServer::SaveCharactersInZone() {
 		}
 
 		CharacterSheet* charSheet = client->GetController()->GetCharacterSheet();
+
+		if (!charSheet) {
+			continue;
+		}
 
 		if (charSheet->updates.GenerateUpdate(query)) {
 			++count;
