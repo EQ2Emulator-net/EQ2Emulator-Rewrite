@@ -869,10 +869,6 @@ bool ZoneDatabase::LoadSpawnLocationGroupAssociations(ZoneServer* z) {
 	return ret;
 }
 
-bool ZoneDatabase::CharacterUpdateBiography(uint32_t char_id, const char* bio) {
-	return Query("UPDATE `character_details` SET `biography` = '%s' WHERE `char_id` = '%u'", bio, char_id);
-}
-
 constexpr const char* GetSpawnLocationFields() {
 	return "sln.id, sln.name,\n"
 		"slp.id, slp.x, slp.y, slp.z, slp.x_offset, slp.y_offset, slp.z_offset, slp.heading, slp.pitch, slp.roll, slp.respawn, slp.expire_timer, slp.expire_offset, slp.grid_id,"

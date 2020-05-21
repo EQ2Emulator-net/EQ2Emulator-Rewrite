@@ -220,6 +220,9 @@ void ZoneServer::SendCharacterInfo(std::shared_ptr<Client> client) {
 	CharacterSheet* sheet = controller->GetCharacterSheet();
 	database.LoadCharacter(client->GetCharacterID(), client->GetAccountID(), entity, *sheet);
 	entity->SetZone(shared_from_this());
+
+	uint32_t oldZoneID = sheet->zoneID;
+
 	sheet->zoneID = GetID();
 	sheet->instanceID = GetInstanceID();
 	
@@ -231,7 +234,11 @@ void ZoneServer::SendCharacterInfo(std::shared_ptr<Client> client) {
 	entity->SetCollisionRadius(28, false);
 	entity->SetSizeRatio(1.0f, false);
 	entity->SetInteractionFlag(12, false);
-	entity->SetLocation(GetSafeX(), GetSafeY(), GetSafeZ(), false);
+	if (oldZoneID != GetID()) {
+		//This player changed zones, update their location
+		entity->SetLocation(GetSafeX(), GetSafeY(), GetSafeZ(), false);
+		entity->SetHeading(GetSafeHeading(), false);
+	}
 	entity->SetMovementMode(0, false);
 
 	m_playerClientList[entity->GetServerID()] = client;

@@ -62,8 +62,6 @@ public:
 	bool LoadSignLocations(ZoneServer* z);
 	bool LoadGroundSpawnLocations(ZoneServer* z);
 
-	bool CharacterUpdateBiography(uint32_t char_id, const char* bio);
-
 	bool LoadChatFilters(class ChatFilterLookup& lookup);
 
 	bool LoadEntityCommands(class MasterEntityCommandList& masterList);
