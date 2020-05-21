@@ -91,6 +91,8 @@ bool ZoneServer::Init() {
 	}
 
 	m_SpawnUpdateTimer.Start(200);
+	//5 minutes
+	m_saveCharactersTimer.Start(60000 * 5);
 
 	LogDebug(LOG_ZONE, 0, "Zone %u (%s) started", id, description.c_str());
 
@@ -148,6 +150,10 @@ void ZoneServer::Process() {
 				if (kvp.second->IsActive())
 					kvp.second->Process();
 			}
+		}
+
+		if (m_saveCharactersTimer.Check()) {
+			SaveCharactersInZone();
 		}
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(50)); // Probably play with this value
@@ -211,8 +217,11 @@ void ZoneServer::SendCharacterInfo(std::shared_ptr<Client> client) {
 	std::shared_ptr<Entity> entity = std::make_shared<Entity>();
 	std::shared_ptr<PlayerController> controller = client->GetController();
 	controller->SetControlled(entity);
-	database.LoadCharacter(client->GetCharacterID(), client->GetAccountID(), entity, *controller->GetCharacterSheet());
+	CharacterSheet* sheet = controller->GetCharacterSheet();
+	database.LoadCharacter(client->GetCharacterID(), client->GetAccountID(), entity, *sheet);
 	entity->SetZone(shared_from_this());
+	sheet->zoneID = GetID();
+	sheet->instanceID = GetInstanceID();
 	
 	entity->SetIsPlayer(true, false);
 
@@ -338,9 +347,15 @@ void ZoneServer::RemoveClient(std::shared_ptr<Client> client) {
 }
 
 void ZoneServer::OnClientRemoval(const std::shared_ptr<Client>& client) {
-	std::shared_ptr<Entity> player = std::static_pointer_cast<Entity>(client->GetController()->GetControlled());
-	if (player)
+	auto controller = client->GetController();
+	std::shared_ptr<Entity> player = std::static_pointer_cast<Entity>(controller->GetControlled());
+	if (player) {
 		RemovePlayer(player);
+		//If the player disconnected from zoning we have already saved it so let the new zone take over
+		if (!client->bZoningDisconnect) {
+			database.SaveSingleCharacter(*controller->GetCharacterSheet());
+		}
+	}
 }
 
 void ZoneServer::AddNPCToMasterList(std::shared_ptr<Entity> npc) {
@@ -1301,4 +1316,41 @@ void ZoneServer::CheckNeededLoads() {
 	}
 
 	OptionalJoin(spawnThread);
+}
+
+void ZoneServer::SaveCharactersInZone() {
+	if (Clients.empty()) {
+		return;
+	}
+
+	uint32_t count = 0;
+
+	std::ostringstream query;
+
+	for (auto& itr : Clients) {
+		auto client = itr.second.lock();
+		if (!client) {
+			continue;
+		}
+
+		CharacterSheet* charSheet = client->GetController()->GetCharacterSheet();
+
+		if (charSheet->updates.GenerateUpdate(query)) {
+			++count;
+		}
+	}
+
+	if (count == 0) {
+		return;
+	}
+
+	std::string updates = query.str();
+
+	auto saveHelper = [](std::string updates, uint32_t count) {
+		LogInfo(LOG_ZONE, 0, "Pushing updates for %u characters to the database.", count);
+		database.Query(updates.c_str());
+	};
+
+	//Detach a thread to run these queries since updates can be slow with several players
+	ThreadManager::ThreadStart("ZoneServer::SaveCharactersInZone", std::bind(saveHelper, std::move(updates), count)).detach();
 }

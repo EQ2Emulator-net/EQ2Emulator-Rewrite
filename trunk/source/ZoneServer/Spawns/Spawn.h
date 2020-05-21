@@ -398,7 +398,7 @@ public:
 	void SetBodySize(int8_t value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.sliders.bodyscale, value, updateFlags);
 	}
-	void SetBodySizeUnknown(int8_t value, bool updateFlags = true) {
+	void SetBodyBumpScale(int8_t value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.sliders.bumpscale, value, updateFlags);
 	}
 	void SetSogaSkullType(int8_t value, uint8_t index, bool updateFlags = true) {
@@ -738,6 +738,8 @@ public:
 	bool ShouldFaceOnHail() { return m_bFaceOnHail; }
 	void SetScriptID(uint32_t id) { m_scriptID = id; }
 	void SetFaceOnHail(bool val) {	m_bFaceOnHail = val; }
+	uint32_t GetCombatVoice() { return m_infoStruct.combat_voice; }
+	uint32_t GetEmoteVoice() { return m_infoStruct.emote_voice; }
 
 	std::pair<int32_t, int32_t> GetCellCoordinates() { return m_currentCellCoordinates; }
 	void UpdateCellCoordinates();

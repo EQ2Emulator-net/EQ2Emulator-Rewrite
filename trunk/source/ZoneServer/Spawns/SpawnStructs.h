@@ -248,8 +248,11 @@ struct SpawnInfoStruct {
 	uint32_t						hair_type_id;
 	uint32_t						facial_hair_type_id;
 	uint32_t						wing_type_id;
+	uint32_t                        soga_wing_type_id;
 	uint32_t						chest_type_id;
+	uint32_t                        soga_chest_type_id;
 	uint32_t						legs_type_id;
+	uint32_t                        soga_legs_type_id;
 	uint32_t						unknown_new_type_id;
 	uint32_t						soga_hair_type_id;
 	uint32_t						soga_facial_hair_type_id;

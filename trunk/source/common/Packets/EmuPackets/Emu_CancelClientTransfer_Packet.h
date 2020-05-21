@@ -6,7 +6,7 @@
 
 class Emu_CancelClientTransfer_Packet : public EmuPacket {
 public:
-	Emu_CancelClientTransfer_Packet() : EmuPacket(EmuOpcode_t::EMUOP_TRANSFER_CLIENT_CONFIRM) {
+	Emu_CancelClientTransfer_Packet() : EmuPacket(EmuOpcode_t::EMUOP_CANCEL_CLIENT_TRANSFER) {
 		RegisterElements();
 
 		access_code = 0;

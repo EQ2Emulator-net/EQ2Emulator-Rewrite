@@ -85,9 +85,9 @@ void ZoneDatabase::ProcessCharactersTableResult(DatabaseResult& result, const st
 	charSheet.advArchetype = Classes::GetBaseClass(charSheet.advClass);
 	charSheet.advBaseClass = Classes::GetSecondaryBaseClass(charSheet.advClass);
 	entity->SetGender(result.GetUInt8(3), false);
-	// Set Deity
-	entity->SetBodySize(result.GetUInt8(5), false);
-	entity->SetBodySizeUnknown(result.GetUInt8(6), false); // Not sure if this is actually the correct field for age
+	charSheet.deityID = result.GetUInt32(4);
+	entity->SetBodySize(static_cast<int8_t>(result.GetFloat(5) * 127), false);
+	entity->SetBodyBumpScale(static_cast<int8_t>(result.GetFloat(6) * 127), false);
 	entity->SetLevel(result.GetUInt8(7), false);
 	entity->SetOrigLevel(entity->GetAdventureLevel(), false);
 	charSheet.tsClass = result.GetUInt32(8);
@@ -97,14 +97,14 @@ void ZoneDatabase::ProcessCharactersTableResult(DatabaseResult& result, const st
 	// Set SOGA Wing Type
 	// Set SOGA Chest Type
 	// Set SOGA Legs Type
-	entity->SetSogaHairType(result.GetUInt16(13), false);
-	entity->SetSogaFacialHairType(result.GetUInt16(14), false);
+	entity->SetSogaHairType(result.GetUInt32(13), false);
+	entity->SetSogaFacialHairType(result.GetUInt32(14), false);
 	entity->SetSogaModelType(result.GetUInt32(15), false);
-	entity->SetLegsType(result.GetUInt16(16), false);
-	entity->SetChestType(result.GetUInt16(17), false);
-	entity->SetWingType(result.GetUInt16(18), false);
-	entity->SetHairType(result.GetUInt16(19), false);
-	entity->SetFacialHairType(result.GetUInt16(20), false);
+	entity->SetLegsType(result.GetUInt32(16), false);
+	entity->SetChestType(result.GetUInt32(17), false);
+	entity->SetWingType(result.GetUInt32(18), false);
+	entity->SetHairType(result.GetUInt32(19), false);
+	entity->SetFacialHairType(result.GetUInt32(20), false);
 	entity->SetModelType(result.GetUInt32(21), false);
 	entity->SetX(result.GetFloat(22), false);
 	entity->SetY(result.GetFloat(23), false);
@@ -112,6 +112,8 @@ void ZoneDatabase::ProcessCharactersTableResult(DatabaseResult& result, const st
 	entity->SetHeading(result.GetFloat(25), false);
 	// Set Starting City
 	// Set Account Age
+	charSheet.zoneID = result.GetUInt32(28);
+	charSheet.instanceID = result.GetUInt32(29);
 }
 
 void ZoneDatabase::ProcessCharacterDetailsResult(DatabaseResult& res, const std::shared_ptr<Entity>& entity, CharacterSheet& sheet) {
@@ -200,10 +202,21 @@ void ZoneDatabase::ProcessCharacterDetailsResult(DatabaseResult& res, const std:
 	i += 8;
 }
 
+void ZoneDatabase::SaveSingleCharacter(CharacterSheet& charSheet) {
+	std::ostringstream ss;
+	if (charSheet.updates.GenerateUpdate(ss)) {
+		if (!Query(ss.str().c_str())) {
+			LogError(LOG_DATABASE, 0, "Error saving character %s", charSheet.entity->GetName().c_str());
+		}
+	}
+}
+
 bool ZoneDatabase::LoadCharacter(uint32_t char_id, uint32_t account_id, std::shared_ptr<Entity> entity, CharacterSheet& charSheet) {
+	charSheet.characterID = char_id;
+
 	//First we need to set up the query
 	std::ostringstream query;
-	const char* characterSelect = "SELECT `name`, `race`, `class`, `gender`, `deity`, `body_size`, `body_age`, `level`, `tradeskill_class`, `tradeskill_level`, `soga_wing_type`, `soga_chest_type`, `soga_legs_type`, `soga_hair_type`, `soga_facial_hair_type`, `soga_model_type`, `legs_type`, `chest_type`, `wing_type`, `hair_type`, `facial_hair_type`, `model_type`, `x`, `y`, `z`, `heading`, `starting_city`, DATEDIFF(curdate(), `created_date`) as accage FROM characters ";
+	const char* characterSelect = "SELECT `name`, `race`, `class`, `gender`, `deity`, `body_size`, `body_age`, `level`, `tradeskill_class`, `tradeskill_level`, `soga_wing_type`, `soga_chest_type`, `soga_legs_type`, `soga_hair_type`, `soga_facial_hair_type`, `soga_model_type`, `legs_type`, `chest_type`, `wing_type`, `hair_type`, `facial_hair_type`, `model_type`, `x`, `y`, `z`, `heading`, `starting_city`, DATEDIFF(curdate(), `created_date`) as accage, current_zone_id, instance_id FROM characters ";
 	//`characters`
 	query << characterSelect << "WHERE id = " << char_id << " AND account_id = " << account_id << " AND deleted = 0;\n";
 	//`char_colors`
@@ -236,6 +249,8 @@ bool ZoneDatabase::LoadCharacter(uint32_t char_id, uint32_t account_id, std::sha
 		ProcessCharacterDetailsResult(result, entity, charSheet);
 	}
 
+	charSheet.updates.LinkUpdateFields(charSheet);
+
 	return ret;
 }
 
@@ -244,6 +259,8 @@ constexpr const char* GetNpcTableFields() {
 }
 
 void ZoneDatabase::ProcessNpcResult(DatabaseResult& result, const std::shared_ptr<Entity>& npc) {
+	EntityAttributeSheet& sheet = npc->attributes;
+
 	//Base spawn data
 	uint32_t i = ProcessSpawnTableFields(npc, result);
 
@@ -284,30 +301,18 @@ void ZoneDatabase::ProcessNpcResult(DatabaseResult& result, const std::shared_pt
 	i++;
 	// Equipment List ID
 	i++;
-	// Base Str
-	i++;
-	// Base Sta
-	i++;
-	// Base Wis
-	i++;
-	// Base Int
-	i++;
-	// Base Agi
-	i++;
-	// Base Heat
-	i++;
-	// Base Cold
-	i++;
-	// Base Magic
-	i++;
-	// Base Mental
-	i++;
-	// Base Divine
-	i++;
-	// Base Disease
-	i++;
-	// Base Poison
-	i++;
+	sheet.str.Initialize(result.GetInt32(i++));
+	sheet.sta.Initialize(result.GetInt32(i++));
+	sheet.wis.Initialize(result.GetInt32(i++));
+	sheet.intel.Initialize(result.GetInt32(i++));
+	sheet.agi.Initialize(result.GetInt32(i++));
+	sheet.heat.Initialize(result.GetInt32(i++));
+	sheet.cold.Initialize(result.GetInt32(i++));
+	sheet.magic.Initialize(result.GetInt32(i++));
+	sheet.mental.Initialize(result.GetInt32(i++));
+	sheet.divine.Initialize(result.GetInt32(i++));
+	sheet.disease.Initialize(result.GetInt32(i++));
+	sheet.poison.Initialize(result.GetInt32(i++));
 	// Aggro Radius
 	i++;
 	// Cast Percentage 
@@ -318,12 +323,9 @@ void ZoneDatabase::ProcessNpcResult(DatabaseResult& result, const std::shared_pt
 	npc->SetHeroicFlag(result.GetUInt8(i++));
 	// Alignment
 	i++;
-	// Base Elemental
-	i++;
-	// Base Arcane
-	i++;
-	// Base Noxious
-	i++;
+	sheet.elemental.baseValue = result.GetInt32(i++);
+	sheet.arcane.baseValue = result.GetInt32(i++);
+	sheet.noxious.baseValue = result.GetInt32(i++);
 	//Hide hood
 	if (result.GetBool(i++)) {
 		npc->EnableInfoVisFlags(INFO_VIS_FLAG_HIDE_HOOD);

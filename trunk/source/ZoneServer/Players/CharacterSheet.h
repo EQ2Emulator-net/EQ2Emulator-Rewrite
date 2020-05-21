@@ -1,6 +1,11 @@
 #pragma once
 
 #include "../Spawns/Entity.h"
+#include "../Database/ZoneDatabase.h"
+#include "../ZoneServer/ZoneServer.h"
+#include "../../common/TableUpdateGenerator.h"
+
+extern ZoneDatabase database;
 
 //Can add other game currencies to this
 struct CharacterCurrency {
@@ -39,6 +44,8 @@ struct CharacterDetails {
 		attributes = nullptr;
 	}
 
+	virtual ~CharacterDetails() = default;
+
 	void LinkToGhost(const std::shared_ptr<Entity>& playerGhost) {
 		entity = playerGhost;
 		if (playerGhost) {
@@ -68,6 +75,8 @@ struct CharacterDetails {
 	uint8_t alignment;
 	uint8_t* gender;
 	uint8_t* race;
+	uint32_t zoneID;
+	uint32_t instanceID;
 
 	CharacterCurrency currency;
 	CharacterExperience experience;
@@ -88,6 +97,25 @@ struct CharacterDetails {
 	uint32_t tsArchetype;
 	uint32_t tsBaseClass;
 	uint32_t tsClass;
+
+	uint32_t characterID;
+	uint32_t deityID;
+};
+
+class CharacterUpdateGenerator {
+public:
+	CharacterUpdateGenerator() = default;
+	~CharacterUpdateGenerator() = default;
+
+	void LinkUpdateFields(const CharacterSheet& sheet);
+	bool GenerateUpdate(std::ostringstream& out);
+
+private:
+	void LinkCharacterFields(const CharacterSheet& sheet);
+	void LinkCharacterDetailsFields(const CharacterSheet& sheet);
+
+	TableUpdateGenerator characterUpdates;
+	TableUpdateGenerator characterDetailsUpdates;
 };
 
 class CharacterSheet : public CharacterDetails {
@@ -95,4 +123,10 @@ public:
 	CharacterSheet(const std::shared_ptr<Entity>& playerGhost) {
 		LinkToGhost(playerGhost);
 	}
+
+	void LinkToGhost(const std::shared_ptr<Entity>& playerGhost) {
+		CharacterDetails::LinkToGhost(playerGhost);
+	}
+
+	CharacterUpdateGenerator updates;
 };

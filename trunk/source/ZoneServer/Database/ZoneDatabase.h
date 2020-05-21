@@ -11,6 +11,7 @@ class GroundSpawn;
 class CommandProcess;
 class DatabaseResult;
 class LuaGlobals;
+class CharacterSheet;
 
 class ZoneDatabase : public CommonDatabase {
 public:
@@ -23,9 +24,12 @@ public:
 	bool LoadCommands(CommandProcess& process);
 
 	//Character loading
-	bool LoadCharacter(uint32_t char_id, uint32_t account_id, std::shared_ptr<Entity> entity, class CharacterSheet& charSheet);
-	void ProcessCharactersTableResult(DatabaseResult& res, const std::shared_ptr<Entity>& entity, class CharacterSheet& charSheet);
+	bool LoadCharacter(uint32_t char_id, uint32_t account_id, std::shared_ptr<Entity> entity, CharacterSheet& charSheet);
+	void ProcessCharactersTableResult(DatabaseResult& res, const std::shared_ptr<Entity>& entity, CharacterSheet& charSheet);
 	void ProcessCharacterDetailsResult(DatabaseResult& res, const std::shared_ptr<Entity>& entity, CharacterSheet& charSheet);
+
+	//Character saving
+	void SaveSingleCharacter(CharacterSheet& charSheet);
 
 	// Loads all spawns with a location in the given zone
 	bool LoadNPCsForZone(ZoneServer* z);

@@ -199,6 +199,9 @@ private:
 	void OnClientRemoval(const std::shared_ptr<Client>& client);
 	void CheckNeededLoads();
 
+	Timer m_saveCharactersTimer;
+	void SaveCharactersInZone();
+
 public:
 	//void SetID(uint32_t val) { id = val; }
 	uint32_t GetID() { return id; }

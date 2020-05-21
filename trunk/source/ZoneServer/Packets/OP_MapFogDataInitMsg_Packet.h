@@ -149,8 +149,4 @@ public:
 			md.unexplored_key = map.unexploredKey;
 		}
 	}
-
-	void HandlePacket(std::shared_ptr<Client> client) override {
-		LogDebug(LOG_PLAYER, 0, "Received a map fog data update...");
-	}
 };

@@ -46,13 +46,13 @@ struct CharacterSheetMiscData {
 	uint16_t character_name2_unknown;
 	
 	uint16_t character_name3_unknown;
-	uint32_t unknown4b;
-	uint32_t savagery_level;
-	uint32_t max_savagery_level;
-	uint8_t unknown4c[4];
+	int32_t base_savagery;
+	int32_t savagery_level;
+	int32_t max_savagery_level;
+	int32_t base_savagery_level;
 	int32_t dissonance;
 	int32_t max_dissonance;
-	uint8_t unknown5c[4];
+	int32_t base_dissonance;
 	uint32_t hp_regen;
 	uint32_t power_regen;
 	uint32_t unknown6[2];
@@ -72,7 +72,7 @@ struct CharacterSheetMiscData {
 	uint16_t avoidance_pct;
 	uint16_t avoidance_reduction;
 	uint16_t avoidance;
-	uint16_t unknown10;
+	uint16_t avoidance_max;
 	uint16_t avoidance_base;
 	uint16_t unknown10a;
 	uint16_t parry;
@@ -796,22 +796,16 @@ private:
 
 		int32_t& savagery = attributes->savagery.currentValue;
 		int32_t& max_savagery = attributes->savagery.maxValue;
+		int32_t& base_savagery = attributes->savagery.baseValue;
 		RegisterInt32(savagery);
 		RegisterInt32(max_savagery);
-		RegisterUInt32(unknown4b);
-		RegisterUInt32(savagery_level);
-		RegisterUInt32(max_savagery_level);
-
-		
-		RescopeArrayElement(unknown4c);
-		RegisterUInt8(unknown4c)->SetCount(4);
-		
-
+		RegisterInt32(base_savagery);
+		RegisterInt32(savagery_level);
+		RegisterInt32(max_savagery_level);
+		RegisterInt32(base_savagery_level);
 		RegisterInt32(dissonance);
 		RegisterInt32(max_dissonance);
-
-		uint8_t& Unknown5c = unknown5c[0];
-		RegisterUInt8(Unknown5c)->SetCount(4);
+		RegisterInt32(base_dissonance);
 		
 		RegisterUInt32(hp_regen);
 		RegisterUInt32(power_regen);
@@ -837,7 +831,7 @@ private:
 		RegisterUInt16(avoidance_pct);
 		RegisterUInt16(avoidance_reduction);
 		RegisterUInt16(avoidance);
-		RegisterUInt16(unknown10);
+		RegisterUInt16(avoidance_max);
 		RegisterUInt16(avoidance_base);
 		RegisterUInt16(unknown10a);
 		RegisterUInt16(parry);
@@ -1622,7 +1616,7 @@ public:
 		e->SetName("packedData");
 		EQ2Packet::elements.push_back(e);
 	}
-
+	
 	PacketPackedData packedData;
 };
 

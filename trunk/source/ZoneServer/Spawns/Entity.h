@@ -66,13 +66,11 @@ struct EntityAttributeSheet {
 };
 
 class Entity : public Spawn {
-	friend struct CharacterDetails;
 public:
 	Entity() { };
 	Entity(std::shared_ptr<Entity> in) : Spawn(in) {
 		SetSwimmingSpeedMultiplier(0.78125f, false);
 	}
 
-private:
 	EntityAttributeSheet attributes;
 };

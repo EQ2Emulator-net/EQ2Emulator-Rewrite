@@ -31,9 +31,10 @@ public:
 		if (GetVersion() > 283) {
 			clientCmdSize = size - 4;
 		}
-		else {
-			//Get the oversized byte element size directly
-			clientCmdSize = size - elements[0]->GetSize();
+		else if (size - 1 >= 255) {
+			//Fix the oversized client command size bytes
+			size += 2;
+			clientCmdSize = size - 1;
 		}
 		return Packet::Write(writeBuffer, size);
 	}

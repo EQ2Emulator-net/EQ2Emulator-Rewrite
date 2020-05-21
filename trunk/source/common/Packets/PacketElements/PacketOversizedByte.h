@@ -114,14 +114,21 @@ public:
 
 	uint32_t GetSize() override {
 		uint32_t ret = 0;
-		for (int i = 0; i < count; i++) {
-			union {
-				uint16_t val;
-				int16_t  sval;
-			};
-			val = element[i];
-			bool oversized = (bSigned ? sval >= 0x7f : val >= 0xff);
-			ret += (oversized ? 3 : 1);
+
+		//Array size handling
+		if (myArray) {
+			ret = myArray->GetArraySize() >= 255 ? 3 : 1;
+		}
+		else {
+			for (int i = 0; i < count; i++) {
+				union {
+					uint16_t val;
+					int16_t  sval;
+				};
+				val = element[i];
+				bool oversized = (bSigned ? sval >= 0x7f : val >= 0xff);
+				ret += (oversized ? 3 : 1);
+			}
 		}
 		return ret;
 	}

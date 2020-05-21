@@ -60,4 +60,5 @@ public:
 
 	ClientChat chat;
 	bool bDevMode;
+	bool bZoningDisconnect;
 };

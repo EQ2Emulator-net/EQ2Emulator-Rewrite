@@ -19,6 +19,7 @@ Client::Client(unsigned int ip, unsigned short port) : EQ2Stream(ip, port), chat
 	character_id = 0;
 	m_controller = std::make_shared<PlayerController>();
 	bDevMode = false;
+	bZoningDisconnect = false;
 }
 
 void Client::Process() {
