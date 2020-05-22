@@ -20,6 +20,8 @@
 #include "../../common/Packets/EmuPackets/Emu_ClientSessionEnded_Packet.h"
 #include "../../common/Packets/EmuPackets/Emu_RequestZoneTransfer_Packet.h"
 #include "../../common/Packets/EmuPackets/Emu_ZoneTransferReply_Packet.h"
+#include "../../common/Packets/EmuPackets/Emu_NotifyCharacterLinkdead_Packet.h"
+#include "../../common/Packets/EmuPackets/Emu_CharacterLinkdeadTimeout_Packet.h"
 
 extern ZoneTalk zoneTalk;
 extern WorldServer g_worldServer;
@@ -85,7 +87,7 @@ void Emu_TransferClientConfirm_Packet::HandlePacket(std::shared_ptr<ZoneStream> 
 		// Send packet to client allowing them to connect to the zone or telling them they can't right now
 		OP_PlayCharacterReplyMsg_Packet* p = new OP_PlayCharacterReplyMsg_Packet(client->GetVersion());
 
-		if (character->IsOnline()) {
+		if (character->IsOnline() && !character->IsLinkdead()) {
 			//This character is either still marked as online or has a pending connection
 			p->response = PlayCharacterResponse::EAccountInUse;
 			client->QueuePacket(p);
@@ -139,4 +141,23 @@ void Emu_RequestZoneTransfer_Packet::HandlePacket(std::shared_ptr<ZoneStream> z)
 		//We have to wait for the zone to start up, we'll request the transfer after that happens
 		zoneTalk.AddPendingZoneTransfer(characterID, zoneID, sessionID, accountID);
 	}
+}
+
+void Emu_NotifyCharacterLinkdead_Packet::HandlePacket(std::shared_ptr<ZoneStream> zs) {
+	auto character = g_characterList.GetCharacterByID(characterID);
+	if (!character) {
+		return;
+	}
+
+	LogDebug(LOG_WORLD, 0, "Setting character %s as linkdead", character->basicInfo.characterName.c_str());
+	character->SetLinkdead();
+}
+
+void Emu_CharacterLinkdeadTimeout_Packet::HandlePacket(std::shared_ptr<ZoneStream> zs) {
+	auto character = g_characterList.GetCharacterByID(characterID);
+	if (!character) {
+		return;
+	}
+
+	character->SetOffline();
 }

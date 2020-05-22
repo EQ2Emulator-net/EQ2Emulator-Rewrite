@@ -24,14 +24,14 @@ std::shared_ptr<Character> CharacterList::GetCharacterBySessionID(uint32_t sessi
 	return std::shared_ptr<Character>();
 }
 
-bool CharacterList::AccountIsOnline(uint32_t accountID) {
+std::shared_ptr<Character> CharacterList::GetOnlineAccountCharacter(uint32_t accountID) {
 	for (auto& itr : charMap) {
 		if (itr.second->basicInfo.accountID == accountID && itr.second->IsOnline()) {
-			return true;
+			return itr.second;
 		}
 	}
 
-	return false;
+	return std::shared_ptr<Character>();
 }
 
 void CharacterList::FlagCharactersOnZoneServerOffline(const std::shared_ptr<ZoneStream>& zs) {

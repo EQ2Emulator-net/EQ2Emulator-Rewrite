@@ -12,7 +12,6 @@
 #include "../../common/Packets/EmuPackets/Emu_RequestZoneTransfer_Packet.h"
 #include "../Packets/OP_ChangeZoneMsg_Packet.h"
 #include "../WorldTalk/WorldStream.h"
-#include "../../common/Packets/EmuPackets/Emu_ClientSessionEnded_Packet.h"
 
 ZoneOperator::ZoneOperator() {
 }
@@ -94,9 +93,6 @@ void ZoneOperator::ClientLogIn(std::shared_ptr<Client> client, OP_LoginByNumRequ
 		client->SetCharacterID(pc.character_id);
 		clients.erase(client);
 		z->AddClient(client);
-
-		// Send Biography text to client (TOO Do: Move from client to player data location when available)
-		client->SendBiography(pc.character_id);
 	}
 	else {
 		client->SendLoginReply(3);
@@ -217,15 +213,4 @@ bool ZoneOperator::RequestZoneTransfer(const std::shared_ptr<Client>& client, ui
 	ws->QueuePacket(p);
 
 	return true;
-}
-
-void ZoneOperator::StreamDisconnected(std::shared_ptr<Stream> stream) {
-	auto ws = GetWorldStream();
-	if (!ws) {
-		return;
-	}
-
-	auto p = new Emu_ClientSessionEnded_Packet;
-	p->sessionID = std::static_pointer_cast<Client>(stream)->GetSessionID();
-	ws->QueuePacket(p);
 }

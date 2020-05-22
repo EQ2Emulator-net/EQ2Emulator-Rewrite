@@ -7,7 +7,7 @@ class ZoneStream;
 
 class Character : std::enable_shared_from_this<Character> {
 public:
-	Character() : sessionID(0), bPendingZoneConnection(false), bOnline(false) {}
+	Character() : sessionID(0), bPendingZoneConnection(false), bOnline(false), bLinkdead(false) {}
 	~Character() = default;
 
 	CharacterBasicInfo basicInfo;
@@ -24,12 +24,17 @@ public:
 
 	uint32_t GetSessionID() { return sessionID; }
 
+	void SetLinkdead() { bLinkdead = true; }
+	bool IsLinkdead() { return bLinkdead; }
+
+	void SetOffline();
+
 private:
 	void SetOnline();
-	void SetOffline();
 
 	uint32_t sessionID;
 	std::weak_ptr<ZoneStream> currentlyConnectedZone;
 	bool bOnline;
 	bool bPendingZoneConnection;
+	bool bLinkdead;
 };

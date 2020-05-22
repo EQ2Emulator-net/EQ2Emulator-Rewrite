@@ -80,10 +80,12 @@ void UDPServer::ReaderThread() {
 		{
 			ReadLocker lock(streamLock);
 			for (auto& itr : Streams) {
-				if (itr.second->CheckHeartbeatDelta(currentTime) >= TIMEOUT_MS) {
-					LogDebug(LOG_NET, 0, "Client timeout : %s", itr.second->ToString().c_str());
+				auto& stream = itr.second;
+				if (stream->CheckHeartbeatDelta(currentTime) >= TIMEOUT_MS) {
+					LogDebug(LOG_NET, 0, "Client timeout : %s", stream->ToString().c_str());
 					SpinLocker l(m_clientRemovals);
-					clientRemovals.push_back(itr.second);
+					clientRemovals.push_back(stream);
+					stream->ConnectionTimeout();
 				}
 			}
 		}

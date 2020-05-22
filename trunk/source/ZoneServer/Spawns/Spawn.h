@@ -59,6 +59,7 @@ enum class EConsiderDifficulty : uint8_t {
 
 class ZoneServer;
 class Client;
+class BaseController;
 
 class Spawn : public std::enable_shared_from_this<Spawn> {
 	friend struct SpawnVisualizationStruct;
@@ -144,6 +145,10 @@ public:
 	//Call this every time something changes that may affect the spawn vis struct
 	void IncrementVisUpdateTag() { ++visUpdateTag; }
 
+	void SetController(const std::shared_ptr<BaseController>& controller) { m_controller = controller; }
+	void RemoveController() { m_controller.reset(); }
+	std::shared_ptr<BaseController> GetController() { return m_controller; }
+
 private:
 	static uint32_t GetNextID();
 
@@ -214,6 +219,7 @@ private:
 	uint32_t m_scriptID;
 
 	uint32_t m_lastFaceTargetTime;
+	std::shared_ptr<BaseController> m_controller;
 
 public:
 	/* I put the template functions down here so they aren't cluttering up the rest of the class */

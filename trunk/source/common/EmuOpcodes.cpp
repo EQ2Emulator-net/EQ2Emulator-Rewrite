@@ -14,6 +14,8 @@
 #include "Packets/EmuPackets/Emu_ClientSessionEnded_Packet.h"
 #include "Packets/EmuPackets/Emu_RequestZoneTransfer_Packet.h"
 #include "Packets/EmuPackets/Emu_ZoneTransferReply_Packet.h"
+#include "Packets/EmuPackets/Emu_NotifyCharacterLinkdead_Packet.h"
+#include "Packets/EmuPackets/Emu_CharacterLinkdeadTimeout_Packet.h"
 
 class EmuPacketAllocatorBase {
 public:
@@ -82,4 +84,6 @@ namespace EmuOpcode {
 	RegisterEmuOpcode(EmuOpcode_t::EMUOP_CLIENT_SESSION_ENDED, Emu_ClientSessionEnded_Packet);
 	RegisterEmuOpcode(EmuOpcode_t::EMUOP_REQUEST_ZONE_TRANSFER, Emu_RequestZoneTransfer_Packet);
 	RegisterEmuOpcode(EmuOpcode_t::EMUOP_ZONE_TRANSFER_REPLY, Emu_ZoneTransferReply_Packet);
+	RegisterEmuOpcode(EmuOpcode_t::EMUOP_NOTIFY_CHARACTER_LINKDEAD, Emu_NotifyCharacterLinkdead_Packet);
+	RegisterEmuOpcode(EmuOpcode_t::EMUOP_CHARACTER_LINKDEAD_TIMEOUT, Emu_CharacterLinkdeadTimeout_Packet);
 }

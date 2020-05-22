@@ -252,8 +252,10 @@
     <ClInclude Include="..\..\source\common\Mutex.h" />
     <ClInclude Include="..\..\source\common\NetUtil.h" />
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_CancelClientTransfer_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_CharacterLinkdeadTimeout_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_ClientLoginConfirm_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_ClientSessionEnded_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_NotifyCharacterLinkdead_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RegisterZoneServerReply_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RegisterZoneServer_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RequestZoneReply_Packet.h" />

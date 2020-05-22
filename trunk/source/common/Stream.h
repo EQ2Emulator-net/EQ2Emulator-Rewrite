@@ -19,6 +19,7 @@ public:
 	virtual void Process(const unsigned char* data, unsigned int length);
 	virtual void Process(){};
 	virtual bool RequestNewClient() { return false; }
+	virtual void ConnectionTimeout() {};
 	void SetServer(Server* serv) { server = serv; }
 	uint32_t GetIP() { return RemoteIP; }
 	std::string GetIPString();

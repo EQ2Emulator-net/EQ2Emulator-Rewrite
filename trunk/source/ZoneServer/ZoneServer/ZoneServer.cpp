@@ -13,6 +13,7 @@
 #include "../Lua/LuaInterface.h"
 #include "../Lua/LuaGlobals.h"
 #include "MasterZoneLookup.h"
+#include "../WorldTalk/WorldStream.h"
 
 // Packets
 #include "../Packets/OP_ZoneInfoMsg_Packet.h"
@@ -22,6 +23,10 @@
 #include "../Packets/OP_CreateWidgetCmd_Packet.h"
 #include "../Packets/OP_EqDestroyGhostCmd_Packet.h"
 #include "../Packets/OP_MapFogDataInitMsg_Packet.h"
+#include "../Packets/OP_BioUpdateMsg_Packet.h"
+#include "../../common/Rules.h"
+#include "../../common/Packets/EmuPackets/Emu_ClientSessionEnded_Packet.h"
+#include "../../common/Packets/EmuPackets/Emu_NotifyCharacterLinkdead_Packet.h"
 
 // Spawns
 #include "../Spawns/Spawn.h"
@@ -36,6 +41,7 @@ extern ZoneOperator g_zoneOperator;
 extern CommandProcess g_commandProcess;
 extern LuaGlobals g_luaGlobals;
 extern MasterZoneLookup g_masterZoneLookup;
+extern RuleManager g_ruleManager;
 
 ZoneServer::ZoneServer(uint32_t zone_id):  chat(Clients, *this) {
 	id = zone_id;
@@ -142,6 +148,8 @@ void ZoneServer::Process() {
 		}
 
 		if (m_SpawnUpdateTimer.Check()) {
+			//Make a copy in case any players are removed from the process
+			auto players = this->players;
 			for (std::shared_ptr<Entity> player : players) {
 				player->Process();
 			}
@@ -213,10 +221,11 @@ bool ZoneServer::AddClient(std::shared_ptr<Client> c) {
 	return true;
 }
 
-void ZoneServer::SendCharacterInfo(std::shared_ptr<Client> client) {
+std::shared_ptr<Entity> ZoneServer::LoadCharacter(const std::shared_ptr<Client>& client) {
 	std::shared_ptr<Entity> entity = std::make_shared<Entity>();
 	std::shared_ptr<PlayerController> controller = client->GetController();
 	controller->SetControlled(entity);
+	entity->SetController(controller);
 	CharacterSheet* sheet = controller->GetCharacterSheet();
 	database.LoadCharacter(client->GetCharacterID(), client->GetAccountID(), entity, *sheet);
 	entity->SetZone(shared_from_this());
@@ -225,7 +234,7 @@ void ZoneServer::SendCharacterInfo(std::shared_ptr<Client> client) {
 
 	sheet->zoneID = GetID();
 	sheet->instanceID = GetInstanceID();
-	
+
 	entity->SetIsPlayer(true, false);
 
 	// Set this in the spawn constructor
@@ -241,14 +250,54 @@ void ZoneServer::SendCharacterInfo(std::shared_ptr<Client> client) {
 	}
 	entity->SetMovementMode(0, false);
 
+	return entity;
+}
+
+std::shared_ptr<Entity> ZoneServer::FindLinkdeadCharacter(uint32_t characterID) {
+	for (auto& itr : players) {
+		if (auto pc = std::dynamic_pointer_cast<PlayerController>(itr->GetController())) {
+			if (pc->GetCharacterSheet()->characterID == characterID) {
+				return itr;
+			}
+		}
+	}
+
+	return std::shared_ptr<Entity>();
+}
+
+void ZoneServer::SendCharacterInfo(std::shared_ptr<Client> client) {
+	std::shared_ptr<Entity> entity = FindLinkdeadCharacter(client->GetCharacterID());
+
+	bool bLinkdead = entity != nullptr;
+	if (bLinkdead) {
+		//Allow this new client to take over the ghost and character sheet of the existing linkdead character
+		entity->DisableEntityFlags(EntityFlagLinkdead);
+		auto controller = client->GetController();
+		auto old_controller = dynamic_pointer_cast<PlayerController>(entity->GetController());
+		controller->MoveCharacterSheetFrom(old_controller->GetCharacterSheet());
+		controller->SetControlled(entity);
+		entity->SetController(controller);
+	}
+	else {
+		//Load a new character ghost from the DB
+		entity = LoadCharacter(client);
+	}
+
 	m_playerClientList[entity->GetServerID()] = client;
 	std::pair<int32_t, int32_t> cellCoords = entity->GetCellCoordinates();
 	LogWarn(LOG_PLAYER, 0, "New player in cell (%i, %i) player loc = (%f, %f, %f)", cellCoords.first, cellCoords.second, entity->GetX(), entity->GetY(), entity->GetZ());
 	cellCoords = GetCellCoordinatesForSpawn(entity);
 	LogWarn(LOG_PLAYER, 0, "Cell coords check 2 (%i, %i)", cellCoords.first, cellCoords.second);
 
+	CharacterSheet* sheet = client->GetController()->GetCharacterSheet();
+	OP_BioUpdateMsg_Packet b(client->GetVersion());
+	b.biography = sheet->biography;
+	client->QueuePacket(b);
+
 	SendSpawnToClient(entity, client);
-	AddPlayer(entity);
+	if (!bLinkdead) {
+		AddPlayer(entity);
+	}
 	SendPlayersToNewClient(client);
 	ActivateCellsForClient(client);
 }
@@ -258,7 +307,8 @@ void ZoneServer::AddPlayer(std::shared_ptr<Entity> player) {
 
 	for (std::pair<uint32_t, std::weak_ptr<Client> > c : Clients) {
 		std::shared_ptr<Client> client = c.second.lock();
-		if (client) {
+		//Wait to send this ghost until the other client has a player, that is needed for the vis struct
+		if (client && client->GetController()->GetControlled()) {
 			SendSpawnToClient(player, client);
 		}
 	}
@@ -356,14 +406,38 @@ void ZoneServer::RemoveClient(std::shared_ptr<Client> client) {
 void ZoneServer::OnClientRemoval(const std::shared_ptr<Client>& client) {
 	auto controller = client->GetController();
 	std::shared_ptr<Entity> player = std::static_pointer_cast<Entity>(controller->GetControlled());
+
+	auto ws = g_zoneOperator.GetWorldStream();
+
 	if (player) {
-		RemovePlayer(player);
+		//Check if we were expecting this disconnect, otherwise start a linkdead timer
+		if (client->bZoningDisconnect || player->IsCamping()) {
+			RemovePlayer(player);
+		}
+		else {
+			static const uint32_t linkdeadTimeoutMS = g_ruleManager.GetGlobalRule(ERuleCategory::R_World, ERuleType::LinkDeadTimer)->GetUInt32();
+			player->SetActivityTimer(Timer::GetServerTime() + linkdeadTimeoutMS);
+			player->EnableEntityFlags(EntityFlagLinkdead);
+
+			if (ws) {
+				auto p = new Emu_NotifyCharacterLinkdead_Packet;
+				p->characterID = client->GetCharacterID();
+				ws->QueuePacket(p);
+			}
+		}
 		//If the player disconnected from zoning we have already saved it so let the new zone take over
 		if (!client->bZoningDisconnect) {
 			if (auto charSheet = controller->GetCharacterSheet()) {
 				database.SaveSingleCharacter(*charSheet);
 			}
 		}
+		m_playerClientList.erase(player->GetServerID());
+	}
+
+	if (ws) {
+		auto p = new Emu_ClientSessionEnded_Packet;
+		p->sessionID = client->GetSessionID();
+		ws->QueuePacket(p);
 	}
 }
 

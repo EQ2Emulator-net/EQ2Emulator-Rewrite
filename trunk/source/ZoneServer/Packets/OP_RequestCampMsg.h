@@ -6,6 +6,7 @@
 #include "OP_CampStartedMsg_Packet.h"
 #include "../Spawns/Entity.h"
 #include "../../common/Rules.h"
+#include "../../common/thread.h"
 
 extern RuleManager g_ruleManager;
 
@@ -39,17 +40,25 @@ public:
 		p.bCampDesktop = bCampDesktop;
 		p.bLogin = bLogin;
 
-		if (!bQuit) {
+		if (bQuit) {
+			auto DelayedDisconnect = [](std::shared_ptr<Client> client) {
+				//Wait until the client has received the camp message and then disconnect it
+				SleepMS(1000);
+				client->SendDisconnect(6);
+			};
+
+			ThreadManager::ThreadStart("RequestCampQuitHelper", std::bind(DelayedDisconnect, client)).detach();
+		}
+		else {
 			//TODO: Check if admin to bypass camp timer
 			static const uint8_t campSeconds = g_ruleManager.GetGlobalRule(ERuleCategory::R_World, ERuleType::PlayerCampTimer)->GetUInt8();
 			p.numSeconds = campSeconds;
+			if (std::shared_ptr<Entity> controlled = client->GetController()->GetControlled()) {
+				controlled->SetActivityTimer(Timer::GetServerTime() + p.numSeconds * 1000, false);
+				controlled->EnableEntityFlags(EntityFlagCamping);
+			}
 		}
 
-		if (std::shared_ptr<Entity> controlled = client->GetController()->GetControlled()) {			
-			controlled->SetActivityTimer(Timer::GetServerTime() + p.numSeconds * 1000, false);
-			controlled->EnableEntityFlags(EntityFlagCamping);
-		}
-	
 		client->QueuePacket(p);
 	}
 

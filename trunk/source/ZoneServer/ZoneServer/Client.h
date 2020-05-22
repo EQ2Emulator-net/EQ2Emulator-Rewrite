@@ -19,6 +19,7 @@ public:
 
 	EncodedPackets encoded_packets;
 	void Disconnected() override;
+	void ConnectionTimeout() override;
 
 protected:
 	void ReadVersionPacket(const unsigned char* data, uint32_t size, uint32_t offset, uint16_t opcode) override;
@@ -55,8 +56,6 @@ public:
 	uint32_t GetIDForSpawn(const std::shared_ptr<Spawn>& spawn);
 	std::shared_ptr<Spawn> GetSpawnByID(uint32_t id);
 	std::shared_ptr<PlayerController> GetController();
-
-	void SendBiography(uint32_t characterID);
 
 	ClientChat chat;
 	bool bDevMode;

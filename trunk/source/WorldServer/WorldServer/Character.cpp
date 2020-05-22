@@ -21,7 +21,7 @@ void Character::RemoveZoneStream(uint32_t session) {
 		currentlyConnectedZone.reset();
 	}
 
-	if (!bPendingZoneConnection && bOnline) {
+	if (!bPendingZoneConnection && bOnline && !bLinkdead) {
 		SetOffline();
 	}
 }
@@ -34,6 +34,7 @@ void Character::SetOnline() {
 
 void Character::SetOffline() {
 	bOnline = false;
+	bLinkdead = false;
 	//Offline events here
 	LogDebug(LOG_WORLD, 0, "Setting character %s as offline", basicInfo.characterName.c_str());
 }
@@ -51,6 +52,7 @@ bool Character::IsOnline() {
 
 void Character::PendingZoneConnectionConfirmed() {
 	bPendingZoneConnection = false;
+	bLinkdead = false;
 }
 
 void Character::PendingZoneConnectionFailed() {

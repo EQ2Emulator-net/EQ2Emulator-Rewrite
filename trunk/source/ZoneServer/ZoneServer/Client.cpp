@@ -3,7 +3,6 @@
 #include "Client.h"
 #include "../Packets/OP_LoginByNumRequestMsg_Packet.h"
 #include "../../common/EQ2Stream.h"
-#include "../Packets/OP_BioUpdateMsg_Packet.h"
 
 #include "../../common/Packets/EQ2Packets/OP_LoginReplyMsg_Packet.h"
 #include "../Controllers/PlayerController.h"
@@ -11,8 +10,11 @@
 #include "ZoneServer.h"
 #include "ZoneOperator.h"
 #include "../WorldTalk/WorldStream.h"
+#include "../../common/Rules.h"
+#include "../../common/Packets/EmuPackets/Emu_NotifyCharacterLinkdead_Packet.h"
 
 extern ZoneOperator g_zoneOperator;
+extern RuleManager g_ruleManager;
 
 Client::Client(unsigned int ip, unsigned short port) : EQ2Stream(ip, port), chat(*this), m_nextSpawnIndex(1), m_nextSpawnID(1) {
 	account_id = 0;
@@ -25,7 +27,7 @@ Client::Client(unsigned int ip, unsigned short port) : EQ2Stream(ip, port), chat
 void Client::Process() {
 	if (auto controlled = GetController()->GetControlled()) {
 		const SpawnInfoStruct* info = controlled->GetInfoStruct();
-		if (info->entityFlags & EntityFlagCamping) {
+		if (controlled->IsCamping()) {
 			uint32_t now = Timer::GetServerTime();
 			if (now >= info->activity_timer) {
 				//This player has camped out, send a disconnect packet
@@ -200,11 +202,24 @@ std::shared_ptr<PlayerController> Client::GetController() {
 	return m_controller;
 }
 
-void Client::SendBiography(uint32_t characterID) {
-	LogDebug(LOG_CLIENT, 0, "SendBiography called");
+void Client::ConnectionTimeout() {
+	auto player = GetController()->GetControlled();
+	if (!player || player->IsLinkdead()) {
+		return;
+	}
 
-	OP_BioUpdateMsg_Packet* b = new OP_BioUpdateMsg_Packet(GetVersion());
-	b->biography = "This is a test biography sentence"; // (TOO DO: Needs to pull from DB or if stored on the character)
+	CharacterSheet* sheet = GetController()->GetCharacterSheet();
 
-	QueuePacket(b);
+	if (!sheet) {
+		return;
+	}
+
+	static const uint32_t linkdeadTimeoutMS = g_ruleManager.GetGlobalRule(ERuleCategory::R_World, ERuleType::LinkDeadTimer)->GetUInt32();
+
+	player->SetActivityTimer(Timer::GetServerTime() + linkdeadTimeoutMS);
+	player->EnableEntityFlags(EntityFlagLinkdead);
+
+	auto p = new Emu_NotifyCharacterLinkdead_Packet;
+	p->characterID = sheet->characterID;
+	g_zoneOperator.GetWorldStream()->QueuePacket(p);
 }

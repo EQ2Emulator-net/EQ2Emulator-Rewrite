@@ -52,8 +52,6 @@ public:
 	void HandleZoneTransferReply(class Emu_ZoneTransferReply_Packet* p);
 	bool RequestZoneTransfer(const std::shared_ptr<Client>& client, uint32_t zoneID, uint32_t instanceID);
 
-	void StreamDisconnected(std::shared_ptr<Stream> stream) override;
-
 private:
 	//Just using the client pointer as a key
 	std::set<std::weak_ptr<Client>, std::owner_less<std::weak_ptr<Client> > > clients;

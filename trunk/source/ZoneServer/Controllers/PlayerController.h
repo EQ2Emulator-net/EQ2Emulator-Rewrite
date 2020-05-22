@@ -16,6 +16,7 @@ public:
 	void ApplyPredictionUpdate(uint32_t deltaMS, const struct SpawnPositionStruct& update);
 	void SetControlled(const std::shared_ptr<Entity>& spawn) override;
 	CharacterSheet* GetCharacterSheet() { return charSheet ? &charSheet.value() : nullptr; }
+	void MoveCharacterSheetFrom(CharacterSheet* rhs) { charSheet.emplace(std::move(*rhs)); }
 
 private:
 	uint32_t predictionCRC;

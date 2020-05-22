@@ -8,6 +8,7 @@
 #include "../ZoneTalk/ZoneTalk.h"
 #include "../Database/WorldDatabase.h"
 #include "../WorldServer/CharacterList.h"
+#include "../WorldServer/Character.h"
 
 #include "OP_PlayCharacterReplyMsg_Packet.h"
 
@@ -27,11 +28,14 @@ public:
 	}
 
 	void HandlePacket(std::shared_ptr<Client> client) {
-		if (g_characterList.AccountIsOnline(client->GetAccountID())) {
-			OP_PlayCharacterReplyMsg_Packet* p = new OP_PlayCharacterReplyMsg_Packet(client->GetVersion());
-			p->response = PlayCharacterResponse::EAccountInUse;
-			client->QueuePacket(p);
-			return;
+		if (auto character = g_characterList.GetOnlineAccountCharacter(client->GetAccountID())) {
+			//If this character is currently linkdead allow the new client to login to that character
+			if (!character->IsLinkdead() || character->basicInfo.characterID != char_id) {
+				OP_PlayCharacterReplyMsg_Packet* p = new OP_PlayCharacterReplyMsg_Packet(client->GetVersion());
+				p->response = PlayCharacterResponse::EAccountInUse;
+				client->QueuePacket(p);
+				return;
+			}
 		}
 
 		uint32_t zone_id = database.GetZoneIDForCharacter(char_id);

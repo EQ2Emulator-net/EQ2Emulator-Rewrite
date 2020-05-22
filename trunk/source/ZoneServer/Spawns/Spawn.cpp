@@ -7,13 +7,17 @@
 #include "../../common/timer.h"
 #include "Entity.h"
 #include "../ZoneServer/ZoneServer.h"
+#include "../ZoneServer/ZoneOperator.h"
+#include "../WorldTalk/WorldStream.h"
 // Packets
 #include "../Packets/OP_UpdateSpawnCmdMsg.h"
 #include "../Packets/OP_UpdateTitleCmd_Packet.h"
 #include "../Lua/LuaGlobals.h"
 #include "../Lua/LuaInterface.h"
+#include "../../common/Packets/EmuPackets/Emu_CharacterLinkdeadTimeout_Packet.h"
 
 extern LuaGlobals g_luaGlobals;
+extern ZoneOperator g_zoneOperator;
 
 Spawn::Spawn() : m_updateFlagsByte(0) {
 	m_spawnID = GetNextID();
@@ -145,6 +149,28 @@ Spawn::~Spawn() {
 
 void Spawn::Process() {
 	// m_controller->Process();
+
+	if (IsLinkdead()) {
+		//TODO: move this to a Player specific process or handle in the player controller process?
+		uint32_t now = Timer::GetServerTime();
+		if (now >= GetInfoStruct()->activity_timer) {
+			//Linkdead player has timed out, remove them from the zone and notify world
+			if (auto zone = GetZone()) {
+				auto _this = shared_from_this();
+				zone->RemovePlayer(std::dynamic_pointer_cast<Entity>(_this));			
+			}
+
+			if (auto pc = std::dynamic_pointer_cast<PlayerController>(m_controller)) {
+				CharacterSheet* sheet = pc->GetCharacterSheet();
+
+				auto p = new Emu_CharacterLinkdeadTimeout_Packet;
+				p->characterID = sheet->characterID;
+				g_zoneOperator.GetWorldStream()->QueuePacket(p);
+			}
+
+			return;
+		}
+	}
 
 	//TODO: move to controller and add a rule for the amount of time?
 	if (m_lastFaceTargetTime != 0 && Timer::GetServerTime() - m_lastFaceTargetTime >= 20000) {

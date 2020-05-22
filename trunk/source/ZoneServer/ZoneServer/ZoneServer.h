@@ -32,8 +32,8 @@ public:
 
 	bool AddClient(std::shared_ptr<Client> client);
 
-
 	void SendCharacterInfo(std::shared_ptr<Client> client);
+	std::shared_ptr<Entity> LoadCharacter(const std::shared_ptr<Client>& client);
 	void AddPlayer(std::shared_ptr<Entity> player);
 	void SendPlayersToNewClient(std::shared_ptr<Client> client);
 	void SendSpawnToClient(std::shared_ptr<Spawn> spawn, std::shared_ptr<Client> client);
@@ -101,6 +101,8 @@ public:
 	void Depop();
 
 	void LoadSpawns();
+
+	std::shared_ptr<Entity> FindLinkdeadCharacter(uint32_t characterID);
 
 	struct ZoneLoadFlags {
 		bool bNeedsSpawnLoad : 1;

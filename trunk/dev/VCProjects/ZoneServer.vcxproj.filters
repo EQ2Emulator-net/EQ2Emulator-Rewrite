@@ -1016,5 +1016,8 @@
     <ClInclude Include="..\..\source\common\TableUpdateGenerator.h">
       <Filter>common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_NotifyCharacterLinkdead_Packet.h">
+      <Filter>common\Packets\EmuPackets</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
