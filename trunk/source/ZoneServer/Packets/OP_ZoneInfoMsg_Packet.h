@@ -307,7 +307,7 @@ private:
 			asize16->SetMyArray(RegisterArray(news_item_array, NewsItem));
 		}
 
-		if (GetVersion() >= 1193) {
+		if (GetVersion() >= 1193 && GetVersion() < 67696) {
 			asize32 = RegisterUInt32(tab_count);
 			asize32->SetMyArray(RegisterArray(tab_array, Tabs));
 		}
