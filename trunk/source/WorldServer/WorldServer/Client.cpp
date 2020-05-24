@@ -55,14 +55,24 @@ void Client::SendLoginReply(uint8_t reply) {
 		r->ClassFlag = GetAllowedClasses();
 
 		if (GetVersion() >= 60100) {
-			r->Unknown5 = 1532;
-			r->Unknown7 = 4219469759;
-			r->Unknown7a = 8388607;
+			r->Unknown4 = 392192;
+			//we had this as 2 separate elements, some kind of flags
+			r->Unknown7 = (4219469759ull << 32) | 8388607ull;
 			r->RaceUnknown = 255;
 		}
 		else if (GetVersion() >= 1096) {
-			r->Unknown5 = 1148;
-			r->Unknown7 = 2145009599;
+			r->Unknown4 = 293888;
+			r->Unknown7 = 2145009599ull << 32;
+		}
+
+		if (GetVersion() >= 67650) {
+			//They moved the 2 8 byte bitflags above to 9 byte elements but array of byte, just send the first 8 bytes of those
+
+			//Guessing we need to htonl this! verify
+			uint64_t tmp1 = htonll(r->Unknown4);
+			uint64_t tmp2 = htonll(r->Unknown7);
+			r->bolUnknown4.assign(reinterpret_cast<const char*>(&tmp1), 8);
+			r->bolUnknown7.assign(reinterpret_cast<const char*>(&tmp2), 8);
 		}
 
 		// Equipment shown during normal character creation

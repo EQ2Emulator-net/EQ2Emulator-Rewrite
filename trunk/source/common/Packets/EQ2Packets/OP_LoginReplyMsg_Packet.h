@@ -25,13 +25,9 @@ public:
 		ResetAppearance = 0;
 		DoNotForceSoga = 1;
 		Unknown4 = 0;
-		Unknown5 = 0;
-		memset(Unknown6, 0, sizeof(Unknown6));
 		Unknown7 = 0;
-		Unknown7a = 0;
 		RaceUnknown = 0;
-		memset(Unknown8, 0, sizeof(Unknown8));
-		memset(Unknown9, 0, sizeof(Unknown9));
+		Unknown8 = 0;
 		Unknown10 = 1;
 		NumClassItems = 0;
 		UnknownArraySize = 0;
@@ -62,14 +58,10 @@ public:
 	std::string Unknown3;
 	uint8_t ResetAppearance;
 	uint8_t DoNotForceSoga;
-	uint8_t Unknown4;
-	uint16_t Unknown5;
-	uint8_t Unknown6[5];					//<Data ElementName = "unknown6" Type = "int8" Size = "5" / >
-	uint32_t Unknown7;
-	uint32_t Unknown7a; // 1188 7a = uint32
-	uint8_t RaceUnknown;
-	uint8_t Unknown8[3];					// size = 1 in 60100+ <Data ElementName = "unknown8" Type = "int8" Size = "3" / > < !--possibly related to rave_unknown but can't confirm-->
-	uint8_t Unknown9[3];
+	uint64_t Unknown4;
+	uint64_t Unknown7;
+	uint32_t RaceUnknown;
+	uint8_t Unknown8;
 	uint8_t Unknown10;
 	uint8_t NumClassItems;				//<Data ElementName = "num_class_items" Type = "int8" IfVariableSet = "unknown10" Size = "1" / >
 	struct ClassItem : public PacketSubstruct {
@@ -155,6 +147,10 @@ public:
 
 	uint8_t Unknown14[13]; // size = 13
 
+	//Arrays of byte
+	std::string bolUnknown4;
+	std::string bolUnknown7;
+
 private:
 	void RegisterElements() {
 		RegisterUInt8(Response);
@@ -171,27 +167,17 @@ private:
 		Register16String(Unknown3);
 		RegisterUInt8(ResetAppearance);
 		RegisterUInt8(DoNotForceSoga);
-		RegisterUInt8(Unknown4);
-		RegisterUInt16(Unknown5);
-		RescopeArrayElement(Unknown6);
-		RegisterUInt8(Unknown6)->SetCount(5);
-		RegisterUInt32(Unknown7);
-		
-		RegisterUInt32(Unknown7a);
+		if (GetVersion() < 67650) {
+			RegisterUInt64(Unknown4);
+			RegisterUInt64(Unknown7);
+		}
+		else {
+			Register32String(bolUnknown4);
+			Register32String(bolUnknown7);
+		}
 
-		RegisterUInt8(RaceUnknown);
-
-		RescopeArrayElement(Unknown8);
-		if (GetVersion() >= 60100)
-			RegisterUInt8(Unknown8);
-		else
-			RegisterUInt8(Unknown8)->SetCount(3);
-
-		RescopeArrayElement(Unknown9);
-		if (GetVersion() >= 60100)
-			RegisterUInt8(Unknown9)->SetCount(3);
-		else
-			RegisterUInt8(Unknown9);
+		RegisterUInt32(RaceUnknown);
+		RegisterUInt8(Unknown8);
 
 		auto u10 = RegisterUInt8(Unknown10);
 		PacketUInt8* asize = RegisterUInt8(NumClassItems);
