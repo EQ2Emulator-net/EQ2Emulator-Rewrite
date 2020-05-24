@@ -71,28 +71,32 @@ void Client::SendLoginReply(uint8_t reply) {
 
 	OP_LoginReplyMsg_Packet* r = new OP_LoginReplyMsg_Packet(GetVersion());
 	r->Response = reply;
-	/*if (reply == 0) {
-		r->AccountID = AccountID;
-		r->ResetAppearance = 0;
-		r->DoNotForceSoga = 1;
-		r->RaceUnknown = 63;
-		r->Unknown11 = 7;
-		r->SubscriptionLevel = 2;
-		r->RaceFlag = GetServer()->GetAllowedRaces();	//0x001FFFFF;
-		r->ClassFlag = GetServer()->GetAllowedClasses();	//0x07FFFFFE;
+	if (reply == 0) {
+		static const unsigned char unk7Bytes[] = { 0x7F, 0xFF, 0xFF, 0xF6, 0xFF, 0xFF, 0xFF, 0xFF, 0xFE };
+		r->bolUnknown4.resize(9);
+		r->bolUnknown7.assign(reinterpret_cast<const char*>(unk7Bytes), 9);
+		//r->AccountID = AccountID;
+		//r->ResetAppearance = 0;
+		//r->DoNotForceSoga = 1;
+		//r->RaceUnknown = 63;
+		//r->Unknown11 = 7;
+		//r->SubscriptionLevel = 2;
+		//r->RaceFlag = GetServer()->GetAllowedRaces();	//0x001FFFFF;
+		//r->ClassFlag = GetServer()->GetAllowedClasses();	//0x07FFFFFE;
 
-		// Unknown5 and Unknown7 set to DoV values
-		r->Unknown5 = 1148;
-		r->Unknown7 = 2145009599;
+		//// Unknown5 and Unknown7 set to DoV values
+		//r->Unknown5 = 1148;
+		//r->Unknown7 = 2145009599;
 
-		r->Unknown10 = 1;
-		r->NumClassItems = 0;
-		r->UnknownArraySize = 0;
+		//r->Unknown10 = 1;
+		//r->NumClassItems = 0;
+		//r->UnknownArraySize = 0;
+		r->Unknown14[12] = 1;
 	}
-	else {
-		r->AccountID = 0xFFFFFFFF;
-		r->ParentalControlTimer = 0xFFFFFFFF;
-	}*/
+	//else {
+	//	r->AccountID = 0xFFFFFFFF;
+	//	r->ParentalControlTimer = 0xFFFFFFFF;
+	//}
 	QueuePacket(r);
 }
 

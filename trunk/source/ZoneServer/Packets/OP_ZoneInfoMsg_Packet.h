@@ -13,7 +13,6 @@ public:
 		//server2 = "";
 		unknown1[0] = 0;
 		unknown1[1] = 0;
-		unknown2a = 0;
 		expansions_enabled = 0;
 		unknown3[0] = 0;
 		unknown3[1] = 0;
@@ -21,18 +20,7 @@ public:
 		unknown2b = 0;
 		unknown3b = 0;
 		unknown3c = 0;
-		//auction_website = "";
 		auction_port = 0;
-		//upload_page = "";
-		//upload_key = "";
-		//upload_key2 = "";
-		//zone = "";
-		//zone2 = "";
-		//parent_zone = "";
-		//zone_unknown2 = "";
-		//zone_desc = "";
-		//char_name = "";
-		//motd = "";
 		x = 0;
 		y = 0;
 		z = 0;
@@ -91,7 +79,8 @@ public:
 	std::string server1;
 	std::string server2;
 	uint8_t unknown1[2];
-	uint32_t unknown2a;
+	std::string bolUnknown4;
+	std::string bolUnknown7;
 	uint32_t expansions_enabled;
 	uint32_t unknown3[3];
 	uint32_t unknown2b;
@@ -235,24 +224,28 @@ private:
 			Register8String(server2);
 			uint8_t& Unknown1 = unknown1[0];
 			RegisterUInt8(Unknown1)->SetCount(2);
-			if (GetVersion() >= 63182)
-				RegisterUInt32(unknown2a);
-			RegisterUInt32(expansions_enabled);
-
-			uint32_t& Unknown3 = unknown3[0];
-			if (GetVersion() < 1142)
-				RegisterUInt32(Unknown3);
-			else
-				RegisterUInt32(Unknown3)->SetCount(3);
-
-			if (GetVersion() >= 63182) {
-				RegisterUInt32(unknown2b);
-				RegisterUInt32(unknown3b);
-				RegisterUInt32(unknown3c);
+			if (GetVersion() >= 67650) {
+				Register32String(bolUnknown4);
+				Register32String(bolUnknown7);
 			}
-			Register8String(auction_website);
-			RegisterUInt32(auction_port);
-			Register8String(upload_page);
+			else {
+				RegisterUInt32(expansions_enabled);
+
+				uint32_t& Unknown3 = unknown3[0];
+				if (GetVersion() < 1142)
+					RegisterUInt32(Unknown3);
+				else
+					RegisterUInt32(Unknown3)->SetCount(3);
+
+				if (GetVersion() >= 63182) {
+					RegisterUInt32(unknown2b);
+					RegisterUInt32(unknown3b);
+					RegisterUInt32(unknown3c);
+				}
+				Register8String(auction_website);
+				RegisterUInt32(auction_port);
+				Register8String(upload_page);
+			}
 			Register8String(upload_key);
 			if (GetVersion() >= 1067)
 				Register8String(upload_key2);

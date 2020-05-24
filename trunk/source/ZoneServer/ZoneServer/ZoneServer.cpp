@@ -206,6 +206,15 @@ bool ZoneServer::AddClient(std::shared_ptr<Client> c) {
 	zone->zone_flags = 25189220;
 	zone->unknown11 = 4294967292;
 
+	if (zone->GetVersion() >= 67650) {
+		//The expansion bytes changed from 2 8 byte vals to 2 9 byte arrays here
+		static const unsigned char unk4Bytes[] = { 0x7F, 0xFF, 0xF8, 0x90, 0x44, 0x94, 0x00, 0x10, 0x10 };
+		static const unsigned char unk7Bytes[] = { 0x7F, 0xFF, 0xFB, 0xF6, 0xC7, 0xFF, 0xFF, 0xFF, 0xFF };
+
+		zone->bolUnknown4.assign(reinterpret_cast<const char*>(unk4Bytes), 9);
+		zone->bolUnknown7.assign(reinterpret_cast<const char*>(unk7Bytes), 9);
+	}
+
 	c->QueuePacket(zone);
 	g_commandProcess.SendCommandList(c);
 

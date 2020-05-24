@@ -54,25 +54,23 @@ void Client::SendLoginReply(uint8_t reply) {
 		r->RaceFlag = GetAllowedRaces();
 		r->ClassFlag = GetAllowedClasses();
 
-		if (GetVersion() >= 60100) {
+		if (GetVersion() >= 67650) {
+			//They moved the 2 8 byte bitflags below to 9 byte elements but array of byte
+			static const unsigned char unk4Bytes[] = { 0x7F, 0xFF, 0xF8, 0x90, 0x44, 0x94, 0x00, 0x10, 0x10 };
+			static const unsigned char unk7Bytes[] = { 0x7F, 0xFF, 0xFF, 0xF6, 0xFF, 0xFF, 0xFF, 0xFF, 0xFE };
+
+			r->bolUnknown4.assign(reinterpret_cast<const char*>(unk4Bytes), 9);
+			r->bolUnknown7.assign(reinterpret_cast<const char*>(unk7Bytes), 9);
+		}
+		else if (GetVersion() >= 60100) {
 			r->Unknown4 = 392192;
 			//we had this as 2 separate elements, some kind of flags
-			r->Unknown7 = (4219469759ull << 32) | 8388607ull;
+			r->Unknown7 = 4219469759ull | (8388607ull << 32);
 			r->RaceUnknown = 255;
 		}
 		else if (GetVersion() >= 1096) {
 			r->Unknown4 = 293888;
-			r->Unknown7 = 2145009599ull << 32;
-		}
-
-		if (GetVersion() >= 67650) {
-			//They moved the 2 8 byte bitflags above to 9 byte elements but array of byte, just send the first 8 bytes of those
-
-			//Guessing we need to htonl this! verify
-			uint64_t tmp1 = htonll(r->Unknown4);
-			uint64_t tmp2 = htonll(r->Unknown7);
-			r->bolUnknown4.assign(reinterpret_cast<const char*>(&tmp1), 8);
-			r->bolUnknown7.assign(reinterpret_cast<const char*>(&tmp2), 8);
+			r->Unknown7 = 2145009599ull;
 		}
 
 		// Equipment shown during normal character creation
