@@ -39,7 +39,7 @@ public:
 	uint16_t NumPlayers;
 	uint8_t Load;
 	uint8_t NumOnlineFlag;
-	uint8_t FeatureSet[2];
+	uint8_t FeatureSet[3];
 	uint32_t AllowedRaces;
 	// End of Array elements
 
@@ -74,7 +74,9 @@ private:
 		}
 
 		RescopeArrayElement(FeatureSet);
-		if (GetVersion() >= 60100)
+		if (GetVersion() >= 67696)
+			RegisterUInt8(FeatureSet)->SetCount(3);
+		else if (GetVersion() >= 60100)
 			RegisterUInt8(FeatureSet)->SetCount(2);
 		else
 			RegisterUInt8(FeatureSet);

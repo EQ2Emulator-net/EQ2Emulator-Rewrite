@@ -84,7 +84,9 @@ public:
 
 private:
 	void RegisterElements() {
-		RegisterInt32(unknown0);
+		if (GetVersion() < 67696)
+			RegisterInt32(unknown0);
+
 		RegisterInt32(unknown1);
 		RegisterUInt64(unknown2);
 		RegisterInt16(unknown3);
