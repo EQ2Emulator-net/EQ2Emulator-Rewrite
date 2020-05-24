@@ -209,6 +209,7 @@
     <ClInclude Include="..\..\source\common\Crypto.h" />
     <ClInclude Include="..\..\source\common\database-result.h" />
     <ClInclude Include="..\..\source\common\database.h" />
+    <ClInclude Include="..\..\source\common\DatabaseRow.h" />
     <ClInclude Include="..\..\source\common\DBFieldTracker.h" />
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_NotifyCharacterLinkdead_Packet.h" />
     <ClInclude Include="..\..\source\common\TableUpdateGenerator.h" />

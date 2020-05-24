@@ -3,7 +3,7 @@
 #include "../Spawns/Entity.h"
 #include "../Database/ZoneDatabase.h"
 #include "../ZoneServer/ZoneServer.h"
-#include "../../common/TableUpdateGenerator.h"
+#include "../../common/DatabaseRow.h"
 
 extern ZoneDatabase database;
 
@@ -114,8 +114,8 @@ private:
 	void LinkCharacterFields(const CharacterSheet& sheet);
 	void LinkCharacterDetailsFields(const CharacterSheet& sheet);
 
-	TableUpdateGenerator characterUpdates;
-	TableUpdateGenerator characterDetailsUpdates;
+	DatabaseRow characterUpdates;
+	DatabaseRow characterDetailsUpdates;
 };
 
 class CharacterSheet : public CharacterDetails {
