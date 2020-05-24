@@ -314,6 +314,10 @@ public:
 	uint32_t AccountUnknown5[4];
 	uint8_t VeteranAdventureBonus; // 1096
 	uint8_t VeteranTradeskillBonus; // 1096
+	int32_t bolUnknown1[2];
+	uint8_t bolUnknown2;
+	int32_t bolUnknown3;
+	uint8_t bolUnknown4;
 
 
 private:
@@ -334,6 +338,13 @@ private:
 			if (GetVersion() >= 1096) {
 				RegisterUInt8(VeteranAdventureBonus);
 				RegisterUInt8(VeteranTradeskillBonus);
+				if (GetVersion() >= 67650) {
+					RescopeArrayElement(bolUnknown1);
+					RegisterInt32(bolUnknown1)->SetCount(2);
+					RegisterUInt8(bolUnknown2);
+					RegisterInt32(bolUnknown3);
+					RegisterUInt8(bolUnknown4);
+				}
 			}
 		}
 	}

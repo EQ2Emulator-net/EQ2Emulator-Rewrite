@@ -17,7 +17,7 @@
 #include "../../common/Packets/EQ2Packets/OP_LoginReplyMsg_Packet.h"
 
 // Server -> Client
-RegisterLoginStruct("OP_AllCharactersDescReplyMsg", OP_AllCharactersDescReplyMsg_Packet, 1, 1096);
+RegisterLoginStruct("OP_AllCharactersDescReplyMsg", OP_AllCharactersDescReplyMsg_Packet, 1, 1096, 67650);
 RegisterLoginStruct("OP_AllWSDescRequestMsg", OP_AllWSDescRequestMsg_Packet, 1);
 RegisterLoginStruct("OP_WorldListMsg", OP_WorldListMsg_Packet, 1, 60100);
 RegisterLoginStruct("OP_DeleteCharacterReplyMsg", OP_DeleteCharacterReplyMsg_Packet, 283, 284);
