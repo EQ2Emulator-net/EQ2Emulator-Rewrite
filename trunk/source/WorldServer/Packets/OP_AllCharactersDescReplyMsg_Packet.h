@@ -50,6 +50,12 @@ public:
 		AccountUnknown5[1] = 0xFFFFFFFF;
 		AccountUnknown5[2] = 0xFFFFFFFF;
 		AccountUnknown5[3] = 0;
+
+		//BOL
+		memset(bolUnknown1, 0, sizeof(bolUnknown1));
+		bolUnknown2 = 0;
+		bolUnknown3 = -1;
+		bolUnknown4 = 1;
 	}
 
 	uint8_t NumCharacters;
