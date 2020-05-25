@@ -12,7 +12,7 @@ extern WorldDatabase database;
 
 class OP_CreateCharacterRequestMsg_Packet : public EQ2Packet {
 public:
-	OP_CreateCharacterRequestMsg_Packet(uint16_t version)
+	OP_CreateCharacterRequestMsg_Packet(uint32_t version)
 		: EQ2Packet(version) {
 		starting_zone = 0;
 		RegisterElements();

@@ -196,6 +196,11 @@ void XmlStructDumper::ElementToXml(PacketElement* e, xml_document<>& doc, xml_no
 			dataNode->append_attribute(doc.allocate_attribute("bShortType", ei->bShortType ? "true" : "false"));
 		}
 	}
+	if (e->check_element) {
+		std::ostringstream ss;
+		ss << e->check_element->name << (e->equality_type ? "=" : "!=") << e->check_value;
+		dataNode->append_attribute(doc.allocate_attribute("Criteria", doc.allocate_string(ss.str().c_str())));
+	}
 	parent.append_node(dataNode);
 }
 

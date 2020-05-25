@@ -2,10 +2,6 @@
 
 #include "OpcodeManager.h"
 
-#ifdef EQ2_ZONE
-#include "../../../ZoneServer/Packets/OP_ClientCmdMsg_Packet.h"
-#endif
-
 OpcodeManager* OpcodeManager::GetGlobal() {
 	static OpcodeManager Manager;
 	return &Manager;
@@ -47,17 +43,6 @@ bool OpcodeManager::SetOpcodeForPacket(EQ2Packet* packet) {
 		if (range.first <= version && range.second >= version) {
 			for (auto& op : itr.second) {
 				if (op.second == allocator) {
-#ifdef EQ2_ZONE
-					if (auto ccmsg = dynamic_cast<OP_ClientCmdMsg_Packet*>(packet)) {
-						if (typeid(*ccmsg) != typeid(OP_ClientCmdMsg_Packet)) {
-							OP_ClientCmdMsg_Packet ccmd(version);
-							SetOpcodeForPacket(&ccmd);
-							packet->opcode = ccmd.opcode;
-							ccmsg->SetSubOpcode(op.first);
-							return true;
-						}
-					}
-#endif
 					if (NetDebugEnabled()) {
 						LogDebug(LOG_PACKET, 0, "Found opcode: %s", allocator->opName);
 					}

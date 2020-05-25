@@ -5,7 +5,7 @@
 
 class OP_DefaultGroupOptionsMsg_Packet : public EQ2Packet {
 public:
-	OP_DefaultGroupOptionsMsg_Packet(uint16_t version)
+	OP_DefaultGroupOptionsMsg_Packet(uint32_t version)
 		: EQ2Packet(version) {
 		RegisterElements();
 

@@ -1022,5 +1022,8 @@
     <ClInclude Include="..\..\source\common\DatabaseRow.h">
       <Filter>common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_EqExamineInfoCmd.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

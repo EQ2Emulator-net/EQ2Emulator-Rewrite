@@ -5,7 +5,7 @@
 
 class OP_GameWorldTimeMsg_Packet : public EQ2Packet {
 public:
-	OP_GameWorldTimeMsg_Packet(uint16_t version)
+	OP_GameWorldTimeMsg_Packet(uint32_t version)
 		: EQ2Packet(version) {
 		RegisterElements();
 

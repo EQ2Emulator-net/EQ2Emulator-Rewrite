@@ -358,6 +358,7 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_EntityVerbsVerbMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_EqCannedEmoteCmd_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_EqDestroyGhostCmd_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_EqExamineInfoCmd.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_EqSetControlGhostCmd_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_EqSetPOVGhostCmd_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_CreateGhostCmd_Packet.h" />

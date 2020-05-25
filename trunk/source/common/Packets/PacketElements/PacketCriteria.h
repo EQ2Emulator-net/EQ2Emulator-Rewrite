@@ -6,6 +6,7 @@
 class PacketElement;
 
 class PacketVariableEquality {
+	friend class XmlStructDumper;
 public:
 	virtual ~PacketVariableEquality() = default;
 

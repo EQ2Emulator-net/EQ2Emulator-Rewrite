@@ -28,7 +28,7 @@
 
 class OP_CreateCharacterReplyMsg_Packet : public EQ2Packet {
 public:
-	OP_CreateCharacterReplyMsg_Packet(uint16_t version)
+	OP_CreateCharacterReplyMsg_Packet(uint32_t version)
 		: EQ2Packet(version) {
 		RegisterElements();
 

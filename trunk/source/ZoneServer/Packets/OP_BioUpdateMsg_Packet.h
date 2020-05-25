@@ -12,7 +12,7 @@ extern ZoneDatabase database;
 
 class OP_BioUpdateMsg_Packet : public EQ2Packet {
 public:
-	OP_BioUpdateMsg_Packet(uint16_t version)
+	OP_BioUpdateMsg_Packet(uint32_t version)
 		: EQ2Packet(version) {
 		RegisterElements();
 	}

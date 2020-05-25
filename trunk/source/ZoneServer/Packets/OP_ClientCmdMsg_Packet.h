@@ -51,6 +51,23 @@ public:
 	}
 
 private:
+	enum ENOREGISTER { _ENOREGISTER };
+	OP_ClientCmdMsg_Packet(uint32_t version, ENOREGISTER) : EQ2Packet(version) {}
+
+public:
+	void FindOpcode() override {
+		EQ2Packet::FindOpcode();
+
+		//Set our sub opcode
+		if (typeid(*this) != typeid(OP_ClientCmdMsg_Packet)) {
+			OP_ClientCmdMsg_Packet ccmd(GetVersion(), _ENOREGISTER);
+			ccmd.FindOpcode();
+			SetSubOpcode(opcode);
+			opcode = ccmd.opcode;
+		}
+	}
+
+private:
 	uint32_t clientCmdSize;
 	uint16_t subOpcode;
 };
