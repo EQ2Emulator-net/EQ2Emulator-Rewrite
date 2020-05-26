@@ -9,6 +9,7 @@
 #include "OP_UpdateSpawnCmdMsg.h"
 #include "OP_MapFogDataUpdateMsg_Packet.h"
 #include "OP_MapFogDataInitMsg_Packet.h"
+#include "Substruct_ExamineDescItem.h"
 
 #define RegisterZoneSubstruct(pt, ...) RegisterXmlSubstruct(pt, "ZoneStructs.xml", __VA_ARGS__)
 
@@ -33,6 +34,7 @@ RegisterZoneSubstruct(UpdateCharacterSheetMsgData, 1, 60114);
 RegisterZoneSubstruct(Substruct_SpawnInfoUpdate, 1);
 RegisterZoneSubstruct(Substruct_SpawnPosUpdate, 1, 1188);
 RegisterZoneSubstruct(Substruct_SpawnVisUpdate, 1);
+RegisterZoneSubstruct(Substruct_ExamineDescItem, 60114, 67650);
 //I would rather these 2 substructs not be inlined but analyzer has issues nesting arrays that deep
 //RegisterZoneSubstruct(Substruct_MapFogData, 1188);
 //RegisterZoneSubstruct(Substruct_MapData, 1188);

@@ -186,7 +186,7 @@ void ZoneDatabase::ProcessCharacterDetailsResult(DatabaseResult& res, const std:
 	entity->SetCombatVoice(res.GetUInt32(i++));
 	entity->SetEmoteVoice(res.GetUInt32(i++));
 	
-	sheet.biography = res.GetUInt32(i++);
+	sheet.biography = res.GetString(i++);
 	sheet.flags = res.GetUInt32(i++);
 	sheet.flags2 = res.GetUInt32(i++);
 
