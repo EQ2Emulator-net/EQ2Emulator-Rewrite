@@ -64,6 +64,9 @@
     <Filter Include="source\Players">
       <UniqueIdentifier>{af3e2848-6ea2-41b5-963c-0a317067a6fd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\Items">
+      <UniqueIdentifier>{01df0f14-06ca-419b-a36d-d9c97f8b2599}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\ZoneServer\main.cpp">
@@ -1030,6 +1033,15 @@
     </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_ExamineDescItem.h">
       <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Items\ItemTypes.h">
+      <Filter>source\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\ItemPackets.h">
+      <Filter>source\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Items\Item.h">
+      <Filter>source\Items</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

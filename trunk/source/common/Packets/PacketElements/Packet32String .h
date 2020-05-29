@@ -52,6 +52,10 @@ public:
 		return size;
 	}
 
+	bool VariableIsSet() override {
+		return !element[0].empty();
+	}
+
 private:
 	std::string* element;
 };

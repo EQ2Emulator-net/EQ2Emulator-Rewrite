@@ -32,18 +32,38 @@ public:
 		ifVariableSet = e;
 	}
 
+	void AddIfAnyVariableSet(PacketElement* e) {
+		ifAnyVariableSet.push_back(e);
+	}
+
 	void SetIsHidden(bool bHide) {
 		bHidden = bHide;
 	}
 
 	bool MeetsCriteria() {
-		if (ifVariableSet) {
-			if (ifVariableSet == this) {
+		auto CheckIfVariableSet = [this](PacketElement* e) -> bool {
+			if (e == this) {
 				return VariableIsSet() && CheckVariableEquality();
 			}
 
-			if (!ifVariableSet->MeetsCriteria() || !ifVariableSet->VariableIsSet()) {
+			if (!e->MeetsCriteria() || !e->VariableIsSet()) {
 				return false;
+			}
+
+			return true;
+		};
+
+		if (ifVariableSet) {
+			if (!CheckIfVariableSet(ifVariableSet)) {
+				return false;
+			}
+		}
+
+		if (!ifAnyVariableSet.empty()) {
+			for (auto& itr : ifAnyVariableSet) {
+				if (!CheckIfVariableSet(itr)) {
+					return false;
+				}
 			}
 		}
 
@@ -67,6 +87,8 @@ protected:
 	const char* name;
 	//Check if this variable is "set" (!= 0) before writing
 	PacketElement* ifVariableSet;
+	//Check if any of these variables are set
+	std::vector<PacketElement*> ifAnyVariableSet;
 	//If true this element will not display in an xml dump
 	bool bHidden;
 };

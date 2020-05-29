@@ -189,9 +189,6 @@ void XmlStructDumper::ElementToXml(PacketElement* e, xml_document<>& doc, xml_no
 		if (auto oe = dynamic_cast<PacketOversizedByte*>(e)) {
 			dataNode->append_attribute(doc.allocate_attribute("OversizedValue", oe->bSigned ? "127" : "255"));
 		}
-		if (e->ifVariableSet) {
-			dataNode->append_attribute(doc.allocate_attribute("IfVariableSet", doc.allocate_string(e->ifVariableSet->name)));
-		}
 		if (auto ei = dynamic_cast<PacketEQ2EquipmentItem*>(e)) {
 			dataNode->append_attribute(doc.allocate_attribute("bShortType", ei->bShortType ? "true" : "false"));
 		}
@@ -200,6 +197,24 @@ void XmlStructDumper::ElementToXml(PacketElement* e, xml_document<>& doc, xml_no
 		std::ostringstream ss;
 		ss << e->check_element->name << (e->equality_type ? "=" : "!=") << e->check_value;
 		dataNode->append_attribute(doc.allocate_attribute("Criteria", doc.allocate_string(ss.str().c_str())));
+	}
+	if (e->ifVariableSet) {
+		dataNode->append_attribute(doc.allocate_attribute("IfVariableSet", doc.allocate_string(e->ifVariableSet->name)));
+	}
+	if (!e->ifAnyVariableSet.empty()) {
+		bool bFirst = true;
+		std::ostringstream ss;
+		for (auto& itr : e->ifAnyVariableSet) {
+			if (bFirst) {
+				bFirst = false;
+			}
+			else {
+				ss << ',';
+			}
+			ss << itr->name;
+		}
+
+		dataNode->append_attribute(doc.allocate_attribute("IfAnyVariableSet", doc.allocate_string(ss.str().c_str())));
 	}
 	parent.append_node(dataNode);
 }

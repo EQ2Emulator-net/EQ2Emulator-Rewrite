@@ -331,6 +331,8 @@
     <ClInclude Include="..\..\source\ZoneServer\Controllers\PetController.h" />
     <ClInclude Include="..\..\source\ZoneServer\Controllers\PlayerController.h" />
     <ClInclude Include="..\..\source\ZoneServer\Database\ZoneDatabase.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Items\Item.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Items\ItemTypes.h" />
     <ClInclude Include="..\..\source\ZoneServer\Lua\LuaChatFunctions.h" />
     <ClInclude Include="..\..\source\ZoneServer\Lua\LuaFunctions.h" />
     <ClInclude Include="..\..\source\ZoneServer\Lua\LuaGlobals.h" />
@@ -338,6 +340,7 @@
     <ClInclude Include="..\..\source\ZoneServer\Lua\LuaSpawnFunctions.h" />
     <ClInclude Include="..\..\source\ZoneServer\Lua\LuaUserData.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\EncodedPackets.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\ItemPackets.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_BioUpdateMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_CampAbortedMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_CampStartedMsg_Packet.h" />
