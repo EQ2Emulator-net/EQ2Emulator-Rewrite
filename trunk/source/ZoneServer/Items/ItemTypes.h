@@ -66,7 +66,6 @@ struct RecipeBookItem {
 };
 
 struct ItemRecipeBookData {
-	uint16_t recipeCount;
 	std::vector<RecipeBookItem> items;
 	uint16_t uses;
 	bool bScribed;

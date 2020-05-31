@@ -396,6 +396,12 @@
     <ClCompile Include="..\..\source\ZoneServer\Players\CharacterSheet.cpp">
       <Filter>source\Players</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Items\Item.cpp">
+      <Filter>source\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Items\ItemDatabase.cpp">
+      <Filter>source\Items</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h">
@@ -1042,6 +1048,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\Items\Item.h">
       <Filter>source\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Items\MasterItemList.h">
+      <Filter>source\Database</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

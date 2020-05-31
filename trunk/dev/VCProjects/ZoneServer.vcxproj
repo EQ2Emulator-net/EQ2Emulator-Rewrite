@@ -163,6 +163,8 @@
     <ClCompile Include="..\..\source\ZoneServer\Controllers\BaseController.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Controllers\PlayerController.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Database\ZoneDatabase.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Items\Item.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Items\ItemDatabase.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Lua\LuaChatFunctions.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Lua\LuaFunctions.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Lua\LuaGlobals.cpp" />
@@ -333,6 +335,7 @@
     <ClInclude Include="..\..\source\ZoneServer\Database\ZoneDatabase.h" />
     <ClInclude Include="..\..\source\ZoneServer\Items\Item.h" />
     <ClInclude Include="..\..\source\ZoneServer\Items\ItemTypes.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Items\MasterItemList.h" />
     <ClInclude Include="..\..\source\ZoneServer\Lua\LuaChatFunctions.h" />
     <ClInclude Include="..\..\source\ZoneServer\Lua\LuaFunctions.h" />
     <ClInclude Include="..\..\source\ZoneServer\Lua\LuaGlobals.h" />

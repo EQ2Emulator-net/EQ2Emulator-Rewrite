@@ -12,6 +12,7 @@ class CommandProcess;
 class DatabaseResult;
 class LuaGlobals;
 class CharacterSheet;
+class Item;
 
 class ZoneDatabase : public CommonDatabase {
 public:
@@ -71,6 +72,9 @@ public:
 	bool LoadSpawnScripts(LuaGlobals& globals);
 	bool LoadZoneScripts(LuaGlobals& globals);
 
+	//Items
+	void LoadMasterItems(class MasterItemList& masterItems);
+
 private:
 	//The return value is the next indice in the query result
 	uint32_t ProcessSpawnTableFields(const std::shared_ptr<class Spawn>& spawn, class DatabaseResult& result);
@@ -78,4 +82,7 @@ private:
 	void ProcessEntityColors(DatabaseResult& result, std::unordered_map<uint32_t, std::shared_ptr<Spawn> >& outEntities);
 	//The input result to this function should be indexed by (spawn_id, slot_id, equip_type, red, green, blue, highlight_red, highlight_green, highlight_blue)
 	void ProcessNpcAppearanceEquipment(DatabaseResult& result, std::unordered_map<uint32_t, std::shared_ptr<Spawn> >& outEntities);
+	//The return value is the next indice in the query result
+	uint32_t ProcessItemTableResult(DatabaseResult& result, const std::shared_ptr<Item>& item);
+	uint32_t ProcessItemStatsResult(DatabaseResult& result, std::unordered_map<uint32_t, const std::shared_ptr<Item> >& outItems);
 };

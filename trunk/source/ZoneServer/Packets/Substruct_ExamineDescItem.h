@@ -3,7 +3,7 @@
 #include "Substruct_ExamineDescBase.h"
 #include "../Items/Item.h"
 
-uint8_t GetItemStructVersion(uint32_t version) {
+inline uint8_t GetItemStructVersion(uint32_t version) {
 	uint8_t subVersion;
 
 	if (version >= 67650)
@@ -196,9 +196,11 @@ public:
 		}
 
 		slotArray.clear();
-		for (auto& itr : ItemDescBaseData::slots) {
-			slotArray.emplace_back(GetVersion());
-			slotArray.back().slotID = itr;
+		for (uint32_t i = 0; i < 31; i++) {
+			if (slotBitmask & (1 << i)) {
+				slotArray.emplace_back(GetVersion());
+				slotArray.back().slotID = static_cast<uint8_t>(i);
+			}
 		}
 
 		stringModArray.clear();
@@ -583,7 +585,7 @@ public:
 			//For select client versions adorn slots were a bitmask
 			adornSlotBitmask = 0;
 			for (uint32_t i = 0; i < 11; i++) {
-				if (adornSlots[i]) {
+				if (adornSlots[i] != 0xFF) {
 					adornSlotBitmask |= (1 << i);
 				}
 			}
@@ -661,7 +663,7 @@ public:
 		}
 		else {
 			RescopeArrayElement(adornSlots);
-			auto e = RegisterBool(adornSlots);
+			auto e = RegisterUInt8(adornSlots);
 			e->SetCount(11);
 		}
 		{

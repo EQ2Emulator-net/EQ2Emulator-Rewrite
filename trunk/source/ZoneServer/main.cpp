@@ -15,6 +15,7 @@
 #include "Spawns/EntityCommands.h"
 #include "ZoneServer/MasterZoneLookup.h"
 #include "Lua/LuaGlobals.h"
+#include "Items/MasterItemList.h"
 
 ZoneDatabase database;
 Classes classes;
@@ -25,6 +26,7 @@ ChatFilterLookup g_chatFilterLookup;
 MasterEntityCommandList g_masterEntityCommandList;
 MasterZoneLookup g_masterZoneLookup;
 LuaGlobals g_luaGlobals;
+MasterItemList g_masterItemList;
 
 int main() {
 	bool looping = true;
@@ -37,6 +39,7 @@ int main() {
 	bool logging = true;
 	std::thread logging_thread(&LoggingSystem::LogWritingThread, &logging);
 
+	std::vector<std::thread> loadingThreads;
 	WorldTalk talk;
 	
 	{
@@ -55,6 +58,20 @@ int main() {
 	if (success) {
 		LogDebug(LOG_DATABASE, 0, "Loading rules...");
 		database.LoadRules(g_ruleManager);
+	}
+
+	if (success) {
+		//These take awhile so load them asyncronously
+		auto LoadItemsHelper = []{
+			database.LoadMasterItems(g_masterItemList);
+		};
+		loadingThreads.emplace_back(LoadItemsHelper);
+
+		LogDebug(LOG_DATABASE, 0, "Loading spawn scripts...");
+		auto LoadSpawnScriptsHelper = [] {
+			database.LoadSpawnScripts(g_luaGlobals);
+		};
+		loadingThreads.emplace_back(LoadSpawnScriptsHelper);
 	}
 
 	if (success) {
@@ -78,14 +95,15 @@ int main() {
 	}
 
 	if (success) {
-		LogDebug(LOG_DATABASE, 0, "Loading spawn scripts...");
-		success = database.LoadSpawnScripts(g_luaGlobals);
-	}
-
-	if (success) {
 		LogDebug(LOG_DATABASE, 0, "Loading zone scripts...");
 		success = database.LoadZoneScripts(g_luaGlobals);
 	}
+
+	//Wait on our child loading threads
+	for (auto& itr : loadingThreads) {
+		itr.join();
+	}
+	loadingThreads.clear();
 
 	if (success)
 		success = g_zoneOperator.Open();

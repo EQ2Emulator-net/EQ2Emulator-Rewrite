@@ -4,6 +4,10 @@
 #include <string>
 #include <vector>
 #include "ItemTypes.h"
+#include "../../common/Packets/PacketElements/PacketEQ2EquipmentItem.h"
+
+class Substruct_ExamineDescItem;
+class Client;
 
 struct ItemStatMod {
 	uint8_t statType;
@@ -47,8 +51,9 @@ struct ItemClassReq {
 };
 
 struct ItemDescBaseData {
+	//Primitives
 	bool bHasCreator;
-	std::string creatorName;
+	
 	uint32_t uniqueID;
 	uint64_t brokerID;
 	int32_t itemID;
@@ -62,9 +67,7 @@ struct ItemDescBaseData {
 	uint8_t unknownBytes10[10];
 	uint8_t statModCount;
 	uint8_t unknownArrayCount;
-	std::vector<ItemStatMod> statMods;
-	std::vector<ItemArrayUnknown> unknownArray;
-	std::vector<ItemStringMod> stringMods;
+	
 	uint8_t stringModCount;
 	uint32_t unknown19;
 	uint8_t condition;
@@ -77,10 +80,19 @@ struct ItemDescBaseData {
 	int16_t skillMin;
 	uint8_t classReqCount;
 	uint8_t slotCount;
-	std::vector<ItemClassReq> classReqs;
-	std::vector<uint8_t> slots;
+	uint32_t slotBitmask;
 	uint32_t itemTypeUnknown;
 	uint8_t itemType;
+
+	//Dynamic
+protected:
+	uint8_t ItemDesc_START_DYNAMIC_DATA;
+public:
+	std::vector<ItemClassReq> classReqs;
+	std::string creatorName;
+	std::vector<ItemStatMod> statMods;
+	std::vector<ItemArrayUnknown> unknownArray;
+	std::vector<ItemStringMod> stringMods;
 };
 
 struct ItemEffect {
@@ -164,29 +176,22 @@ struct ItemAdornmentSlotDetails {
 };
 
 struct ItemDescFooterData {
+	//Primitives
 	uint8_t numEffects;
 	uint8_t numTierLine;
 	uint8_t recommendedLevel;
 	uint32_t requiredLevel;
-	std::vector<ItemEffect> effects;
-	std::vector<ItemTierLineEntry> tierLine;
 	uint64_t requiredClasses;
 	uint64_t requiredClasses2;
-	bool adornSlots[11];
+	uint8_t adornSlots[11];
 	uint16_t stackSize;
 	uint8_t footerUnknownArrayCount;
-	std::vector<ItemArrayUnknown> footerUnknownArray;
-	std::string setName;
-	ItemSetDetails setDetails;
 	uint8_t adornCount;
-	std::vector<ItemAdornmentDetails> adornments;
 	uint8_t unknown1;
 	bool bCollectable;
 	bool bCollectionNeeded;
 	uint8_t unknown60055a;
 	uint8_t unknown60055b;
-	std::string offersQuest;
-	std::string requiredByQuest;
 	uint8_t offersQuestColor;
 	uint8_t requiredByQuestColor;
 	bool bHasCharges;
@@ -196,7 +201,6 @@ struct ItemDescFooterData {
 	uint8_t unknown27;
 	uint8_t unknown32;
 	uint8_t adornSlotDetailsCount;
-	std::vector<ItemAdornmentSlotDetails> adornSlotDetails;
 	bool bLockedFlag;
 	uint8_t unknown61;
 	uint8_t unknown76;
@@ -206,36 +210,265 @@ struct ItemDescFooterData {
 	uint32_t unknown64b;
 	uint32_t COEAppearanceIDUnknown;
 	uint8_t unknown67;
+	uint8_t unknown87;
+	uint8_t unknown94;
+	uint8_t footer_unknown_7;
+
+	//Dynamic
+protected:
+	uint8_t ItemFooter_START_DYNAMIC_DATA;
+public:
+	ItemSetDetails setDetails;
+	std::vector<ItemAdornmentSlotDetails> adornSlotDetails;
+	std::vector<ItemAdornmentDetails> adornments;
+	std::vector<ItemArrayUnknown> footerUnknownArray;
+	std::vector<ItemEffect> effects;
+	std::vector<ItemTierLineEntry> tierLine;
 	std::string unknown68;
 	std::string unknown71;
-	uint8_t unknown87;
-	std::string unknown88String;
-	std::string unknown93String;
-	uint8_t unknown94;
 	std::string itemName;
 	std::string description;
-	uint8_t footer_unknown_7;
+	std::string unknown88String;
+	std::string unknown93String;
+	std::string offersQuest;
+	std::string requiredByQuest;
+	std::string setName;
+
 
 protected:
 	//For some versions this was a bitmask, later changed to just array of bool
 	uint32_t adornSlotBitmask;
 };
 
-class Item : public ItemDescBaseData, public ItemDescFooterData {
+enum class EItemType : uint8_t {
+	EINVALID = 0xFF,
+	EGENERIC = 0,
+	EWEAPON = 1,
+	ERANGED_WEAPON = 2,
+	EARMOR = 3,
+	ESHIELD = 4,
+	EBAG = 5,
+	ERECIPE_BOOK = 7,
+	EPROVISION = 8,
+	EBAUBLE = 9,
+	EHOUSE = 10,
+	EAMMO = 11,
+	EHOUSE_CONTAINER = 12,
+	EADORNMENT = 13,
+	EACHIEVEMENT_PROFILE = 16,
+	EREWARD_VOUCHER = 17,
+	EREWARD_CRATE = 18,
+	EBOOK = 19,
+	EREFORGING_DECORATION = 20,
+	EDUNGEON_MAKER = 21,
+	EMARKETPLACE = 22,
+	EREWARD_CRATE_2 = 23,
+	EINFUSER_1 = 24,
+	EINFUSER_2 = 25,
+	EEXPERIENCE_VALUE = 26,
+	EOVERSEER = 27
+};
+
+class Item : public ItemDescBaseData, public ItemDescFooterData, public std::enable_shared_from_this<Item> {
 protected:
-	Item() = default;
+	Item();
+	Item(const Item& rhs);
 
 public:
 	virtual ~Item() = default;
+	virtual std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) = 0;
+
+	virtual std::shared_ptr<Item> Copy() const = 0;
+
+	bool bUseable;
+	uint32_t scriptID;
+	std::optional<EQ2EquipmentItem> appearance;
+
+	static EItemType GetItemTypeFromName(const char* name);
+
+	static const uint64_t ITEM_FLAG_ATTUNED = 1 << 0;
+	static const uint64_t ITEM_FLAG_ATTUNEABLE = 1 << 1;
+	static const uint64_t ITEM_FLAG_ARTIFACT = 1 << 2;
+	static const uint64_t ITEM_FLAG_LORE = 1 << 3;
+	static const uint64_t ITEM_FLAG_TEMPORARY = 1 << 4;
+	static const uint64_t ITEM_FLAG_NO_TRADE = 1 << 5;
+	static const uint64_t ITEM_FLAG_NO_VALUE = 1 << 6;
+	static const uint64_t ITEM_FLAG_NO_ZONE = 1 << 7;
+	static const uint64_t ITEM_FLAG_NO_DESTROY = 1 << 8;
+	static const uint64_t ITEM_FLAG_CRAFTED = 1 << 9;
+	static const uint64_t ITEM_FLAG_GOOD_ONLY = 1 << 10;
+	static const uint64_t ITEM_FLAG_EVIL_ONLY = 1 << 11;
+	static const uint64_t ITEM_FLAG_STACK_LORE = 1 << 12;
+	static const uint64_t ITEM_FLAG_LORE_EQUIP = 1 << 13;
+	static const uint64_t ITEM_FLAG_NO_TRANSMUTE = 1 << 14;
+	static const uint64_t ITEM_FLAG_CURSED = 1 << 15;
+	static const uint64_t ITEM_FLAG_ORNATE = 1 << 16;
+	static const uint64_t ITEM_FLAG_HEIRLOOM = 1 << 17;
+	static const uint64_t ITEM_FLAG_APPEARANCE_ONLY = 1 << 18;
+	static const uint64_t ITEM_FLAG_UNLOCKED = 1 << 19;
+	static const uint64_t ITEM_FLAG_REFORGED = 1 << 20;
+	static const uint64_t ITEM_FLAG_NO_REPAIR = 1 << 21;
+	static const uint64_t ITEM_FLAG_REFINED = 1 << 23;
+	static const uint64_t ITEM_FLAG_INDESTRUCTIBLE = 1 << 25;
+	static const uint64_t ITEM_FLAG_NO_EXPERIMENT = 1 << 26;
+	static const uint64_t ITEM_FLAG_HOUSE_LORE = 1 << 27;
+	static const uint64_t ITEM_FLAG_BUILDING_BLOCK = 1 << 29;
+	static const uint64_t ITEM_FLAG_FREE_REFORGE = 1 << 30;
+	static const uint64_t ITEM_FLAG_INFUSABLE = 1 << 31;
+	static const uint64_t ITEM_FLAG_MERC_ONLY = 1ull << 32;
+	static const uint64_t ITEM_FLAG_MOUNT_ONLY = 1ull << 33;
 };
 
 class ItemGeneric : public Item {
 public:
 	ItemGeneric() = default;
 	~ItemGeneric() = default;
+
+	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) override;
+
+	std::shared_ptr<Item> Copy() const override;
 };
 
 class ItemMeleeWeapon : public Item, public ItemMeleeWeaponData {
 public:
+	ItemMeleeWeapon() = default;
+	~ItemMeleeWeapon() = default;
 
+	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) override;
+	std::shared_ptr<Item> Copy() const override;
+};
+
+class ItemRangedWeapon : public Item, public ItemRangedWeaponData {
+public:
+	ItemRangedWeapon() = default;
+	~ItemRangedWeapon() = default;
+
+	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) override;
+	std::shared_ptr<Item> Copy() const override;
+};
+
+class ItemArmor : public Item, public ItemArmorData {
+public:
+	ItemArmor() = default;
+	~ItemArmor() = default;
+
+	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) override;
+	std::shared_ptr<Item> Copy() const override;
+};
+
+class ItemShield : public Item, public ItemShieldData {
+public:
+	ItemShield() = default;
+	~ItemShield() = default;
+
+	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) override;
+	std::shared_ptr<Item> Copy() const override;
+};
+
+class ItemBag : public Item, public ItemBagData {
+public:
+	ItemBag() = default;
+	~ItemBag() = default;
+
+	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) override;
+	std::shared_ptr<Item> Copy() const override;
+};
+
+class ItemRecipeBook : public Item, public ItemRecipeBookData {
+public:
+	ItemRecipeBook() = default;
+	~ItemRecipeBook() = default;
+
+	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) override;
+	std::shared_ptr<Item> Copy() const override;
+};
+
+class ItemProvision : public Item, public ItemProvisionData {
+public:
+	ItemProvision() = default;
+	~ItemProvision() = default;
+
+	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) override;
+	std::shared_ptr<Item> Copy() const override;
+};
+
+class ItemBauble : public Item, public ItemBaubleData {
+public:
+	ItemBauble() = default;
+	~ItemBauble() = default;
+
+	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) override;
+	std::shared_ptr<Item> Copy() const override;
+};
+
+class ItemHouse : public Item, public ItemHouseData {
+public:
+	ItemHouse() = default;
+	~ItemHouse() = default;
+
+	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) override;
+	std::shared_ptr<Item> Copy() const override;
+};
+
+class ItemAmmo : public Item, public ItemAmmoData {
+public:
+	ItemAmmo() = default;
+	~ItemAmmo() = default;
+
+	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) override;
+	std::shared_ptr<Item> Copy() const override;
+};
+
+class ItemAdornment : public Item, public ItemAdornmentData {
+public:
+	ItemAdornment() = default;
+	~ItemAdornment() = default;
+
+	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) override;
+	std::shared_ptr<Item> Copy() const override;
+};
+
+class ItemAchievementProfile : public Item, public ItemAchievementProfileData {
+public:
+	ItemAchievementProfile() = default;
+	~ItemAchievementProfile() = default;
+
+	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) override;
+	std::shared_ptr<Item> Copy() const override;
+};
+
+class ItemRewardVoucher : public Item, public ItemRewardVoucherData {
+public:
+	ItemRewardVoucher() = default;
+	~ItemRewardVoucher() = default;
+
+	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) override;
+	std::shared_ptr<Item> Copy() const override;
+};
+
+class ItemRewardCrate : public Item, public ItemRewardCrateData {
+public:
+	ItemRewardCrate() = default;
+	~ItemRewardCrate() = default;
+
+	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) override;
+	std::shared_ptr<Item> Copy() const override;
+};
+
+class ItemBook : public Item, public ItemBookData {
+public:
+	ItemBook() = default;
+	~ItemBook() = default;
+
+	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) override;
+	std::shared_ptr<Item> Copy() const override;
+};
+
+class ItemReforgingDecoration : public Item, public ItemReforgingDecorationData {
+public:
+	ItemReforgingDecoration() = default;
+	~ItemReforgingDecoration() = default;
+
+	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) override;
+	std::shared_ptr<Item> Copy() const override;
 };

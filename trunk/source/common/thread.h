@@ -43,7 +43,7 @@ public:
 
 	template <typename T>
 	static std::future<typename std::result_of<T()>::type> ThreadStartWithFuture(const char* ThreadLabel, T func) {
-		static_assert(std::is_bind_expression<T>::value, "ThreadManager::ThreadStartWithFuture must use a std::bind object as \"func\"");
+		static_assert(std::is_bind_expression_v<T>, "ThreadManager::ThreadStartWithFuture must use a std::bind object as \"func\"");
 		return std::async(std::launch::async, &ThreadManager::ThreadStartHelper<T>, ThreadLabel, func);
 	}
 

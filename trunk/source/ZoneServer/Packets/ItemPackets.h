@@ -6,16 +6,16 @@
 
 class ExamineInfoCmd_Item_Packet : public OP_EqExamineInfoCmd_Packet {
 public:
-	ExamineInfoCmd_Item_Packet(uint32_t ver, const Substruct_ExamineDescItem* item) : OP_EqExamineInfoCmd_Packet(ver), itemDesc(item) {
+	ExamineInfoCmd_Item_Packet(uint32_t ver, Substruct_ExamineDescItem* item) : OP_EqExamineInfoCmd_Packet(ver), itemDesc(item) {
 		RegisterElements();
 	}
 
 	~ExamineInfoCmd_Item_Packet() = default;
 
-	const Substruct_ExamineDescItem* itemDesc;
+	Substruct_ExamineDescItem* itemDesc;
 
 	void RegisterElements() {
-		const Substruct_ExamineDescItem& itemDesc = *this->itemDesc;
+		Substruct_ExamineDescItem& itemDesc = *this->itemDesc;
 		RegisterSubstruct(itemDesc);
 	}
 };
@@ -214,6 +214,7 @@ public:
 	};
 
 	std::vector<Substruct_RecipeBook> recipeArray;
+	uint16_t recipeCount;
 
 	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
 		recipeArray.clear();
@@ -588,6 +589,13 @@ public:
 	}
 
 	~Substruct_ExamineDescItem_Book() = default;
+
+	Substruct_HouseItem houseData;
+
+	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
+		static_cast<ItemHouseData&>(houseData) = this->ItemBookData::houseData;
+		PacketSubstruct::WriteElement(outbuf, offset);
+	}
 
 	void RegisterElements() {
 		RegisterUInt8(language);
