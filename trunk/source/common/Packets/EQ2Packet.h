@@ -22,6 +22,10 @@ public:
 
 	virtual void HandlePacket(std::shared_ptr<Client> client);
 
+	virtual void PreWrite();
+	virtual void PostWrite();
+	virtual void PostRead();
+
 	virtual EQ2Packet* GetSubPacket() {
 		return nullptr;
 	}

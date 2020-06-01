@@ -5,9 +5,9 @@
 
 class OP_EqExamineInfoCmd_Packet : public OP_ClientCmdMsg_Packet {
 public:
-	OP_EqExamineInfoCmd_Packet(uint32_t version)
+	OP_EqExamineInfoCmd_Packet(uint32_t version, bool bStructDump = true)
 		: OP_ClientCmdMsg_Packet(version), bShowName(true), bShowPopup(false), unknown1(0), unknown{ 0, 0, 0 } {
-		RegisterElements();
+		RegisterElements(bStructDump);
 	}
 
 private:
@@ -24,6 +24,7 @@ public:
 	void FindOpcode() override {
 		if (typeid(*this) != typeid(OP_EqExamineInfoCmd_Packet)) {
 			OP_EqExamineInfoCmd_Packet p(GetVersion(), _ENOREGISTER);
+			p.FindOpcode();
 			opcode = p.GetOpcode();
 			SetSubOpcode(p.GetSubOpcode());
 		}
@@ -35,15 +36,14 @@ public:
 private:
 	std::optional<Substruct_ExamineDescBase> baseSubstruct;
 
-	void RegisterElements() {
+	void RegisterElements(bool bStructDump) {
 		RegisterBool(bShowName);
 		RescopeArrayElement(unknown);
 		RegisterUInt8(unknown)->SetCount(GetVersion() >= 1188 ? 3 : 2);
 		RegisterBool(bShowPopup);
 		RegisterUInt8(unknown1);
 
-		if (typeid(*this) == typeid(OP_EqExamineInfoCmd_Packet)) {
-			//This is basically just used for packet struct dumps
+		if (bStructDump) {
 			baseSubstruct.emplace(GetVersion(), true);
 			RegisterSubstruct(*baseSubstruct);
 		}

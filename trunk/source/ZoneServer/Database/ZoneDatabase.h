@@ -84,5 +84,18 @@ private:
 	void ProcessNpcAppearanceEquipment(DatabaseResult& result, std::unordered_map<uint32_t, std::shared_ptr<Spawn> >& outEntities);
 	//The return value is the next indice in the query result
 	uint32_t ProcessItemTableResult(DatabaseResult& result, const std::shared_ptr<Item>& item);
-	uint32_t ProcessItemStatsResult(DatabaseResult& result, std::unordered_map<uint32_t, const std::shared_ptr<Item> >& outItems);
+	uint32_t ProcessItemWeaponResult(DatabaseResult& result, const std::shared_ptr<class ItemMeleeWeapon>& item, uint32_t startIndex);
+	uint32_t ProcessItemRangeResult(DatabaseResult& result, const std::shared_ptr<class ItemRangedWeapon>& item, uint32_t startIndex);
+	uint32_t ProcessItemArmorResult(DatabaseResult& result, const std::shared_ptr<class ItemArmor>& item, uint32_t startIndex);
+	uint32_t ProcessItemShieldResult(DatabaseResult& result, const std::shared_ptr<class ItemShield>& item, uint32_t startIndex);
+	uint32_t ProcessItemBagResult(DatabaseResult& result, const std::shared_ptr<class ItemBag>& item, uint32_t startIndex);
+	uint32_t ProcessItemProvisionResult(DatabaseResult& result, const std::shared_ptr<class ItemProvision>& item, uint32_t startIndex);
+	uint32_t ProcessItemRecipeResult(DatabaseResult& result, const std::shared_ptr<class ItemRecipeBook>& item, uint32_t startIndex);
+	void ProcessItemRecipeItemsResult(DatabaseResult& result, const std::unordered_map<uint32_t, std::shared_ptr<class ItemRecipeBook> >& items);
+	uint32_t ProcessItemHouseResult(DatabaseResult& result, const std::shared_ptr<class ItemHouse>& item, uint32_t startIndex);
+	uint32_t ProcessItemBaubleResult(DatabaseResult& result, const std::shared_ptr<class ItemBauble>& item, uint32_t startIndex);
+	uint32_t ProcessItemAmmoResult(DatabaseResult& result, const std::shared_ptr<class ItemAmmo>& item, uint32_t startIndex);
+	uint32_t ProcessItemHouseContainerResult(DatabaseResult& result, const std::shared_ptr<class ItemHouseContainer>& item, uint32_t startIndex);
+	uint32_t ProcessItemBookResult(DatabaseResult& result, const std::shared_ptr<class ItemBook>& item, uint32_t startIndex);
+	uint32_t ProcessItemRewardVoucherResult(DatabaseResult& result, const std::shared_ptr<class ItemRewardVoucher>& item);
 };

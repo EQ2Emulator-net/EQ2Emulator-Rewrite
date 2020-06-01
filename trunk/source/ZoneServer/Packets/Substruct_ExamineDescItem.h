@@ -58,17 +58,19 @@ public:
 		RegisterElements();
 	}
 
-	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
-		//itemVersion <= 76
+	void PreWrite() override {
 		if (version < 60024 && statType != 6) {
 			int32_t v = iValue;
 			sValue_do_not_set = v;
-			PacketSubstruct::WriteElement(outbuf, offset);
-			iValue = v;
 		}
-		else {
-			PacketSubstruct::WriteElement(outbuf, offset);
+		PacketSubstruct::PreWrite();
+	}
+
+	void PostWrite() override {
+		if (version < 60024 && statType != 6) {
+			iValue = sValue_do_not_set;
 		}
+		PacketSubstruct::PostWrite();
 	}
 
 	uint8_t itemVersion;
@@ -108,8 +110,6 @@ public:
 	Substruct_ItemUnknown(uint32_t ver = 0) : PacketSubstruct(ver, true) {
 		RegisterElements();
 	}
-
-	
 
 	void RegisterElements() {
 		RegisterUInt8(unknown1);
@@ -184,11 +184,12 @@ class Substruct_ItemDescHeader : public PacketSubstruct, public ItemDescBaseData
 public:
 	Substruct_ItemDescHeader(uint32_t ver = 0) : PacketSubstruct(ver) {
 		itemVersion = GetItemStructVersion(ver);
+		RegisterElements();
 	}
 
 	~Substruct_ItemDescHeader() = default;
 
-	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
+	void PreWrite() override {
 		classReqArray.clear();
 		for (auto& itr : ItemDescBaseData::classReqs) {
 			classReqArray.emplace_back(GetVersion());
@@ -222,14 +223,16 @@ public:
 		}
 
 		if (itemVersion < 11) {
-			int32_t w = weight;
 			sWeight_do_not_set = weight;
-			PacketSubstruct::WriteElement(outbuf, offset);
-			weight = w;
 		}
-		else {
-			PacketSubstruct::WriteElement(outbuf, offset);
+		PacketSubstruct::PreWrite();
+	}
+
+	void PostWrite() override {
+		if (itemVersion < 11) {
+			weight = sWeight_do_not_set;
 		}
+		PacketSubstruct::PostWrite();
 	}
 
 	uint8_t itemVersion;
@@ -239,7 +242,7 @@ public:
 	std::vector<Substruct_ItemClassReq> classReqArray;
 	std::vector<Substruct_ItemSlot> slotArray;
 
-	void RegisterHeader() {
+	void RegisterElements() {
 		RegisterBool(bHasCreator);
 		Register8String(creatorName);
 		auto e = RegisterUInt32(uniqueID);
@@ -373,7 +376,7 @@ public:
 		RegisterElements();
 	}
 
-	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
+	void PreWrite() override {
 		statArray.clear();
 		for (auto& itr : stats) {
 			statArray.emplace_back(GetVersion(), itemVersion);
@@ -384,7 +387,7 @@ public:
 			effectArray.emplace_back(GetVersion());
 			static_cast<ItemSetBonusEffect&>(effectArray.back()) = itr;
 		}
-		PacketSubstruct::WriteElement(outbuf, offset);
+		PacketSubstruct::PreWrite();
 	}
 
 	uint8_t itemVersion;
@@ -435,7 +438,7 @@ public:
 		RegisterElements();
 	}
 
-	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
+	void PreWrite() override {
 		setBonusArray.clear();
 		for (auto& itr : setBonuses) {
 			setBonusArray.emplace_back(GetVersion(), itemVersion);
@@ -446,7 +449,7 @@ public:
 			setItemArray.emplace_back(GetVersion(), itemVersion);
 			static_cast<ItemSetItem&>(setItemArray.back()) = itr;
 		}
-		PacketSubstruct::WriteElement(outbuf, offset);
+		PacketSubstruct::PreWrite();
 	}
 
 	uint8_t itemVersion;
@@ -475,13 +478,13 @@ public:
 		RegisterElements();
 	}
 
-	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
+	void PreWrite() override {
 		statArray.clear();
 		for (auto& itr : stats) {
 			statArray.emplace_back(GetVersion(), itemVersion);
 			static_cast<ItemStatMod&>(statArray.back()) = itr;
 		}
-		PacketSubstruct::WriteElement(outbuf, offset);
+		PacketSubstruct::PreWrite();
 	}
 
 	uint8_t itemVersion;
@@ -505,13 +508,13 @@ public:
 		RegisterElements();
 	}
 
-	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
+	void PreWrite() override {
 		levelArray.clear();
 		for (auto& itr : adornLevels) {
 			levelArray.emplace_back(GetVersion(), itemVersion);
 			static_cast<ItemAdornmentLevel&>(levelArray.back()) = itr;
 		}
-		PacketSubstruct::WriteElement(outbuf, offset);
+		PacketSubstruct::PreWrite();
 	}
 
 	uint8_t itemVersion;
@@ -561,15 +564,16 @@ public:
 	}
 };
 
-class Substruct_ItemDescFooter : public Substruct_ExamineDescBase, public ItemDescFooterData {
+class Substruct_ItemDescFooter : public PacketSubstruct, public ItemDescFooterData {
 public:
-	Substruct_ItemDescFooter(uint32_t ver = 0, uint8_t p_itemVersion = 0) : Substruct_ExamineDescBase(ver) {
+	Substruct_ItemDescFooter(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver) {
 		if (p_itemVersion == 0) {
 			itemVersion = GetItemStructVersion(ver);
 		}
 		else {
 			itemVersion = p_itemVersion;
 		}
+		RegisterElements();
 	}
 
 	~Substruct_ItemDescFooter() = default;
@@ -580,7 +584,7 @@ public:
 	std::vector<Substruct_ItemAdornmentDetails> footerAdornmentArray;
 	std::vector<Substruct_ItemAdornmentSlotDetails> adornSlotDetailsArray;
 
-	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
+	void PreWrite() override {
 		if (itemVersion < 54 && itemVersion >= 47) {
 			//For select client versions adorn slots were a bitmask
 			adornSlotBitmask = 0;
@@ -622,10 +626,10 @@ public:
 			adornSlotDetailsArray.emplace_back();
 			static_cast<ItemAdornmentSlotDetails&>(adornSlotDetailsArray.back()) = itr;
 		}
-		
+
 		static_cast<ItemSetDetails&>(itemSetDetails) = setDetails;
 
-		PacketSubstruct::WriteElement(outbuf, offset);
+		PacketSubstruct::PreWrite();
 	}
 
 	uint8_t itemVersion;

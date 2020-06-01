@@ -87,6 +87,30 @@ public:
 
 	uint32_t GetVersion() { return version; }
 
+	virtual void PreWrite() {
+		for (auto& e : elements) {
+			if (auto substr = dynamic_cast<PacketSubstruct*>(e)) {
+				substr->PreWrite();
+			}
+		}
+	}
+
+	virtual void PostWrite() {
+		for (auto& e : elements) {
+			if (auto substr = dynamic_cast<PacketSubstruct*>(e)) {
+				substr->PostWrite();
+			}
+		}
+	}
+
+	virtual void PostRead() {
+		for (auto& e : elements) {
+			if (auto substr = dynamic_cast<PacketSubstruct*>(e)) {
+				substr->PostRead();
+			}
+		}
+	}
+
 protected:
 	PacketSubstruct(uint32_t p_version, bool p_inline = false): elementsInitialized(false), version(p_version), bInline(p_inline) {
 	}

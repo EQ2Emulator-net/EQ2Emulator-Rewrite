@@ -137,6 +137,10 @@ public:
 		return element[0] != 0;
 	}
 
+	bool CheckVariableEquality(PacketVariableEquality* e) override {
+		return e->CheckVariableEquality(element[0]);
+	}
+
 	bool bSigned;
 private:
 	uint16_t* element;

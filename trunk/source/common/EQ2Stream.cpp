@@ -855,8 +855,6 @@ bool EQ2Stream::HandleEmbeddedPacket(unsigned char* buffer, uint32_t length, boo
 			}
 			InboundQueuePush(newpacket);
 		}
-		else
-			LogError(LOG_PACKET, 0, "No Packet!");
 		return true;
 	}
 
@@ -960,6 +958,7 @@ void EQ2Stream::InboundQueueClear() {
 }
 
 void EQ2Stream::QueuePacket(EQ2Packet* p, bool bDelete, bool bDump) {
+	p->PreWrite();
 	unsigned char* buf = nullptr;
 	p->Write(buf);
 	if (p->bOpcodeError) {

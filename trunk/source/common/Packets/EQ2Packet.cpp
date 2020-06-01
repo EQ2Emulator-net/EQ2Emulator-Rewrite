@@ -3,6 +3,7 @@
 #include "EQ2Packet.h"
 #include "../util.h"
 #include "../Packets/EQ2Packets/OpcodeManager.h"
+#include "../../common/Packets/PacketElements/PacketSubstruct.h"
 
 EQ2Packet::EQ2Packet(uint32_t version) {
 	app_opcode_size = 2;
@@ -158,4 +159,28 @@ EQ2Packet* EQ2Packet::CopyRaw() {
 	ret->Version = Version;
 	ret->opcode = opcode;
 	return ret;
+}
+
+void EQ2Packet::PreWrite() {
+	for (auto& e : elements) {
+		if (auto substr = dynamic_cast<PacketSubstruct*>(e)) {
+			substr->PreWrite();
+		}
+	}
+}
+
+void EQ2Packet::PostWrite() {
+	for (auto& e : elements) {
+		if (auto substr = dynamic_cast<PacketSubstruct*>(e)) {
+			substr->PostWrite();
+		}
+	}
+}
+
+void EQ2Packet::PostRead() {
+	for (auto& e : elements) {
+		if (auto substr = dynamic_cast<PacketSubstruct*>(e)) {
+			substr->PostRead();
+		}
+	}
 }

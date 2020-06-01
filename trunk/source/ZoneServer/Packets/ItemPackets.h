@@ -6,7 +6,7 @@
 
 class ExamineInfoCmd_Item_Packet : public OP_EqExamineInfoCmd_Packet {
 public:
-	ExamineInfoCmd_Item_Packet(uint32_t ver, Substruct_ExamineDescItem* item) : OP_EqExamineInfoCmd_Packet(ver), itemDesc(item) {
+	ExamineInfoCmd_Item_Packet(uint32_t ver, Substruct_ExamineDescItem* item) : OP_EqExamineInfoCmd_Packet(ver, false), itemDesc(item) {
 		RegisterElements();
 	}
 
@@ -15,6 +15,7 @@ public:
 	Substruct_ExamineDescItem* itemDesc;
 
 	void RegisterElements() {
+		assert(itemDesc);
 		Substruct_ExamineDescItem& itemDesc = *this->itemDesc;
 		RegisterSubstruct(itemDesc);
 	}
@@ -78,6 +79,8 @@ public:
 		RegisterOversizedByte(baseMinDamage);
 		RegisterOversizedByte(baseMaxDamage);
 		RegisterUInt8(delay);
+		RegisterOversizedByte(minRange);
+		RegisterOversizedByte(maxRange);
 		RegisterUInt8(damageType);
 		RegisterFloat(damageRating);
 		if (subVersion >= 53) {
@@ -95,10 +98,25 @@ public:
 
 	~Substruct_ExamineDescItem_Armor() = default;
 
+	void PreWrite() override {
+		if (subVersion < 90) {
+			sMitigationLow = mitigationLow;
+			sMitigationHigh = mitigationHigh;
+		}
+	}
+
 	void RegisterElements() {
 		RegisterSubstruct(header);
-		RegisterOversizedByte(mitigationLow);
-		RegisterOversizedByte(mitigationHigh);
+		if (subVersion < 90) {
+			auto& mitigationLow = sMitigationLow;
+			auto& mitigationHigh = sMitigationHigh;
+			RegisterOversizedByte(mitigationLow);
+			RegisterOversizedByte(mitigationHigh);
+		}
+		else {
+			RegisterInt32(mitigationLow);
+			RegisterInt32(mitigationHigh);
+		}
 		RegisterOversizedByte(absorb);
 		if (subVersion >= 44) {
 			RegisterUInt32(skillID_NEEDS_VERIFY);
@@ -154,13 +172,13 @@ public:
 
 	std::vector<Substruct_ItemName> itemNames;
 
-	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
+	void PreWrite() override {
 		itemNames.clear();
 		for (auto& itr : ItemBagData::itemNames) {
 			itemNames.emplace_back();
 			itemNames.back().itemName = itr;
 		}
-		PacketSubstruct::WriteElement(outbuf, offset);
+		PacketSubstruct::PreWrite();
 	}
 
 	void RegisterElements() {
@@ -216,13 +234,13 @@ public:
 	std::vector<Substruct_RecipeBook> recipeArray;
 	uint16_t recipeCount;
 
-	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
+	void PreWrite() override {
 		recipeArray.clear();
 		for (auto& itr : ItemRecipeBookData::items) {
 			recipeArray.emplace_back(GetVersion(), subVersion);
 			static_cast<RecipeBookItem&>(recipeArray.back()) = itr;
 		}
-		PacketSubstruct::WriteElement(outbuf, offset);
+		PacketSubstruct::PreWrite();
 	}
 
 	void RegisterElements() {
@@ -230,7 +248,7 @@ public:
 		auto e = RegisterOversizedByte(recipeCount);
 		e->SetMyArray(RegisterArray(recipeArray, Substruct_RecipeBook));
 		if (subVersion >= 19) {
-			RegisterUInt16(uses);
+			RegisterUInt16(numUses);
 		}
 		if (subVersion >= 17) {
 			RegisterBool(bScribed);
@@ -249,8 +267,8 @@ public:
 
 	void RegisterElements() {
 		RegisterSubstruct(header);
-		RegisterUInt8(foodType);
-		RegisterOversizedByte(level);
+		RegisterUInt8(provisionType);
+		RegisterOversizedByte(provisionLevel);
 		RegisterFloat(duration);
 		RegisterSubstruct(footer);
 	}
@@ -308,7 +326,7 @@ public:
 	void RegisterElements() {
 		RegisterInt32(rentStatusReduction);
 		RegisterFloat(rentCoinReduction);
-		if (itemVersion >= 38) {
+		if (itemVersion < 38) {
 			RegisterUInt8(unknown1);
 		}
 		RegisterUInt8(houseType);
@@ -470,13 +488,13 @@ private:
 	std::vector<Substruct_RewardVoucherItem> itemsArray;
 
 public:
-	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
+	void PreWrite() override {
 		itemsArray.clear();
 		for (auto& itr : items) {
 			itemsArray.emplace_back(GetVersion(), subVersion);
 			static_cast<RewardVoucherItem&>(itemsArray.back()) = itr;
 		}
-		PacketSubstruct::WriteElement(outbuf, offset);
+		PacketSubstruct::PreWrite();
 	}
 
 	void RegisterElements() {
@@ -544,13 +562,13 @@ private:
 	std::vector<Substruct_RewardCrateItem> itemsArray;
 
 public:
-	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
+	void PreWrite() override {
 		itemsArray.clear();
 		for (auto& itr : items) {
 			itemsArray.emplace_back(GetVersion(), subVersion);
 			static_cast<RewardCrateItem&>(itemsArray.back()) = itr;
 		}
-		PacketSubstruct::WriteElement(outbuf, offset);
+		PacketSubstruct::PreWrite();
 	}
 
 	void RegisterElements() {
@@ -592,9 +610,9 @@ public:
 
 	Substruct_HouseItem houseData;
 
-	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
+	void PreWrite() override {
 		static_cast<ItemHouseData&>(houseData) = this->ItemBookData::houseData;
-		PacketSubstruct::WriteElement(outbuf, offset);
+		PacketSubstruct::PreWrite();
 	}
 
 	void RegisterElements() {

@@ -27,17 +27,23 @@ struct ItemRangedWeaponData {
 	int16_t masteryMaxDmg;
 	int16_t baseMinDamage;
 	int16_t baseMaxDamage;
+	uint16_t minRange;
+	uint16_t maxRange;
 	float damageRating;
 	uint32_t itemScore;
 };
 
 struct ItemArmorData {
-	int16_t mitigationLow;
-	int16_t mitigationHigh;
+	int32_t mitigationLow;
+	int32_t mitigationHigh;
 	int16_t absorb;
 	//Guess
 	uint32_t skillID_NEEDS_VERIFY;
 	uint32_t itemScore;
+
+protected:
+	int16_t sMitigationLow;
+	int16_t sMitigationHigh;
 };
 
 struct ItemShieldData {
@@ -67,13 +73,13 @@ struct RecipeBookItem {
 
 struct ItemRecipeBookData {
 	std::vector<RecipeBookItem> items;
-	uint16_t uses;
+	uint16_t numUses;
 	bool bScribed;
 };
 
 struct ItemProvisionData {
-	uint8_t foodType;
-	int16_t level;
+	uint8_t provisionType;
+	int16_t provisionLevel;
 	float duration;
 };
 
@@ -95,6 +101,14 @@ struct ItemHouseData {
 	int32_t rentStatusReduction;
 	float rentCoinReduction;
 	uint8_t houseType;
+	//House types
+	//0 = any house type
+	//1 = house only
+	//2 = guild hall only
+	//3 = player-made dungeon only
+	//4 = NOT player-made dungeon
+	//5 = NOT guild hall
+	//6 = NOT house
 	uint8_t unknown1;
 	uint8_t unknown2;
 };

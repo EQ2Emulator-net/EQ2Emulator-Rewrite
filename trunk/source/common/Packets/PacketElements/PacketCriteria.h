@@ -32,7 +32,7 @@ public:
 	
 	//This will tell the other element to call our equality check with its value
 	virtual bool CheckVariableEquality(PacketVariableEquality*) {
-		assert(("Tried to check a packet element's equality on a non-int type!", false));
+		assert(false);
 		return true;
 	}
 

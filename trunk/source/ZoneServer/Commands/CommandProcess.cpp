@@ -15,10 +15,12 @@
 #include "../ZoneServer/ZoneServer.h"
 #include "../Packets/OP_EqCannedEmoteCmd_Packet.h"
 #include "../ZoneServer/MasterZoneLookup.h"
+#include "../Items/MasterItemList.h"
 
 extern ZoneOperator g_zoneOperator;
 extern ZoneServer g_zoneServer;
 extern MasterZoneLookup g_masterZoneLookup;
+extern MasterItemList g_masterItemList;
 
 CommandProcess::CommandProcess() {
 	RegisterCommands();
@@ -190,14 +192,27 @@ void CommandProcess::CommandMove(const std::shared_ptr<Client>& client, Separato
 	client->QueuePacket(packet);
 }
 
+#include "../Packets/Substruct_ExamineDescItem.h"
+#include "../Packets/ItemPackets.h"
+
 void CommandProcess::CommandTest(const std::shared_ptr<Client>& client, Separator& sep) {
-	//auto controller = client->GetController();
+	if (!sep.IsNumber(0)) {
+		return;
+	}
 
-	//auto target = controller->GetTarget();
+	uint32_t id = sep.GetUInt32(0);
 
-	//if (!target) {
-	//	return;
-	//}
+	auto item = g_masterItemList.GetReferenceItem(id);
+
+	if (!item) {
+		return;
+	}
+
+	auto itemDesc = item->GetPacketData(client);
+
+	ExamineInfoCmd_Item_Packet p(client->GetVersion(), itemDesc.get());
+	p.bShowPopup = true;
+	client->QueuePacket(p, true);
 }
 
 void CommandProcess::CommandZone(const std::shared_ptr<Client>& client, Separator& sep) {
