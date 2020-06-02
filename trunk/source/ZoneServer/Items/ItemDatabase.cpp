@@ -123,133 +123,22 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 	//Item count
 	loadList.reserve(result.GetUInt32(0));
 	result.NextResultSet();
-	//Generic items
-	while (result.Next()) {
-		auto item = std::make_shared<ItemGeneric>();
-		ProcessItemTableResult(result, item);
-		loadList[item->itemID] = item;
-	}
-	result.NextResultSet();
-	//Melee weapons
-	while (result.Next()) {
-		auto item = std::make_shared<ItemMeleeWeapon>();
-		uint32_t i = ProcessItemTableResult(result, item);
-		ProcessItemWeaponResult(result, item, i);
-		loadList[item->itemID] = item;
-	}
-	result.NextResultSet();
-	//Ranged weapons
-	while (result.Next()) {
-		auto item = std::make_shared<ItemRangedWeapon>();
-		uint32_t i = ProcessItemTableResult(result, item);
-		ProcessItemRangeResult(result, item, i);
-		loadList[item->itemID] = item;
-	}
-	result.NextResultSet();
-	//Armor
-	while (result.Next()) {
-		auto item = std::make_shared<ItemArmor>();
-		uint32_t i = ProcessItemTableResult(result, item);
-		ProcessItemArmorResult(result, item, i);
-		loadList[item->itemID] = item;
-	}
-	result.NextResultSet();
-	//Shield
-	while (result.Next()) {
-		auto item = std::make_shared<ItemShield>();
-		uint32_t i = ProcessItemTableResult(result, item);
-		ProcessItemShieldResult(result, item, i);
-		loadList[item->itemID] = item;
-	}
-	result.NextResultSet();
-	//Bag
-	while (result.Next()) {
-		auto item = std::make_shared<ItemBag>();
-		uint32_t i = ProcessItemTableResult(result, item);
-		ProcessItemBagResult(result, item, i);
-		loadList[item->itemID] = item;
-	}
-	result.NextResultSet();
-	//Provisions
-	while (result.Next()) {
-		auto item = std::make_shared<ItemProvision>();
-		uint32_t i = ProcessItemTableResult(result, item);
-		ProcessItemProvisionResult(result, item, i);
-		loadList[item->itemID] = item;
-	}
-	result.NextResultSet();
-	//Recipe
-	while (result.Next()) {
-		auto item = std::make_shared<ItemRecipeBook>();
-		uint32_t i = ProcessItemTableResult(result, item);
-		ProcessItemRecipeResult(result, item, i);
-		//TODO: Load recipe item data once we have it parsed
-		loadList[item->itemID] = item;
-	}
-	result.NextResultSet();
-	//House
-	while (result.Next()) {
-		auto item = std::make_shared<ItemHouse>();
-		uint32_t i = ProcessItemTableResult(result, item);
-		ProcessItemHouseResult(result, item, i);
-		loadList[item->itemID] = item;
-	}
-	result.NextResultSet();
-	//Bauble
-	while (result.Next()) {
-		auto item = std::make_shared<ItemBauble>();
-		uint32_t i = ProcessItemTableResult(result, item);
-		ProcessItemBaubleResult(result, item, i);
-		loadList[item->itemID] = item;
-	}
-	result.NextResultSet();
-	//Ammo
-	while (result.Next()) {
-		auto item = std::make_shared<ItemAmmo>();
-		uint32_t i = ProcessItemTableResult(result, item);
-		ProcessItemAmmoResult(result, item, i);
-		loadList[item->itemID] = item;
-	}
-	result.NextResultSet();
-	//House container
-	while (result.Next()) {
-		auto item = std::make_shared<ItemHouseContainer>();
-		uint32_t i = ProcessItemTableResult(result, item);
-		ProcessItemHouseContainerResult(result, item, i);
-		loadList[item->itemID] = item;
-	}
-	result.NextResultSet();
-	//Book
-	while (result.Next()) {
-		auto item = std::make_shared<ItemBook>();
-		uint32_t i = ProcessItemTableResult(result, item);
-		ProcessItemBookResult(result, item, i);
-		loadList[item->itemID] = item;
-	}
-	std::map<uint32_t, std::shared_ptr<ItemRewardVoucher>> rewardVouchers;
-	result.NextResultSet();
-	//RewardVoucher
-	while (result.Next()) {		
-		uint32_t id = result.GetUInt32(0);
-		auto itr = rewardVouchers.find(id);
-		if (itr != rewardVouchers.end()) {
-			continue;
-		}
+	
+	for (int i = 0; i < 14; i++) {
+		while (result.Next()) {
+			EItemType type = Item::GetItemTypeFromName(result.GetString(i++));
 
-		auto item = std::make_shared<ItemRewardVoucher>();
-		item->ItemRewardVoucherData::unknown1 = 0;
-		item->ItemRewardVoucherData::unknown2 = 0;
-		rewardVouchers[id] = item;
-		loadList[id] = item;
-		ProcessItemTableResult(result, item);
+			if (type == EItemType::EINVALID) {
+				type = EItemType::EGENERIC;
+			}
+
+			auto item = Item::CreateItemWithType(type);
+			uint32_t i = ProcessItemTableResult(result, item);
+			item->LoadTypeSpecificData(result, i);
+			loadList[item->itemID] = item;
+		}
+		result.NextResultSet();
 	}
-	result.NextResultSet();
-	while (result.Next()) {
-		uint32_t id = result.GetUInt32(1);
-		auto item = rewardVouchers[id];
-		ProcessItemRewardVoucherResult(result, item);
-	}
-	rewardVouchers.clear();
 
 	statThread.join();
 	appearanceThread.join();
@@ -291,13 +180,8 @@ uint32_t ZoneDatabase::ProcessItemTableResult(DatabaseResult& result, const std:
 	uint32_t i = 0;
 	item->itemID = result.GetUInt32(i++);
 	item->itemName = result.GetString(i++);
-	EItemType type = Item::GetItemTypeFromName(result.GetString(i++));
-	if (type == EItemType::EINVALID) {
-		item->itemType = static_cast<uint8_t>(EItemType::EGENERIC);
-	}
-	else {
-		item->itemType = static_cast<uint8_t>(type);
-	}
+	//Set the item type before this function
+	i++;
 	item->icon = result.GetUInt16(i++);
 	item->stackSize = 1;
 	i++;
@@ -410,165 +294,155 @@ uint32_t ZoneDatabase::ProcessItemTableResult(DatabaseResult& result, const std:
 	return i;
 }
 
-uint32_t ZoneDatabase::ProcessItemWeaponResult(DatabaseResult& result, const std::shared_ptr<ItemMeleeWeapon>& item, uint32_t i) {
+void ItemMeleeWeapon::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
+	wieldType = result.GetUInt8(i++);
+	damageType = result.GetUInt8(i++);
+	minDmg = result.GetInt16(i++);
+	maxDmg = result.GetInt16(i++);
+	masteryMinDmg = result.GetInt16(i++);
+	masteryMaxDmg = result.GetInt16(i++);
+	baseMinDamage = result.GetInt16(i++);
+	baseMaxDamage = result.GetInt16(i++);
+	delay = result.GetUInt8(i++);
+	damageRating = result.GetFloat(i++);
+	itemScore = 0;
+}
+
+void ItemRangedWeapon::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
 	i += 2;
-	item->wieldType = result.GetUInt8(i++);
-	item->damageType = result.GetUInt8(i++);
-	item->minDmg = result.GetInt16(i++);
-	item->maxDmg = result.GetInt16(i++);
-	item->masteryMinDmg = result.GetInt16(i++);
-	item->masteryMaxDmg = result.GetInt16(i++);
-	item->baseMinDamage = result.GetInt16(i++);
-	item->baseMaxDamage = result.GetInt16(i++);
-	item->delay = result.GetUInt8(i++);
-	item->damageRating = result.GetFloat(i++);
-	item->itemScore = 0;
-	return i;
+	minDmg = result.GetInt16(i++);
+	maxDmg = result.GetInt16(i++);
+	masteryMinDmg = result.GetInt16(i++);
+	masteryMaxDmg = result.GetInt16(i++);
+	baseMinDamage = result.GetInt16(i++);
+	baseMaxDamage = result.GetInt16(i++);
+	delay = result.GetUInt8(i++);
+	minRange = result.GetUInt16(i++);
+	maxRange = result.GetUInt16(i++);
+	damageRating = result.GetFloat(i++);
+	damageType = result.GetUInt8(i++);
+	itemScore = 0;
 }
 
-uint32_t ZoneDatabase::ProcessItemRangeResult(DatabaseResult& result, const std::shared_ptr<ItemRangedWeapon>& item, uint32_t i) {
+void ItemArmor::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
 	i += 2;
-	item->minDmg = result.GetInt16(i++);
-	item->maxDmg = result.GetInt16(i++);
-	item->masteryMinDmg = result.GetInt16(i++);
-	item->masteryMaxDmg = result.GetInt16(i++);
-	item->baseMinDamage = result.GetInt16(i++);
-	item->baseMaxDamage = result.GetInt16(i++);
-	item->delay = result.GetUInt8(i++);
-	item->minRange = result.GetUInt16(i++);
-	item->maxRange = result.GetUInt16(i++);
-	item->damageRating = result.GetFloat(i++);
-	item->damageType = result.GetUInt8(i++);
-	item->itemScore = 0;
-	return i;
+	mitigationLow = result.GetInt32(i++);
+	mitigationHigh = result.GetInt32(i++);
+	itemScore = 0;
 }
 
-uint32_t ZoneDatabase::ProcessItemArmorResult(DatabaseResult& result, const std::shared_ptr<ItemArmor>& item, uint32_t i) {
+void ItemShield::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
 	i += 2;
-	item->mitigationLow = result.GetInt32(i++);
-	item->mitigationHigh = result.GetInt32(i++);
-	item->itemScore = 0;
-	return i;
+	mitigationLow = result.GetInt32(i++);
+	mitigationHigh = result.GetInt32(i++);
+	itemScore = 0;
 }
 
-uint32_t ZoneDatabase::ProcessItemShieldResult(DatabaseResult& result, const std::shared_ptr<ItemShield>& item, uint32_t i) {
+void ItemBag::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
 	i += 2;
-	item->mitigationLow = result.GetInt32(i++);
-	item->mitigationHigh = result.GetInt32(i++);
-	item->itemScore = 0;
-	return i;
+	numSlots = result.GetUInt8(i++);
+	weightReduction = result.GetUInt8(i++);
+	bagUnknown1 = 0;
+	bagUnknown2 = 0;
+	bagUnknown3 = 0;
+	memset(bagUnknown4, 0, sizeof(bagUnknown4));
+	numEmptySlots = numSlots;
+	numItems = 0;
 }
 
-uint32_t ZoneDatabase::ProcessItemBagResult(DatabaseResult& result, const std::shared_ptr<ItemBag>& item, uint32_t i) {
+void ItemProvision::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
 	i += 2;
-	item->numSlots = result.GetUInt8(i++);
-	item->weightReduction = result.GetUInt8(i++);
-	item->bagUnknown1 = 0;
-	item->bagUnknown2 = 0;
-	item->bagUnknown3 = 0;
-	memset(item->bagUnknown4, 0, sizeof(item->bagUnknown4));
-	item->numEmptySlots = item->numSlots;
-	item->numItems = 0;
-	return i;
+	provisionType = result.GetUInt8(i++);
+	provisionLevel = result.GetInt16(i++);
+	duration = result.GetFloat(i++);
 }
 
-uint32_t ZoneDatabase::ProcessItemProvisionResult(DatabaseResult& result, const std::shared_ptr<ItemProvision>& item, uint32_t i) {
+void ItemRecipeBook::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
 	i += 2;
-	item->provisionType = result.GetUInt8(i++);
-	item->provisionLevel = result.GetInt16(i++);
-	item->duration = result.GetFloat(i++);
-	return ++i;
+	numUses = result.GetUInt16(i++);
+	bScribed = false;
 }
 
-uint32_t ZoneDatabase::ProcessItemRecipeResult(DatabaseResult& result, const std::shared_ptr<ItemRecipeBook>& item, uint32_t i) {
-	i += 2;
-	item->numUses = result.GetUInt16(i++);
-	item->bScribed = false;
-	return i;
-}
-
-void ZoneDatabase::ProcessItemRecipeItemsResult(DatabaseResult& result, const std::unordered_map<uint32_t, std::shared_ptr<ItemRecipeBook> >& items) {
-	//uint32_t i = 1;
-	//uint32_t itemID = result.GetUInt32(i++);
-	//auto itr = items.find(itemID);
-	//if (itr == items.end()) {
-	//	LogError(LOG_DATABASE, 0, "Unable to find recipe book with id %u to add recipe items.", itemID);
-	//	return;
-	//}
-
-	//const std::shared_ptr<ItemRecipeBook>& item = itr->second;
-	//item->items.emplace_back();
-	//RecipeBookItem& recipeItemEntry = item->items.back();
-
-	//recipeItemEntry.recipeID = itemID;
-	//recipeItemEntry.
-}
-
-uint32_t ZoneDatabase::ProcessItemHouseResult(DatabaseResult& result, const std::shared_ptr<ItemHouse>& item, uint32_t i) {
+void ItemHouse::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
 	i += 3;
-	item->rentStatusReduction = result.GetInt32(i++);
-	item->rentCoinReduction = result.GetFloat(i++);
-	item->houseType = result.GetUInt8(i++);
-	item->ItemHouseData::unknown1 = 0;
-	item->ItemHouseData::unknown2 = 0xFF;
-	return i;
+	rentStatusReduction = result.GetInt32(i++);
+	rentCoinReduction = result.GetFloat(i++);
+	houseType = result.GetUInt8(i++);
+	ItemHouseData::unknown1 = 0;
+	ItemHouseData::unknown2 = 0xFF;
 }
 
-uint32_t ZoneDatabase::ProcessItemBaubleResult(DatabaseResult& result, const std::shared_ptr<ItemBauble>& item, uint32_t i) {
+void ItemBauble::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
 	i += 2;
-	item->castTime = result.GetInt16(i++);
-	item->recovery = result.GetInt16(i++);
-	item->duration = result.GetInt32(i++);
-	item->recast = result.GetFloat(i++);
-	item->bDisplaySlotOptional = result.GetBool(i++);
-	item->bDisplayCastTime = result.GetBool(i++);
-	item->bDisplayBaubleType = result.GetBool(i++);
-	item->effectRadius = result.GetFloat(i++);
-	item->maxAoeTargets = result.GetInt32(i++);
-	item->bDisplayUntilCancelled = result.GetBool(i++);
-	return i;
+	castTime = result.GetInt16(i++);
+	recovery = result.GetInt16(i++);
+	duration = result.GetInt32(i++);
+	recast = result.GetFloat(i++);
+	bDisplaySlotOptional = result.GetBool(i++);
+	bDisplayCastTime = result.GetBool(i++);
+	bDisplayBaubleType = result.GetBool(i++);
+	effectRadius = result.GetFloat(i++);
+	maxAoeTargets = result.GetInt32(i++);
+	bDisplayUntilCancelled = result.GetBool(i++);
 }
 
-uint32_t ZoneDatabase::ProcessItemAmmoResult(DatabaseResult& result, const std::shared_ptr<ItemAmmo>& item, uint32_t i) {
+void ItemAmmo::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
 	i += 2;
-	item->range = result.GetInt32(i++);
-	item->damageModifier = result.GetInt32(i++);
+	range = result.GetInt32(i++);
+	damageModifier = result.GetInt32(i++);
 	i++;
-	item->hitBonus = result.GetFloat(i++);
-	item->damageType = result.GetUInt32(i++);
-	return i;
+	hitBonus = result.GetFloat(i++);
+	damageType = result.GetUInt32(i++);
 }
 
-uint32_t ZoneDatabase::ProcessItemHouseContainerResult(DatabaseResult& result, const std::shared_ptr<ItemHouseContainer>& item, uint32_t i) {
+void ItemHouseContainer::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
 	i += 2;
-	item->numSlots = result.GetUInt16(i++);
-	item->allowedTypes = result.GetUInt32(i++);
+	numSlots = result.GetUInt16(i++);
+	allowedTypes = result.GetUInt32(i++);
 	//Not sure if unknown12 in the db is this value or the other 4 bytes of allowedTypes
-	item->ItemHouseContainerData::unknown1 = result.GetUInt32(i++);
-	item->unknown2 = result.GetUInt8(i++);
-	item->brokerCommission = result.GetUInt16(i++);
-	item->fenceCommission = result.GetUInt16(i++);
-	return i;
+	ItemHouseContainerData::unknown1 = result.GetUInt32(i++);
+	unknown2 = result.GetUInt8(i++);
+	brokerCommission = result.GetUInt16(i++);
+	fenceCommission = result.GetUInt16(i++);
 }
 
-uint32_t ZoneDatabase::ProcessItemBookResult(DatabaseResult& result, const std::shared_ptr<ItemBook>& item, uint32_t i) {
+void ItemBook::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
 	i += 2;
-	item->language = result.GetUInt8(i++);
-	item->author = result.GetString(i++);
-	item->title = result.GetString(i++);
+	language = result.GetUInt8(i++);
+	author = result.GetString(i++);
+	title = result.GetString(i++);
 	//TODO: add in this data for books
-	memset(&item->houseData, 0, sizeof(item->houseData));
-	return i;
+	memset(&houseData, 0, sizeof(houseData));
 }
 
-uint32_t ZoneDatabase::ProcessItemRewardVoucherResult(DatabaseResult& result, const std::shared_ptr<ItemRewardVoucher>& item) {
-	uint32_t i = 2;
-	item->items.emplace_back();
-	RewardVoucherItem& reward = item->items.back();
+void ItemRewardVoucher::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
+	i = 2;
+	items.emplace_back();
+	RewardVoucherItem& reward = items.back();
 	reward.itemID = result.GetUInt32(i++);
 	reward.icon = result.GetUInt16(i++);
 	reward.itemName = result.GetString(i++);
 	reward.crc = 0;
 	reward.unknown = 0;
-	return i;
+}
+
+void ItemGeneric::LoadTypeSpecificData(DatabaseResult& res, uint32_t i) {
+
+}
+
+//The below classes are still TODO
+void ItemAdornment::LoadTypeSpecificData(DatabaseResult& res, uint32_t i) {
+
+}
+
+void ItemAchievementProfile::LoadTypeSpecificData(DatabaseResult& res, uint32_t i) {
+
+}
+
+void ItemReforgingDecoration::LoadTypeSpecificData(DatabaseResult& res, uint32_t i) {
+
+}
+
+void ItemRewardCrate::LoadTypeSpecificData(DatabaseResult& res, uint32_t i) {
+
 }

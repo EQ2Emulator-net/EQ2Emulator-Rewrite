@@ -8,6 +8,7 @@
 
 class Substruct_ExamineDescItem;
 class Client;
+class DatabaseResult;
 
 struct ItemStatMod {
 	uint8_t statType;
@@ -280,6 +281,7 @@ public:
 	virtual ~Item() = default;
 	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) const;
 	virtual std::shared_ptr<Item> Copy() const = 0;
+	virtual void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) = 0;
 
 	static std::shared_ptr<Item> CreateItemWithType(EItemType type);
 
@@ -330,6 +332,7 @@ public:
 	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 
 	std::shared_ptr<Item> Copy() const override;
+	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
 
 class ItemMeleeWeapon : public Item, public ItemMeleeWeaponData {
@@ -339,6 +342,7 @@ public:
 
 	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
+	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
 
 class ItemRangedWeapon : public Item, public ItemRangedWeaponData {
@@ -348,6 +352,7 @@ public:
 
 	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
+	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
 
 class ItemArmor : public Item, public ItemArmorData {
@@ -357,6 +362,7 @@ public:
 
 	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
+	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
 
 class ItemShield : public Item, public ItemShieldData {
@@ -366,6 +372,7 @@ public:
 
 	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
+	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
 
 class ItemBag : public Item, public ItemBagData {
@@ -375,6 +382,7 @@ public:
 
 	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
+	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
 
 class ItemRecipeBook : public Item, public ItemRecipeBookData {
@@ -384,6 +392,7 @@ public:
 
 	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
+	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
 
 class ItemProvision : public Item, public ItemProvisionData {
@@ -393,6 +402,7 @@ public:
 
 	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
+	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
 
 class ItemBauble : public Item, public ItemBaubleData {
@@ -402,6 +412,7 @@ public:
 
 	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
+	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
 
 class ItemHouse : public Item, public ItemHouseData {
@@ -411,6 +422,7 @@ public:
 
 	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
+	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
 
 class ItemAmmo : public Item, public ItemAmmoData {
@@ -420,6 +432,7 @@ public:
 
 	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
+	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
 
 class ItemAdornment : public Item, public ItemAdornmentData {
@@ -429,6 +442,7 @@ public:
 
 	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
+	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
 
 class ItemAchievementProfile : public Item, public ItemAchievementProfileData {
@@ -438,6 +452,7 @@ public:
 
 	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
+	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
 
 class ItemRewardVoucher : public Item, public ItemRewardVoucherData {
@@ -447,6 +462,7 @@ public:
 
 	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
+	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
 
 class ItemRewardCrate : public Item, public ItemRewardCrateData {
@@ -456,6 +472,7 @@ public:
 
 	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
+	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
 
 class ItemBook : public Item, public ItemBookData {
@@ -465,6 +482,7 @@ public:
 
 	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
+	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
 
 class ItemReforgingDecoration : public Item, public ItemReforgingDecorationData {
@@ -474,6 +492,7 @@ public:
 
 	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
+	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
 
 class ItemHouseContainer : public Item, public ItemHouseContainerData {
@@ -483,4 +502,5 @@ public:
 
 	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
+	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
