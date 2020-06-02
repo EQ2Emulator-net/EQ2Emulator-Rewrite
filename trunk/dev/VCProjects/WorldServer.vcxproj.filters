@@ -186,6 +186,9 @@
     <ClCompile Include="..\..\source\WorldServer\WorldServer\CharacterList.cpp">
       <Filter>source\WorldServer</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\common\Packets\PacketElements\PacketSubstruct.cpp">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\common\io.h">

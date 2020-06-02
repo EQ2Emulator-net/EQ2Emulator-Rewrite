@@ -15,6 +15,9 @@ public:
 	virtual void SetArraySize(uint32_t size) = 0;
 	virtual uint32_t GetArraySize() = 0;
 	virtual std::unique_ptr<PacketSubstruct> GetArraySubstruct() = 0;
+	virtual void PreWrite() = 0;
+	virtual void PostWrite() = 0;
+	virtual void PostRead() = 0;
 	const char* arraySizeName;
 };
 
@@ -101,6 +104,24 @@ public:
 	std::unique_ptr<PacketSubstruct> GetArraySubstruct() override {
 		T* ret = new T(version);
 		return std::unique_ptr<PacketSubstruct>(static_cast<PacketSubstruct*>(ret));
+	}
+
+	void PreWrite() override {
+		for (auto& itr : *element) {
+			itr.PreWrite();
+		}
+	}
+
+	void PostWrite() override {
+		for (auto& itr : *element) {
+			itr.PostWrite();
+		}
+	}
+	
+	void PostRead() override {
+		for (auto& itr : *element) {
+			itr.PostRead();
+		}
 	}
 
 private:

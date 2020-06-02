@@ -10,6 +10,78 @@
 void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 	std::ostringstream ss;
 
+	std::unordered_map<uint32_t, std::vector<ItemStatMod>> stats;
+	std::unordered_map<uint32_t, std::vector<ItemStringMod>> stringStats;
+
+	auto LoadStats = [this, &stats, &stringStats] {
+		DatabaseResult result;
+		if (!Select(&result, "SELECT item_id, type, subtype, value, text, description FROM item_stats;")) {
+			LogError(LOG_DATABASE, 0, "Error loading item stats.");
+			return;
+		}
+
+		while (result.Next()) {
+			uint32_t itemID = result.GetUInt32(0);
+			uint8_t type = result.GetUInt8(1);
+			std::string text = result.GetString(4);
+
+			if (type == 1 || text.empty()) {
+				std::vector<ItemStatMod>& mods = stats[itemID];
+				mods.emplace_back();
+				ItemStatMod& mod = mods.back();
+				mod.statType = type;
+				mod.statSubtype = result.GetInt16(2);
+				if (mod.statType == 6) {
+					mod.fValue = result.GetFloat(3);
+				}
+				else {
+					mod.iValue = result.GetInt32(3);
+				}
+				mod.stringVal = std::move(text);
+				mod.unknown64 = 0;
+				mod.unknown83 = 0;
+				mod.unknown89 = 0;
+				mod.unknown92 = 0;
+			}
+			else {
+				std::vector<ItemStringMod>& mods = stringStats[itemID];
+				mods.emplace_back();
+				ItemStringMod& mod = mods.back();
+				mod.stringVal = std::move(text);
+				mod.statDescription = result.GetString(5);
+				mod.unknown1 = 0;
+				mod.unknown2 = 0;
+				mod.unknown3 = 0;
+				mod.unknown4 = 0;
+				mod.unknown5 = 0;
+			}
+		}
+	};
+
+	std::unordered_map<uint32_t, EQ2EquipmentItem> appearances;
+
+	auto LoadAppearances = [this, &appearances] {
+		DatabaseResult result;
+		if (!Select(&result, "SELECT* FROM item_appearances;")) {
+			LogError(LOG_DATABASE, 0, "Error loading item stats.");
+			return;
+		}
+
+		appearances.reserve(result.GetNumRows());
+
+		while (result.Next()) {
+			uint32_t i = 1;
+			EQ2EquipmentItem& app = appearances[result.GetUInt32(i++)];
+			app.type = result.GetUInt32(i++);
+			app.color.Red = result.GetUInt8(i++);
+			app.color.Green = result.GetUInt8(i++);
+			app.color.Blue = result.GetUInt8(i++);
+			app.highlight.Red = result.GetUInt8(i++);
+			app.highlight.Green = result.GetUInt8(i++);
+			app.highlight.Blue = result.GetUInt8(i++);
+		}
+	};
+
 	LogInfo(LOG_DATABASE, 0, "Loading items...");
 
 	ss << "SELECT MAX(id) FROM character_items;\n"
@@ -33,13 +105,16 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 		//
 		//<< "SELECT * FROM items i INNER JOIN item_details_adornments ida ON i.id = ida.item_id;\n";
 
+	std::thread statThread(LoadStats);
+	std::thread appearanceThread(LoadAppearances);
+
 	DatabaseResult result;
 	if (!Select(&result, ss.str().c_str())) {
 		LogError(LOG_ITEM, 0, "Error loading items list!");
 		return;
 	}
 
-	std::unordered_map<uint32_t, std::shared_ptr<const Item>> loadList;
+	std::unordered_map<uint32_t, std::shared_ptr<Item>> loadList;
 	result.Next();
 	//Unique id
 	uint32_t nextID = result.GetUInt32(0);
@@ -176,9 +251,40 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 	}
 	rewardVouchers.clear();
 
+	statThread.join();
+	appearanceThread.join();
+
+	//Move loaded stats over
+	for (auto& itr : stats) {
+		auto f = loadList.find(itr.first);
+		if (f == loadList.end()) {
+			continue;
+		}
+
+		f->second->statMods = std::move(itr.second);
+	}
+	for (auto& itr : stringStats) {
+		auto f = loadList.find(itr.first);
+		if (f == loadList.end()) {
+			continue;
+		}
+
+		f->second->stringMods = std::move(itr.second);
+	}
+
+	//Move loaded appearances
+	for (auto& itr : appearances) {
+		auto f = loadList.find(itr.first);
+		if (f == loadList.end()) {
+			continue;
+		}
+
+		f->second->appearance.emplace(itr.second);
+	}
+
 	LogInfo(LOG_DATABASE, 0, "Successfully loaded %u items.", static_cast<uint32_t>(loadList.size()));;
 
-	masterItems.AssignItems(loadList, nextID);
+	masterItems.AssignItems(reinterpret_cast<std::unordered_map<uint32_t, std::shared_ptr<const Item>>&>(loadList), nextID);
 }
 
 uint32_t ZoneDatabase::ProcessItemTableResult(DatabaseResult& result, const std::shared_ptr<Item>& item) {
@@ -456,7 +562,7 @@ uint32_t ZoneDatabase::ProcessItemBookResult(DatabaseResult& result, const std::
 }
 
 uint32_t ZoneDatabase::ProcessItemRewardVoucherResult(DatabaseResult& result, const std::shared_ptr<ItemRewardVoucher>& item) {
-	uint32_t i = 0;
+	uint32_t i = 2;
 	item->items.emplace_back();
 	RewardVoucherItem& reward = item->items.back();
 	reward.itemID = result.GetUInt32(i++);

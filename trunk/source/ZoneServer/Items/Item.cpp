@@ -7,166 +7,171 @@
 
 extern MasterItemList g_masterItemList;
 
-
 //Packet functions
-std::unique_ptr<Substruct_ExamineDescItem> ItemGeneric::GetPacketData(const std::shared_ptr<Client>& client) const {
+std::unique_ptr<Substruct_ExamineDescItem> Item::GetPacketData(const std::shared_ptr<Client>& client) const {
+	auto ret = GetItemTypeData(client);
+	static_cast<ItemDescBaseData&>(ret->header) = static_cast<const ItemDescBaseData&>(*this);
+	static_cast<ItemDescFooterData&>(ret->footer) = static_cast<const ItemDescFooterData&>(*this);
+	return ret;
+}
+
+std::unique_ptr<Substruct_ExamineDescItem> ItemGeneric::GetItemTypeData(const std::shared_ptr<Client>& client) const {
 	uint32_t version = client->GetVersion();
 	auto ret = std::make_unique<Substruct_ExamineDescItem_Generic>(version);
-	static_cast<ItemDescBaseData&>(ret->header) = static_cast<const ItemDescBaseData&>(*this);
-	static_cast<ItemDescFooterData&>(ret->footer) = static_cast<const ItemDescFooterData&>(*this);
+
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemMeleeWeapon::GetPacketData(const std::shared_ptr<Client>& client) const {
+std::unique_ptr<Substruct_ExamineDescItem> ItemMeleeWeapon::GetItemTypeData(const std::shared_ptr<Client>& client) const {
 	uint32_t version = client->GetVersion();
 	auto ret = std::make_unique<Substruct_ExamineDescItem_MeleeWeapon>(version);
-	static_cast<ItemDescBaseData&>(ret->header) = static_cast<const ItemDescBaseData&>(*this);
+
 	static_cast<ItemMeleeWeaponData&>(*ret) = static_cast<const ItemMeleeWeaponData&>(*this);
-	static_cast<ItemDescFooterData&>(ret->footer) = static_cast<const ItemDescFooterData&>(*this);
+
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemRangedWeapon::GetPacketData(const std::shared_ptr<Client>& client) const {
+std::unique_ptr<Substruct_ExamineDescItem> ItemRangedWeapon::GetItemTypeData(const std::shared_ptr<Client>& client) const {
 	uint32_t version = client->GetVersion();
 	auto ret = std::make_unique<Substruct_ExamineDescItem_RangedWeapon>(version);
-	static_cast<ItemDescBaseData&>(ret->header) = static_cast<const ItemDescBaseData&>(*this);
+
 	static_cast<ItemRangedWeaponData&>(*ret) = static_cast<const ItemRangedWeaponData&>(*this);
-	static_cast<ItemDescFooterData&>(ret->footer) = static_cast<const ItemDescFooterData&>(*this);
+
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemArmor::GetPacketData(const std::shared_ptr<Client>& client) const {
+std::unique_ptr<Substruct_ExamineDescItem> ItemArmor::GetItemTypeData(const std::shared_ptr<Client>& client) const {
 	uint32_t version = client->GetVersion();
 	auto ret = std::make_unique<Substruct_ExamineDescItem_Armor>(version);
-	static_cast<ItemDescBaseData&>(ret->header) = static_cast<const ItemDescBaseData&>(*this);
+
 	static_cast<ItemArmorData&>(*ret) = static_cast<const ItemArmorData&>(*this);
-	static_cast<ItemDescFooterData&>(ret->footer) = static_cast<const ItemDescFooterData&>(*this);
+
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemShield::GetPacketData(const std::shared_ptr<Client>& client) const {
+std::unique_ptr<Substruct_ExamineDescItem> ItemShield::GetItemTypeData(const std::shared_ptr<Client>& client) const {
 	uint32_t version = client->GetVersion();
 	auto ret = std::make_unique<Substruct_ExamineDescItem_Shield>(version);
-	static_cast<ItemDescBaseData&>(ret->header) = static_cast<const ItemDescBaseData&>(*this);
+
 	static_cast<ItemShieldData&>(*ret) = static_cast<const ItemShieldData&>(*this);
-	static_cast<ItemDescFooterData&>(ret->footer) = static_cast<const ItemDescFooterData&>(*this);
+
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemBag::GetPacketData(const std::shared_ptr<Client>& client) const {
+std::unique_ptr<Substruct_ExamineDescItem> ItemBag::GetItemTypeData(const std::shared_ptr<Client>& client) const {
 	uint32_t version = client->GetVersion();
 	auto ret = std::make_unique<Substruct_ExamineDescItem_Bag>(version);
-	static_cast<ItemDescBaseData&>(ret->header) = static_cast<const ItemDescBaseData&>(*this);
+
 	static_cast<ItemBagData&>(*ret) = static_cast<const ItemBagData&>(*this);
-	static_cast<ItemDescFooterData&>(ret->footer) = static_cast<const ItemDescFooterData&>(*this);
+
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemRecipeBook::GetPacketData(const std::shared_ptr<Client>& client) const {
+std::unique_ptr<Substruct_ExamineDescItem> ItemRecipeBook::GetItemTypeData(const std::shared_ptr<Client>& client) const {
 	uint32_t version = client->GetVersion();
 	auto ret = std::make_unique<Substruct_ExamineDescItem_RecipeBook>(version);
-	static_cast<ItemDescBaseData&>(ret->header) = static_cast<const ItemDescBaseData&>(*this);
+
 	static_cast<ItemRecipeBookData&>(*ret) = static_cast<const ItemRecipeBookData&>(*this);
-	static_cast<ItemDescFooterData&>(ret->footer) = static_cast<const ItemDescFooterData&>(*this);
+
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemProvision::GetPacketData(const std::shared_ptr<Client>& client) const {
+std::unique_ptr<Substruct_ExamineDescItem> ItemProvision::GetItemTypeData(const std::shared_ptr<Client>& client) const {
 	uint32_t version = client->GetVersion();
 	auto ret = std::make_unique<Substruct_ExamineDescItem_Provision>(version);
-	static_cast<ItemDescBaseData&>(ret->header) = static_cast<const ItemDescBaseData&>(*this);
+
 	static_cast<ItemProvisionData&>(*ret) = static_cast<const ItemProvisionData&>(*this);
-	static_cast<ItemDescFooterData&>(ret->footer) = static_cast<const ItemDescFooterData&>(*this);
+
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemBauble::GetPacketData(const std::shared_ptr<Client>& client) const {
+std::unique_ptr<Substruct_ExamineDescItem> ItemBauble::GetItemTypeData(const std::shared_ptr<Client>& client) const {
 	uint32_t version = client->GetVersion();
 	auto ret = std::make_unique<Substruct_ExamineDescItem_Bauble>(version);
-	static_cast<ItemDescBaseData&>(ret->header) = static_cast<const ItemDescBaseData&>(*this);
+
 	static_cast<ItemBaubleData&>(*ret) = static_cast<const ItemBaubleData&>(*this);
-	static_cast<ItemDescFooterData&>(ret->footer) = static_cast<const ItemDescFooterData&>(*this);
+
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemHouse::GetPacketData(const std::shared_ptr<Client>& client) const {
+std::unique_ptr<Substruct_ExamineDescItem> ItemHouse::GetItemTypeData(const std::shared_ptr<Client>& client) const {
 	uint32_t version = client->GetVersion();
 	auto ret = std::make_unique<Substruct_ExamineDescItem_House>(version);
-	static_cast<ItemDescBaseData&>(ret->header) = static_cast<const ItemDescBaseData&>(*this);
+
 	static_cast<ItemHouseData&>(ret->houseData) = static_cast<const ItemHouseData&>(*this);
-	static_cast<ItemDescFooterData&>(ret->footer) = static_cast<const ItemDescFooterData&>(*this);
+
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemAmmo::GetPacketData(const std::shared_ptr<Client>& client) const {
+std::unique_ptr<Substruct_ExamineDescItem> ItemAmmo::GetItemTypeData(const std::shared_ptr<Client>& client) const {
 	uint32_t version = client->GetVersion();
 	auto ret = std::make_unique<Substruct_ExamineDescItem_Ammo>(version);
-	static_cast<ItemDescBaseData&>(ret->header) = static_cast<const ItemDescBaseData&>(*this);
+
 	static_cast<ItemAmmoData&>(*ret) = static_cast<const ItemAmmoData&>(*this);
-	static_cast<ItemDescFooterData&>(ret->footer) = static_cast<const ItemDescFooterData&>(*this);
+
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemAdornment::GetPacketData(const std::shared_ptr<Client>& client) const {
+std::unique_ptr<Substruct_ExamineDescItem> ItemAdornment::GetItemTypeData(const std::shared_ptr<Client>& client) const {
 	uint32_t version = client->GetVersion();
 	auto ret = std::make_unique<Substruct_ExamineDescItem_Adornment>(version);
-	static_cast<ItemDescBaseData&>(ret->header) = static_cast<const ItemDescBaseData&>(*this);
+
 	static_cast<ItemAdornmentData&>(*ret) = static_cast<const ItemAdornmentData&>(*this);
-	static_cast<ItemDescFooterData&>(ret->footer) = static_cast<const ItemDescFooterData&>(*this);
+
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemAchievementProfile::GetPacketData(const std::shared_ptr<Client>& client) const {
+std::unique_ptr<Substruct_ExamineDescItem> ItemAchievementProfile::GetItemTypeData(const std::shared_ptr<Client>& client) const {
 	uint32_t version = client->GetVersion();
 	auto ret = std::make_unique<Substruct_ExamineDescItem_AchievementProfile>(version);
-	static_cast<ItemDescBaseData&>(ret->header) = static_cast<const ItemDescBaseData&>(*this);
+
 	static_cast<ItemAchievementProfileData&>(*ret) = static_cast<const ItemAchievementProfileData&>(*this);
-	static_cast<ItemDescFooterData&>(ret->footer) = static_cast<const ItemDescFooterData&>(*this);
+
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemRewardVoucher::GetPacketData(const std::shared_ptr<Client>& client) const {
+std::unique_ptr<Substruct_ExamineDescItem> ItemRewardVoucher::GetItemTypeData(const std::shared_ptr<Client>& client) const {
 	uint32_t version = client->GetVersion();
 	auto ret = std::make_unique<Substruct_ExamineDescItem_RewardVoucher>(version);
-	static_cast<ItemDescBaseData&>(ret->header) = static_cast<const ItemDescBaseData&>(*this);
+
 	static_cast<ItemRewardVoucherData&>(*ret) = static_cast<const ItemRewardVoucherData&>(*this);
-	static_cast<ItemDescFooterData&>(ret->footer) = static_cast<const ItemDescFooterData&>(*this);
+
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemRewardCrate::GetPacketData(const std::shared_ptr<Client>& client) const {
+std::unique_ptr<Substruct_ExamineDescItem> ItemRewardCrate::GetItemTypeData(const std::shared_ptr<Client>& client) const {
 	uint32_t version = client->GetVersion();
 	auto ret = std::make_unique<Substruct_ExamineDescItem_RewardCrate>(version);
-	static_cast<ItemDescBaseData&>(ret->header) = static_cast<const ItemDescBaseData&>(*this);
+
 	static_cast<ItemRewardCrateData&>(*ret) = static_cast<const ItemRewardCrateData&>(*this);
-	static_cast<ItemDescFooterData&>(ret->footer) = static_cast<const ItemDescFooterData&>(*this);
+
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemBook::GetPacketData(const std::shared_ptr<Client>& client) const {
+std::unique_ptr<Substruct_ExamineDescItem> ItemBook::GetItemTypeData(const std::shared_ptr<Client>& client) const {
 	uint32_t version = client->GetVersion();
 	auto ret = std::make_unique<Substruct_ExamineDescItem_Book>(version);
-	static_cast<ItemDescBaseData&>(ret->header) = static_cast<const ItemDescBaseData&>(*this);
+
 	static_cast<ItemBookData&>(*ret) = static_cast<const ItemBookData&>(*this);
-	static_cast<ItemDescFooterData&>(ret->footer) = static_cast<const ItemDescFooterData&>(*this);
+
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemReforgingDecoration::GetPacketData(const std::shared_ptr<Client>& client) const {
+std::unique_ptr<Substruct_ExamineDescItem> ItemReforgingDecoration::GetItemTypeData(const std::shared_ptr<Client>& client) const {
 	uint32_t version = client->GetVersion();
 	auto ret = std::make_unique<Substruct_ExamineDescItem_ReforgingDecoration>(version);
-	static_cast<ItemDescBaseData&>(ret->header) = static_cast<const ItemDescBaseData&>(*this);
+
 	static_cast<ItemReforgingDecorationData&>(*ret) = static_cast<const ItemReforgingDecorationData&>(*this);
-	static_cast<ItemDescFooterData&>(ret->footer) = static_cast<const ItemDescFooterData&>(*this);
+
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemHouseContainer::GetPacketData(const std::shared_ptr<Client>& client) const {
+std::unique_ptr<Substruct_ExamineDescItem> ItemHouseContainer::GetItemTypeData(const std::shared_ptr<Client>& client) const {
 	uint32_t version = client->GetVersion();
 	auto ret = std::make_unique<Substruct_ExamineDescItem_HouseContainer>(version);
-	static_cast<ItemDescBaseData&>(ret->header) = static_cast<const ItemDescBaseData&>(*this);
+
 	static_cast<ItemHouseContainerData&>(*ret) = static_cast<const ItemHouseContainerData&>(*this);
-	static_cast<ItemDescFooterData&>(ret->footer) = static_cast<const ItemDescFooterData&>(*this);
+
 	return ret;
 }
 
@@ -327,6 +332,47 @@ Item::Item() : bUseable(false), scriptID(0) {
 
 	memset(adornSlots, 0xFF, sizeof(adornSlots));
 	uniqueID = 0xFFFFFFFF;
-	itemTypeUnknown = 3;
+	footerTypeUnknown = 3;
 	condition = 100;
+}
+
+std::shared_ptr<Item> Item::CreateItemWithType(EItemType type) {
+	switch (type) {
+	case EItemType::EACHIEVEMENT_PROFILE:
+		return std::make_shared<ItemAchievementProfile>();
+	case EItemType::EARMOR:
+		return std::make_shared<ItemArmor>();
+	case EItemType::EMELEE_WEAPON:
+		return std::make_shared<ItemMeleeWeapon>();
+	case EItemType::ERANGED_WEAPON:
+		return std::make_shared<ItemRangedWeapon>();
+	case EItemType::ESHIELD:
+		return std::make_shared<ItemShield>();
+	case EItemType::EBAG:
+		return std::make_shared<ItemBag>();
+	case EItemType::EBAUBLE:
+		return std::make_shared<ItemBauble>();
+	case EItemType::EHOUSE:
+		return std::make_shared<ItemHouse>();
+	case EItemType::EHOUSE_CONTAINER:
+		return std::make_shared<ItemHouseContainer>();
+	case EItemType::EBOOK:
+		return std::make_shared<ItemBook>();
+	case EItemType::EPROVISION:
+		return std::make_shared<ItemProvision>();
+	case EItemType::EREFORGING_DECORATION:
+		return std::make_shared<ItemReforgingDecoration>();
+	case EItemType::EMARKETPLACE:
+	case EItemType::EDUNGEON_MAKER:
+	case EItemType::EOVERSEER:
+	case EItemType::EREWARD_CRATE:
+	case EItemType::EREWARD_CRATE_2:
+		return std::make_shared<ItemRewardCrate>();
+	case EItemType::EREWARD_VOUCHER:
+		return std::make_shared<ItemRewardVoucher>();
+	case EItemType::EAMMO:
+		return std::make_shared<ItemAmmo>();
+	default:
+		return std::make_shared<ItemGeneric>();
+	}
 }

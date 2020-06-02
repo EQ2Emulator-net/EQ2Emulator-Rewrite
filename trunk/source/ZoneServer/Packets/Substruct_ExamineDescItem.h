@@ -292,7 +292,7 @@ public:
 		classCount->SetMyArray(RegisterArray(classReqArray, Substruct_ItemClassReq));
 		auto nSlots = RegisterUInt8(slotCount);
 		nSlots->SetMyArray(RegisterArray(slotArray, Substruct_ItemSlot));
-		RegisterUInt32(itemTypeUnknown);
+		RegisterUInt32(footerTypeUnknown);
 		RegisterUInt8(itemType);
 	}
 };

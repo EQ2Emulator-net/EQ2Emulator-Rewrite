@@ -81,7 +81,7 @@ struct ItemDescBaseData {
 	uint8_t classReqCount;
 	uint8_t slotCount;
 	uint32_t slotBitmask;
-	uint32_t itemTypeUnknown;
+	uint32_t footerTypeUnknown;
 	uint8_t itemType;
 
 	//Dynamic
@@ -265,7 +265,7 @@ enum class EItemType : uint8_t {
 	EREWARD_CRATE_2 = 23,
 	EINFUSER_1 = 24,
 	EINFUSER_2 = 25,
-	EEXPERIENCE_VALUE = 26,
+	EEXPERIENCE_VIAL = 26,
 	EOVERSEER = 27
 };
 
@@ -274,11 +274,14 @@ protected:
 	Item();
 	Item(const Item& rhs);
 
+	virtual std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const = 0;
+
 public:
 	virtual ~Item() = default;
-	virtual std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) const = 0;
-
+	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) const;
 	virtual std::shared_ptr<Item> Copy() const = 0;
+
+	static std::shared_ptr<Item> CreateItemWithType(EItemType type);
 
 	bool bUseable;
 	uint32_t scriptID;
@@ -324,7 +327,7 @@ public:
 	ItemGeneric() = default;
 	~ItemGeneric() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 
 	std::shared_ptr<Item> Copy() const override;
 };
@@ -334,7 +337,7 @@ public:
 	ItemMeleeWeapon() = default;
 	~ItemMeleeWeapon() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
 };
 
@@ -343,7 +346,7 @@ public:
 	ItemRangedWeapon() = default;
 	~ItemRangedWeapon() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
 };
 
@@ -352,7 +355,7 @@ public:
 	ItemArmor() = default;
 	~ItemArmor() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
 };
 
@@ -361,7 +364,7 @@ public:
 	ItemShield() = default;
 	~ItemShield() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
 };
 
@@ -370,7 +373,7 @@ public:
 	ItemBag() = default;
 	~ItemBag() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
 };
 
@@ -379,7 +382,7 @@ public:
 	ItemRecipeBook() = default;
 	~ItemRecipeBook() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
 };
 
@@ -388,7 +391,7 @@ public:
 	ItemProvision() = default;
 	~ItemProvision() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
 };
 
@@ -397,7 +400,7 @@ public:
 	ItemBauble() = default;
 	~ItemBauble() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
 };
 
@@ -406,7 +409,7 @@ public:
 	ItemHouse() = default;
 	~ItemHouse() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
 };
 
@@ -415,7 +418,7 @@ public:
 	ItemAmmo() = default;
 	~ItemAmmo() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
 };
 
@@ -424,7 +427,7 @@ public:
 	ItemAdornment() = default;
 	~ItemAdornment() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
 };
 
@@ -433,7 +436,7 @@ public:
 	ItemAchievementProfile() = default;
 	~ItemAchievementProfile() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
 };
 
@@ -442,7 +445,7 @@ public:
 	ItemRewardVoucher() = default;
 	~ItemRewardVoucher() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
 };
 
@@ -451,7 +454,7 @@ public:
 	ItemRewardCrate() = default;
 	~ItemRewardCrate() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
 };
 
@@ -460,7 +463,7 @@ public:
 	ItemBook() = default;
 	~ItemBook() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
 };
 
@@ -469,7 +472,7 @@ public:
 	ItemReforgingDecoration() = default;
 	~ItemReforgingDecoration() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
 };
 
@@ -478,6 +481,6 @@ public:
 	ItemHouseContainer() = default;
 	~ItemHouseContainer() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(const std::shared_ptr<Client>& client) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;
 };

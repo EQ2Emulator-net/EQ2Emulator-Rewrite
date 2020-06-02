@@ -203,6 +203,7 @@
     <ClCompile Include="..\..\source\common\Packets\EQ2Packets\CommonSubstructs.cpp" />
     <ClCompile Include="..\..\source\common\Packets\EQ2Packets\OpcodeManager.cpp" />
     <ClCompile Include="..\..\source\common\Packets\PacketElements\PacketCriteria.cpp" />
+    <ClCompile Include="..\..\source\common\Packets\PacketElements\PacketSubstruct.cpp" />
     <ClCompile Include="..\..\source\common\Packets\ProtocolPacket.cpp" />
     <ClCompile Include="..\..\source\common\Packets\XmlStructDumper.cpp" />
     <ClCompile Include="..\..\source\common\RC4.cpp" />

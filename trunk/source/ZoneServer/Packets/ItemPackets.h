@@ -103,6 +103,7 @@ public:
 			sMitigationLow = mitigationLow;
 			sMitigationHigh = mitigationHigh;
 		}
+		PacketSubstruct::PreWrite();
 	}
 
 	void RegisterElements() {

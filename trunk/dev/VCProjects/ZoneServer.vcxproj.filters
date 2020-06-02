@@ -402,6 +402,9 @@
     <ClCompile Include="..\..\source\ZoneServer\Items\ItemDatabase.cpp">
       <Filter>source\Items</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\common\Packets\PacketElements\PacketSubstruct.cpp">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h">

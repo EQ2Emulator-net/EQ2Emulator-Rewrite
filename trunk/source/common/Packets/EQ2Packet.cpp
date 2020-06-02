@@ -4,6 +4,7 @@
 #include "../util.h"
 #include "../Packets/EQ2Packets/OpcodeManager.h"
 #include "../../common/Packets/PacketElements/PacketSubstruct.h"
+#include "../../common/Packets/PacketElements/PacketArray.h"
 
 EQ2Packet::EQ2Packet(uint32_t version) {
 	app_opcode_size = 2;
@@ -163,24 +164,33 @@ EQ2Packet* EQ2Packet::CopyRaw() {
 
 void EQ2Packet::PreWrite() {
 	for (auto& e : elements) {
-		if (auto substr = dynamic_cast<PacketSubstruct*>(e)) {
+		if (auto substr = dynamic_cast<PacketSubstructParentBase*>(e)) {
 			substr->PreWrite();
+		}
+		if (auto arr = dynamic_cast<PacketArrayBase*>(e)) {
+			arr->PreWrite();
 		}
 	}
 }
 
 void EQ2Packet::PostWrite() {
 	for (auto& e : elements) {
-		if (auto substr = dynamic_cast<PacketSubstruct*>(e)) {
+		if (auto substr = dynamic_cast<PacketSubstructParentBase*>(e)) {
 			substr->PostWrite();
+		}
+		if (auto arr = dynamic_cast<PacketArrayBase*>(e)) {
+			arr->PostWrite();
 		}
 	}
 }
 
 void EQ2Packet::PostRead() {
 	for (auto& e : elements) {
-		if (auto substr = dynamic_cast<PacketSubstruct*>(e)) {
+		if (auto substr = dynamic_cast<PacketSubstructParentBase*>(e)) {
 			substr->PostRead();
+		}
+		if (auto arr = dynamic_cast<PacketArrayBase*>(e)) {
+			arr->PostRead();
 		}
 	}
 }

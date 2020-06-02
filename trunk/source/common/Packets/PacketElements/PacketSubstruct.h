@@ -87,29 +87,9 @@ public:
 
 	uint32_t GetVersion() { return version; }
 
-	virtual void PreWrite() {
-		for (auto& e : elements) {
-			if (auto substr = dynamic_cast<PacketSubstruct*>(e)) {
-				substr->PreWrite();
-			}
-		}
-	}
-
-	virtual void PostWrite() {
-		for (auto& e : elements) {
-			if (auto substr = dynamic_cast<PacketSubstruct*>(e)) {
-				substr->PostWrite();
-			}
-		}
-	}
-
-	virtual void PostRead() {
-		for (auto& e : elements) {
-			if (auto substr = dynamic_cast<PacketSubstruct*>(e)) {
-				substr->PostRead();
-			}
-		}
-	}
+	virtual void PreWrite();
+	virtual void PostWrite();
+	virtual void PostRead();
 
 protected:
 	PacketSubstruct(uint32_t p_version, bool p_inline = false): elementsInitialized(false), version(p_version), bInline(p_inline) {
@@ -147,6 +127,9 @@ protected:
 
 public:
 	virtual PacketSubstruct* GetSubstructs() = 0;
+	virtual void PreWrite() = 0;
+	virtual void PostWrite() = 0;
+	virtual void PostRead() = 0;
 };
 
 //PacketSubstructParent simply links to a PacketSubstruct object and writes it
@@ -189,5 +172,23 @@ public:
 
 	PacketSubstruct* GetSubstructs() override {
 		return substructs;
+	}
+
+	void PreWrite() override {
+		for (int i = 0; i < count; i++) {
+			substructs[i].PreWrite();
+		}
+	}
+
+	void PostWrite() override {
+		for (int i = 0; i < count; i++) {
+			substructs[i].PostWrite();
+		}
+	}
+
+	void PostRead() override {
+		for (int i = 0; i < count; i++) {
+			substructs[i].PostWrite();
+		}
 	}
 };
