@@ -99,8 +99,12 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 		<< "SELECT * FROM items i INNER JOIN item_details_thrown idt ON i.id = idt.item_id;\n"
 		<< "SELECT * FROM items i INNER JOIN item_details_house_container idhc ON i.id = idhc.item_id;\n"
 		<< "SELECT * FROM items i INNER JOIN item_details_book idb ON i.id = idb.item_id;\n"
-		<< "SELECT i.* FROM items i INNER JOIN item_details_pattern idp ON i.id = idp.item_id;\n"
-		<< "SELECT * FROM item_details_pattern;\n";
+		<< "SELECT * FROM items WHERE id IN (SELECT DISTINCT item_id FROM item_details_pattern);\n"
+		<< "SELECT * FROM items WHERE id IN (SELECT DISTINCT itemset_item_id FROM item_details_itemset);\n"
+		<< "SELECT * FROM items WHERE id IN (SELECT DISTINCT marketplace_item_id FROM item_details_marketplace);\n"
+		<< "SELECT idp.item_id, i.id, i.name, i.icon FROM item_details_pattern idp INNER JOIN items i ON i.soe_item_id = idp.pattern_item_id;\n"
+		<< "SELECT idm.marketplace_item_id, i.id, i.name, i.icon FROM item_details_marketplace idm INNER JOIN items i ON i.soe_item_id = idm.item_id;"
+		<< "SELECT ids.*, i.name, i.id FROM item_details_itemset ids INNER JOIN items i ON i.soe_item_id = ids.item_id;";
 		//<< "SELECT idri.item_id, i.icon, idri.name FROM items i INNER JOIN item_details_recipe_items idri ON i.id = idri.item_id;\n"
 		//
 		//<< "SELECT * FROM items i INNER JOIN item_details_adornments ida ON i.id = ida.item_id;\n";
@@ -124,20 +128,58 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 	loadList.reserve(result.GetUInt32(0));
 	result.NextResultSet();
 	
-	for (int i = 0; i < 14; i++) {
+	for (int i = 0; i < 16; i++) {
 		while (result.Next()) {
-			EItemType type = Item::GetItemTypeFromName(result.GetString(i++));
+			EItemType type = Item::GetItemTypeFromName(result.GetString(2));
 
 			if (type == EItemType::EINVALID) {
 				type = EItemType::EGENERIC;
 			}
 
 			auto item = Item::CreateItemWithType(type);
+			item->itemType = static_cast<uint8_t>(type);
 			uint32_t i = ProcessItemTableResult(result, item);
 			item->LoadTypeSpecificData(result, i);
 			loadList[item->itemID] = item;
 		}
 		result.NextResultSet();
+	}
+
+	//item_details_pattern/marketplace
+	for (int i = 0; i < 2; i++) {
+		while (result.Next()) {
+			uint32_t id = result.GetUInt32(0);
+
+			auto itr = loadList.find(id);
+			if (itr == loadList.end()) {
+				continue;
+			}
+
+			auto item = std::dynamic_pointer_cast<ItemRewardVoucher>(itr->second);
+			if (!item) {
+				continue;
+			}
+
+			ProcessItemRewardVoucherResult(result, item);
+		}
+		result.NextResultSet();
+	}
+
+	//item_details_itemset NOTE We need to change from SOE item id to OUR id, item_name field that was parsed for patterns is also useless because it is the base item not the sub item
+	while (result.Next()) {
+		uint32_t id = result.GetUInt32(1);
+
+		auto itr = loadList.find(id);
+		if (itr == loadList.end()) {
+			continue;
+		}
+
+		auto item = std::dynamic_pointer_cast<ItemRewardCrate>(itr->second);
+		if (!item) {
+			continue;
+		}
+
+		ProcessItemRewardCrateResult(result, item);
 	}
 
 	statThread.join();
@@ -416,18 +458,41 @@ void ItemBook::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
 }
 
 void ItemRewardVoucher::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
-	i = 2;
-	items.emplace_back();
-	RewardVoucherItem& reward = items.back();
-	reward.itemID = result.GetUInt32(i++);
-	reward.icon = result.GetUInt16(i++);
-	reward.itemName = result.GetString(i++);
-	reward.crc = 0;
-	reward.unknown = 0;
 }
 
 void ItemGeneric::LoadTypeSpecificData(DatabaseResult& res, uint32_t i) {
 
+}
+
+void ItemRewardCrate::LoadTypeSpecificData(DatabaseResult& res, uint32_t i) {
+
+}
+
+uint32_t ZoneDatabase::ProcessItemRewardVoucherResult(DatabaseResult& result, const std::shared_ptr<ItemRewardVoucher>& item) {
+	uint32_t i = 1;
+	item->items.emplace_back();
+	RewardVoucherItem& reward = item->items.back();
+	reward.itemID = result.GetUInt32(i++);
+	reward.itemName = result.GetString(i++);
+	reward.icon = result.GetUInt16(i++);
+	reward.crc = 0;
+	reward.unknown = 0;
+	return i;
+}
+
+uint32_t ZoneDatabase::ProcessItemRewardCrateResult(DatabaseResult& result, const std::shared_ptr<ItemRewardCrate>& item) {
+	uint32_t i = 3;
+	item->items.emplace_back();
+	RewardCrateItem& reward = item->items.back();
+	//TODO: Really need to change this table to use OUR ids not sony's...
+	reward.icon = result.GetUInt16(i++);
+	reward.stackSize = result.GetUInt32(i++);
+	reward.colorID = result.GetUInt32(i++);
+	reward.language = result.GetUInt8(i++);
+	reward.itemName = result.GetString(i++);
+	reward.itemID = result.GetUInt32(i++);
+	reward.crc = 0;
+	return i;
 }
 
 //The below classes are still TODO
@@ -440,9 +505,5 @@ void ItemAchievementProfile::LoadTypeSpecificData(DatabaseResult& res, uint32_t 
 }
 
 void ItemReforgingDecoration::LoadTypeSpecificData(DatabaseResult& res, uint32_t i) {
-
-}
-
-void ItemRewardCrate::LoadTypeSpecificData(DatabaseResult& res, uint32_t i) {
 
 }

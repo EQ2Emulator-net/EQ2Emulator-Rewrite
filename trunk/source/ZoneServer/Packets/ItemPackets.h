@@ -544,18 +544,18 @@ public:
 			RegisterUInt16(icon);
 			if (itemVersion >= 40) {
 				if (itemVersion >= 42) {
-					RegisterUInt32(unknown2);
+					RegisterUInt32(stackSize);
 				}
 				else {
-					uint8_t& unknown2 = reinterpret_cast<uint8_t&>(this->unknown2);
-					RegisterUInt8(unknown2);
+					uint8_t& stackSize = reinterpret_cast<uint8_t&>(this->stackSize);
+					RegisterUInt8(stackSize);
 				}
 			}
 			if (itemVersion >= 95) {
-				RegisterUInt8(unknown);
+				RegisterUInt8(language);
 			}
 			Register16String(itemName);
-			RegisterUInt32(unknown3);
+			RegisterUInt32(colorID);
 		}
 	};
 	

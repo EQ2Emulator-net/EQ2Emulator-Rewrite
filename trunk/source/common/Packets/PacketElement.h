@@ -60,10 +60,16 @@ public:
 		}
 
 		if (!ifAnyVariableSet.empty()) {
+			bool bSet = false;
 			for (auto& itr : ifAnyVariableSet) {
-				if (!CheckIfVariableSet(itr)) {
-					return false;
+				if (CheckIfVariableSet(itr)) {
+					bSet = true;
+					break;
 				}
+			}
+
+			if (!bSet) {
+				return false;
 			}
 		}
 

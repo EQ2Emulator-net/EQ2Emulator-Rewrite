@@ -74,6 +74,8 @@ public:
 
 	//Items
 	void LoadMasterItems(class MasterItemList& masterItems);
+	uint32_t ProcessItemRewardVoucherResult(DatabaseResult& result, const std::shared_ptr<class ItemRewardVoucher>& item);
+	uint32_t ProcessItemRewardCrateResult(DatabaseResult& result, const std::shared_ptr<class ItemRewardCrate>& item);
 
 private:
 	//The return value is the next indice in the query result

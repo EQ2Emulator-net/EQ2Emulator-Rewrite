@@ -177,10 +177,10 @@ struct ItemReforgingDecorationData {
 struct RewardCrateItem {
 	uint32_t itemID;
 	uint32_t crc;
-	uint32_t unknown2;
-	uint32_t unknown3;
+	uint32_t stackSize;
+	uint32_t colorID;
 	uint16_t icon;
-	uint8_t unknown;
+	uint8_t language;
 	std::string itemName;
 };
 

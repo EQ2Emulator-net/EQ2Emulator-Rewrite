@@ -363,13 +363,13 @@ std::shared_ptr<Item> Item::CreateItemWithType(EItemType type) {
 	case EItemType::EREFORGING_DECORATION:
 		return std::make_shared<ItemReforgingDecoration>();
 	case EItemType::EMARKETPLACE:
-	case EItemType::EDUNGEON_MAKER:
+	case EItemType::EEXPERIENCE_VIAL:
 	case EItemType::EOVERSEER:
-	case EItemType::EREWARD_CRATE:
-	case EItemType::EREWARD_CRATE_2:
-		return std::make_shared<ItemRewardCrate>();
 	case EItemType::EREWARD_VOUCHER:
+	case EItemType::EREWARD_CRATE_2:
 		return std::make_shared<ItemRewardVoucher>();
+	case EItemType::EREWARD_CRATE:
+		return std::make_shared<ItemRewardCrate>();
 	case EItemType::EAMMO:
 		return std::make_shared<ItemAmmo>();
 	default:
