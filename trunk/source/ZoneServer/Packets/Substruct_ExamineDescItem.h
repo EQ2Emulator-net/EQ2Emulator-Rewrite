@@ -139,10 +139,10 @@ public:
 		uint8_t itemVersion = GetItemStructVersion(GetVersion());
 		Register8String(stringVal);
 		if (itemVersion >= 7) {
-			RegisterUInt8(unknown1);
-		}
-		if (itemVersion >= 28) {
-			RegisterUInt8(unknown2);
+			auto e = RegisterUInt8(unknown1);
+			if (itemVersion >= 28) {
+				RegisterUInt8(unknown2)->SetIsVariableSet(e);
+			}
 		}
 		//if Substruct_ExamineDescItem::unknown1 NOT SET
 		Register16String(statDescription);
