@@ -5,6 +5,8 @@
 class NPCController : BaseController {
 public:
 
+	bool IsNPCController() override { return true; }
+
 private:
 
 };

@@ -67,6 +67,9 @@
     <Filter Include="source\Items">
       <UniqueIdentifier>{01df0f14-06ca-419b-a36d-d9c97f8b2599}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\AI">
+      <UniqueIdentifier>{58a60d54-8bd4-4cd9-b6c6-4c78a86db813}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\ZoneServer\main.cpp">
@@ -404,6 +407,9 @@
     </ClCompile>
     <ClCompile Include="..\..\source\common\Packets\PacketElements\PacketSubstruct.cpp">
       <Filter>common\Packets\PacketElements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\AI\NPCMovement.cpp">
+      <Filter>source\AI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1054,6 +1060,12 @@
     </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\Items\MasterItemList.h">
       <Filter>source\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\AI\NPCMovement.h">
+      <Filter>source\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\AI\MovementLocationInfo.h">
+      <Filter>source\AI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

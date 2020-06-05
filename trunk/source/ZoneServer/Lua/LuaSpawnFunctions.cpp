@@ -2,11 +2,14 @@
 
 #include "LuaSpawnFunctions.h"
 #include "../Spawns/Entity.h"
+#include "../AI/MovementLocationInfo.h"
+#include "../Controllers/BaseController.h"
 
 void LuaSpawnFunctions::RegisterFunctions(lua_State* state) {
 	lua_register(state, "FaceTarget", Emu_Lua_FaceTarget);
 	lua_register(state, "GetRace", Emu_Lua_GetRace);
 	lua_register(state, "GetName", Emu_Lua_GetName);
+	lua_register(state, "MovementLoopAddLocation", Emu_Lua_MovementLoopAddLocation);
 }
 
 int LuaSpawnFunctions::Emu_Lua_FaceTarget(lua_State* state) {
@@ -45,5 +48,32 @@ int LuaSpawnFunctions::Emu_Lua_GetName(lua_State* state) {
 	}
 
 	PushLuaString(state, spawn->GetName().c_str());
+	return 1;
+}
+
+int LuaSpawnFunctions::Emu_Lua_MovementLoopAddLocation(lua_State* state) {
+	std::shared_ptr<Spawn> spawn = GetLuaSpawn(state, 1);
+	if (!spawn) {
+		LuaError("Lua MovementLoopAddLocation command error: spawn is not valid");
+		return 0;
+	}
+
+	std::shared_ptr<BaseController> controller = spawn->GetController();
+	if (!controller) {
+		LuaError("Lua MovementLoopAddLocation command error: unable to get a controller for the given spawn");
+		return 0;
+	}
+
+	std::shared_ptr<MovementLocationInfo> loc = std::make_shared<MovementLocationInfo>();
+	loc->x = GetLuaFloat(state, 2);
+	loc->y = GetLuaFloat(state, 3);
+	loc->z = GetLuaFloat(state, 4);
+	float speed = GetLuaFloat(state, 5);
+	loc->speed = speed == 0 ? 2 : speed;
+	loc->delay = GetLuaFloat(state, 6);
+	loc->callback = GetLuaString(state, 7);
+
+	// This will probably need to be reworked when AI is figured out
+	controller->AddMovementLocation(loc);
 	return 1;
 }

@@ -64,7 +64,9 @@ void CommandProcess::CommandSpawnSet(const std::shared_ptr<Client>& client, Sepa
 		SpawnSet(target, masterSpawn, SetDifficultyOffset(sep.GetUInt32(1)));
 	}
 
-	
+	if (cmd == "model_type" && sep.IsNumber(1)) {
+		SpawnSet(target, masterSpawn, SetModelType(sep.GetUInt32(1)));
+	}
 
 	// Vis struct
 

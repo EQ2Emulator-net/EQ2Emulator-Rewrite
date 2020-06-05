@@ -155,6 +155,7 @@
     <ClCompile Include="..\..\source\Lua\lzio.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\AI\NPCMovement.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Chat\ChatFilterLookup.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Chat\ClientChat.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Chat\ClientChatFilters.cpp" />
@@ -319,6 +320,8 @@
     <ClInclude Include="..\..\source\Lua\lundump.h" />
     <ClInclude Include="..\..\source\Lua\lvm.h" />
     <ClInclude Include="..\..\source\Lua\lzio.h" />
+    <ClInclude Include="..\..\source\ZoneServer\AI\MovementLocationInfo.h" />
+    <ClInclude Include="..\..\source\ZoneServer\AI\NPCMovement.h" />
     <ClInclude Include="..\..\source\ZoneServer\Chat\ChatFilterLookup.h" />
     <ClInclude Include="..\..\source\ZoneServer\Chat\ClientChat.h" />
     <ClInclude Include="..\..\source\ZoneServer\Chat\ClientChatFilters.h" />
