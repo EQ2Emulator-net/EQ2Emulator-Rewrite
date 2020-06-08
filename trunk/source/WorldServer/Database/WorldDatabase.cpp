@@ -1051,3 +1051,23 @@ bool WorldDatabase::LoadCharacterList(CharacterList& charList) {
 
 	return true;
 }
+
+bool WorldDatabase::LoadNextItemUniqueID(uint32_t& out) {
+	DatabaseResult result;
+	
+	if (!Select(&result, "SELECT MAX(id) FROM character_items")) {
+		LogError(LOG_DATABASE, 0, "Error loading the next item unique id!");
+		return false;
+	}
+
+	result.Next();
+
+	if (result.IsNull(0)) {
+		out = 1;
+	}
+	else {
+		out = result.GetUInt32(0) + 1;
+	}
+
+	return true;
+}

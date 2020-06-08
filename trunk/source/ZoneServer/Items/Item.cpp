@@ -177,7 +177,7 @@ std::unique_ptr<Substruct_ExamineDescItem> ItemHouseContainer::GetItemTypeData(c
 
 //Copy functions
 Item::Item(const Item& rhs) : ItemDescBaseData(rhs), ItemDescFooterData(rhs) {
-	uniqueID = g_masterItemList.GetNextUniqueID();
+	uniqueID = 0xFFFFFFFF;
 }
 
 std::shared_ptr<Item> ItemGeneric::Copy() const {

@@ -25,6 +25,7 @@ Classes classes;
 ZoneTalk zoneTalk;
 RuleManager g_ruleManager;
 CharacterList g_characterList;
+std::atomic<uint32_t> g_nextItemUniqueID;
 
 int main(int argc, char **argv)
 {
@@ -63,6 +64,12 @@ int main(int argc, char **argv)
 	if (success) {
 		LogDebug(LOG_DATABASE, 0, "Loading character list...");
 		success = database.LoadCharacterList(g_characterList);
+	}
+
+	if (success) {
+		uint32_t tmp;
+		success = database.LoadNextItemUniqueID(tmp);
+		g_nextItemUniqueID.store(tmp);
 	}
 
 	if (success)

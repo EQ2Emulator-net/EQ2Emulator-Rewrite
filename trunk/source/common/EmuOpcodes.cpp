@@ -16,6 +16,8 @@
 #include "Packets/EmuPackets/Emu_ZoneTransferReply_Packet.h"
 #include "Packets/EmuPackets/Emu_NotifyCharacterLinkdead_Packet.h"
 #include "Packets/EmuPackets/Emu_CharacterLinkdeadTimeout_Packet.h"
+#include "Packets/EmuPackets/Emu_ItemIDRequest_Packet.h"
+#include "Packets/EmuPackets/Emu_ItemIDReply_Packet.h"
 
 class EmuPacketAllocatorBase {
 public:
@@ -86,4 +88,6 @@ namespace EmuOpcode {
 	RegisterEmuOpcode(EmuOpcode_t::EMUOP_ZONE_TRANSFER_REPLY, Emu_ZoneTransferReply_Packet);
 	RegisterEmuOpcode(EmuOpcode_t::EMUOP_NOTIFY_CHARACTER_LINKDEAD, Emu_NotifyCharacterLinkdead_Packet);
 	RegisterEmuOpcode(EmuOpcode_t::EMUOP_CHARACTER_LINKDEAD_TIMEOUT, Emu_CharacterLinkdeadTimeout_Packet);
+	RegisterEmuOpcode(EmuOpcode_t::EMUOP_ITEM_ID_REQUEST, Emu_ItemIDRequest_Packet);
+	RegisterEmuOpcode(EmuOpcode_t::EMUOP_ITEM_ID_REPLY, Emu_ItemIDReply_Packet);
 }

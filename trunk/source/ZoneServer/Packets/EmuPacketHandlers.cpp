@@ -9,6 +9,7 @@
 #include "../../common/Packets/EmuPackets/Emu_TransferClientConfirm_Packet.h"
 #include "../../common/Packets/EmuPackets/Emu_CancelClientTransfer_Packet.h"
 #include "../../common/Packets/EmuPackets/Emu_ZoneTransferReply_Packet.h"
+#include "../../common/Packets/EmuPackets/Emu_ItemIDReply_Packet.h"
 
 #include "../ZoneServer/ZoneServer.h"
 #include "../ZoneServer/ZoneOperator.h"
@@ -71,4 +72,8 @@ void Emu_CancelClientTransfer_Packet::HandlePacket(std::shared_ptr<WorldStream> 
 
 void Emu_ZoneTransferReply_Packet::HandlePacket(std::shared_ptr<WorldStream> w) {
 	g_zoneOperator.HandleZoneTransferReply(this);
+}
+
+void Emu_ItemIDReply_Packet::HandlePacket(std::shared_ptr<WorldStream> ws) {
+
 }

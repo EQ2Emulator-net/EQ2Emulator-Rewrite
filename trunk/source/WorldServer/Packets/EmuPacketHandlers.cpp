@@ -22,10 +22,13 @@
 #include "../../common/Packets/EmuPackets/Emu_ZoneTransferReply_Packet.h"
 #include "../../common/Packets/EmuPackets/Emu_NotifyCharacterLinkdead_Packet.h"
 #include "../../common/Packets/EmuPackets/Emu_CharacterLinkdeadTimeout_Packet.h"
+#include "../../common/Packets/EmuPackets/Emu_ItemIDRequest_Packet.h"
+#include "../../common/Packets/EmuPackets/Emu_ItemIDReply_Packet.h"
 
 extern ZoneTalk zoneTalk;
 extern WorldServer g_worldServer;
 extern CharacterList g_characterList;
+extern std::atomic<uint32_t> g_nextItemUniqueID;
 
 void Emu_RegisterZoneServer_Packet::HandlePacket(std::shared_ptr<ZoneStream> z) {
 	// TODO: Actually do checks instead of just accepting the ZoneServer
@@ -160,4 +163,11 @@ void Emu_CharacterLinkdeadTimeout_Packet::HandlePacket(std::shared_ptr<ZoneStrea
 	}
 
 	character->SetOffline();
+}
+
+void Emu_ItemIDRequest_Packet::HandlePacket(std::shared_ptr<ZoneStream> zs) {
+	auto p = new Emu_ItemIDReply_Packet;
+	p->requestTag = requestTag;
+	p->itemID = g_nextItemUniqueID.fetch_add(1);
+	zs->QueuePacket(p);
 }

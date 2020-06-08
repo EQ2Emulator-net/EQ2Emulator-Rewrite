@@ -84,8 +84,7 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 
 	LogInfo(LOG_DATABASE, 0, "Loading items...");
 
-	ss << "SELECT MAX(id) FROM character_items;\n"
-		<< "SELECT COUNT(id) FROM items;\n"
+	ss << "SELECT COUNT(id) FROM items;\n"
 		<< "SELECT * FROM items WHERE item_type IN ('Normal', 'Dungeon Maker');\n"
 		<< "SELECT * FROM items i INNER JOIN item_details_weapon idw ON i.id = idw.item_id;\n"
 		<< "SELECT * FROM items i INNER JOIN item_details_range idr ON i.id = idr.item_id;\n"
@@ -119,10 +118,6 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 	}
 
 	std::unordered_map<uint32_t, std::shared_ptr<Item>> loadList;
-	result.Next();
-	//Unique id
-	uint32_t nextID = result.GetUInt32(0);
-	result.NextResultSet();
 	result.Next();
 	//Item count
 	loadList.reserve(result.GetUInt32(0));
@@ -215,7 +210,7 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 
 	LogInfo(LOG_DATABASE, 0, "Successfully loaded %u items.", static_cast<uint32_t>(loadList.size()));;
 
-	masterItems.AssignItems(reinterpret_cast<std::unordered_map<uint32_t, std::shared_ptr<const Item>>&>(loadList), nextID);
+	masterItems.AssignItems(reinterpret_cast<std::unordered_map<uint32_t, std::shared_ptr<const Item>>&>(loadList));
 }
 
 uint32_t ZoneDatabase::ProcessItemTableResult(DatabaseResult& result, const std::shared_ptr<Item>& item) {
