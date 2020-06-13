@@ -6,19 +6,19 @@
 
 class Emu_ItemIDReply_Packet : public EmuPacket {
 public:
-	Emu_ItemIDReply_Packet() : EmuPacket(EmuOpcode_t::EMUOP_ITEM_ID_REPLY) {
+	Emu_ItemIDReply_Packet() : EmuPacket(EmuOpcode_t::EMUOP_ITEM_ID_REPLY), rangeLow(0), rangeHigh(0) {
 		RegisterElements();
 	}
 	~Emu_ItemIDReply_Packet() = default;
 
 	void HandlePacket(std::shared_ptr<WorldStream> w);
 
-	uint32_t requestTag;
-	uint32_t itemID;
+	uint32_t rangeLow;
+	uint32_t rangeHigh;
 
 private:
 	void RegisterElements() {
-		RegisterUInt32(requestTag);
-		RegisterUInt32(itemID);
+		RegisterUInt32(rangeLow);
+		RegisterUInt32(rangeHigh);
 	}
 };

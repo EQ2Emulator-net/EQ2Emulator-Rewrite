@@ -123,6 +123,7 @@ void XmlStructDumper::ElementToXml(PacketElement* e, xml_document<>& doc, xml_no
 
 	xml_node<>* dataNode = doc.allocate_node(node_element, "Data");
 	if (auto pe = dynamic_cast<PacketPackedData*>(e)) {
+		dataNode->append_attribute(doc.allocate_attribute("ElementName", doc.allocate_string(e->name)));
 		dataNode->append_attribute(doc.allocate_attribute("Type", "PackedData"));
 		dataNode->append_attribute(doc.allocate_attribute("IncludeSize", pe->bIncludeSize ? "true" : "false"));
 		if (e->ifVariableSet) {

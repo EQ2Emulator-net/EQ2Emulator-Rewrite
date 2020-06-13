@@ -28,7 +28,6 @@
 extern ZoneTalk zoneTalk;
 extern WorldServer g_worldServer;
 extern CharacterList g_characterList;
-extern std::atomic<uint32_t> g_nextItemUniqueID;
 
 void Emu_RegisterZoneServer_Packet::HandlePacket(std::shared_ptr<ZoneStream> z) {
 	// TODO: Actually do checks instead of just accepting the ZoneServer
@@ -166,8 +165,22 @@ void Emu_CharacterLinkdeadTimeout_Packet::HandlePacket(std::shared_ptr<ZoneStrea
 }
 
 void Emu_ItemIDRequest_Packet::HandlePacket(std::shared_ptr<ZoneStream> zs) {
-	auto p = new Emu_ItemIDReply_Packet;
-	p->requestTag = requestTag;
-	p->itemID = g_nextItemUniqueID.fetch_add(1);
-	zs->QueuePacket(p);
+	for (uint32_t idCount = 0; idCount < 2000;) {
+		auto p = new Emu_ItemIDReply_Packet;
+
+		std::pair<uint32_t, uint32_t> idRange;
+
+		if (!database.LoadNextItemUniqueIDRange(idRange)) {
+			//Error
+			zs->QueuePacket(p);
+			return;
+		}
+
+		p->rangeLow = idRange.first;
+		p->rangeHigh = idRange.second;
+		zs->QueuePacket(p);
+
+		//Keep sending ID ranges until the server has a decent number to work with
+		idCount += idRange.second - idRange.first;
+	}
 }

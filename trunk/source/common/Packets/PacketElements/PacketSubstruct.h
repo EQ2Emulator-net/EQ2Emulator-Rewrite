@@ -85,7 +85,7 @@ public:
 		return bInline;
 	}
 
-	uint32_t GetVersion() { return version; }
+	inline uint32_t GetVersion() { return version; }
 
 	virtual void PreWrite();
 	virtual void PostWrite();

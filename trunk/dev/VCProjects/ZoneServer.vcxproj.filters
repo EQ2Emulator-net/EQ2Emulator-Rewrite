@@ -1067,5 +1067,8 @@
     <ClInclude Include="..\..\source\ZoneServer\AI\MovementLocationInfo.h">
       <Filter>source\AI</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_UpdateInventoryMsg_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

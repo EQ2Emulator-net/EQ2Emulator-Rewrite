@@ -13,8 +13,10 @@
 
 #include "../ZoneServer/ZoneServer.h"
 #include "../ZoneServer/ZoneOperator.h"
+#include "../Items/MasterItemList.h"
 
 extern ZoneOperator g_zoneOperator;
+extern MasterItemList g_masterItemList;
 
 void Emu_RegisterZoneServerReply_Packet::HandlePacket(std::shared_ptr<WorldStream> w) {
 	if (reply == 1) {
@@ -22,6 +24,12 @@ void Emu_RegisterZoneServerReply_Packet::HandlePacket(std::shared_ptr<WorldStrea
 		g_zoneOperator.SetWorldStream(w);
 		g_zoneOperator.SetWorldServerName(serverName);
 		LogDebug(LOG_NET, 0, "Zoneserver is now authenticated.");
+
+		static bool bItemIDRequestSent = false;
+		if (!bItemIDRequestSent) {
+			g_masterItemList.SendIDRequestToWorld();
+			bItemIDRequestSent = true;
+		}
 	}
 	else {
 		w->SetAuthentication(EAuthentication::EAuthDenied);
@@ -75,5 +83,9 @@ void Emu_ZoneTransferReply_Packet::HandlePacket(std::shared_ptr<WorldStream> w) 
 }
 
 void Emu_ItemIDReply_Packet::HandlePacket(std::shared_ptr<WorldStream> ws) {
-
+	if (rangeLow == 0 && rangeHigh == 0) {
+		LogError(LOG_ITEM, 0, "World server returned an error trying to obtain an item unique ID range!");
+		return;
+	}
+	g_masterItemList.AddUniqueIDRange(rangeLow, rangeHigh);
 }

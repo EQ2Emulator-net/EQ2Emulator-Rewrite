@@ -256,6 +256,8 @@
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_CharacterLinkdeadTimeout_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_ClientLoginConfirm_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_ClientSessionEnded_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_ItemIDReply_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_ItemIDRequest_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_NotifyCharacterLinkdead_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RegisterZoneServerReply_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_RegisterZoneServer_Packet.h" />

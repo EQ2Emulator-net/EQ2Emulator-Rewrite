@@ -1052,21 +1052,37 @@ bool WorldDatabase::LoadCharacterList(CharacterList& charList) {
 	return true;
 }
 
-bool WorldDatabase::LoadNextItemUniqueID(uint32_t& out) {
+bool WorldDatabase::LoadNextItemUniqueIDRange(std::pair<uint32_t,uint32_t>& out) {
 	DatabaseResult result;
+
+	static uint32_t rangeStart = 1;
 	
-	if (!Select(&result, "SELECT MAX(id) FROM character_items")) {
-		LogError(LOG_DATABASE, 0, "Error loading the next item unique id!");
-		return false;
-	}
+	for (;;) {
+		uint32_t rangeEnd = rangeStart + 9999;
 
-	result.Next();
+		if (!Select(&result, "SELECT MAX(id) FROM character_items WHERE id BETWEEN %u AND %u", rangeStart, rangeEnd)) {
+			LogError(LOG_DATABASE, 0, "Error loading the next item unique id!");
+			return false;
+		}
 
-	if (result.IsNull(0)) {
-		out = 1;
-	}
-	else {
-		out = result.GetUInt32(0) + 1;
+		result.Next();
+
+		rangeStart += 10000;
+
+		if (result.IsNull(0)) {
+			out = std::make_pair(rangeStart - 10000, rangeEnd);
+		}
+		else {
+			uint32_t next = result.GetUInt32(0) + 1;
+			if (next == rangeStart) {
+				//This range is completely full, check the next one
+				continue;
+			}
+
+			out = std::make_pair(next, rangeEnd);
+		}
+
+		break;
 	}
 
 	return true;

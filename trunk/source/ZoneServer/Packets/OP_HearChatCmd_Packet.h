@@ -20,7 +20,7 @@ public:
 	void RegisterElements() {
 		RegisterBool(bFromNPC);
 		if (GetVersion() > 283) {
-			RegisterUInt8(unknown);
+			RegisterBool(bFromPC);
 		}
 		RegisterUInt32(fromSpawnID);
 		RegisterUInt32(toSpawnID);
@@ -54,7 +54,6 @@ public:
 	}
 
 	uint8_t chatFilterID;
-	uint8_t unknown;
 	uint8_t unknowna;
 	uint8_t unknownc;
 
@@ -66,7 +65,6 @@ public:
 private:
 	void InitializeMembers() {
 		chatFilterID = 0xFF;
-		unknown = 0;
 		unknowna = 0;
 		unknownc = 0;
 		unknown4 = 0;

@@ -515,5 +515,11 @@
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_CharacterLinkdeadTimeout_Packet.h">
       <Filter>common\Packets\EmuPackets</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_ItemIDRequest_Packet.h">
+      <Filter>common\Packets\EmuPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_ItemIDReply_Packet.h">
+      <Filter>common\Packets\EmuPackets</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

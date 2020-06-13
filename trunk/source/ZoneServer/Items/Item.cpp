@@ -176,7 +176,8 @@ std::unique_ptr<Substruct_ExamineDescItem> ItemHouseContainer::GetItemTypeData(c
 }
 
 //Copy functions
-Item::Item(const Item& rhs) : ItemDescBaseData(rhs), ItemDescFooterData(rhs) {
+Item::Item(const Item& rhs) : ItemDescBaseData(rhs), ItemDescFooterData(rhs), 
+bUseable(rhs.bUseable), scriptID(rhs.scriptID), appearance(rhs.appearance) {
 	uniqueID = 0xFFFFFFFF;
 }
 

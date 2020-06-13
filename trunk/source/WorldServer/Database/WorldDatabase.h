@@ -44,7 +44,7 @@ public:
 	bool LoadServerConfig(WorldServer* s);
 
 	uint32_t GetZoneIDForCharacter(uint32_t char_id);
-	bool LoadNextItemUniqueID(uint32_t& out);
+	bool LoadNextItemUniqueIDRange(std::pair<uint32_t,uint32_t>& out);
 
 private:
 

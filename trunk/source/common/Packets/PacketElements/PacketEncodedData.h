@@ -8,7 +8,7 @@
 
 class PacketEncodedData : public PacketSubstruct {
 public:
-	PacketEncodedData(uint32_t version) : PacketSubstruct(version), element_size(0), b_size_initialized(false), 
+	PacketEncodedData(uint32_t version, bool p_bInline = false) : PacketSubstruct(version, p_bInline), element_size(0), b_size_initialized(false), 
 		b_write_buf_initialized(false), b_ready_for_decode(false) {
 	
 	}

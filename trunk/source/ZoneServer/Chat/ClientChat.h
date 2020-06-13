@@ -9,9 +9,10 @@ class Spawn;
 
 struct HearChatParams {
 	HearChatParams() : language(0), bFromNPC(false), bShowBubble(false), bUnderstood(true),
-		fromSpawnID(0xFFFFFFFF), toSpawnID(0xFFFFFFFF), unknownb(1), unknownd(2) {}
+		fromSpawnID(0xFFFFFFFF), toSpawnID(0xFFFFFFFF), unknownb(1), unknownd(2), bFromPC(false) {}
 	uint8_t language;
 	bool bFromNPC;
+	bool bFromPC;
 	bool bShowBubble;
 	bool bUnderstood;
 	uint32_t fromSpawnID;

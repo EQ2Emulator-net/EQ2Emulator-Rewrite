@@ -47,6 +47,7 @@
 #include "OP_MapFogDataInitMsg_Packet.h"
 #include "OP_MapRequest_Packet.h"
 #include "OP_EqExamineInfoCmd.h"
+#include "OP_UpdateInventoryMsg_Packet.h"
 
 // Server to Client
 RegisterZoneStruct("OP_ZoneInfoMsg", OP_ZoneInfoMsg_Packet, 283, 284, 942, 957, 959, 1067, 1096, 1142, 1193, 63119, 63182, 67650);
@@ -79,6 +80,7 @@ RegisterZoneStruct("OP_DialogCloseMsg", OP_DialogCloseMsg_Packet, 1);
 RegisterZoneStruct("OP_EqHearPlayFlavorCmd", OP_HearPlayFlavorCmd_Packet, 1);
 RegisterZoneStruct("OP_MapFogDataInitMsg", OP_MapFogDataInitMsg_Packet, 1188);
 RegisterZoneStruct("OP_EqExamineInfoCmd", OP_EqExamineInfoCmd_Packet, 1, 1188);
+RegisterZoneStruct("OP_UpdateInventoryMsg", OP_UpdateInventoryMsg_Packet, 1, 893, 1193, 1208, 57048, 57107, 67650);
 
 // Client to Server
 RegisterZoneStruct("OP_LoginByNumRequestMsg", OP_LoginByNumRequestMsg_Packet, 1, 1212);

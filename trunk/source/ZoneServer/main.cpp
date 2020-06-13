@@ -109,7 +109,7 @@ int main() {
 		success = g_zoneOperator.Open();
 
 	if (success)
-		success = talk.Open();
+		success = talk.Open();		
 
 	{
 		//TODO: Add a rule in for whether to generate this file
