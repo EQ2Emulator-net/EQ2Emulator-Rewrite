@@ -7,6 +7,7 @@
 #include "Client.h"
 #include "../../common/thread.h"
 #include "../Controllers/PlayerController.h"
+#include "../Controllers/NPCController.h"
 #include "../Commands/CommandProcess.h"
 #include "Cell.h"
 #include "../../common/string.h"
@@ -928,6 +929,11 @@ void ZoneServer::AddSpawn(std::shared_ptr<Spawn> spawn, SpawnEntryType type) {
 	int32_t y = static_cast<int32_t>(std::floor(spawn->GetZ() / 100.f));
 	std::pair<int32_t, int32_t> cellCoords = std::make_pair(x, y);
 	AddSpawnToCell(spawn, cellCoords);
+
+	if (!spawn->GetController()) {
+		std::shared_ptr<NPCController> controller = std::make_shared<NPCController>();
+		spawn->SetController(controller);
+	}
 
 	spawn->CallScript("spawn");
 }

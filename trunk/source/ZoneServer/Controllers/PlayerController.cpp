@@ -2,6 +2,17 @@
 
 #include "PlayerController.h"
 #include "../Spawns/Entity.h"
+#include "../Players/NPCPathDebug.h"
+
+bool PlayerController::Process() {
+	bool ret = true;
+
+	if (m_npcPathDebug) {
+		ret = m_npcPathDebug->Process();
+	}
+
+	return ret;
+}
 
 bool PlayerController::CheckPredictionCrc(uint32_t crc) { 
 	bool ret = predictionCRC != crc;

@@ -8,6 +8,7 @@
 #include "../Spawns/Entity.h"
 #include "../Controllers/PlayerController.h"
 #include "../ZoneServer/ZoneServer.h"
+#include "../Players/NPCPathDebug.h"
 
 #define SpawnSet(target, master, action) if(master) { master->action; } target->action
 
@@ -200,4 +201,38 @@ void CommandProcess::CommandSpawn(const std::shared_ptr<Client>& client, Separat
 		zone->SendSpawnToClient(spawn, client);
 	}
 
+}
+
+void CommandProcess::CommandPath(const std::shared_ptr<Client>& client, Separator& sep) {
+	std::shared_ptr<PlayerController> controller = client->GetController();
+	if (!controller) {
+		LogDebug(LOG_NPC, 0, "CommandPath: unable to get player controller");
+		return;
+	}
+
+	std::shared_ptr<Spawn> target = controller->GetTarget();
+	if (!target) {
+		LogDebug(LOG_NPC, 0, "CommandPath: unable to get player target");
+		return;
+	}
+
+	std::shared_ptr<NPCPathDebug> path = controller->GetNPCPathDebug();
+	if (!path) {
+		path = std::make_shared<NPCPathDebug>(client);
+		controller->SetNPCPathDebug(path);
+	}
+	std::string cmd = sep.GetString(0);
+	std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::tolower);
+
+	if (cmd == "start")
+		path->Start(target);
+
+	if (cmd == "end")
+		path->End();
+
+	if (cmd == "add")
+		path->AddPathPoint();
+
+	if (cmd == "remove")
+		path->RemovePathPoint(target);
 }

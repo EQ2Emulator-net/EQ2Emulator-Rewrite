@@ -36,6 +36,8 @@ void Client::Process() {
 		}
 	}
 
+	GetController()->Process();
+
 	while (EQ2Packet* p = PopPacket()) {
 		if (NetDebugEnabled()) {
 			LogError(LOG_PACKET, 0, "ZoneServer client packet dump");

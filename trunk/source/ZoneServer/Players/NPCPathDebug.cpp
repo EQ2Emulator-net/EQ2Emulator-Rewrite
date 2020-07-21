@@ -1,0 +1,247 @@
+#include "stdafx.h"
+
+#include "NPCPathDebug.h"
+#include "../Spawns/Spawn.h"
+#include "../ZoneServer/Client.h"
+#include "../Controllers/BaseController.h"
+#include "../Controllers/PlayerController.h"
+#include "../AI/NPCMovement.h"
+#include "../ZoneServer/ZoneServer.h"
+#include "../../common/log.h"
+
+bool NPCPathDebug::Process() {
+	bool ret = true;
+
+	for (std::shared_ptr<Spawn> s : m_locationSpawns)
+		s->Process();
+
+	return ret;
+}
+
+void NPCPathDebug::Start(std::shared_ptr<Spawn> target) {
+	std::shared_ptr<Spawn> oldTarget = m_targetSpawn.lock();
+	
+	if (oldTarget && oldTarget == target) {
+		SendClientMessage("You are already viewing this NPC's path");
+		return;
+	}
+
+	if (oldTarget) {
+		LogDebug(LOG_NPC, 0, "NPCPathDebug: old spawn found, clearing spawns");
+		RemoveLocationsFromClient();
+		ClearLocations();
+	}
+
+	m_targetSpawn = target;
+	m_locations = target->GetController()->GetNPCMovement()->GetLocations();
+
+	// Create spawns for the locations if there are any
+	if (GenerateSpawns()) {
+		SendClientMessage("Showing the path for " + target->GetName());
+		SendLocationSpawnsToClient();
+	}
+	else
+		SendClientMessage("No path for " + target->GetName());
+}
+
+bool NPCPathDebug::GenerateSpawns() {
+	bool ret = false;
+	if (m_locations->size() > 0) {
+		uint32_t index = 0;
+		for (std::shared_ptr<MovementLocationInfo> info : *m_locations) {
+			std::shared_ptr<Spawn> s = CreateLocationSpawn(info, ++index);
+			if (s) {
+				m_locationSpawns.push_back(s);
+				LogDebug(LOG_NPC, 0, "NPCPathDebug: spawn created for location");
+			}
+		}
+
+		ret = true;
+	}
+
+	return ret;
+}
+
+void NPCPathDebug::End() {
+	std::shared_ptr<Spawn> target = m_targetSpawn.lock();
+	if (target)
+		SendClientMessage("Hiding the path for " + target->GetName());
+	else
+		SendClientMessage("Hiding the path for unknown");
+
+	RemoveLocationsFromClient();
+	ClearLocations();
+	m_targetSpawn.reset();
+}
+
+void NPCPathDebug::SendLocationSpawnsToClient() {
+	std::shared_ptr<Client> client = m_client.lock();
+	if (!client)
+		return;
+
+	std::shared_ptr<ZoneServer> zone = client->GetZone();
+	if (!zone)
+		return;
+
+	
+	for (std::shared_ptr<Spawn> s : m_locationSpawns) {
+		LogDebug(LOG_NPC, 0, "NPCPathDebug: sending location spawn %s to client", s->GetName().c_str());
+		zone->SendSpawnToClient(s, client);
+	}
+}
+
+void NPCPathDebug::RemoveLocationsFromClient() {
+	std::shared_ptr<Client> client = m_client.lock();
+	if (!client)
+		return;
+
+	std::shared_ptr<ZoneServer> zone = client->GetZone();
+	if (!zone)
+		return;
+
+
+	for (std::shared_ptr<Spawn> s : m_locationSpawns) {
+		zone->RemoveSpawnFromClient(s, client);
+	}
+}
+
+void NPCPathDebug::ClearLocations() {
+	m_locations = nullptr;
+	m_locationSpawns.clear();
+}
+
+void NPCPathDebug::AddPathPoint() {
+	std::shared_ptr<Client> client = m_client.lock();
+	if (!client)
+		return;
+
+	std::shared_ptr<ZoneServer> zone = client->GetZone();
+	if (!zone)
+		return;
+
+	std::shared_ptr<Spawn> player = client->GetController()->GetControlled();
+	if (!player)
+		return;
+
+	std::shared_ptr<Spawn> target = m_targetSpawn.lock();
+	if (!target)
+		return;
+
+	uint32_t index = m_locationSpawns.size() + 1;
+	std::shared_ptr<MovementLocationInfo> loc = std::make_shared<MovementLocationInfo>();
+	loc->x = player->GetX();
+	loc->y = player->GetY();
+	loc->z = player->GetZ();
+	loc->speed = 2.0f;
+	loc->delay = 0.0f;
+	loc->callback = "";
+
+	std::shared_ptr<Spawn> spawn = CreateLocationSpawn(loc, index);
+	spawn->SetGridID(player->GetGridID(), false);
+	m_locationSpawns.push_back(spawn);
+	m_locations->push_back(loc);
+	zone->SendSpawnToClient(spawn, client);
+
+	std::string msg = "Added point " + std::to_string(index) + " to " + target->GetName() + "'s path";
+	SendClientMessage(msg);
+}
+
+void NPCPathDebug::RemovePathPoint(std::shared_ptr<Spawn> spawn) {
+	std::shared_ptr<Client> client = m_client.lock();
+	if (!client)
+		return;
+
+	std::shared_ptr<ZoneServer> zone = client->GetZone();
+	if (!zone)
+		return;
+
+	uint32_t index = GetIndexForSpawn(spawn);
+	if (index == 0)
+		return;
+
+	// reduce the index by 1 to make it zero based
+	index--;
+	
+	// Erase the location from the path
+	m_locations->erase(m_locations->begin() + index);
+
+	// Nuke spawns from client
+	RemoveLocationsFromClient();
+
+	// Clear the spawn list and regenerate it
+	m_locationSpawns.clear();
+	if (GenerateSpawns())
+		SendLocationSpawnsToClient();
+
+	SendClientMessage("Path point removed.");
+}
+
+std::shared_ptr<Spawn> NPCPathDebug::CreateLocationSpawn(std::shared_ptr<MovementLocationInfo> location, uint32_t pointIndex) {
+	std::shared_ptr<Spawn> targetSpawn = m_targetSpawn.lock();
+	if (!targetSpawn)
+		return nullptr;
+
+	std::shared_ptr<Spawn> ret = std::make_shared<Spawn>();
+
+	/*
+		Possible model ID's to visualize the path
+
+		273 - willowisp, floats around in the air
+		2681 - crystal ball on the floor
+
+		flag colors
+		12882 - blue
+		12883 - green
+		12884 - orange
+		12885 - purple
+		12886 - red
+		12887 - white
+		12888 - yellow
+	*/
+
+	uint32_t modelID = 12883;
+	if (location->delay > 0 && !location->callback.empty())
+		modelID = 12885;
+	else if (location->delay > 0)
+		modelID = 12886;
+	else if (!location->callback.empty())
+		modelID = 12882;
+
+	ret->SetModelType(modelID, false);
+	ret->SetLocation(location->x, location->y, location->z, false);
+	ret->SetGridID(targetSpawn->GetGridID(), false);
+	ret->SetHeading(MakeRandom(0, 360), false);
+
+	std::string name = "Point " + std::to_string(pointIndex);
+	ret->SetName(name, false);
+
+	std::string info = "SPD: " + std::to_string(location->speed) + " DLY: " + std::to_string(location->delay) + (location->callback.empty() ? "" : (" CB: " + location->callback));
+	ret->SetGuild(info, false);
+
+	// consider making these default values for spawns
+	ret->SetSize(1.0f, false);
+	ret->SetSizeRatio(1.0f, false);
+	ret->SetCollisionRadius(1.0f, false);
+	ret->SetState(16384, false);
+
+	return ret;
+}
+
+void NPCPathDebug::SendClientMessage(std::string message, std::string filter) {
+	std::shared_ptr<Client> client = m_client.lock();
+	if (client)
+		client->chat.DisplayText(filter.c_str(), message, 0xff, false, "");
+}
+
+uint32_t NPCPathDebug::GetIndexForSpawn(std::shared_ptr<Spawn> spawn) {
+	std::string name = spawn->GetName();
+	size_t pos = name.find("Point ");
+	// check to prevent spawns with point anywhere in their name from trigging this code
+	if (pos > 0) {
+		SendClientMessage("Targeted spawn (" + name + ") is not a path point", "Error Text");
+		return 0;
+	}
+
+	uint32_t index = atoul(name.substr(6, name.length() - 6).c_str());
+	return index;
+}

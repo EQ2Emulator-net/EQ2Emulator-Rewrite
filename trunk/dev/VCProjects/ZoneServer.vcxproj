@@ -185,6 +185,7 @@
     <ClCompile Include="..\..\source\ZoneServer\Packets\ZoneServerPackets.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Packets\ZoneServerSubstructs.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Players\CharacterSheet.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Players\NPCPathDebug.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Spawns\Entity.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Spawns\EntityCommands.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Spawns\Object.cpp" />
@@ -405,6 +406,7 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_SpawnHeader.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_SpellEffects.h" />
     <ClInclude Include="..\..\source\ZoneServer\Players\CharacterSheet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Players\NPCPathDebug.h" />
     <ClInclude Include="..\..\source\ZoneServer\Spawns\Entity.h" />
     <ClInclude Include="..\..\source\ZoneServer\Spawns\EntityCommands.h" />
     <ClInclude Include="..\..\source\ZoneServer\Spawns\GroundSpawn.h" />

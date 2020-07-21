@@ -48,6 +48,7 @@ void CommandProcess::RegisterCommands() {
 	RegisterCommandHandler(522, CommandDevMode);
 	RegisterCommandHandler(340, CommandSetEmoteVoice);
 	RegisterCommandHandler(341, CommandSetCombatVoice);
+	RegisterCommandHandler(523, CommandPath);
 }
 
 void CommandProcess::RegisterCommandHandler(uint32_t handler_id, CommandHandler_t handler) {

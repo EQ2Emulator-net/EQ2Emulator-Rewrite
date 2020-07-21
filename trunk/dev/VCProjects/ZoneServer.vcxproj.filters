@@ -411,6 +411,9 @@
     <ClCompile Include="..\..\source\ZoneServer\AI\NPCMovement.cpp">
       <Filter>source\AI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Players\NPCPathDebug.cpp">
+      <Filter>source\Players</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h">
@@ -1069,6 +1072,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_UpdateInventoryMsg_Packet.h">
       <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Players\NPCPathDebug.h">
+      <Filter>source\Players</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
