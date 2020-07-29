@@ -12,7 +12,6 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
 -- Dumping structure for table eq2rewrite.opcodes
-DROP TABLE IF EXISTS `opcodes`;
 CREATE TABLE IF NOT EXISTS `opcodes` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `version_range1` int(10) unsigned NOT NULL DEFAULT '0',
@@ -24,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `opcodes` (
   UNIQUE KEY `newindex` (`version_range1`,`name`,`version_range2`)
 ) ENGINE=InnoDB AUTO_INCREMENT=29911 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table eq2rewrite.opcodes: ~21,571 rows (approximately)
+-- Dumping data for table eq2rewrite.opcodes: ~21,577 rows (approximately)
 /*!40000 ALTER TABLE `opcodes` DISABLE KEYS */;
 INSERT INTO `opcodes` (`id`, `version_range1`, `version_range2`, `name`, `opcode`, `table_data_version`) VALUES
 	(1, 0, 0, 'OP_LoginRequestMsg', 0, 1),
@@ -21454,7 +21453,7 @@ INSERT INTO `opcodes` (`id`, `version_range1`, `version_range2`, `name`, `opcode
 	(29375, 67650, 67727, 'OP_AuditAuctionEventMsg', 451, 1),
 	(29376, 67650, 67727, 'OP_InviteRequestMsg', 452, 1),
 	(29377, 67650, 67727, 'OP_InviteResponseMsg', 453, 1),
-	(29378, 67650, 67727, 'OP_InspectPlayerRequestMsg', 454, 1),
+	(29378, 67650, 67727, 'OP_InspectPlayerRequestMsg', 455, 1),
 	(29379, 67650, 67727, 'OP_InviteTargetResponseMsg', 454, 1),
 	(29380, 67650, 67727, 'OP_DisplayEventMsg', 456, 1),
 	(29381, 67650, 67727, 'OP_PrePossessionMsg', 457, 1),
