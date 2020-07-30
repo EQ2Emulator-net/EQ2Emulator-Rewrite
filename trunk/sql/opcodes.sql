@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `opcodes` (
   UNIQUE KEY `newindex` (`version_range1`,`name`,`version_range2`)
 ) ENGINE=InnoDB AUTO_INCREMENT=29911 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table eq2rewrite.opcodes: ~21,577 rows (approximately)
+-- Dumping data for table eq2rewrite.opcodes: ~21,957 rows (approximately)
 /*!40000 ALTER TABLE `opcodes` DISABLE KEYS */;
 INSERT INTO `opcodes` (`id`, `version_range1`, `version_range2`, `name`, `opcode`, `table_data_version`) VALUES
 	(1, 0, 0, 'OP_LoginRequestMsg', 0, 1),
@@ -21287,14 +21287,14 @@ INSERT INTO `opcodes` (`id`, `version_range1`, `version_range2`, `name`, `opcode
 	(29209, 67650, 67727, 'OP_CSTicketDeleteMsg', 238, 1),
 	(29210, 67650, 67727, 'OP_CSTicketChangeNotificationMsg', 239, 1),
 	(29211, 67650, 67727, 'OP_WorldDataUpdateMsg', 240, 1),
-	(29212, 67650, 67727, 'OP_KnownLanguagesMsg', 242, 1),
-	(29213, 67650, 67727, 'OP_LsRequestClientCrashLogMsg', 243, 1),
-	(29214, 67650, 67727, 'OP_LsClientBaselogReplyMsg', 244, 1),
-	(29215, 67650, 67727, 'OP_LsClientCrashlogReplyMsg', 245, 1),
-	(29216, 67650, 67727, 'OP_LsClientAlertlogReplyMsg', 246, 1),
-	(29217, 67650, 67727, 'OP_LsClientVerifylogReplyMsg', 247, 1),
-	(29218, 67650, 67727, 'OP_ClientTeleportToLocationMsg', 248, 1),
-	(29219, 67650, 67727, 'OP_UpdateClientPredFlagsMsg', 249, 1),
+	(29212, 67650, 67727, 'OP_KnownLanguagesMsg', 244, 1),
+	(29213, 67650, 67727, 'OP_LsRequestClientCrashLogMsg', 245, 1),
+	(29214, 67650, 67727, 'OP_LsClientBaselogReplyMsg', 246, 1),
+	(29215, 67650, 67727, 'OP_LsClientCrashlogReplyMsg', 247, 1),
+	(29216, 67650, 67727, 'OP_LsClientAlertlogReplyMsg', 248, 1),
+	(29217, 67650, 67727, 'OP_LsClientVerifylogReplyMsg', 249, 1),
+	(29218, 67650, 67727, 'OP_ClientTeleportToLocationMsg', 250, 1),
+	(29219, 67650, 67727, 'OP_UpdateClientPredFlagsMsg', 251, 1),
 	(29220, 67650, 67727, 'OP_ChangeServerControlFlagMsg', 252, 1),
 	(29221, 67650, 67727, 'OP_CSToolsRequestMsg', 253, 1),
 	(29222, 67650, 67727, 'OP_CSToolsResponseMsg', 254, 1),
@@ -21468,13 +21468,13 @@ INSERT INTO `opcodes` (`id`, `version_range1`, `version_range2`, `name`, `opcode
 	(29390, 67650, 67727, 'OP_CancelSpellCast', 485, 1),
 	(29391, 67650, 67727, 'OP_ClearForLandingMsg', 486, 1),
 	(29392, 67650, 67727, 'OP_UpdateTitleCmd', 490, 1),
-	(29393, 67650, 67727, 'OP_AttackAllowed', 501, 1),
-	(29394, 67650, 67727, 'OP_AttackNotAllowed', 502, 1),
-	(29395, 67650, 67727, 'OP_BagOptions', 503, 1),
-	(29396, 67650, 67727, 'OP_LFGGroupSearch', 504, 1),
-	(29397, 67650, 67727, 'OP_CharacterHousingList', 505, 1),
-	(29398, 67650, 67727, 'OP_DressingRoom', 506, 1),
-	(29399, 67650, 67727, 'OP_PlayLon', 507, 1),
+	(29393, 67650, 67727, 'OP_AttackAllowed', 499, 1),
+	(29394, 67650, 67727, 'OP_AttackNotAllowed', 500, 1),
+	(29395, 67650, 67727, 'OP_BagOptions', 501, 1),
+	(29396, 67650, 67727, 'OP_LFGGroupSearch', 502, 1),
+	(29397, 67650, 67727, 'OP_CharacterHousingList', 503, 1),
+	(29398, 67650, 67727, 'OP_DressingRoom', 504, 1),
+	(29399, 67650, 67727, 'OP_PlayLon', 505, 1),
 	(29400, 67650, 67727, 'OP_SkillInfoRequest', 509, 1),
 	(29401, 67650, 67727, 'OP_SkillInfoResponse', 510, 1),
 	(29402, 67650, 67727, 'OP_LFGUpdateMsg', 513, 1),
