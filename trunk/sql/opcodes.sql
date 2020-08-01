@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `opcodes` (
   UNIQUE KEY `newindex` (`version_range1`,`name`,`version_range2`)
 ) ENGINE=InnoDB AUTO_INCREMENT=29911 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table eq2rewrite.opcodes: ~21,957 rows (approximately)
+-- Dumping data for table eq2rewrite.opcodes: ~21,398 rows (approximately)
 /*!40000 ALTER TABLE `opcodes` DISABLE KEYS */;
 INSERT INTO `opcodes` (`id`, `version_range1`, `version_range2`, `name`, `opcode`, `table_data_version`) VALUES
 	(1, 0, 0, 'OP_LoginRequestMsg', 0, 1),
@@ -21380,15 +21380,14 @@ INSERT INTO `opcodes` (`id`, `version_range1`, `version_range2`, `name`, `opcode
 	(21351, 67650, 67727, 'OP_EqChatChannelUpdateCmd', 746, 1),
 	(21352, 67650, 67727, 'OP_EqWhoChannelQueryReplyCmd', 747, 1),
 	(21353, 67650, 67727, 'OP_EqAvailWorldChannelsCmd', 748, 1),
-	(21354, 67650, 67727, 'OP_MapUnknownCmd', 754, 1),
-	(21355, 67650, 67727, 'OP_EqUpdateTargetCmd', 763, 1),
-	(21356, 67650, 67727, 'OP_BrokerSellList', 764, 1),
-	(21357, 67650, 67727, 'OP_EqConsignmentItemsCmd', 765, 1),
-	(21358, 67650, 67727, 'OP_EqStartBrokerCmd', 767, 1),
-	(21359, 67650, 67727, 'OP_EqMapExplorationCmd', 768, 1),
-	(21360, 67650, 67727, 'OP_EqStoreLogCmd', 769, 1),
-	(21361, 67650, 67727, 'OP_EqSpellMoveToRangeAndRetryCmd', 770, 1),
-	(21362, 67650, 67727, 'OP_EqUpdatePlayerMailCmd', 771, 1),
+	(21355, 67650, 67727, 'OP_EqUpdateTargetCmd', 749, 1),
+	(21356, 67650, 67727, 'OP_BrokerSellList', 750, 1),
+	(21357, 67650, 67727, 'OP_EqConsignmentItemsCmd', 751, 1),
+	(21358, 67650, 67727, 'OP_EqStartBrokerCmd', 753, 1),
+	(21359, 67650, 67727, 'OP_EqMapExplorationCmd', 754, 1),
+	(21360, 67650, 67727, 'OP_EqStoreLogCmd', 755, 1),
+	(21361, 67650, 67727, 'OP_EqSpellMoveToRangeAndRetryCmd', 756, 1),
+	(21362, 67650, 67727, 'OP_EqUpdatePlayerMailCmd', 757, 1),
 	(21363, 67650, 67727, 'OP_GuildStatusUpdate', 774, 1),
 	(21364, 67650, 67727, 'OP_EqArenaResultsCmd', 775, 1),
 	(21365, 67650, 67727, 'OP_EqGuildBankEventActionCmd', 776, 1),
@@ -21424,7 +21423,14 @@ INSERT INTO `opcodes` (`id`, `version_range1`, `version_range2`, `name`, `opcode
 	(21395, 67650, 67727, 'OP_MercUnknown', 813, 1),
 	(21396, 67650, 67727, 'OP_MercListCmd', 814, 1),
 	(21397, 67650, 67727, 'OP_Unknown', 826, 1),
-	(21398, 67650, 67727, 'OP_HeritageMsg', 10053, 1);
+	(21398, 67650, 67727, 'OP_HeritageMsg', 10053, 1),
+	(21399, 67650, 67727, 'OP_PersonaWindowUnknownCmd', 820, 1),
+	(21400, 67650, 67727, 'OP_DungeonFinderMsg', 561, 1),
+	(21401, 67650, 67727, 'OP_ExperienceVialMsg', 611, 1),
+	(21402, 67650, 67727, 'OP_MapUnknownMsg', 625, 1),
+	(21403, 67650, 67727, 'OP_MarketplaceVariablesMsg', 596, 1),
+	(21404, 67650, 67727, 'OP_TierUnknownMsg', 597, 1),
+	(21405, 67650, 67727, 'OP_AttributeUnknownMsg', 598, 1);
 /*!40000 ALTER TABLE `opcodes` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
