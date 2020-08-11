@@ -126,9 +126,6 @@ void XmlStructDumper::ElementToXml(PacketElement* e, xml_document<>& doc, xml_no
 		dataNode->append_attribute(doc.allocate_attribute("ElementName", doc.allocate_string(e->name)));
 		dataNode->append_attribute(doc.allocate_attribute("Type", "PackedData"));
 		dataNode->append_attribute(doc.allocate_attribute("IncludeSize", pe->bIncludeSize ? "true" : "false"));
-		if (e->ifVariableSet) {
-			dataNode->append_attribute(doc.allocate_attribute("IfVariableSet", doc.allocate_string(e->ifVariableSet->name)));
-		}
 		for (auto& itr : static_cast<PacketSubstruct*>(e)->elements) {
 			ElementToXml(itr, doc, *dataNode);
 		}
@@ -160,6 +157,12 @@ void XmlStructDumper::ElementToXml(PacketElement* e, xml_document<>& doc, xml_no
 		if (ps->bInline) {
 			ps->CheckElementsInitialized();
 			for (auto& e : ps->elements) {
+				if (ps->ifVariableSet && !e->ifVariableSet) {
+					e->ifVariableSet = ps->ifVariableSet;
+				}
+				if (!ps->ifAnyVariableSet.empty() && e->ifAnyVariableSet.empty()) {
+					e->ifAnyVariableSet = ps->ifAnyVariableSet;
+				}
 				ElementToXml(e, doc, parent);
 			}
 			//If we're inline we don't want to add a new node here, just use the parent and return before a new node is appended
@@ -170,9 +173,6 @@ void XmlStructDumper::ElementToXml(PacketElement* e, xml_document<>& doc, xml_no
 			dataNode->append_attribute(doc.allocate_attribute("ElementName", doc.allocate_string(e->name)));
 			dataNode->append_attribute(doc.allocate_attribute("Substruct", psName.empty() ? "REGISTER_MY_SUBSTRUCT" : doc.allocate_string(psName.c_str())));
 			dataNode->append_attribute(doc.allocate_attribute("Size", doc.allocate_string(std::to_string(e->count).c_str())));
-			if (e->ifVariableSet) {
-				dataNode->append_attribute(doc.allocate_attribute("IfVariableSet", doc.allocate_string(e->ifVariableSet->name)));
-			}
 		}
 	}
 	else if (auto pp = dynamic_cast<PacketSubstructParentBase*>(e)) {
@@ -248,7 +248,7 @@ void XmlStructDumper::DumpSubstructsToFile(const char* filename, xml_document<>&
 
 void XmlStructDumper::DumpStructsFile(const char* filename) {
 	std::unique_ptr<xml_document<>> doc(new xml_document<>);
-	xml_node<>* root = doc->allocate_node(node_element, "EQ2Emulator");
+	xml_node<>* root = doc->allocate_node(node_element, "EQ2EmulatorRewrite");
 	DumpSubstructsToFile(filename, *doc, *root);
 	DumpPacketStructsToFile(filename, *doc, *root);
 	doc->append_node(root);

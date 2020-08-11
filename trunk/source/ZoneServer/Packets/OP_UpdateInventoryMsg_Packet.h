@@ -13,8 +13,8 @@ public:
 
 	struct Substruct_InventoryItem : public PacketSubstruct {
 		uint32_t uniqueID;
-		uint32_t bagID;
-		uint32_t inventorySlotID;
+		int32_t bagID;
+		int32_t parentBagID; //This can be the base inventory slots for example, or equipment slots
 		uint64_t flags;
 		uint16_t index;
 		uint16_t icon;
@@ -38,8 +38,8 @@ public:
 
 		void RegisterElements() {
 			RegisterUInt32(uniqueID);
-			RegisterUInt32(bagID);
-			RegisterUInt32(inventorySlotID);
+			RegisterInt32(bagID);
+			RegisterInt32(parentBagID);
 			if (GetVersion() >= 893) {
 				RegisterUInt64(flags);
 			}

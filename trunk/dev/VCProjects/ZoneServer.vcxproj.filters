@@ -1076,5 +1076,8 @@
     <ClInclude Include="..\..\source\ZoneServer\Players\NPCPathDebug.h">
       <Filter>source\Players</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Players\CharacterInventory.h">
+      <Filter>source\Players</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

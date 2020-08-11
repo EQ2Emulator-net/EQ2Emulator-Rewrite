@@ -304,6 +304,11 @@ public:
 		if (subVersion >= 53) {
 			RegisterUInt32(itemScore);
 		}
+		if (subVersion >= 96) {
+			RegisterUInt8(unknown96a);
+			RegisterUInt64(unknown96b);
+			RegisterUInt64(unknown96c);
+		}
 		RegisterSubstruct(footer);
 	}
 };
@@ -597,7 +602,9 @@ public:
 	~Substruct_ExamineDescItem_ReforgingDecoration() = default;
 
 	void RegisterElements() {
+		RegisterSubstruct(header);
 		Register16String(decoName);
+		RegisterSubstruct(footer);
 	}
 };
 
@@ -617,9 +624,11 @@ public:
 	}
 
 	void RegisterElements() {
+		RegisterSubstruct(header);
 		RegisterUInt8(language);
 		Register16String(author);
 		Register16String(title);
 		RegisterSubstruct(houseData);
+		RegisterSubstruct(footer);
 	}
 };

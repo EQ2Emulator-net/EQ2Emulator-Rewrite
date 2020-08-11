@@ -6,9 +6,11 @@
 inline uint8_t GetItemStructVersion(uint32_t version) {
 	uint8_t subVersion;
 
-	if (version >= 67650)
+	if (version >= 67727)
+		subVersion = 97;
+	else if (version >= 67650)
 		subVersion = 95;
-	if (version >= 64707)
+	else if (version >= 64707)
 		subVersion = 92;
 	else if (version >= 63119)
 		subVersion = 86;
@@ -47,6 +49,8 @@ inline uint8_t GetItemStructVersion(uint32_t version) {
 }
 
 class Substruct_ItemStatMod : public PacketSubstruct, public ItemStatMod {
+private:
+	int16_t sValue_do_not_set;
 public:
 	Substruct_ItemStatMod(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
 		if (p_itemVersion == 0) {
@@ -60,17 +64,9 @@ public:
 
 	void PreWrite() override {
 		if (version < 60024 && statType != 6) {
-			int32_t v = iValue;
-			sValue_do_not_set = v;
+			sValue_do_not_set = static_cast<int16_t>(iValue);
 		}
 		PacketSubstruct::PreWrite();
-	}
-
-	void PostWrite() override {
-		if (version < 60024 && statType != 6) {
-			iValue = sValue_do_not_set;
-		}
-		PacketSubstruct::PostWrite();
 	}
 
 	uint8_t itemVersion;
@@ -97,10 +93,10 @@ public:
 			RegisterUInt8(unknown92);
 		}
 		if (itemVersion >= 83) {
-			RegisterInt32(unknown83);
+			RegisterFloat(statAsFloat);
 		}
 		if (itemVersion >= 89) {
-			RegisterInt16(unknown89);
+			RegisterInt16(stringStatUnknown);
 		}
 	}
 };
@@ -189,6 +185,10 @@ public:
 
 	~Substruct_ItemDescHeader() = default;
 
+private:
+	int16_t sWeight_do_not_set;
+
+public:
 	void PreWrite() override {
 		classReqArray.clear();
 		for (auto& itr : ItemDescBaseData::classReqs) {
@@ -228,13 +228,6 @@ public:
 		PacketSubstruct::PreWrite();
 	}
 
-	void PostWrite() override {
-		if (itemVersion < 11) {
-			weight = sWeight_do_not_set;
-		}
-		PacketSubstruct::PostWrite();
-	}
-
 	uint8_t itemVersion;
 	std::vector<Substruct_ItemStatMod> statModArray;
 	std::vector<Substruct_ItemUnknown> unknownArray;
@@ -245,8 +238,8 @@ public:
 	void RegisterElements() {
 		RegisterBool(bHasCreator);
 		Register8String(creatorName);
-		auto e = RegisterUInt32(uniqueID);
-		RegisterUInt64(brokerID)->SetIfVariableNotEquals(0xFFFFFFFF, e);
+		auto e = RegisterInt32(uniqueID);
+		RegisterUInt64(brokerID)->SetIfVariableNotEquals(-1, e);
 		if (itemVersion >= 20) {
 			RegisterInt32(itemID);
 		}
@@ -459,7 +452,7 @@ public:
 	void RegisterElements() {
 		auto e = RegisterUInt8(setBonusCount);
 		e->SetMyArray(RegisterArray(setBonusArray, Substruct_ItemSetBonus));
-		e = RegisterUInt8(numItemsInSet);
+		e = RegisterUInt8(setItemsCount);
 		e->SetMyArray(RegisterArray(setItemArray, Substruct_ItemSetItem));
 		RegisterUInt8(numSetItemsEquipped);
 		RegisterUInt8(numItemsInSet);
@@ -772,6 +765,9 @@ public:
 		}
 		if (itemVersion >= 94) {
 			RegisterUInt8(unknown94);
+		}
+		if (itemVersion >= 97) {
+			Register16String(unknownString97);
 		}
 		Register8String(itemName);
 		Register16String(description);

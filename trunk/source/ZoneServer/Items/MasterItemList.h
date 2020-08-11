@@ -72,6 +72,8 @@ public:
 		if (bSendRequest) {
 			SendIDRequestToWorld();
 		}
+
+		return ret;
 	}
 
 	void AddUniqueIDRange(uint32_t low, uint32_t high) {

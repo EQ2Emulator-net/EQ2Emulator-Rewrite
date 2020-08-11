@@ -17,15 +17,14 @@ struct ItemStatMod {
 
 	union {
 		float fValue;
-		int16_t sValue_do_not_set;
 		int32_t iValue;
 	};
 
 	uint8_t statLevel;
 	uint8_t unknown64;
 	uint8_t unknown92;
-	int32_t unknown83;
-	int16_t unknown89;
+	float statAsFloat; // not sure what this is used for yet
+	int16_t stringStatUnknown;
 };
 
 struct ItemStringMod {
@@ -55,7 +54,7 @@ struct ItemDescBaseData {
 	//Primitives
 	bool bHasCreator;
 
-	uint32_t uniqueID;
+	int32_t uniqueID;
 	uint64_t brokerID;
 	int32_t itemID;
 	int32_t itemCRC;
@@ -74,10 +73,7 @@ struct ItemDescBaseData {
 	uint8_t condition;
 	uint32_t skillReq1;
 	uint32_t skillReq2;
-	union {
-		int32_t weight;
-		int16_t sWeight_do_not_set;
-	};
+	int32_t weight;
 	int16_t skillMin;
 	uint8_t classReqCount;
 	uint8_t slotCount;
@@ -227,6 +223,7 @@ public:
 	std::vector<ItemTierLineEntry> tierLine;
 	std::string unknown68;
 	std::string unknown71;
+	std::string unknownString97;
 	std::string itemName;
 	std::string description;
 	std::string unknown88String;

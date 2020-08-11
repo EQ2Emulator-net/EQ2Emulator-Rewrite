@@ -33,15 +33,17 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 				mod.statSubtype = result.GetInt16(2);
 				if (mod.statType == 6) {
 					mod.fValue = result.GetFloat(3);
+					mod.statAsFloat = mod.fValue;
 				}
 				else {
 					mod.iValue = result.GetInt32(3);
+					mod.statAsFloat = mod.iValue;
 				}
 				mod.stringVal = std::move(text);
 				mod.unknown64 = 0;
-				mod.unknown83 = 0;
-				mod.unknown89 = 0;
 				mod.unknown92 = 0;
+				//This is set to something else for string stats but not sure what it does
+				mod.stringStatUnknown = -1;
 			}
 			else {
 				std::vector<ItemStringMod>& mods = stringStats[itemID];

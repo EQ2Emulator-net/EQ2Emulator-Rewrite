@@ -95,6 +95,9 @@ struct ItemBaubleData {
 	float effectRadius;
 	int32_t maxAoeTargets;
 	uint32_t itemScore;
+	uint64_t unknown96b;
+	uint64_t unknown96c;
+	uint8_t unknown96a;
 };
 
 struct ItemHouseData {
