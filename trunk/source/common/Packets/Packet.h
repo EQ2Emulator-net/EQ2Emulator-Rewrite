@@ -3,6 +3,7 @@
 #include "PacketElement.h"
 #include <vector>
 #include "../log.h"
+#include "../util.h"
 
 constexpr bool NetDebugEnabled() { return false; }
 
@@ -24,6 +25,7 @@ public:
 			}
 			if (!elements[i]->ReadElement(in_buf, offset, bufsize)) {
  				LogError(LOG_PACKET, 0, "Reading an element went out of bounds");
+				DumpBytes(in_buf, bufsize);
 				return false;
 			}
 		}

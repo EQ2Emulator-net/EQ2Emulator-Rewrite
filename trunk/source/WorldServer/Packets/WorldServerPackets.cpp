@@ -33,4 +33,4 @@ RegisterLoginStruct("OP_LsClientBaselogReplyMsg", OP_LsClientBaselogReplyMsg_Pac
 RegisterLoginStruct("OP_LsClientCrashlogReplyMsg", OP_LsClientCrashlogReplyMsg_Packet, 1);
 RegisterLoginStruct("OP_LsClientAlertlogReplyMsg", OP_LsClientAlertlogReplyMsg_Packet, 1);
 RegisterLoginStruct("OP_LsClientVerifylogReplyMsg", OP_LsClientVerifylogReplyMsg_Packet, 1);
-RegisterLoginStruct("OP_CreateCharacterRequestMsg", OP_CreateCharacterRequestMsg_Packet, 283, 284, 869, 1096, 57080);
+RegisterLoginStruct("OP_CreateCharacterRequestMsg", OP_CreateCharacterRequestMsg_Packet, 283, 284, 869, 1096, 57080, 67650);

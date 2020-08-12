@@ -36,6 +36,16 @@ public:
 		client->QueuePacket(reply);
 	}
 
+	void PostRead() override {
+		if (GetVersion() >= 67650) {
+			//They got rid of the 26 byte sliders
+			for (int i = 0; i < 26; i++) {
+				sliderBytes[i] = sliderFloats[i] * 127.f;
+				sogaSliderBytes[i] = sogaSliderFloats[i] * 127.f;
+			}
+		}
+	}
+
 	uint8_t unknown0;
 	uint32_t unknown1;
 	uint32_t account_id;
@@ -49,7 +59,10 @@ public:
 	uint8_t level;
 	uint16_t starting_zone;
 	uint8_t version;
-	uint16_t unknown10; // version = 57080
+	uint16_t unknown10;// version = 57080
+	uint8_t unknown67650a; 
+	uint8_t unknown67650b;
+	uint8_t unknown67650c;
 	std::string race_file; // Type = "EQ2_16Bit_String" / >
 	EQ2ColorFloat skin_color;
 	EQ2ColorFloat skin_color2;
@@ -76,6 +89,10 @@ public:
 	std::string legs_file;
 	EQ2ColorFloat pants_color;
 	EQ2ColorFloat unknown_legs_color;
+	std::string unk67650_file;
+	EQ2ColorFloat unk67650_color1;
+	EQ2ColorFloat unk67650_color2;
+	std::string unk67650_string;
 	union {
 		SpawnFloatMorphSliders floatSliders;
 		float sliderFloats[26];
@@ -87,7 +104,7 @@ public:
 	EQ2ColorFloat soga_hair_color1;
 	EQ2ColorFloat soga_hair_color2;
 	EQ2ColorFloat soga_hair_highlight;
-	EQ2ColorFloat soga_unknown_color; //869
+	EQ2ColorFloat soga_skin_color2; //869
 	union {
 		SpawnMorphSliders sogaSliders;
 		int8_t sogaSliderBytes[26];
@@ -107,6 +124,10 @@ public:
 	std::string soga_legs_file;
 	EQ2ColorFloat soga_pants_color;
 	EQ2ColorFloat soga_unknown_legs_color;
+	std::string soga_unk67650_file;
+	EQ2ColorFloat soga_unk67650_color1;
+	EQ2ColorFloat soga_unk67650_color2;
+	std::string soga_unk67650_string;
 	union {
 		SpawnFloatMorphSliders sogaFloatSliders;
 		float sogaSliderFloats[26];
@@ -116,10 +137,13 @@ private:
 	void RegisterElements() {
 		if (GetVersion() > 283) {
 			RegisterUInt8(unknown0);
+			if (GetVersion() >= 67650) {
+				RegisterUInt8(unknown3);
+			}
 			RegisterUInt32(unknown1);
 		}
 		RegisterUInt32(account_id);
-		if (GetVersion() > 283) {
+		if (GetVersion() > 283 && GetVersion() < 67650) {
 			RegisterUInt8(unknown3);
 		}
 		RegisterUInt32(server_id);
@@ -136,9 +160,15 @@ private:
 		else {
 			RegisterUInt16(starting_zone);
 		}
+		if (GetVersion() >= 67650) {
+			RegisterUInt8(unknown67650a);
+			RegisterUInt8(unknown67650b);
+			RegisterUInt8(unknown67650c);
+		}
 		RegisterUInt8(version);
-		if (GetVersion() >= 57080)
+		if (GetVersion() >= 57080 && GetVersion() < 67650) {
 			RegisterUInt16(unknown10);
+		}
 		Register16String(race_file);
 		RegisterEQ2ColorFloat(skin_color);
 		if (GetVersion() < 57080) //moved in 57080
@@ -150,8 +180,15 @@ private:
 		RegisterEQ2ColorFloat(hair_color2);
 		if (GetVersion() >= 869)
 			RegisterEQ2ColorFloat(hair_highlight);
-		RescopeArrayElement(sliderBytes);
-		RegisterInt8(sliderBytes)->SetCount(26);
+		if (GetVersion() < 67650) {
+			RescopeArrayElement(sliderBytes);
+			RegisterInt8(sliderBytes)->SetCount(26);
+		}
+		if (GetVersion() >= 67650) {
+			Register16String(unk67650_file);
+			RegisterEQ2ColorFloat(unk67650_color1);
+			RegisterEQ2ColorFloat(unk67650_color2);
+		}
 		Register16String(hair_file);
 		RegisterEQ2ColorFloat(hair_type_color);
 		RegisterEQ2ColorFloat(hair_type_highlight_color);
@@ -169,6 +206,7 @@ private:
 		Register16String(legs_file);
 		RegisterEQ2ColorFloat(pants_color);
 		RegisterEQ2ColorFloat(unknown_legs_color);
+
 		RescopeArrayElement(sliderFloats);
 		RegisterFloat(sliderFloats)->SetCount(26);
 
@@ -179,14 +217,24 @@ private:
 		RegisterUInt8(soga_version);
 		Register16String(soga_race_file);
 		RegisterEQ2ColorFloat(soga_skin_color);
+		if (GetVersion() < 57080)
+			RegisterEQ2ColorFloat(soga_skin_color2);
 		RegisterEQ2ColorFloat(soga_eye_color);
+		if (GetVersion() >= 57080)
+			RegisterEQ2ColorFloat(soga_skin_color2);
 		RegisterEQ2ColorFloat(soga_hair_color1);
 		RegisterEQ2ColorFloat(soga_hair_color2);
-		RegisterEQ2ColorFloat(soga_hair_highlight);
 		if (GetVersion() >= 869)
-			RegisterEQ2ColorFloat(soga_unknown_color);
-		RescopeArrayElement(sogaSliderBytes);
-		RegisterInt8(sogaSliderBytes)->SetCount(26);
+			RegisterEQ2ColorFloat(soga_hair_highlight);
+		if (GetVersion() < 67650) {
+			RescopeArrayElement(sogaSliderBytes);
+			RegisterInt8(sogaSliderBytes)->SetCount(26);
+		}
+		if (GetVersion() >= 67650) {
+			Register16String(soga_unk67650_file);
+			RegisterEQ2ColorFloat(soga_unk67650_color1);
+			RegisterEQ2ColorFloat(soga_unk67650_color2);
+		}
 		Register16String(soga_hair_file);
 		RegisterEQ2ColorFloat(soga_hair_type_color);
 		RegisterEQ2ColorFloat(soga_hair_type_highlight_color);
@@ -204,6 +252,11 @@ private:
 		RegisterEQ2ColorFloat(soga_unknown_legs_color);
 		RescopeArrayElement(sogaSliderFloats);
 		RegisterFloat(sogaSliderFloats)->SetCount(26);
+
+		if (GetVersion() >= 67650) {
+			Register16String(unk67650_string);
+			return;
+		}
 	}
 
 };
