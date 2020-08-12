@@ -1,8 +1,8 @@
 -- --------------------------------------------------------
 -- Host:                         127.0.0.1
--- Server version:               5.6.41-log - MySQL Community Server (GPL)
+-- Server version:               10.5.4-MariaDB - mariadb.org binary distribution
 -- Server OS:                    Win64
--- HeidiSQL Version:             9.5.0.5196
+-- HeidiSQL Version:             11.0.0.5919
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -11,21 +11,21 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
--- Dumping structure for table eq2rewrite.commands
+-- Dumping structure for table eq2_rewrite.commands
 DROP TABLE IF EXISTS `commands`;
 CREATE TABLE IF NOT EXISTS `commands` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `command` varchar(64) COLLATE latin1_general_ci DEFAULT NULL,
   `parent_command` int(10) unsigned DEFAULT NULL,
   `required_status` varchar(64) COLLATE latin1_general_ci DEFAULT NULL,
-  `syntax` text COLLATE latin1_general_ci,
+  `syntax` text COLLATE latin1_general_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `Index 2` (`command`,`parent_command`),
   KEY `FK_commands_new_commands_new` (`parent_command`),
   CONSTRAINT `FK_commands_new_commands_new` FOREIGN KEY (`parent_command`) REFERENCES `commands` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=522 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=524 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table eq2rewrite.commands: ~515 rows (approximately)
+-- Dumping data for table eq2_rewrite.commands: ~499 rows (approximately)
 /*!40000 ALTER TABLE `commands` DISABLE KEYS */;
 INSERT INTO `commands` (`id`, `command`, `parent_command`, `required_status`, `syntax`) VALUES
 	(1, 'who', NULL, NULL, NULL),
@@ -543,7 +543,8 @@ INSERT INTO `commands` (`id`, `command`, `parent_command`, `required_status`, `s
 	(519, 'switch_aa_profile', NULL, NULL, NULL),
 	(520, 'cancel_aa_profile', NULL, NULL, NULL),
 	(521, 'save_aa_profile', NULL, NULL, NULL),
-	(522, 'devmode', NULL, NULL, NULL);
+	(522, 'devmode', NULL, NULL, NULL),
+	(523, 'path', NULL, NULL, NULL);
 /*!40000 ALTER TABLE `commands` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
