@@ -184,5 +184,5 @@ ALTER TABLE `spawn_npcs`
 	ADD COLUMN `weapons_equipped` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `is_sitting`,
 	ADD COLUMN `disable_loot` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `weapons_equipped`;
 	
---This table was replaced;
+/* This table was replaced */
 DROP TABLE IF EXISTS map_data;
