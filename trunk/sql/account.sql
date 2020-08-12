@@ -1,6 +1,6 @@
 -- --------------------------------------------------------
 -- Host:                         127.0.0.1
--- Server version:               10.3.15-MariaDB - mariadb.org binary distribution
+-- Server version:               10.5.4-MariaDB - mariadb.org binary distribution
 -- Server OS:                    Win64
 -- HeidiSQL Version:             11.0.0.5919
 -- --------------------------------------------------------
@@ -26,11 +26,11 @@ CREATE TABLE IF NOT EXISTS `account` (
   `key1` varchar(64) COLLATE latin1_general_ci NOT NULL DEFAULT '0',
   `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `hack_count` tinyint(3) unsigned NOT NULL DEFAULT 0,
-  `last_client_version` smallint(5) unsigned NOT NULL DEFAULT 0,
+  `last_client_version` int(10) unsigned NOT NULL DEFAULT 0,
   `account_enabled` tinyint(1) unsigned NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`),
   UNIQUE KEY `Name` (`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- Data exporting was unselected.
 
