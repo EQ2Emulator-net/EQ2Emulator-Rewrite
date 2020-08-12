@@ -1,11 +1,9 @@
 #include "stdafx.h"
 
 #include "../../common/Packets/XmlStructDumper.h"
-//#include 
+#include "OP_CreateCharacterRequestMsg_Packet.h"
 
-//#define RegisterLoginSubstruct(n, pt, f, ...) uint32_t zUNIQUENAMEVERz ## pt [] = { __VA_ARGS__ };\
-//SubstructRegistrar<pt> zUNIQUENAMEz ## pt (n, f, zUNIQUENAMEVERz ## pt, sizeof(zUNIQUENAMEVERz ## pt) / sizeof(uint32_t))
-//
-//#define RegisterLoginSubstruct(n, pt, ...) RegisterSubstruct(n, pt, "LoginStructs.xml", __VA_ARGS__)
+#define RegisterLoginSubstruct(pt, ...) RegisterXmlSubstruct(pt, "LoginStructs.xml", __VA_ARGS__)
 
-//RegisterLoginSubstruct()
+RegisterLoginSubstruct(Substruct_CharacterCustomization_Asset, 1);
+RegisterLoginSubstruct(Substruct_CharacterCustomization, 1, 284, 57080, 67650);

@@ -4,7 +4,6 @@
 #include "../../common/Packets/EQ2Packets/OpcodeManager.h"
 #include "../../common/Packets/PacketElements/PacketElements.h"
 
-//26 bytes
 struct SpawnMorphSliders {
 	int8_t skull[3];
 	int8_t eyes[3];

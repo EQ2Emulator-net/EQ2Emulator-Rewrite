@@ -473,6 +473,9 @@ uint32_t WorldDatabase::CreateCharacter(uint32_t account_id, OP_CreateCharacterR
 		"soga_facial_hair_type, created_date, last_saved, admin_status) "
 		"VALUES (%i, %i, '%s', %i, %i, %i, %i, %f, %f, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, now(), unix_timestamp(), %i)";
 	 
+	const Substruct_CharacterCustomization& custom = packet->customization;
+	const Substruct_CharacterCustomization& soga = packet->soga_customization;
+
 	QueryResult res = QueryWithFetchedResult(QUERY_RESULT_FLAG_LAST_INSERT_ID, create_char,
 		account_id,
 		packet->server_id,
@@ -481,21 +484,20 @@ uint32_t WorldDatabase::CreateCharacter(uint32_t account_id, OP_CreateCharacterR
 		packet->_class,
 		packet->gender,
 		packet->deity,
-		packet->floatSliders.bodyscale,
-		packet->floatSliders.bumpscale,
-		GetAppearanceID(packet->soga_wing_file),
-		GetAppearanceID(packet->soga_chest_file),
-		GetAppearanceID(packet->soga_legs_file),
-		GetAppearanceID(packet->soga_hair_file),
-		GetAppearanceID(packet->soga_race_file),
-		GetAppearanceID(packet->legs_file),
-		GetAppearanceID(packet->chest_file),
-		GetAppearanceID(packet->wing_file),
-		GetAppearanceID(packet->hair_file),
-		GetAppearanceID(packet->race_file),
-		GetAppearanceID(packet->face_file),
-		GetAppearanceID(packet->soga_race_file),
-		0
+		custom.floatSliders.bodyscale,
+		custom.floatSliders.bumpscale,
+		GetAppearanceID(soga.wingAsset.file),
+		GetAppearanceID(soga.chestAsset.file),
+		GetAppearanceID(soga.legsAsset.file),
+		GetAppearanceID(soga.hairAsset.file),
+		GetAppearanceID(soga.race_file),
+		GetAppearanceID(custom.legsAsset.file),
+		GetAppearanceID(custom.chestAsset.file),
+		GetAppearanceID(custom.wingAsset.file),
+		GetAppearanceID(custom.hairAsset.file),
+		GetAppearanceID(custom.race_file),
+		GetAppearanceID(custom.faceAsset.file),
+		GetAppearanceID(soga.faceAsset.file)
 		);
 
 	if (!res) {
@@ -528,54 +530,54 @@ uint32_t WorldDatabase::CreateCharacter(uint32_t account_id, OP_CreateCharacterR
 
 	//AddNewPlayerToServerGuild(loginID, char_id);
 
-	SaveCharacterColors(char_id, "skin_color", packet->skin_color);
-	SaveCharacterColors(char_id, "eye_color", packet->eye_color);
-	SaveCharacterColors(char_id, "hair_color1", packet->hair_color1);
-	SaveCharacterColors(char_id, "hair_color2", packet->hair_color2);
-	SaveCharacterColors(char_id, "hair_highlight", packet->hair_highlight);
-	SaveCharacterColors(char_id, "hair_type_color", packet->hair_type_color);
-	SaveCharacterColors(char_id, "hair_type_highlight_color", packet->hair_type_highlight_color);
-	SaveCharacterColors(char_id, "hair_face_color", packet->hair_face_color);
-	SaveCharacterColors(char_id, "hair_face_highlight_color", packet->hair_face_highlight_color);
-	SaveCharacterColors(char_id, "wing_color1", packet->wing_color1);
-	SaveCharacterColors(char_id, "wing_color2", packet->wing_color2);
-	SaveCharacterColors(char_id, "shirt_color", packet->shirt_color);
-	SaveCharacterColors(char_id, "unknown_chest_color", packet->unknown_chest_color);
-	SaveCharacterColors(char_id, "pants_color", packet->pants_color);
-	SaveCharacterColors(char_id, "unknown_legs_color", packet->unknown_legs_color);
-	SaveCharacterColors(char_id, "unknown9", packet->sliders.skull);
-	SaveCharacterColors(char_id, "eye_type", packet->sliders.eyes);
-	SaveCharacterColors(char_id, "ear_type", packet->sliders.ears);
-	SaveCharacterColors(char_id, "eye_brow_type", packet->sliders.eyebrow);
-	SaveCharacterColors(char_id, "cheek_type", packet->sliders.cheeks);
-	SaveCharacterColors(char_id, "lip_type", packet->sliders.mouth);
-	SaveCharacterColors(char_id, "chin_type", packet->sliders.chin);
-	SaveCharacterColors(char_id, "nose_type", packet->sliders.nose);
-	SaveCharacterFloats(char_id, "body_size", packet->sliders.bodyscale, 0, 0);
+	SaveCharacterColors(char_id, "skin_color", custom.skin_color);
+	SaveCharacterColors(char_id, "eye_color", custom.eye_color);
+	SaveCharacterColors(char_id, "hair_color1", custom.hair_color1);
+	SaveCharacterColors(char_id, "hair_color2", custom.hair_color2);
+	SaveCharacterColors(char_id, "hair_highlight", custom.hair_highlight);
+	SaveCharacterColors(char_id, "hair_type_color", custom.hairAsset.color);
+	SaveCharacterColors(char_id, "hair_type_highlight_color", custom.hairAsset.highlight);
+	SaveCharacterColors(char_id, "hair_face_color", custom.faceAsset.color);
+	SaveCharacterColors(char_id, "hair_face_highlight_color", custom.faceAsset.highlight);
+	SaveCharacterColors(char_id, "wing_color1", custom.wingAsset.color);
+	SaveCharacterColors(char_id, "wing_color2", custom.wingAsset.highlight);
+	SaveCharacterColors(char_id, "shirt_color", custom.chestAsset.color);
+	SaveCharacterColors(char_id, "unknown_chest_color", custom.chestAsset.highlight);
+	SaveCharacterColors(char_id, "pants_color", custom.legsAsset.color);
+	SaveCharacterColors(char_id, "unknown_legs_color", custom.legsAsset.highlight);
+	SaveCharacterColors(char_id, "unknown9", custom.sliders.skull);
+	SaveCharacterColors(char_id, "eye_type", custom.sliders.eyes);
+	SaveCharacterColors(char_id, "ear_type", custom.sliders.ears);
+	SaveCharacterColors(char_id, "eye_brow_type", custom.sliders.eyebrow);
+	SaveCharacterColors(char_id, "cheek_type", custom.sliders.cheeks);
+	SaveCharacterColors(char_id, "lip_type", custom.sliders.mouth);
+	SaveCharacterColors(char_id, "chin_type", custom.sliders.chin);
+	SaveCharacterColors(char_id, "nose_type", custom.sliders.nose);
+	SaveCharacterFloats(char_id, "body_size", custom.sliders.bodyscale, 0, 0);
 
-	SaveCharacterColors(char_id, "soga_skin_color", packet->soga_skin_color);
-	SaveCharacterColors(char_id, "soga_eye_color", packet->soga_eye_color);
-	SaveCharacterColors(char_id, "soga_hair_color1", packet->soga_hair_color1);
-	SaveCharacterColors(char_id, "soga_hair_color2", packet->soga_hair_color2);
-	SaveCharacterColors(char_id, "soga_hair_highlight", packet->soga_hair_highlight);
-	SaveCharacterColors(char_id, "soga_hair_type_color", packet->soga_hair_type_color);
-	SaveCharacterColors(char_id, "soga_hair_type_highlight_color", packet->soga_hair_type_highlight_color);
-	SaveCharacterColors(char_id, "soga_hair_face_color", packet->soga_hair_face_color);
-	SaveCharacterColors(char_id, "soga_hair_face_highlight_color", packet->soga_hair_face_highlight_color);
-	SaveCharacterColors(char_id, "soga_wing_color1", packet->soga_wing_color1);
-	SaveCharacterColors(char_id, "soga_wing_color2", packet->soga_wing_color2);
-	SaveCharacterColors(char_id, "soga_shirt_color", packet->soga_shirt_color);
-	SaveCharacterColors(char_id, "soga_unknown_chest_color", packet->soga_unknown_chest_color);
-	SaveCharacterColors(char_id, "soga_pants_color", packet->soga_pants_color);
-	SaveCharacterColors(char_id, "soga_unknown_legs_color", packet->soga_unknown_legs_color);
-	SaveCharacterColors(char_id, "soga_unknown13", packet->sogaSliders.skull);
-	SaveCharacterColors(char_id, "soga_eye_type", packet->sogaSliders.eyes);
-	SaveCharacterColors(char_id, "soga_ear_type", packet->sogaSliders.ears);
-	SaveCharacterColors(char_id, "soga_eye_brow_type", packet->sogaSliders.eyebrow);
-	SaveCharacterColors(char_id, "soga_cheek_type", packet->sogaSliders.cheeks);
-	SaveCharacterColors(char_id, "soga_lip_type", packet->sogaSliders.mouth);
-	SaveCharacterColors(char_id, "soga_chin_type", packet->sogaSliders.chin);
-	SaveCharacterColors(char_id, "soga_nose_type", packet->sogaSliders.nose);
+	SaveCharacterColors(char_id, "soga_skin_color", soga.skin_color);
+	SaveCharacterColors(char_id, "soga_eye_color", soga.eye_color);
+	SaveCharacterColors(char_id, "soga_hair_color1", soga.hair_color1);
+	SaveCharacterColors(char_id, "soga_hair_color2", soga.hair_color2);
+	SaveCharacterColors(char_id, "soga_hair_highlight", soga.hair_highlight);
+	SaveCharacterColors(char_id, "soga_hair_type_color", soga.hairAsset.color);
+	SaveCharacterColors(char_id, "soga_hair_type_highlight_color", soga.hairAsset.highlight);
+	SaveCharacterColors(char_id, "soga_hair_face_color", soga.faceAsset.color);
+	SaveCharacterColors(char_id, "soga_hair_face_highlight_color", soga.faceAsset.highlight);
+	SaveCharacterColors(char_id, "soga_wing_color1", soga.wingAsset.color);
+	SaveCharacterColors(char_id, "soga_wing_color2", soga.wingAsset.highlight);
+	SaveCharacterColors(char_id, "soga_shirt_color", soga.chestAsset.color);
+	SaveCharacterColors(char_id, "soga_unknown_chest_color", soga.chestAsset.highlight);
+	SaveCharacterColors(char_id, "soga_pants_color", soga.legsAsset.color);
+	SaveCharacterColors(char_id, "soga_unknown_legs_color", soga.legsAsset.highlight);
+	SaveCharacterColors(char_id, "soga_unknown13", soga.sliders.skull);
+	SaveCharacterColors(char_id, "soga_eye_type", soga.sliders.eyes);
+	SaveCharacterColors(char_id, "soga_ear_type", soga.sliders.ears);
+	SaveCharacterColors(char_id, "soga_eye_brow_type", soga.sliders.eyebrow);
+	SaveCharacterColors(char_id, "soga_cheek_type", soga.sliders.cheeks);
+	SaveCharacterColors(char_id, "soga_lip_type", soga.sliders.mouth);
+	SaveCharacterColors(char_id, "soga_chin_type", soga.sliders.chin);
+	SaveCharacterColors(char_id, "soga_nose_type", soga.sliders.nose);
 
 	return char_id;
 }
@@ -670,7 +672,7 @@ void WorldDatabase::SaveCharacterColors(uint32_t char_id, const char* type, EQ2C
 	}
 }
 
-void WorldDatabase::SaveCharacterColors(uint32_t char_id, const char* type, int8_t* color) {
+void WorldDatabase::SaveCharacterColors(uint32_t char_id, const char* type, const int8_t* color) {
 	if (!Query("INSERT INTO char_colors (char_id, signed_value, type, red, green, blue) VALUES (%u, %u, '%s', %i, %i, %i)", char_id, 1, type, color[0], color[1], color[2])) {
 		//LogWrite(WORLD__ERROR, 0, "World", "Error in SaveCharacterColors query: %s", GetError());
 	}
