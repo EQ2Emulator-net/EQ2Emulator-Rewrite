@@ -20,6 +20,12 @@ const uint32_t POS_STATE_CROUCHING = 1 << 9;
 const uint32_t POS_STATE_UNKNOWN = 1 << 14;
 const uint32_t POS_STATE_DISABLE_GRAVITY = 1 << 15;
 
+struct vec3 {
+	float x;
+	float y;
+	float z;
+};
+
 ///<summary>Packet struct containing the spawns position information</summary>
 struct SpawnPositionStruct {
 	SpawnPositionStruct();
@@ -490,6 +496,49 @@ public:
 	uint32_t lerpType;
 	uint32_t num_waypoint;
 	std::vector<Substruct_LerpWayPoint> waypoint_array;
+};
+
+class Substruct_Matrix3 : public PacketSubstruct {
+public:
+
+	Substruct_Matrix3(uint32_t p_version = 0) : PacketSubstruct(p_version) {
+		RegisterElements();
+	}
+
+	void RegisterElements() {
+		float& M = this->planes[0].x;
+		RegisterFloat(M)->SetCount(9);
+	}
+
+	vec3 planes[3];
+};
+
+class Substruct_Position : public PacketSubstruct {
+public:
+
+	Substruct_Position(uint32_t p_version = 0) : PacketSubstruct(p_version), rotMatrix(p_version) {
+		RegisterElements();
+	}
+
+	void RegisterElements() {
+		RegisterFloat(yaw);
+		RegisterFloat(pitch);
+		RegisterFloat(roll);
+		RegisterSubstruct(rotMatrix);
+		RegisterFloat(scale);
+		RegisterFloat(x);
+		RegisterFloat(y);
+		RegisterFloat(z);
+	}
+
+	Substruct_Matrix3 rotMatrix;
+	float pitch;
+	float yaw;
+	float roll;
+	float scale;
+	float x;
+	float y;
+	float z;
 };
 
 class Substruct_SpawnFooter : public PacketSubstruct {

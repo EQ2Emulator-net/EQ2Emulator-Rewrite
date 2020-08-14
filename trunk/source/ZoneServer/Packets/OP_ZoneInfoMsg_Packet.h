@@ -2,11 +2,12 @@
 
 #include "../../common/Packets/EQ2Packet.h"
 #include "../../common/Packets/PacketElements/PacketElements.h"
+#include "OP_PlayFlythroughCmd_Packet.h"
 
 class OP_ZoneInfoMsg_Packet : public EQ2Packet {
 public:
 	OP_ZoneInfoMsg_Packet(uint32_t version)
-		: EQ2Packet(version) {
+		: EQ2Packet(version), flythrough(version) {
 		RegisterElements();
 
 		//server1 = "";
@@ -32,7 +33,7 @@ public:
 		seconds = 0;
 		unknown7[0] = 0;
 		unknown7[1] = 0;
-		unknown8 = 0;
+		unknown8ArraySize = 0;
 		unknown9 = 0;
 		zone_flags = 0;
 		unknown10b = 0;
@@ -74,6 +75,7 @@ public:
 		unknown_mj20 = 0;
 		unknown_mj21 = 0;
 		unknown_mj22 = 0;
+		bHasFlythrough = false;
 	}
 
 	std::string server1;
@@ -108,7 +110,7 @@ public:
 	uint8_t minute;
 	uint8_t seconds;
 	float unknown7[2];
-	uint16_t unknown8;
+	uint8_t unknown8ArraySize;
 	float unknown9;
 	uint32_t zone_flags;
 	uint16_t unknown10b;
@@ -117,6 +119,8 @@ public:
 	uint8_t unknown10e;
 	uint8_t permission_level;
 	uint8_t unknown10f;
+	bool bHasFlythrough;
+	Substruct_FlythroughDesc flythrough;
 
 	uint32_t num_adv;
 	struct AdvArray : public PacketSubstruct {
@@ -270,7 +274,9 @@ private:
 		if (GetVersion() > 283) {
 			float& Unknown7 = unknown7[0];
 			RegisterFloat(Unknown7)->SetCount(2);
-			RegisterUInt16(unknown8);
+			RegisterUInt8(unknown8ArraySize);
+			auto e = RegisterBool(bHasFlythrough);
+			RegisterSubstruct(flythrough)->SetIsVariableSet(e);
 			RegisterFloat(unknown9);
 		}
 		RegisterUInt32(zone_flags);

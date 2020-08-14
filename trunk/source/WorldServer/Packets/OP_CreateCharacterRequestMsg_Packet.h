@@ -189,7 +189,6 @@ private:
 		RegisterSubstruct(soga_customization);
 		if (GetVersion() >= 67650) {
 			Register16String(unk67650_string);
-			return;
 		}
 	}
 

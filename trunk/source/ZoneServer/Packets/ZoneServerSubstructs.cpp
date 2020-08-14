@@ -10,6 +10,7 @@
 #include "OP_MapFogDataUpdateMsg_Packet.h"
 #include "OP_MapFogDataInitMsg_Packet.h"
 #include "ItemPackets.h"
+#include "OP_PlayFlythroughCmd_Packet.h"
 
 #define RegisterZoneSubstruct(pt, ...) RegisterXmlSubstruct(pt, "ZoneStructs.xml", __VA_ARGS__)
 
@@ -21,6 +22,8 @@ RegisterZoneSubstruct(Substruct_TargetSpellInfo, 1, 60055);
 RegisterZoneSubstruct(Substruct_SpawnInfo, 283, 284, 860, 861, 864, 936, 955, 1096, 1188, 1198, 60055);
 RegisterZoneSubstruct(Substruct_SpawnVisualization, 1, 936, 955, 1142, 1188, 60055);
 RegisterZoneSubstruct(Substruct_Lerp, 1);
+RegisterZoneSubstruct(Substruct_Matrix3, 1);
+RegisterZoneSubstruct(Substruct_Position, 1);
 RegisterZoneSubstruct(Substruct_SpawnTitleStruct, 1);
 RegisterZoneSubstruct(Substruct_SpawnFooter, 1);
 RegisterZoneSubstruct(Substruct_WidgetFooter, 1);
@@ -55,6 +58,20 @@ RegisterZoneSubstruct(Substruct_ExamineDescItem_RecipeBook, 60114, 67650);
 RegisterZoneSubstruct(Substruct_ExamineDescItem_RewardCrate, 60114, 67650);
 RegisterZoneSubstruct(Substruct_ExamineDescItem_RewardVoucher, 60114, 67650);
 RegisterZoneSubstruct(Substruct_ExamineDescItem_Shield, 60114, 67650);
+RegisterZoneSubstruct(Substruct_FlythroughDesc_Action, 1);
+RegisterZoneSubstruct(Substruct_FlythroughDesc_Action_PlaySound, 1);
+RegisterZoneSubstruct(Substruct_FlythroughDesc_Action_Text, 1);
+RegisterZoneSubstruct(Substruct_FlythroughDesc_Action_ActivateCamera, 1);
+RegisterZoneSubstruct(Substruct_FlythroughDesc_Action_DeactivateCamera, 1);
+RegisterZoneSubstruct(Substruct_FlythroughDesc_Action_SetCamera, 1);
+RegisterZoneSubstruct(Substruct_FlythroughDesc_Action_SceneFade, 1);
+RegisterZoneSubstruct(Substruct_FlythroughDesc_Action_LensFilterState, 1);
+RegisterZoneSubstruct(Substruct_FlythroughDesc_Action_LensFilter, 1);
+RegisterZoneSubstruct(Substruct_FlythroughDesc_Shot, 1);
+RegisterZoneSubstruct(Substruct_FlythroughDesc_Movement_Strings, 1);
+RegisterZoneSubstruct(Substruct_FlythroughDesc_Movement, 1);
+RegisterZoneSubstruct(Substruct_FlythroughDesc_Scene, 1);
+RegisterZoneSubstruct(Substruct_FlythroughDesc, 1);
 //I would rather these 2 substructs not be inlined but analyzer has issues nesting arrays that deep
 //RegisterZoneSubstruct(Substruct_MapFogData, 1188);
 //RegisterZoneSubstruct(Substruct_MapData, 1188);

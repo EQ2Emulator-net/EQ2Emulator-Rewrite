@@ -384,6 +384,7 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_OnscreenMsgMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DialogOpenCmd_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_PaperdollImage_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_PlayFlythroughCmd_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_PredictionUpdateMsg.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_ReadyToZoneMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_RemoteCmdMsg_Packet.h" />
