@@ -48,6 +48,7 @@
 #include "OP_MapRequest_Packet.h"
 #include "OP_EqExamineInfoCmd.h"
 #include "OP_UpdateInventoryMsg_Packet.h"
+#include "OP_FlythroughEndMsg_Packet.h"
 
 // Server to Client
 RegisterZoneStruct("OP_ZoneInfoMsg", OP_ZoneInfoMsg_Packet, 283, 284, 942, 957, 959, 1067, 1096, 1142, 1193, 63119, 63182, 67650);
@@ -81,6 +82,7 @@ RegisterZoneStruct("OP_EqHearPlayFlavorCmd", OP_HearPlayFlavorCmd_Packet, 1);
 RegisterZoneStruct("OP_MapFogDataInitMsg", OP_MapFogDataInitMsg_Packet, 1188);
 RegisterZoneStruct("OP_EqExamineInfoCmd", OP_EqExamineInfoCmd_Packet, 1, 1188);
 RegisterZoneStruct("OP_UpdateInventoryMsg", OP_UpdateInventoryMsg_Packet, 1, 893, 1193, 1208, 57048, 57107, 67650);
+RegisterZoneStruct("OP_PlayFlythroughCmd", OP_PlayFlythroughCmd_Packet, 1);
 
 // Client to Server
 RegisterZoneStruct("OP_LoginByNumRequestMsg", OP_LoginByNumRequestMsg_Packet, 1, 1212);
@@ -99,6 +101,7 @@ RegisterZoneStruct("OP_DialogSelectMsg", OP_DialogSelectMsg_Packet, 1);
 RegisterZoneStruct("OP_EntityVerbsVerbMsg", OP_EntityVerbsVerbMsg_Packet, 1);
 RegisterZoneStruct("OP_MapFogDataUpdateMsg", OP_MapFogDataUpdateMsg_Packet, 1188);
 RegisterZoneStruct("OP_MapRequest", OP_MapRequest_Packet, 1);
+RegisterZoneStruct("OP_FlythroughEndMsg", OP_FlythroughEndMsg_Packet, 1);
 
 //Bidirectional
 RegisterZoneStruct("OP_PredictionUpdateMsg", OP_PredictionUpdateMsg_Packet, 1);

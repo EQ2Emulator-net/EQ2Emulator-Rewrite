@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../common/Packets/EQ2Packet.h"
+#include "OP_ClientCmdMsg_Packet.h"
 #include "../../common/Packets/PacketElements/PacketElements.h"
 #include "../Spawns/SpawnStructs.h"
 #include <variant>
@@ -172,12 +172,15 @@ public:
 	7 = LensFilter*/
 	uint32_t actionType;
 
+private:
 	//Magic, basically a union for classes to save on memory
+	//Access from the actionStruct pointer
 	std::variant<std::monostate, 
 		Substruct_FlythroughDesc_Action_PlaySound, Substruct_FlythroughDesc_Action_Text,
 		Substruct_FlythroughDesc_Action_ActivateCamera, Substruct_FlythroughDesc_Action_DeactivateCamera,
 		Substruct_FlythroughDesc_Action_SetCamera, Substruct_FlythroughDesc_Action_SceneFade,
 		Substruct_FlythroughDesc_Action_LensFilterState, Substruct_FlythroughDesc_Action_LensFilter> actionData;
+public:
 
 	PacketSubstruct* actionStruct;
 
@@ -215,6 +218,9 @@ public:
 		if (bSuccess) {
 			InitActionStruct();
 			if (actionStruct) return actionStruct->ReadElement(srcbuf, offset, bufsize);
+		}
+		else {
+			actionStruct = nullptr;
 		}
 
 		return bSuccess;
@@ -295,8 +301,10 @@ public:
 		RegisterUInt32(moveType);
 	}
 
+private:
 	std::variant<std::monostate, Substruct_Lerp, Substruct_Position, Substruct_FlythroughDesc_Movement_Strings> moveData;
 
+public:
 	PacketSubstruct* moveStruct;
 
 	void InitMoveStruct() {
@@ -392,13 +400,45 @@ public:
 	uint8_t unknown3;
 	bool unknown6;
 	
-	float unknownVec[3];
+	vec3 unknownVec;
 	std::vector<Substruct_FlythroughDesc_Shot> shots;
 	std::vector<Substruct_FlythroughDesc_Scene> scenes;
 	uint16_t shotCount;
 	uint16_t sceneCount;
-	int32_t unknown7;
-	uint8_t unknown8[3];
+	uint16_t unkCount;
+
+	class Substruct_FlythroughDesc_Unknown : public PacketSubstruct {
+	public:
+		Substruct_FlythroughDesc_Unknown(uint32_t ver = 0) : PacketSubstruct(ver, true) {
+
+		}
+
+		~Substruct_FlythroughDesc_Unknown() = default;
+
+		struct Substruct_Int : public PacketSubstruct {
+			Substruct_Int(uint32_t ver = 0) : PacketSubstruct(ver, true) {
+
+			}
+
+			void RegisterElements() override {
+				RegisterInt32(myInt);
+			}
+
+			int32_t myInt;
+		};
+
+		int32_t unknown;
+		std::vector<Substruct_Int> ints;
+		uint16_t count;
+
+		void RegisterElements() override {
+			RegisterInt32(unknown);
+			auto e = RegisterUInt16(count);
+			e->SetMyArray(RegisterArray(ints, Substruct_Int));
+		}
+	};
+
+	std::vector<Substruct_FlythroughDesc_Unknown> unkArray;
 
 	void RegisterElements() override {
 		Register16String(unkString1);
@@ -411,16 +451,35 @@ public:
 		RescopeArrayElement(unknown5);
 		RegisterUInt8(unknown5)->SetCount(5);
 		auto e = RegisterBool(unknown6);
-		RescopeArrayElement(unknownVec);
-		auto vec = RegisterFloat(unknownVec);
+		auto vec = RegisterFloat(unknownVec.x);
 		vec->SetCount(3);
 		vec->SetIsVariableSet(e);
 		auto asize = RegisterUInt16(shotCount);
 		asize->SetMyArray(RegisterArray(shots, Substruct_FlythroughDesc_Shot));
 		asize = RegisterUInt16(sceneCount);
 		asize->SetMyArray(RegisterArray(scenes, Substruct_FlythroughDesc_Scene));
-		RegisterInt32(unknown7);
-		RescopeArrayElement(unknown8);
-		RegisterUInt8(unknown8)->SetCount(3);
+		auto unkSize = RegisterUInt16(unkCount);
+		unkSize->SetMyArray(RegisterArray(unkArray, Substruct_FlythroughDesc_Unknown));
+	}
+};
+
+class OP_PlayFlythroughCmd_Packet : public OP_ClientCmdMsg_Packet {
+public:
+	OP_PlayFlythroughCmd_Packet(uint32_t ver) : OP_ClientCmdMsg_Packet(ver), flythrough(ver), bHasFlythrough(true) {
+		RegisterElements();
+	}
+
+	~OP_PlayFlythroughCmd_Packet() = default;
+
+	Substruct_FlythroughDesc flythrough;
+	int32_t unknown2;
+	bool bHasFlythrough;
+	uint8_t unknown1;
+
+	void RegisterElements() {
+		RegisterUInt8(unknown1);
+		RegisterInt32(unknown2);
+		auto e = RegisterBool(bHasFlythrough);
+		RegisterSubstruct(flythrough)->SetIsVariableSet(e);
 	}
 };
