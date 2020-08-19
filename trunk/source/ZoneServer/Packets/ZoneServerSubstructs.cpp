@@ -19,7 +19,7 @@ RegisterZoneSubstruct(Substruct_MovementData, 283, 284);
 RegisterZoneSubstruct(Substruct_SpawnHeader, 283, 284, 57080);
 RegisterZoneSubstruct(Substruct_SpawnPosition, 284, 284, 911);
 RegisterZoneSubstruct(Substruct_TargetSpellInfo, 1, 60055);
-RegisterZoneSubstruct(Substruct_SpawnInfo, 283, 284, 860, 861, 864, 936, 955, 1096, 1188, 1198, 60055);
+RegisterZoneSubstruct(Substruct_SpawnInfo, 283, 284, 860, 861, 864, 936, 955, 1096, 1188, 1198, 60055, 67633);
 RegisterZoneSubstruct(Substruct_SpawnVisualization, 1, 936, 955, 1142, 1188, 60055);
 RegisterZoneSubstruct(Substruct_Lerp, 1);
 RegisterZoneSubstruct(Substruct_Matrix3, 1);

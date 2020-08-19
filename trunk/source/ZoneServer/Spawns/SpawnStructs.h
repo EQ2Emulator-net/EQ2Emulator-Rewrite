@@ -9,6 +9,8 @@
 //Position state bitflags
 const uint32_t POS_STATE_FLYMODE = 1;
 const uint32_t POS_STATE_FLYMODE_NO_COLLIDE = 1 << 1;
+//The lava widget in najena's has this, play with it?
+const uint32_t POS_STATE_WATER = 1 << 2;
 const uint32_t POS_STATE_NO_MOVEMENT = 1 << 3;
 const uint32_t POS_STATE_NO_TURNING = 1 << 4;
 const uint32_t POS_STATE_GLIDE = 1 << 5;
@@ -286,16 +288,17 @@ struct SpawnInfoStruct {
 	uint16_t                        unknownpkShort;
 	uint32_t                        unknownpk1;
 	uint8_t							unknown600554[10];
-	uint32_t						hp_remaining;
+	uint32_t						hp_percent; //this is sent as 100 ^ percentage remaining
 	uint32_t						power_percent;
-	float							unknown600553; // if set from 1.0 to -1.0 you shrink so small you can't see yourself
+	int32_t							unknown600553; // if set from 1.0 to -1.0 you shrink so small you can't see yourself
 	uint8_t							unknown600553b;
 	uint8_t							unknown600553c;
 	uint16_t						orig_level;  // This is the original level and should not change when the level value changes when mentoring
 	uint16_t						level;
 	uint8_t							unknown5;
-	uint16_t						heroic_flag;
-	uint16_t    					unknown7;
+	uint8_t						    heroic_flag;
+	uint8_t                         unknown1096;
+	uint32_t    					unknown7;
 	uint8_t                         unknown7_b;
 	uint8_t							race;
 	uint8_t							gender;
@@ -319,10 +322,10 @@ struct SpawnInfoStruct {
 	uint8_t                         unknown20[4];
 	uint32_t                        unknown20a[3];
 	uint8_t                         unknown13b;
-	uint8_t                         unknown14a[18];
+	uint8_t                         unknown14a[14];
 	uint8_t                         body_age;
 	uint32_t                        size_mod;
-	uint8_t                         unknown67633[3];
+	uint32_t                        unknown67633;
 	uint8_t                         unknown67633b;
 	union {
 		SpawnMorphSliders               sliders;
@@ -378,6 +381,9 @@ struct SpawnInfoStruct {
 	SpawnInfoStruct() {
 		//Hack to zero out most of the data allowing default values for the eq2 colors
 		memset(&model_type, 0, reinterpret_cast<size_t>(equipment_colors) - reinterpret_cast<size_t>(&model_type));
+		power_percent = 100;
+		hp_percent = 100;
+		unknown7 = 255;
 	}
 
 protected:
@@ -398,26 +404,26 @@ public:
 	Substruct_TargetSpellInfo spell_effects[30];
 
 	//We need to syncronize the data for equipment types pre int32 versions since this is a special case
-	bool ReadElement(const unsigned char* srcbuf, uint32_t& offset, uint32_t bufsize) override {
-		bool ret = PacketEncodedData::ReadElement(srcbuf, offset, bufsize);
-
+	void PostRead() override {
 		if (version < 57080) {
 			for (int i = 0; i < 25; i++) {
 				equipment_types[i] = equipment_types_int16[i];
 			}
 		}
-
-		return ret;
 	}
 
-	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
+	void PreWrite() override {
 		if (version < 57080) {
 			for (int i = 0; i < 25; i++) {
 				equipment_types_int16[i] = static_cast<uint16_t>(equipment_types[i]);
 			}
 		}
 
-		return PacketEncodedData::WriteElement(outbuf, offset);
+		hp_percent ^= 100;
+	}
+
+	void PostWrite() override {
+		hp_percent ^= 100;
 	}
 
 	void RegisterElements();

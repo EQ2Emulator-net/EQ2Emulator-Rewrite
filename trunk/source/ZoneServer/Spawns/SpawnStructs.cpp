@@ -322,7 +322,7 @@ void Substruct_SpawnInfo::RegisterElements() {
 
 	if (version < 60055) {
 		if (version < 1188) {
-			uint8_t& hp_remaining = reinterpret_cast<uint8_t&>(this->hp_remaining);
+			uint8_t& hp_remaining = reinterpret_cast<uint8_t&>(this->hp_percent);
 			RegisterUInt8(hp_remaining);
 			RescopeArrayElement(unknown2a);
 			RegisterUInt8(unknown2a)->SetCount(3);
@@ -331,7 +331,7 @@ void Substruct_SpawnInfo::RegisterElements() {
 			RegisterUInt8(unknown2b);
 		}
 		else {
-			RegisterUInt32(hp_remaining);
+			RegisterUInt32(hp_percent);
 			RegisterUInt32(power_percent);
 		}
 		RescopeArrayElement(unknown3);
@@ -391,11 +391,13 @@ void Substruct_SpawnInfo::RegisterElements() {
 			RegisterUInt8(unknown5);
 			if (version < 1096 || version >= 1188) {
 				//Thinking this got moved by accident at some point then moved to the correct location again
-				RegisterUInt16(heroic_flag);
+				RegisterUInt8(heroic_flag);
+				RegisterUInt8(unknown1096);
 			}
 			RegisterUInt32(activity_timer);
 		}
 		RegisterUInt8(unknown7_b);
+		RescopeToReference(unknown7, uint16_t);
 		RegisterUInt16(unknown7);
 	}
 	if (version < 57080) {
@@ -579,10 +581,8 @@ void Substruct_SpawnInfo::RegisterElements() {
 			else {
 				RegisterUInt32(mount_type);
 			}
-			RegisterEQ2Color(mount_color);
-			RegisterEQ2Color(mount_saddle_color);
 			RescopeArrayElement(unknown14a);
-			RegisterUInt8(unknown14a)->SetCount(18);
+			RegisterUInt8(unknown14a)->SetCount(14);
 		}
 		if (version < 57080) {
 			uint16_t& combat_voice = reinterpret_cast<uint16_t&>(this->combat_voice);
@@ -658,22 +658,19 @@ void Substruct_SpawnInfo::RegisterElements() {
 		RegisterUInt32(activity_timer);
 		RescopeArrayElement(unknown600554);
 		RegisterUInt8(unknown600554)->SetCount(4);
-		RegisterUInt32(hp_remaining);
+		RegisterUInt32(hp_percent);
 		RegisterUInt32(power_percent);
-		RegisterFloat(unknown600553);
 		RegisterUInt32(size_mod);
+		RegisterInt32(unknown600553);
+		if (GetVersion() >= 67633) {
+			RegisterUInt32(unknown67633);
+		}
 		RegisterUInt8(unknown600553b);
 		RegisterUInt8(orig_level);
-		if (version >= 67633) {
-			RescopeArrayElement(unknown67633);
-			RegisterUInt8(unknown67633)->SetCount(3);
-			RegisterUInt8(unknown67633b);
-		}
 		RegisterUInt8(level);
 		RegisterUInt8(unknown5);
-		RegisterUInt16(heroic_flag);
-		RegisterUInt8(unknown7_b);
-		RegisterUInt16(unknown7);
+		RegisterUInt8(heroic_flag);
+		RegisterUInt32(unknown7);
 	}
 
 	RegisterUInt8(race);
