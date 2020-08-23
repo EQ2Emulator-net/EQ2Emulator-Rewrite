@@ -1146,6 +1146,9 @@ void ZoneDatabase::ProcessEntityColors(DatabaseResult& result, std::unordered_ma
 		if (type == "skin_color") {
 			entity->SetSkinColor(c, false);
 		}
+		else if (type == "model_color") {
+			entity->SetModelColor(c, false);
+		}
 		else if (type == "eye_color") {
 			entity->SetEyeColor(c, false);
 		}
@@ -1234,6 +1237,9 @@ void ZoneDatabase::ProcessEntityColors(DatabaseResult& result, std::unordered_ma
 		}
 		else if (type == "soga_skin_color") {
 			entity->SetSogaSkinColor(c, false);
+		}
+		else if (type == "soga_model_color") {
+			entity->SetSogaModelColor(c, false);
 		}
 		else if (type == "soga_eye_color") {
 			entity->SetSogaEyeColor(c, false);

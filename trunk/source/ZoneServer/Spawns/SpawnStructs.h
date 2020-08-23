@@ -250,9 +250,10 @@ struct SpawnMorphSliders {
 struct SpawnInfoStruct {
 	uint32_t						model_type;
 	uint32_t						soga_model_type;
-	uint32_t						equipment_types[25];
-	uint32_t						unknownType26;
-	uint32_t						unknownType27;
+	uint32_t						equipment_types[24];
+	uint32_t                        textures_slot_type;
+	uint32_t						mount_adornment_type;
+	uint32_t                        mount_armor_type;
 	uint32_t						hair_type_id;
 	uint32_t						facial_hair_type_id;
 	uint32_t						wing_type_id;
@@ -261,7 +262,7 @@ struct SpawnInfoStruct {
 	uint32_t                        soga_chest_type_id;
 	uint32_t						legs_type_id;
 	uint32_t                        soga_legs_type_id;
-	uint32_t						unknown_new_type_id;
+	uint32_t						back_slot_type_id;
 	uint32_t						soga_hair_type_id;
 	uint32_t						soga_facial_hair_type_id;
 	uint32_t						mount_type;
@@ -338,27 +339,29 @@ struct SpawnInfoStruct {
 	};
 
 	//The above data is zeroed out
-	EQ2Color						equipment_colors[25];
+	EQ2Color						equipment_colors[24];
 	EQ2Color						hair_type_color;
 	EQ2Color						hair_face_color;
-	EQ2Color						unknownType26Color;
-	EQ2Color                        unknownType27Color;
+	EQ2Color                        textures_slot_color;
+	EQ2Color						mount_adornment_color;
+	EQ2Color                        mount_armor_color;
 	EQ2Color						wing_color1;
 	EQ2Color                        soga_wing_color1;
 	EQ2Color                        chest_type_color;
 	EQ2Color                        legs_type_color;
-	EQ2Color                        unknown_new_type_color;
+	EQ2Color                        back_slot_type_color;
 	EQ2Color						unknown10[3];
-	EQ2Color						equipment_highlights[25];
-	EQ2Color						unknownType26Highlight;
-	EQ2Color                        unknownType27Highlight;
+	EQ2Color						equipment_highlights[24];
+	EQ2Color                        textures_slot_highlight;
+	EQ2Color						mount_adornment_highlight;
+	EQ2Color                        mount_armor_highlight;
 	EQ2Color						hair_type_highlight_color;
 	EQ2Color						hair_face_highlight_color;
 	EQ2Color						wing_color2;
 	EQ2Color                        soga_wing_color2;
 	EQ2Color						chest_type_highlight;
 	EQ2Color                        legs_type_highlight;
-	EQ2Color                        unknown_new_type_highlight;
+	EQ2Color                        back_slot_type_highlight;
 	EQ2Color						soga_hair_type_color;
 	EQ2Color						soga_hair_type_highlight_color;
 	EQ2Color						soga_hair_face_color;
@@ -367,8 +370,8 @@ struct SpawnInfoStruct {
 	EQ2Color						eye_color;
 	EQ2Color						soga_eye_color;
 	EQ2Color						soga_skin_color;
-	EQ2Color						kunark_unknown_color1;
-	EQ2Color						kunark_unknown_color2;
+	EQ2Color						model_color;
+	EQ2Color						soga_model_color;
 	EQ2Color						mount_color;
 	EQ2Color						mount_saddle_color;
 	EQ2Color						hair_color1;
@@ -382,13 +385,13 @@ struct SpawnInfoStruct {
 		//Hack to zero out most of the data allowing default values for the eq2 colors
 		memset(&model_type, 0, reinterpret_cast<size_t>(equipment_colors) - reinterpret_cast<size_t>(&model_type));
 		power_percent = 100;
-		hp_percent = 100;
+		hp_percent = 100 ^ 42;
 		unknown7 = 255;
 	}
 
 protected:
 	//Used for legacy clients
-	uint16_t equipment_types_int16[25];
+	uint16_t equipment_types_int16[24];
 };
 
 class Substruct_SpawnInfo : public SpawnInfoStruct, public PacketEncodedData {
@@ -406,7 +409,7 @@ public:
 	//We need to syncronize the data for equipment types pre int32 versions since this is a special case
 	void PostRead() override {
 		if (version < 57080) {
-			for (int i = 0; i < 25; i++) {
+			for (int i = 0; i < 24; i++) {
 				equipment_types[i] = equipment_types_int16[i];
 			}
 		}
@@ -414,16 +417,16 @@ public:
 
 	void PreWrite() override {
 		if (version < 57080) {
-			for (int i = 0; i < 25; i++) {
+			for (int i = 0; i < 24; i++) {
 				equipment_types_int16[i] = static_cast<uint16_t>(equipment_types[i]);
 			}
 		}
 
-		hp_percent ^= 100;
+		//hp_percent = hp_percent ^ 100;
 	}
 
 	void PostWrite() override {
-		hp_percent ^= 100;
+		//hp_percent = hp_percent ^ 100;
 	}
 
 	void RegisterElements();

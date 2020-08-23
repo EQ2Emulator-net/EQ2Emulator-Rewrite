@@ -41,6 +41,13 @@ const uint8_t INFO_VIS_FLAG_HIDE_HOOD = 1 << 1;
 const uint8_t INFO_VIS_FLAG_MOUNTED = 1 << 2;
 const uint8_t INFO_VIS_FLAG_CROUCH = 1 << 3;
 
+//Info interaction flag (part of vis flags really)
+const uint8_t INFO_INTERACTION_FLAG_HIDE_HEAD_COVER = 1 << 1;
+const uint8_t INFO_INTERACTION_FLAG_SHOW_CLOAK = 1 << 2;
+const uint8_t INFO_INTERACTION_FLAG_LOOK_AT_PLAYER = 1 << 3;
+const uint8_t INFO_INTERACTION_FLAG_SHOW_RANGED_WEAPON = 1 << 4;
+const uint8_t INFO_INTERACTION_FLAG_SHOW_BACK_SLOT = 1 << 6;
+
 enum class EConsiderDifficulty : uint8_t {
 	GRAY = 0,
 	GREEN = 1,
@@ -362,6 +369,9 @@ public:
 	void SetSkinColor(EQ2Color value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.skin_color, value, updateFlags);
 	}
+	void SetModelColor(EQ2Color value, bool updateFlags = true) {
+		SetInfo(&m_infoStruct.model_color, value, updateFlags);
+	}
 	void SetEyeColor(EQ2Color value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.eye_color, value, updateFlags);
 	}
@@ -370,6 +380,9 @@ public:
 	}
 	void SetSogaSkinColor(EQ2Color value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.soga_skin_color, value, updateFlags);
+	}
+	void SetSogaModelColor(EQ2Color value, bool updateFlags = true) {
+		SetInfo(&m_infoStruct.soga_model_color, value, updateFlags);
 	}
 	void SetSkullType(int8_t value, uint8_t index, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.sliders.skull[index], value, updateFlags);

@@ -43,7 +43,7 @@ public:
 	uint8_t version;
 	std::string race_file;
 	EQ2ColorFloat skin_color;
-	EQ2ColorFloat skin_color2;
+	EQ2ColorFloat model_color;
 	EQ2ColorFloat eye_color;
 	EQ2ColorFloat hair_color1;
 	EQ2ColorFloat hair_color2;
@@ -68,10 +68,10 @@ public:
 		Register16String(race_file);
 		RegisterEQ2ColorFloat(skin_color);
 		if (GetVersion() < 57080) //moved in 57080
-			RegisterEQ2ColorFloat(skin_color2);
+			RegisterEQ2ColorFloat(model_color);
 		RegisterEQ2ColorFloat(eye_color);
 		if (GetVersion() >= 57080) //moved in 57080
-			RegisterEQ2ColorFloat(skin_color2);
+			RegisterEQ2ColorFloat(model_color);
 		RegisterEQ2ColorFloat(hair_color1);
 		RegisterEQ2ColorFloat(hair_color2);
 		if (GetVersion() >= 869)

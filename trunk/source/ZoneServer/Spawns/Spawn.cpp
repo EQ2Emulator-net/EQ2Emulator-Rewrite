@@ -368,9 +368,17 @@ float Spawn::GetDistance(const std::shared_ptr<Spawn>& spawn, bool ignore_y) {
 }
 
 void Spawn::SetAppearanceEquipmentItem(uint8_t slotID, const EQ2EquipmentItem& item, bool updateFlags) {
-	SetInfo(&m_infoStruct.equipment_colors[slotID], item.color, false);
-	SetInfo(&m_infoStruct.equipment_highlights[slotID], item.highlight, false);
-	SetInfo(&m_infoStruct.equipment_types[slotID], item.type, updateFlags);
+	if (slotID == 24) {
+		//This should maybe be mount_adornment_slot_type instead but depends on when the spawn was parsed
+		SetInfo(&m_infoStruct.textures_slot_color, item.color, false);
+		SetInfo(&m_infoStruct.textures_slot_highlight, item.highlight, false);
+		SetInfo(&m_infoStruct.textures_slot_type, item.type, updateFlags);
+	}
+	else {
+		SetInfo(&m_infoStruct.equipment_colors[slotID], item.color, false);
+		SetInfo(&m_infoStruct.equipment_highlights[slotID], item.highlight, false);
+		SetInfo(&m_infoStruct.equipment_types[slotID], item.type, updateFlags);
+	}
 }
 
 EConsiderDifficulty Spawn::GetConsiderDifficulty(uint16_t considererLevel, uint16_t targetLevel) {

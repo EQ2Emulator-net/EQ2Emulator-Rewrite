@@ -322,8 +322,8 @@ void Substruct_SpawnInfo::RegisterElements() {
 
 	if (version < 60055) {
 		if (version < 1188) {
-			uint8_t& hp_remaining = reinterpret_cast<uint8_t&>(this->hp_percent);
-			RegisterUInt8(hp_remaining);
+			uint8_t& hp_percent = reinterpret_cast<uint8_t&>(this->hp_percent);
+			RegisterUInt8(hp_percent);
 			RescopeArrayElement(unknown2a);
 			RegisterUInt8(unknown2a)->SetCount(3);
 			uint8_t& power_percent = reinterpret_cast<uint8_t&>(this->power_percent);
@@ -419,27 +419,36 @@ void Substruct_SpawnInfo::RegisterElements() {
 			RegisterEQ2Color(soga_eye_color);
 			RegisterEQ2Color(soga_skin_color);
 			if (version > 860) {
-				RegisterEQ2Color(kunark_unknown_color1);
-				RegisterEQ2Color(kunark_unknown_color2);
+				RegisterEQ2Color(model_color);
+				RegisterEQ2Color(soga_model_color);
 			}
 		}
 	}
 	if (version < 57080) {
 		uint16_t& equipment_types = reinterpret_cast<uint16_t&>(this->equipment_types_int16[0]);
-		RegisterUInt16(equipment_types)->SetCount(25);
+		RegisterUInt16(equipment_types)->SetCount(24);
 	}
 	else {
 		RescopeArrayElement(equipment_types);
-		RegisterUInt32(equipment_types)->SetCount(25);
+		RegisterUInt32(equipment_types)->SetCount(24);
 	}
+
 	if (version >= 1188) {
-		RegisterUInt32(unknownType26);
 		if (version >= 57080) {
-			RegisterUInt32(unknownType27);
+			RegisterUInt32(mount_adornment_type);
+			RegisterUInt32(mount_armor_type);
+		}
+		else {
+			RescopeToReference(mount_adornment_type, uint16_t);
+			RegisterUInt16(mount_adornment_type);
+			RescopeToReference(mount_armor_type, uint16_t);
+			RegisterUInt16(mount_armor_type);
 		}
 	}
 
 	if (version < 57080) {
+		RescopeToReference(textures_slot_type, uint16_t);
+		RegisterUInt16(textures_slot_type);
 		RescopeToReference(hair_type_id, uint16_t);
 		RegisterUInt16(hair_type_id);
 		RescopeToReference(facial_hair_type_id, uint16_t);
@@ -455,6 +464,7 @@ void Substruct_SpawnInfo::RegisterElements() {
 
 	}
 	else {
+		RegisterUInt32(textures_slot_type);
 		RegisterUInt32(hair_type_id);
 		RegisterUInt32(facial_hair_type_id);
 		RegisterUInt32(wing_type_id);
@@ -464,11 +474,11 @@ void Substruct_SpawnInfo::RegisterElements() {
 
 	if (version >= 996) {
 		if (version < 57080) {
-			RescopeToReference(unknown_new_type_id, uint16_t);
-			RegisterUInt16(unknown_new_type_id);
+			RescopeToReference(back_slot_type_id, uint16_t);
+			RegisterUInt16(back_slot_type_id);
 		}
 		else {
-			RegisterUInt32(unknown_new_type_id);
+			RegisterUInt32(back_slot_type_id);
 		}
 	}
 
@@ -495,12 +505,15 @@ void Substruct_SpawnInfo::RegisterElements() {
 		RegisterUInt8(unknown60055)->SetCount(18);
 	}
 
-	int32_t colorCount = (GetVersion() > 283 ? 25 : 21);
+	int32_t colorCount = (version > 283 ? 24 : 21);
 	RescopeArrayElement(equipment_colors);
 	RegisterEQ2Color(equipment_colors)->SetCount(colorCount);
 	if (version >= 1188) {
-		RegisterEQ2Color(unknownType26Color);
-		RegisterEQ2Color(unknownType27Color);
+		RegisterEQ2Color(mount_adornment_color);
+		RegisterEQ2Color(mount_armor_color);
+	}
+	if (GetVersion() > 283) {
+		RegisterEQ2Color(textures_slot_color);
 	}
 	RegisterEQ2Color(hair_type_color);
 	RegisterEQ2Color(hair_face_color);
@@ -512,14 +525,17 @@ void Substruct_SpawnInfo::RegisterElements() {
 	RegisterEQ2Color(legs_type_color);
 
 	if (version >= 996) {
-		RegisterEQ2Color(unknown_new_type_color);
+		RegisterEQ2Color(back_slot_type_color);
 	}
 
 	RescopeArrayElement(equipment_highlights);
-	RegisterEQ2Color(equipment_highlights)->SetCount(25);
+	RegisterEQ2Color(equipment_highlights)->SetCount(24);
 	if (version >= 1188) {
-		RegisterEQ2Color(unknownType26Highlight);
-		RegisterEQ2Color(unknownType27Highlight);
+		RegisterEQ2Color(mount_adornment_highlight);
+		RegisterEQ2Color(mount_armor_highlight);
+	}
+	if (version > 283) {
+		RegisterEQ2Color(textures_slot_highlight);
 	}
 	RegisterEQ2Color(hair_type_highlight_color);
 	RegisterEQ2Color(hair_face_highlight_color);
@@ -527,7 +543,7 @@ void Substruct_SpawnInfo::RegisterElements() {
 
 	RegisterEQ2Color(chest_type_highlight);
 	RegisterEQ2Color(legs_type_highlight);
-	RegisterEQ2Color(unknown_new_type_highlight);
+	RegisterEQ2Color(back_slot_type_highlight);
 
 	if (version > 283) {
 		RegisterEQ2Color(soga_hair_type_color);
@@ -538,10 +554,10 @@ void Substruct_SpawnInfo::RegisterElements() {
 		if (version >= 60055) {
 			RegisterEQ2Color(skin_color);
 			RegisterEQ2Color(eye_color);
-			RegisterEQ2Color(kunark_unknown_color1);
+			RegisterEQ2Color(model_color);
 			RegisterEQ2Color(soga_eye_color);
 			RegisterEQ2Color(soga_skin_color);
-			RegisterEQ2Color(kunark_unknown_color2);
+			RegisterEQ2Color(soga_model_color);
 		}
 	}
 

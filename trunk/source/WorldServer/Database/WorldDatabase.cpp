@@ -194,6 +194,11 @@ bool WorldDatabase::LoadCharacterAppearances(uint32_t account, OP_AllCharactersD
 				c.eye_color.Green = result2.GetUInt8(2);
 				c.eye_color.Blue = result2.GetUInt8(3);
 			}
+			else if (type == "model_color") {
+				c.model_color.Red = result2.GetUInt8(1);
+				c.model_color.Green = result2.GetUInt8(2);
+				c.model_color.Blue = result2.GetUInt8(3);
+			}
 			else if (type == "hair_color1") {
 				c.hair_color1.Red = result2.GetUInt8(1);
 				c.hair_color1.Green = result2.GetUInt8(2);
@@ -312,6 +317,11 @@ bool WorldDatabase::LoadCharacterAppearances(uint32_t account, OP_AllCharactersD
 				c.soga_eye_color.Red = result2.GetUInt8(1);
 				c.soga_eye_color.Green = result2.GetUInt8(2);
 				c.soga_eye_color.Blue = result2.GetUInt8(3);
+			}
+			else if (type == "soga_model_color") {
+				c.soga_model_color.Red = result2.GetUInt8(1);
+				c.soga_model_color.Green = result2.GetUInt8(2);
+				c.soga_model_color.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "soga_hair_color1") {
 				c.soga_hair_color1.Red = result2.GetUInt8(1);
@@ -531,6 +541,7 @@ uint32_t WorldDatabase::CreateCharacter(uint32_t account_id, OP_CreateCharacterR
 	//AddNewPlayerToServerGuild(loginID, char_id);
 
 	SaveCharacterColors(char_id, "skin_color", custom.skin_color);
+	SaveCharacterColors(char_id, "model_color", custom.model_color);
 	SaveCharacterColors(char_id, "eye_color", custom.eye_color);
 	SaveCharacterColors(char_id, "hair_color1", custom.hair_color1);
 	SaveCharacterColors(char_id, "hair_color2", custom.hair_color2);
@@ -556,6 +567,7 @@ uint32_t WorldDatabase::CreateCharacter(uint32_t account_id, OP_CreateCharacterR
 	SaveCharacterFloats(char_id, "body_size", custom.sliders.bodyscale, 0, 0);
 
 	SaveCharacterColors(char_id, "soga_skin_color", soga.skin_color);
+	SaveCharacterColors(char_id, "soga_model_color", soga.model_color);
 	SaveCharacterColors(char_id, "soga_eye_color", soga.eye_color);
 	SaveCharacterColors(char_id, "soga_hair_color1", soga.hair_color1);
 	SaveCharacterColors(char_id, "soga_hair_color2", soga.hair_color2);

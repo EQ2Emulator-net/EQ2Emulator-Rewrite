@@ -87,23 +87,24 @@ public:
 		uint8_t tradeskill_class; // 887
 		uint32_t tradeskill_level; //887
 		uint8_t netAppearanceVersion;
-		uint16_t race_type;
+		uint32_t race_type;
 		EQ2Color skin_color;
 		EQ2Color eye_color;
+		EQ2Color model_color;
 		EQ2EquipmentItem equip[25]; // " Type = "EQ2_EquipmentItem" Size = "25" / >
-		uint16_t hair_type;
+		uint32_t hair_type;
 		EQ2Color hair_type_color;
 		EQ2Color hair_type_highlight_color;
-		uint16_t hair_face_type;
+		uint32_t hair_face_type;
 		EQ2Color hair_face_color;
 		EQ2Color hair_face_highlight_color;
-		uint16_t wing_type;
+		uint32_t wing_type;
 		EQ2Color wing_color1;
 		EQ2Color wing_color2;
-		uint16_t chest_type;
+		uint32_t chest_type;
 		EQ2Color shirt_color;
 		EQ2Color unknown_chest_color;
-		uint16_t legs_type;
+		uint32_t legs_type;
 		EQ2Color pants_color;
 		EQ2Color unknown_legs_color;
 		union {
@@ -112,10 +113,15 @@ public:
 		};
 		EQ2Color hair_color1;
 		EQ2Color hair_color2;
-		uint8_t unknown11[13]; // " Type = "int8" Size = "13" / >
-		uint16_t soga_race_type;
+		EQ2Color hair_scatter;
+		uint32_t emote_voice;
+		uint32_t combat_voice;
+		uint32_t unkType1;
+		uint32_t unkType2;
+		uint32_t soga_race_type;
 		EQ2Color soga_skin_color;
 		EQ2Color soga_eye_color;
+		EQ2Color soga_model_color;
 		union {
 			SpawnMorphSliders sogaSliders;
 			int8_t sogaSliderBytes[26];
@@ -123,15 +129,16 @@ public:
 		EQ2Color soga_hair_color1;
 		EQ2Color soga_hair_color2;
 		EQ2Color unknown14;
-		uint16_t soga_hair_type;
+		uint32_t soga_hair_type;
 		EQ2Color soga_hair_type_color;
 		EQ2Color soga_hair_type_highlight_color;
-		uint16_t soga_hair_face_type;
+		uint32_t soga_hair_face_type;
 		EQ2Color soga_hair_face_color;
 		EQ2Color soga_hair_face_highlight_color;
 		uint8_t unknown15[7]; // " Type = "int8" Size = "7" / >
+		uint8_t unknown18[7]; //maybe soga version of unknown15?
 
-		uint16_t mountType;
+		uint32_t mountType;
 		EQ2Color mountColor1;
 		EQ2Color mountColor2;
 		uint8_t flags;
@@ -165,7 +172,7 @@ public:
 			tradeskill_class = 0; // 887
 			tradeskill_level = 0; //887
 			if (GetVersion() > 283) {
-				netAppearanceVersion = 15;
+				netAppearanceVersion = 16;
 			}
 			else {
 				netAppearanceVersion = 5;
@@ -179,21 +186,15 @@ public:
 			legs_type = 0;
 			memset(sliderBytes, 0, 26);
 			memset(sogaSliderBytes, 0, 26);
-			
-			unsigned char tmp[] = { 0xFF, 0xFF, 0xFF, 0x61, 0x00, 0x2C, 0x04, 0xA5, 0x09, 0x02, 0x0F, 0x00, 0x00 };
-			for (uint32_t y = 0; y < sizeof(tmp); y++)
-				unknown11[y] = tmp[y];
+
+			combat_voice = 0;
+			emote_voice = 0;
+			unkType1 = 0;
+			unkType2 = 0;
 
 			soga_race_type = 0;
 			soga_hair_type = 0;
 			soga_hair_face_type = 0;
-			unknown15[0] = 0;
-			unknown15[1] = 0;
-			unknown15[2] = 0;
-			unknown15[3] = 0;
-			unknown15[4] = 0;
-			unknown15[5] = 0;
-			unknown15[6] = 0;
 			
 			mountType = 0;
 			mountColor1.Blue = 0;
@@ -203,6 +204,9 @@ public:
 			mountColor2.Red = 0;
 			mountColor2.Green = 0;
 			flags = 0;
+
+			memset(unknown15, 0, sizeof(unknown15));
+			memset(unknown18, 0, sizeof(unknown18));
 		}
 
 		void RegisterElements() {
@@ -241,21 +245,29 @@ public:
 				RegisterUInt32(tradeskill_level); //887
 			}
 			RegisterUInt8(netAppearanceVersion);
-			RegisterUInt16(race_type);
+			
+			if (netAppearanceVersion >= 21) {
+				RescopeToReference(race_type, uint16_t);
+				RegisterUInt16(race_type);
+			}
+			else {
+				RegisterUInt32(race_type);//netapp ver 21
+			}
+
 			RegisterEQ2Color(skin_color);
 			RegisterEQ2Color(eye_color);
+			RegisterEQ2Color(model_color);
 			EQ2EquipmentItem& Equip = equip[0];
-			//NOTE: if we ever send a higher net appearance version we will need to check that when determining
-			//Whether to use the short or int type id
-			RegisterEQ2EquipmentItem(Equip, true)->SetCount(25);
+			RegisterEQ2EquipmentItem(Equip, netAppearanceVersion >= 21)->SetCount(25);
 
 			if (GetVersion() <= 283) {
 				RescopeArrayElement(sliderBytes);
 				RegisterInt8(sliderBytes)->SetCount(26);
-
+				RescopeToReference(mountType, uint16_t);
 				RegisterUInt16(mountType);
 				RegisterEQ2Color(mountColor1);
 				RegisterEQ2Color(mountColor2);
+				RescopeToReference(hair_type, uint16_t);
 				RegisterUInt16(hair_type);
 				static uint8_t hair_type_byte3 = 0;
 				RegisterUInt8(hair_type_byte3);
@@ -265,48 +277,133 @@ public:
 				return;
 			}
 
-			RegisterUInt16(hair_type);
+			if (netAppearanceVersion >= 21) {
+				RescopeToReference(hair_type, uint16_t);
+				RegisterUInt16(hair_type);
+			}
+			else {
+				RegisterUInt32(hair_type);//netapp ver 21
+			}
 			RegisterEQ2Color(hair_type_color);
 			RegisterEQ2Color(hair_type_highlight_color);
-			RegisterUInt16(hair_face_type);
+			if (netAppearanceVersion >= 21) {
+				RescopeToReference(hair_face_type, uint16_t);
+				RegisterUInt16(hair_face_type);
+			}
+			else {
+				RegisterUInt32(hair_face_type);//netapp ver 21
+			}
 			RegisterEQ2Color(hair_face_color);
 			RegisterEQ2Color(hair_face_highlight_color);
-			if (GetVersion() > 283) {
+			if (netAppearanceVersion >= 21) {
+				RescopeToReference(wing_type, uint16_t);
 				RegisterUInt16(wing_type);
-				RegisterEQ2Color(wing_color1);
-				RegisterEQ2Color(wing_color2);
 			}
-			RegisterUInt16(chest_type);
+			else {
+				RegisterUInt32(wing_type);//netapp ver 21
+			}
+			RegisterEQ2Color(wing_color1);
+			RegisterEQ2Color(wing_color2);
+			if (netAppearanceVersion >= 21) {
+				RescopeToReference(chest_type, uint16_t);
+				RegisterUInt16(chest_type);
+			}
+			else {
+				RegisterUInt32(chest_type);//netapp ver 21
+			}
 			RegisterEQ2Color(shirt_color);
 			RegisterEQ2Color(unknown_chest_color);
-			RegisterUInt16(legs_type);
+			if (netAppearanceVersion >= 21) {
+				RescopeToReference(legs_type, uint16_t);
+				RegisterUInt16(legs_type);
+			}
+			else {
+				RegisterUInt32(legs_type);//netapp ver 21
+			}
 			RegisterEQ2Color(pants_color);
 			RegisterEQ2Color(unknown_legs_color);
 			RescopeArrayElement(sliderBytes);
 			RegisterInt8(sliderBytes)->SetCount(26);
-			RegisterUInt16(mountType);
+			if (netAppearanceVersion >= 21) {
+				RescopeToReference(mountType, uint16_t);
+				RegisterUInt16(mountType);
+			}
+			else {
+				RegisterUInt32(mountType);//netapp ver 21
+			}
 			RegisterEQ2Color(mountColor1);
 			RegisterEQ2Color(mountColor2);
 			RegisterEQ2Color(hair_color1);
 			RegisterEQ2Color(hair_color2);
-			uint8_t& Unknown11 = unknown11[0]; // " Type = "int8" Size = "13" / >
-			RegisterUInt8(Unknown11)->SetCount(13);
-			RegisterUInt16(soga_race_type);
+			RegisterEQ2Color(hair_scatter);
+			if (netAppearanceVersion >= 22) {
+				RescopeToReference(combat_voice, uint16_t);
+				RegisterUInt16(combat_voice);
+			}
+			else {
+				RegisterUInt32(combat_voice);//netapp ver 22
+			}
+			if (netAppearanceVersion >= 22) {
+				RescopeToReference(emote_voice, uint16_t);
+				RegisterUInt16(emote_voice);
+			}
+			else {
+				RegisterUInt32(emote_voice);//netapp ver 22
+			}
+			if (netAppearanceVersion >= 21) {
+				RescopeToReference(unkType1, uint16_t);
+				RegisterUInt16(unkType1);
+			}
+			else {
+				RegisterUInt32(unkType1);//netapp ver 21
+			}
+			if (netAppearanceVersion >= 21) {
+				RescopeToReference(unkType2, uint16_t);
+				RegisterUInt16(unkType2);
+			}
+			else {
+				RegisterUInt32(unkType2);//netapp ver 21
+			}
+			if (netAppearanceVersion >= 21) {
+				RescopeToReference(soga_race_type, uint16_t);
+				RegisterUInt16(soga_race_type);
+			}
+			else {
+				RegisterUInt32(soga_race_type);//netapp ver 21
+			}
 			RegisterEQ2Color(soga_skin_color);
 			RegisterEQ2Color(soga_eye_color);
+			RegisterEQ2Color(soga_model_color);
 			RescopeArrayElement(sogaSliderBytes);
 			RegisterInt8(sogaSliderBytes)->SetCount(26);
 			RegisterEQ2Color(soga_hair_color1);
 			RegisterEQ2Color(soga_hair_color2);
 			RegisterEQ2Color(unknown14);
-			RegisterUInt16(soga_hair_type);
+			if (netAppearanceVersion >= 21) {
+				RescopeToReference(soga_hair_type, uint16_t);
+				RegisterUInt16(soga_hair_type);
+			}
+			else {
+				RegisterUInt32(soga_hair_type);//netapp ver 21
+			}
 			RegisterEQ2Color(soga_hair_type_color);
 			RegisterEQ2Color(soga_hair_type_highlight_color);
-			RegisterUInt16(soga_hair_face_type);
+			if (netAppearanceVersion >= 21) {
+				RescopeToReference(soga_hair_face_type, uint16_t);
+				RegisterUInt16(soga_hair_face_type);
+			}
+			else {
+				RegisterUInt32(soga_hair_face_type);//netapp ver 21
+			}
 			RegisterEQ2Color(soga_hair_face_color);
 			RegisterEQ2Color(soga_hair_face_highlight_color);
 			uint8_t& Unknown15 = unknown15[0]; // " Type = "int8" Size = "7" / >
 			RegisterUInt8(Unknown15)->SetCount(7);
+
+			if (netAppearanceVersion >= 18) {
+				RescopeToReference(unknown18);
+				RegisterUInt8(unknown18)->SetCount(7);
+			}
 		}
 	};
 	std::vector<CharacterListEntry> CharacterList;

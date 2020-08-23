@@ -961,6 +961,7 @@ void EQ2Stream::QueuePacket(EQ2Packet* p, bool bDelete, bool bDump) {
 	p->PreWrite();
 	unsigned char* buf = nullptr;
 	p->Write(buf);
+	p->PostWrite();
 	if (p->bOpcodeError) {
 		//The opcode manager will spit out an error about this
 		if (bDelete)
