@@ -61,7 +61,7 @@ public:
 
 	// Array
 	struct CharacterListEntry : public PacketSubstruct {
-		uint32_t version;
+		uint32_t entryVersion;
 		uint32_t charid;
 		uint32_t server_id;
 		std::string name;
@@ -91,7 +91,8 @@ public:
 		EQ2Color skin_color;
 		EQ2Color eye_color;
 		EQ2Color model_color;
-		EQ2EquipmentItem equip[25]; // " Type = "EQ2_EquipmentItem" Size = "25" / >
+		EQ2EquipmentItem equip[24]; // " Type = "EQ2_EquipmentItem" Size = "25" / >
+		EQ2EquipmentItem texture_slot_item;
 		uint32_t hair_type;
 		EQ2Color hair_type_color;
 		EQ2Color hair_type_highlight_color;
@@ -117,18 +118,21 @@ public:
 		uint32_t emote_voice;
 		uint32_t combat_voice;
 		uint32_t unkType1;
-		uint32_t unkType2;
+		uint32_t unknown10;
 		uint32_t soga_race_type;
 		EQ2Color soga_skin_color;
 		EQ2Color soga_eye_color;
 		EQ2Color soga_model_color;
+		EQ2EquipmentItem back_slot_item;
+		EQ2EquipmentItem mount_adornment_slot_item;
+		EQ2EquipmentItem mount_armor_slot_item;
 		union {
 			SpawnMorphSliders sogaSliders;
 			int8_t sogaSliderBytes[26];
 		};
 		EQ2Color soga_hair_color1;
 		EQ2Color soga_hair_color2;
-		EQ2Color unknown14;
+		EQ2Color soga_hair_scatter;
 		uint32_t soga_hair_type;
 		EQ2Color soga_hair_type_color;
 		EQ2Color soga_hair_type_highlight_color;
@@ -171,12 +175,6 @@ public:
 			unknown7 = 0;
 			tradeskill_class = 0; // 887
 			tradeskill_level = 0; //887
-			if (GetVersion() > 283) {
-				netAppearanceVersion = 16;
-			}
-			else {
-				netAppearanceVersion = 5;
-			}
 			race_type = 0;
 
 			hair_type = 0;
@@ -190,7 +188,7 @@ public:
 			combat_voice = 0;
 			emote_voice = 0;
 			unkType1 = 0;
-			unkType2 = 0;
+			unknown10 = 0;
 
 			soga_race_type = 0;
 			soga_hair_type = 0;
@@ -210,18 +208,42 @@ public:
 		}
 
 		void RegisterElements() {
-			if (GetVersion() > 283) {
-				RegisterUInt32(version);
+			//Just adding these const versions so the compiler can optimize the checks better
+			const uint32_t version = GetVersion();
+
+			if (version > 283) {
+				entryVersion = 6;
+			}
+			else {
+				entryVersion = 5;
+			}
+
+			if (version >= 60114) {
+				netAppearanceVersion = 20;
+			}
+			else if (version >= 1193) {
+				netAppearanceVersion = 20;
+			}
+			else if (version > 283) {
+				 netAppearanceVersion = 16;
+			}
+			else {
+				netAppearanceVersion = 5;
+			}
+			const uint8_t appVersion = netAppearanceVersion;
+
+			if (version > 283) {
+				RegisterUInt32(entryVersion);
 			}
 			RegisterUInt32(charid);
 			RegisterUInt32(server_id);
 			Register16String(name);
-			if (GetVersion() > 283) {
+			if (version > 283) {
 				RegisterUInt8(unknown);
 			}
 			RegisterUInt8(race);
 			RegisterUInt8(_class);
-			if (GetVersion() > 283) {
+			if (version > 283) {
 				RegisterUInt8(gender);
 			}
 			RegisterUInt32(level);
@@ -234,7 +256,7 @@ public:
 			RegisterUInt32(unknown4);
 			Register16String(zonename2);
 			Register16String(zonedesc);
-			if (GetVersion() > 283) {
+			if (version > 283) {
 				RegisterUInt32(unknown5);
 				Register16String(server_name);
 				RegisterUInt32(account_id);
@@ -245,8 +267,8 @@ public:
 				RegisterUInt32(tradeskill_level); //887
 			}
 			RegisterUInt8(netAppearanceVersion);
-			
-			if (netAppearanceVersion >= 21) {
+
+			if (appVersion < 21) {
 				RescopeToReference(race_type, uint16_t);
 				RegisterUInt16(race_type);
 			}
@@ -256,11 +278,18 @@ public:
 
 			RegisterEQ2Color(skin_color);
 			RegisterEQ2Color(eye_color);
-			RegisterEQ2Color(model_color);
+			if (appVersion >= 16) {
+				RegisterEQ2Color(model_color);
+			}
 			EQ2EquipmentItem& Equip = equip[0];
-			RegisterEQ2EquipmentItem(Equip, netAppearanceVersion >= 21)->SetCount(25);
+			RegisterEQ2EquipmentItem(Equip, appVersion < 21)->SetCount(24);
+			if (appVersion >= 20) {
+				RegisterEQ2EquipmentItem(mount_adornment_slot_item, appVersion < 21);
+				RegisterEQ2EquipmentItem(mount_armor_slot_item, appVersion < 21);
+			}
+			RegisterEQ2EquipmentItem(texture_slot_item, appVersion < 21);
 
-			if (GetVersion() <= 283) {
+			if (version <= 283) {
 				RescopeArrayElement(sliderBytes);
 				RegisterInt8(sliderBytes)->SetCount(26);
 				RescopeToReference(mountType, uint16_t);
@@ -277,7 +306,7 @@ public:
 				return;
 			}
 
-			if (netAppearanceVersion >= 21) {
+			if (appVersion < 21) {
 				RescopeToReference(hair_type, uint16_t);
 				RegisterUInt16(hair_type);
 			}
@@ -286,7 +315,7 @@ public:
 			}
 			RegisterEQ2Color(hair_type_color);
 			RegisterEQ2Color(hair_type_highlight_color);
-			if (netAppearanceVersion >= 21) {
+			if (appVersion < 21) {
 				RescopeToReference(hair_face_type, uint16_t);
 				RegisterUInt16(hair_face_type);
 			}
@@ -295,7 +324,7 @@ public:
 			}
 			RegisterEQ2Color(hair_face_color);
 			RegisterEQ2Color(hair_face_highlight_color);
-			if (netAppearanceVersion >= 21) {
+			if (appVersion < 21) {
 				RescopeToReference(wing_type, uint16_t);
 				RegisterUInt16(wing_type);
 			}
@@ -304,7 +333,7 @@ public:
 			}
 			RegisterEQ2Color(wing_color1);
 			RegisterEQ2Color(wing_color2);
-			if (netAppearanceVersion >= 21) {
+			if (appVersion < 21) {
 				RescopeToReference(chest_type, uint16_t);
 				RegisterUInt16(chest_type);
 			}
@@ -313,7 +342,7 @@ public:
 			}
 			RegisterEQ2Color(shirt_color);
 			RegisterEQ2Color(unknown_chest_color);
-			if (netAppearanceVersion >= 21) {
+			if (appVersion < 21) {
 				RescopeToReference(legs_type, uint16_t);
 				RegisterUInt16(legs_type);
 			}
@@ -322,9 +351,12 @@ public:
 			}
 			RegisterEQ2Color(pants_color);
 			RegisterEQ2Color(unknown_legs_color);
+			if (appVersion >= 17) {
+				RegisterEQ2EquipmentItem(back_slot_item, appVersion < 21);
+			}
 			RescopeArrayElement(sliderBytes);
 			RegisterInt8(sliderBytes)->SetCount(26);
-			if (netAppearanceVersion >= 21) {
+			if (appVersion < 21) {
 				RescopeToReference(mountType, uint16_t);
 				RegisterUInt16(mountType);
 			}
@@ -336,35 +368,29 @@ public:
 			RegisterEQ2Color(hair_color1);
 			RegisterEQ2Color(hair_color2);
 			RegisterEQ2Color(hair_scatter);
-			if (netAppearanceVersion >= 22) {
+			if (appVersion < 22) {
 				RescopeToReference(combat_voice, uint16_t);
 				RegisterUInt16(combat_voice);
 			}
 			else {
 				RegisterUInt32(combat_voice);//netapp ver 22
 			}
-			if (netAppearanceVersion >= 22) {
+			if (appVersion < 22) {
 				RescopeToReference(emote_voice, uint16_t);
 				RegisterUInt16(emote_voice);
 			}
 			else {
 				RegisterUInt32(emote_voice);//netapp ver 22
 			}
-			if (netAppearanceVersion >= 21) {
+			if (appVersion < 21) {
 				RescopeToReference(unkType1, uint16_t);
 				RegisterUInt16(unkType1);
 			}
 			else {
 				RegisterUInt32(unkType1);//netapp ver 21
 			}
-			if (netAppearanceVersion >= 21) {
-				RescopeToReference(unkType2, uint16_t);
-				RegisterUInt16(unkType2);
-			}
-			else {
-				RegisterUInt32(unkType2);//netapp ver 21
-			}
-			if (netAppearanceVersion >= 21) {
+			RegisterUInt32(unknown10);
+			if (appVersion < 21) {
 				RescopeToReference(soga_race_type, uint16_t);
 				RegisterUInt16(soga_race_type);
 			}
@@ -373,13 +399,15 @@ public:
 			}
 			RegisterEQ2Color(soga_skin_color);
 			RegisterEQ2Color(soga_eye_color);
-			RegisterEQ2Color(soga_model_color);
+			if (appVersion >= 16) {
+				RegisterEQ2Color(soga_model_color);
+			}
 			RescopeArrayElement(sogaSliderBytes);
 			RegisterInt8(sogaSliderBytes)->SetCount(26);
 			RegisterEQ2Color(soga_hair_color1);
 			RegisterEQ2Color(soga_hair_color2);
-			RegisterEQ2Color(unknown14);
-			if (netAppearanceVersion >= 21) {
+			RegisterEQ2Color(soga_hair_scatter);
+			if (appVersion < 21) {
 				RescopeToReference(soga_hair_type, uint16_t);
 				RegisterUInt16(soga_hair_type);
 			}
@@ -388,9 +416,9 @@ public:
 			}
 			RegisterEQ2Color(soga_hair_type_color);
 			RegisterEQ2Color(soga_hair_type_highlight_color);
-			if (netAppearanceVersion >= 21) {
+			if (appVersion < 21) {
 				RescopeToReference(soga_hair_face_type, uint16_t);
-				RegisterUInt16(soga_hair_face_type);
+				RegisterUInt16(soga_hair_face_type);		
 			}
 			else {
 				RegisterUInt32(soga_hair_face_type);//netapp ver 21
@@ -400,8 +428,8 @@ public:
 			uint8_t& Unknown15 = unknown15[0]; // " Type = "int8" Size = "7" / >
 			RegisterUInt8(Unknown15)->SetCount(7);
 
-			if (netAppearanceVersion >= 18) {
-				RescopeToReference(unknown18);
+			if (appVersion >= 18) {
+				RescopeArrayElement(unknown18);
 				RegisterUInt8(unknown18)->SetCount(7);
 			}
 		}

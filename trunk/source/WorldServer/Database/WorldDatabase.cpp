@@ -122,11 +122,6 @@ bool WorldDatabase::LoadCharacterAppearances(uint32_t account, OP_AllCharactersD
 		auto& c = packet->CharacterList.back();
 		c.account_id = account;
 
-		if (packet->GetVersion() >= 887)
-			c.version = 6;
-		else
-			c.version = 5;
-
 		c.charid = result.GetUInt32(0);
 		c.server_id = result.GetUInt32(1);
 		c.name = result.GetString(2);
