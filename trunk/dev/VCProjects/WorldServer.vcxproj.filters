@@ -521,5 +521,8 @@
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_ItemIDReply_Packet.h">
       <Filter>common\Packets\EmuPackets</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EQ2Packets\Substruct_NetAppearance.h">
+      <Filter>common\Packets\EQ2Packets</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

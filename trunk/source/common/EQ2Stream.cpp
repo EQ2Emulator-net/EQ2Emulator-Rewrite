@@ -344,6 +344,7 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 	}
 	case OP_OutOfSession: {
 		LogError(LOG_NET, 0, "OutOfSession packet");
+		NonSequencedPush(new OP_OutOfSession_Packet);
 		break;
 	}
 	default:

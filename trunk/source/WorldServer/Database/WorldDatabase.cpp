@@ -129,8 +129,9 @@ bool WorldDatabase::LoadCharacterAppearances(uint32_t account, OP_AllCharactersD
 		c._class = result.GetUInt8(4);
 		c.gender = result.GetUInt8(5);
 		//c.deity = result.GetUInt8(6);
-		c.sliders.bodyscale = result.GetUInt8(7);
-		//c.body_age = result.GetUInt8(8);
+		Substruct_NetAppearance& app = c.appearance;
+		app.sliders.bodyscale = result.GetUInt8(7);
+		app.sliders.bumpscale = result.GetUInt8(8);
 		uint32_t zone_id = result.GetUInt32(9);
 		ret = Select(&result2, "SELECT name, description FROM zones WHERE id = %u", zone_id);
 		if (!ret)
@@ -153,17 +154,19 @@ bool WorldDatabase::LoadCharacterAppearances(uint32_t account, OP_AllCharactersD
 		//c.soga_wing_type = result.GetUInt16(13);
 		//c.soga_cheek_type = result.GetUInt16(14);
 		//c.soga_legs_type = result.GetUInt16(15);
-		c.soga_hair.type = result.GetUInt16(16);
-		c.soga_hair_face.type = result.GetUInt16(17);
-		c.soga_race_type = result.GetUInt16(18);
+
+		
+		app.soga_hair.type = result.GetUInt16(16);
+		app.soga_hair_face.type = result.GetUInt16(17);
+		app.soga_race_type = result.GetUInt16(18);
 
 		/* NORMAL Appearances */
-		c.pants.type = result.GetUInt16(19);
-		c.shirt.type = result.GetUInt16(20);
-		c.wings.type = result.GetUInt16(21);
-		c.hair.type = result.GetUInt16(22);
-		c.hair_face.type = result.GetUInt16(23);
-		c.race_type = result.GetUInt16(24);
+		app.pants.type = result.GetUInt16(19);
+		app.shirt.type = result.GetUInt16(20);
+		app.wings.type = result.GetUInt16(21);
+		app.hair.type = result.GetUInt16(22);
+		app.hair_face.type = result.GetUInt16(23);
+		app.race_type = result.GetUInt16(24);
 
 		if (!result.IsNull(25))
 			c.created_date = result.GetUInt32(25);
@@ -180,227 +183,227 @@ bool WorldDatabase::LoadCharacterAppearances(uint32_t account, OP_AllCharactersD
 			std::string type = result2.GetString(0);
 
 			if (type == "skin_color") {
-				c.skin_color.Red = result2.GetUInt8(1);
-				c.skin_color.Green = result2.GetUInt8(2);
-				c.skin_color.Blue = result2.GetUInt8(3);
+				app.skin_color.Red = result2.GetUInt8(1);
+				app.skin_color.Green = result2.GetUInt8(2);
+				app.skin_color.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "eye_color") {
-				c.eye_color.Red = result2.GetUInt8(1);
-				c.eye_color.Green = result2.GetUInt8(2);
-				c.eye_color.Blue = result2.GetUInt8(3);
+				app.eye_color.Red = result2.GetUInt8(1);
+				app.eye_color.Green = result2.GetUInt8(2);
+				app.eye_color.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "model_color") {
-				c.model_color.Red = result2.GetUInt8(1);
-				c.model_color.Green = result2.GetUInt8(2);
-				c.model_color.Blue = result2.GetUInt8(3);
+				app.model_color.Red = result2.GetUInt8(1);
+				app.model_color.Green = result2.GetUInt8(2);
+				app.model_color.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "hair_color1") {
-				c.hair_color1.Red = result2.GetUInt8(1);
-				c.hair_color1.Green = result2.GetUInt8(2);
-				c.hair_color1.Blue = result2.GetUInt8(3);
+				app.hair_color1.Red = result2.GetUInt8(1);
+				app.hair_color1.Green = result2.GetUInt8(2);
+				app.hair_color1.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "hair_color2") {
-				c.hair_color2.Red = result2.GetUInt8(1);
-				c.hair_color2.Green = result2.GetUInt8(2);
-				c.hair_color2.Blue = result2.GetUInt8(3);
+				app.hair_color2.Red = result2.GetUInt8(1);
+				app.hair_color2.Green = result2.GetUInt8(2);
+				app.hair_color2.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "hair_highlight") {
-				c.hair_scatter.Red = result2.GetUInt8(1);
-				c.hair_scatter.Green = result2.GetUInt8(2);
-				c.hair_scatter.Blue = result2.GetUInt8(3);
+				app.hair_scatter.Red = result2.GetUInt8(1);
+				app.hair_scatter.Green = result2.GetUInt8(2);
+				app.hair_scatter.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "hair_type_color") {
-				c.hair.color.Red = result2.GetUInt8(1);
-				c.hair.color.Green = result2.GetUInt8(2);
-				c.hair.color.Blue = result2.GetUInt8(3);
+				app.hair.color.Red = result2.GetUInt8(1);
+				app.hair.color.Green = result2.GetUInt8(2);
+				app.hair.color.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "hair_type_highlight_color") {
-				c.hair.highlight.Red = result2.GetUInt8(1);
-				c.hair.highlight.Green = result2.GetUInt8(2);
-				c.hair.highlight.Blue = result2.GetUInt8(3);
+				app.hair.highlight.Red = result2.GetUInt8(1);
+				app.hair.highlight.Green = result2.GetUInt8(2);
+				app.hair.highlight.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "hair_face_color") {
-				c.hair_face.color.Red = result2.GetUInt8(1);
-				c.hair_face.color.Green = result2.GetUInt8(2);
-				c.hair_face.color.Blue = result2.GetUInt8(3);
+				app.hair_face.color.Red = result2.GetUInt8(1);
+				app.hair_face.color.Green = result2.GetUInt8(2);
+				app.hair_face.color.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "hair_face_highlight_color") {
-				c.hair_face.highlight.Red = result2.GetUInt8(1);
-				c.hair_face.highlight.Green = result2.GetUInt8(2);
-				c.hair_face.highlight.Blue = result2.GetUInt8(3);
+				app.hair_face.highlight.Red = result2.GetUInt8(1);
+				app.hair_face.highlight.Green = result2.GetUInt8(2);
+				app.hair_face.highlight.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "wing_color1") {
-				c.wings.color.Red = result2.GetUInt8(1);
-				c.wings.color.Green = result2.GetUInt8(2);
-				c.wings.color.Blue = result2.GetUInt8(3);
+				app.wings.color.Red = result2.GetUInt8(1);
+				app.wings.color.Green = result2.GetUInt8(2);
+				app.wings.color.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "wing_color2") {
-				c.wings.color.Red = result2.GetUInt8(1);
-				c.wings.color.Green = result2.GetUInt8(2);
-				c.wings.color.Blue = result2.GetUInt8(3);
+				app.wings.color.Red = result2.GetUInt8(1);
+				app.wings.color.Green = result2.GetUInt8(2);
+				app.wings.color.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "shirt_color") {
-				c.shirt.color.Red = result2.GetUInt8(1);
-				c.shirt.color.Green = result2.GetUInt8(2);
-				c.shirt.color.Blue = result2.GetUInt8(3);
+				app.shirt.color.Red = result2.GetUInt8(1);
+				app.shirt.color.Green = result2.GetUInt8(2);
+				app.shirt.color.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "unknown_chest_color") {
-				c.shirt.highlight.Red = result2.GetUInt8(1);
-				c.shirt.highlight.Green = result2.GetUInt8(2);
-				c.shirt.highlight.Blue = result2.GetUInt8(3);
+				app.shirt.highlight.Red = result2.GetUInt8(1);
+				app.shirt.highlight.Green = result2.GetUInt8(2);
+				app.shirt.highlight.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "pants_color") {
-				c.pants.color.Red = result2.GetUInt8(1);
-				c.pants.color.Green = result2.GetUInt8(2);
-				c.pants.color.Blue = result2.GetUInt8(3);
+				app.pants.color.Red = result2.GetUInt8(1);
+				app.pants.color.Green = result2.GetUInt8(2);
+				app.pants.color.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "unknown_legs_color") {
-				c.pants.highlight.Red = result2.GetUInt8(1);
-				c.pants.highlight.Green = result2.GetUInt8(2);
-				c.pants.highlight.Blue = result2.GetUInt8(3);
+				app.pants.highlight.Red = result2.GetUInt8(1);
+				app.pants.highlight.Green = result2.GetUInt8(2);
+				app.pants.highlight.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "unknown9") {
-				c.sliders.skull[0] = result2.GetUInt8(1);
-				c.sliders.skull[1] = result2.GetUInt8(2);
-				c.sliders.skull[2] = result2.GetUInt8(3);
+				app.sliders.skull[0] = result2.GetUInt8(1);
+				app.sliders.skull[1] = result2.GetUInt8(2);
+				app.sliders.skull[2] = result2.GetUInt8(3);
 			}
 			else if (type == "eye_type") {
-				c.sliders.eyes[0] = result2.GetUInt8(1);
-				c.sliders.eyes[1] = result2.GetUInt8(2);
-				c.sliders.eyes[2] = result2.GetUInt8(3);
+				app.sliders.eyes[0] = result2.GetUInt8(1);
+				app.sliders.eyes[1] = result2.GetUInt8(2);
+				app.sliders.eyes[2] = result2.GetUInt8(3);
 			}
 			else if (type == "ear_type") {
-				c.sliders.ears[0] = result2.GetUInt8(1);
-				c.sliders.ears[1] = result2.GetUInt8(2);
-				c.sliders.ears[2] = result2.GetUInt8(3);
+				app.sliders.ears[0] = result2.GetUInt8(1);
+				app.sliders.ears[1] = result2.GetUInt8(2);
+				app.sliders.ears[2] = result2.GetUInt8(3);
 			}
 			else if (type == "eye_brow_type") {
-				c.sliders.eyebrow[0] = result2.GetUInt8(1);
-				c.sliders.eyebrow[1] = result2.GetUInt8(2);
-				c.sliders.eyebrow[2] = result2.GetUInt8(3);
+				app.sliders.eyebrow[0] = result2.GetUInt8(1);
+				app.sliders.eyebrow[1] = result2.GetUInt8(2);
+				app.sliders.eyebrow[2] = result2.GetUInt8(3);
 			}
 			else if (type == "cheek_type") {
-				c.sliders.cheeks[0] = result2.GetUInt8(1);
-				c.sliders.cheeks[1] = result2.GetUInt8(2);
-				c.sliders.cheeks[2] = result2.GetUInt8(3);
+				app.sliders.cheeks[0] = result2.GetUInt8(1);
+				app.sliders.cheeks[1] = result2.GetUInt8(2);
+				app.sliders.cheeks[2] = result2.GetUInt8(3);
 			}
 			else if (type == "lip_type") {
-				c.sliders.mouth[0] = result2.GetUInt8(1);
-				c.sliders.mouth[1] = result2.GetUInt8(2);
-				c.sliders.mouth[2] = result2.GetUInt8(3);
+				app.sliders.mouth[0] = result2.GetUInt8(1);
+				app.sliders.mouth[1] = result2.GetUInt8(2);
+				app.sliders.mouth[2] = result2.GetUInt8(3);
 			}
 			else if (type == "chin_type") {
-				c.sliders.chin[0] = result2.GetUInt8(1);
-				c.sliders.chin[1] = result2.GetUInt8(2);
-				c.sliders.chin[2] = result2.GetUInt8(3);
+				app.sliders.chin[0] = result2.GetUInt8(1);
+				app.sliders.chin[1] = result2.GetUInt8(2);
+				app.sliders.chin[2] = result2.GetUInt8(3);
 			}
 			else if (type == "nose_type") {
-				c.sliders.nose[0] = result2.GetUInt8(1);
-				c.sliders.nose[1] = result2.GetUInt8(2);
-				c.sliders.nose[2] = result2.GetUInt8(3);
+				app.sliders.nose[0] = result2.GetUInt8(1);
+				app.sliders.nose[1] = result2.GetUInt8(2);
+				app.sliders.nose[2] = result2.GetUInt8(3);
 			}
 			else if (type == "body_size") {
-				c.sliders.bodyscale = result2.GetInt8(1);
+				app.sliders.bodyscale = result2.GetInt8(1);
 			}
 			else if (type == "soga_skin_color") {
-				c.soga_skin_color.Red = result2.GetUInt8(1);
-				c.soga_skin_color.Green = result2.GetUInt8(2);
-				c.soga_skin_color.Blue = result2.GetUInt8(3);
+				app.soga_skin_color.Red = result2.GetUInt8(1);
+				app.soga_skin_color.Green = result2.GetUInt8(2);
+				app.soga_skin_color.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "soga_eye_color") {
-				c.soga_eye_color.Red = result2.GetUInt8(1);
-				c.soga_eye_color.Green = result2.GetUInt8(2);
-				c.soga_eye_color.Blue = result2.GetUInt8(3);
+				app.soga_eye_color.Red = result2.GetUInt8(1);
+				app.soga_eye_color.Green = result2.GetUInt8(2);
+				app.soga_eye_color.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "soga_model_color") {
-				c.soga_model_color.Red = result2.GetUInt8(1);
-				c.soga_model_color.Green = result2.GetUInt8(2);
-				c.soga_model_color.Blue = result2.GetUInt8(3);
+				app.soga_model_color.Red = result2.GetUInt8(1);
+				app.soga_model_color.Green = result2.GetUInt8(2);
+				app.soga_model_color.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "soga_hair_color1") {
-				c.soga_hair_color1.Red = result2.GetUInt8(1);
-				c.soga_hair_color1.Green = result2.GetUInt8(2);
-				c.soga_hair_color1.Blue = result2.GetUInt8(3);
+				app.soga_hair_color1.Red = result2.GetUInt8(1);
+				app.soga_hair_color1.Green = result2.GetUInt8(2);
+				app.soga_hair_color1.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "soga_hair_color2") {
-				c.soga_hair_color2.Red = result2.GetUInt8(1);
-				c.soga_hair_color2.Green = result2.GetUInt8(2);
-				c.soga_hair_color2.Blue = result2.GetUInt8(3);
+				app.soga_hair_color2.Red = result2.GetUInt8(1);
+				app.soga_hair_color2.Green = result2.GetUInt8(2);
+				app.soga_hair_color2.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "soga_hair_highlight") {
-				c.soga_hair.highlight.Red = result2.GetUInt8(1);
-				c.soga_hair.highlight.Green = result2.GetUInt8(2);
-				c.soga_hair.highlight.Blue = result2.GetUInt8(3);
+				app.soga_hair.highlight.Red = result2.GetUInt8(1);
+				app.soga_hair.highlight.Green = result2.GetUInt8(2);
+				app.soga_hair.highlight.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "soga_hair_type_color") {
-				c.soga_hair.color.Red = result2.GetUInt8(1);
-				c.soga_hair.color.Green = result2.GetUInt8(2);
-				c.soga_hair.color.Blue = result2.GetUInt8(3);
+				app.soga_hair.color.Red = result2.GetUInt8(1);
+				app.soga_hair.color.Green = result2.GetUInt8(2);
+				app.soga_hair.color.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "soga_hair_type_highlight_color") {
-				c.soga_hair.highlight.Red = result2.GetUInt8(1);
-				c.soga_hair.highlight.Green = result2.GetUInt8(2);
-				c.soga_hair.highlight.Blue = result2.GetUInt8(3);
+				app.soga_hair.highlight.Red = result2.GetUInt8(1);
+				app.soga_hair.highlight.Green = result2.GetUInt8(2);
+				app.soga_hair.highlight.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "soga_hair_face_color") {
-				c.soga_hair_face.color.Red = result2.GetUInt8(1);
-				c.soga_hair_face.color.Green = result2.GetUInt8(2);
-				c.soga_hair_face.color.Blue = result2.GetUInt8(3);
+				app.soga_hair_face.color.Red = result2.GetUInt8(1);
+				app.soga_hair_face.color.Green = result2.GetUInt8(2);
+				app.soga_hair_face.color.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "soga_hair_face_highlight_color") {
-				c.soga_hair_face.highlight.Red = result2.GetUInt8(1);
-				c.soga_hair_face.highlight.Green = result2.GetUInt8(2);
-				c.soga_hair_face.highlight.Blue = result2.GetUInt8(3);
+				app.soga_hair_face.highlight.Red = result2.GetUInt8(1);
+				app.soga_hair_face.highlight.Green = result2.GetUInt8(2);
+				app.soga_hair_face.highlight.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "soga_wing_color1") {
-				c.wings.color.Red = result2.GetUInt8(1);
-				c.wings.color.Green = result2.GetUInt8(2);
-				c.wings.color.Blue = result2.GetUInt8(3);
+				app.wings.color.Red = result2.GetUInt8(1);
+				app.wings.color.Green = result2.GetUInt8(2);
+				app.wings.color.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "soga_wing_color2") {
-				c.wings.highlight.Red = result2.GetUInt8(1);
-				c.wings.highlight.Green = result2.GetUInt8(2);
-				c.wings.highlight.Blue = result2.GetUInt8(3);
+				app.wings.highlight.Red = result2.GetUInt8(1);
+				app.wings.highlight.Green = result2.GetUInt8(2);
+				app.wings.highlight.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "soga_unknown13") {
-				c.sogaSliders.skull[0] = result2.GetUInt8(1);
-				c.sogaSliders.skull[1] = result2.GetUInt8(2);
-				c.sogaSliders.skull[2] = result2.GetUInt8(3);
+				app.sogaSliders.skull[0] = result2.GetUInt8(1);
+				app.sogaSliders.skull[1] = result2.GetUInt8(2);
+				app.sogaSliders.skull[2] = result2.GetUInt8(3);
 			}
 			else if (type == "soga_eye_type") {
-				c.sogaSliders.eyes[0] = result2.GetUInt8(1);
-				c.sogaSliders.eyes[1] = result2.GetUInt8(2);
-				c.sogaSliders.eyes[2] = result2.GetUInt8(3);
+				app.sogaSliders.eyes[0] = result2.GetUInt8(1);
+				app.sogaSliders.eyes[1] = result2.GetUInt8(2);
+				app.sogaSliders.eyes[2] = result2.GetUInt8(3);
 			}
 			else if (type == "soga_ear_type") {
-				c.sogaSliders.ears[0] = result2.GetUInt8(1);
-				c.sogaSliders.ears[1] = result2.GetUInt8(2);
-				c.sogaSliders.ears[2] = result2.GetUInt8(3);
+				app.sogaSliders.ears[0] = result2.GetUInt8(1);
+				app.sogaSliders.ears[1] = result2.GetUInt8(2);
+				app.sogaSliders.ears[2] = result2.GetUInt8(3);
 			}
 			else if (type == "soga_eye_brow_type") {
-				c.sogaSliders.eyebrow[0] = result2.GetUInt8(1);
-				c.sogaSliders.eyebrow[1] = result2.GetUInt8(2);
-				c.sogaSliders.eyebrow[2] = result2.GetUInt8(3);
+				app.sogaSliders.eyebrow[0] = result2.GetUInt8(1);
+				app.sogaSliders.eyebrow[1] = result2.GetUInt8(2);
+				app.sogaSliders.eyebrow[2] = result2.GetUInt8(3);
 			}
 			else if (type == "soga_cheek_type") {
-				c.sogaSliders.cheeks[0] = result2.GetUInt8(1);
-				c.sogaSliders.cheeks[1] = result2.GetUInt8(2);
-				c.sogaSliders.cheeks[2] = result2.GetUInt8(3);
+				app.sogaSliders.cheeks[0] = result2.GetUInt8(1);
+				app.sogaSliders.cheeks[1] = result2.GetUInt8(2);
+				app.sogaSliders.cheeks[2] = result2.GetUInt8(3);
 			}
 			else if (type == "soga_lip_type") {
-				c.sogaSliders.mouth[0] = result2.GetUInt8(1);
-				c.sogaSliders.mouth[1] = result2.GetUInt8(2);
-				c.sogaSliders.mouth[2] = result2.GetUInt8(3);
+				app.sogaSliders.mouth[0] = result2.GetUInt8(1);
+				app.sogaSliders.mouth[1] = result2.GetUInt8(2);
+				app.sogaSliders.mouth[2] = result2.GetUInt8(3);
 			}
 			else if (type == "soga_chin_type") {
-				c.sogaSliders.chin[0] = result2.GetUInt8(1);
-				c.sogaSliders.chin[1] = result2.GetUInt8(2);
-				c.sogaSliders.chin[2] = result2.GetUInt8(3);
+				app.sogaSliders.chin[0] = result2.GetUInt8(1);
+				app.sogaSliders.chin[1] = result2.GetUInt8(2);
+				app.sogaSliders.chin[2] = result2.GetUInt8(3);
 			}
 			else if (type == "soga_nose_type") {
-				c.sogaSliders.nose[0] = result2.GetUInt8(1);
-				c.sogaSliders.nose[1] = result2.GetUInt8(2);
-				c.sogaSliders.nose[2] = result2.GetUInt8(3);
+				app.sogaSliders.nose[0] = result2.GetUInt8(1);
+				app.sogaSliders.nose[1] = result2.GetUInt8(2);
+				app.sogaSliders.nose[2] = result2.GetUInt8(3);
 			}
 		}
 
@@ -410,13 +413,13 @@ bool WorldDatabase::LoadCharacterAppearances(uint32_t account, OP_AllCharactersD
 
 		while (result2.Next()) {
 			uint8_t slot = result2.GetUInt8(0);
-			c.equip[slot].type = result2.GetUInt16(1);
-			c.equip[slot].color.Red = result2.GetUInt8(2);
-			c.equip[slot].color.Green = result2.GetUInt8(3);
-			c.equip[slot].color.Blue = result2.GetUInt8(4);
-			c.equip[slot].highlight.Red = result2.GetUInt8(5);
-			c.equip[slot].highlight.Green = result2.GetUInt8(6);
-			c.equip[slot].highlight.Blue = result2.GetUInt8(7);
+			app.equip[slot].type = result2.GetUInt16(1);
+			app.equip[slot].color.Red = result2.GetUInt8(2);
+			app.equip[slot].color.Green = result2.GetUInt8(3);
+			app.equip[slot].color.Blue = result2.GetUInt8(4);
+			app.equip[slot].highlight.Red = result2.GetUInt8(5);
+			app.equip[slot].highlight.Green = result2.GetUInt8(6);
+			app.equip[slot].highlight.Blue = result2.GetUInt8(7);
 		}
 		
 		ret = Select(&result2, "SELECT s.name FROM config_world s INNER JOIN characters c WHERE s.id = c.server_id AND c.id = %u", c.charid);

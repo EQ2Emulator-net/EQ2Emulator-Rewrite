@@ -272,6 +272,7 @@
     <ClInclude Include="..\..\source\common\Packets\EQ2Packets\OP_KeyRequest_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EQ2Packets\OP_LoginReplyMsg_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\EQ2Packets\OP_UIEvent_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\EQ2Packets\Substruct_NetAppearance.h" />
     <ClInclude Include="..\..\source\common\Packets\Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElement.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\Packet16String.h" />
