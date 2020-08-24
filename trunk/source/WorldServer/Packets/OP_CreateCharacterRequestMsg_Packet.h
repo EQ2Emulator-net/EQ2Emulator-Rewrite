@@ -99,7 +99,7 @@ public:
 		if (GetVersion() >= 67650) {
 			//They got rid of the 26 byte sliders (customization version 7)
 			for (int i = 0; i < 26; i++) {
-				sliderBytes[i] = sliderFloats[i] * 127.f;
+				sliderBytes[i] = static_cast<int8_t>(sliderFloats[i] * 127.f);
 			}
 		}
 	}

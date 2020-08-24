@@ -77,8 +77,25 @@ public:
 		uint32_t last_played;
 		uint32_t unknown3;
 		uint32_t unknown4;
+		uint64_t unknowne11;
+		uint8_t unknowne7;
+		uint8_t unknowne8;
+		uint8_t unknowne9;
+		uint8_t unknowne10;
+		uint8_t unknowne12;
+		std::string unknowne13[3];
 		std::string zonename2;
 		std::string zonedesc;
+		uint8_t unknowne14a;
+		uint8_t unknowne14b;
+		EQ2Color unknowne15;
+		uint8_t unknowne16;
+		uint8_t unknowne17;
+		uint8_t unknowne18;
+		uint8_t unknowne19;
+		int32_t unknowne21;
+		uint8_t unknowne22;
+		uint8_t unknowne23;
 		uint32_t unknown5;
 		std::string server_name;
 		uint32_t account_id;
@@ -108,7 +125,7 @@ public:
 		uint32_t emote_voice;
 		uint32_t combat_voice;
 		uint32_t unkType1;
-		uint32_t unknown10;
+		uint32_t info_vis_flags;
 		uint32_t soga_race_type;
 		EQ2Color soga_skin_color;
 		EQ2Color soga_eye_color;
@@ -131,7 +148,6 @@ public:
 		EQ2EquipmentItem mount;
 		EQ2Color mountColor1;
 		EQ2Color mountColor2;
-		uint8_t flags;
 
 		CharacterListEntry(uint32_t p_version = 0) : PacketSubstruct(p_version, true) {
 			RegisterElements();
@@ -169,26 +185,33 @@ public:
 			combat_voice = 0;
 			emote_voice = 0;
 			unkType1 = 0;
-			unknown10 = 0;
 
 			soga_race_type = 0;
-			flags = 0;
+			info_vis_flags = 0;
 
 			memset(unknown15, 0, sizeof(unknown15));
 			memset(unknown18, 0, sizeof(unknown18));
+
+			//character entry versioned unknowns
+			unknowne7 = 0;
+			unknowne8 = 0;
+			unknowne9 = 0;
+			unknowne10 = 0;
+			unknowne11 = -1ll;
+			unknowne12 = 0;
+			unknowne14a = 0;
+			unknowne14b = 0;
+			unknowne16 = 0;
+			unknowne17 = 0;
+			unknowne18 = 0;
+			unknowne19 = 0;
+			unknowne21 = 0;
+			unknowne22 = 0;
+			unknowne23 = 0;
 		}
 
-		void RegisterElements() {
-			//Just adding these const versions so the compiler can optimize the checks better
+		uint8_t GetNetAppearanceVersion() {
 			const uint32_t version = GetVersion();
-
-			if (version > 283) {
-				entryVersion = 6;
-			}
-			else {
-				entryVersion = 5;
-			}
-
 			if (version >= 67650) {
 				netAppearanceVersion = 23;
 			}
@@ -199,17 +222,48 @@ public:
 				netAppearanceVersion = 20;
 			}
 			else if (version > 283) {
-				 netAppearanceVersion = 16;
+				netAppearanceVersion = 16;
 			}
 			else {
 				netAppearanceVersion = 5;
 			}
-			const uint8_t appVersion = netAppearanceVersion;
+			return netAppearanceVersion;
+		}
 
+		uint32_t GetCharacterEntryVersion() {
+			const uint32_t version = GetVersion();
+			if (version >= 67650) {
+				entryVersion = 23;
+			}
+			else if (version >= 60114) {
+				entryVersion = 18;
+			}
+			else if (version >= 1193) {
+				entryVersion = 13;
+			}
+			else if (version > 283) {
+				entryVersion = 6;
+			}
+			else {
+				entryVersion = 5;
+			}
+			return entryVersion;
+		}
+
+		void RegisterElements() {
 			if (version > 283) {
 				RegisterUInt32(entryVersion);
 			}
+
+			//Just adding these const versions so the compiler can optimize the checks better
+			const uint32_t version = GetVersion();
+			const uint8_t appVersion = GetNetAppearanceVersion();
+			const uint32_t entryVersion = GetCharacterEntryVersion();
+
 			RegisterUInt32(charid);
+			if (entryVersion >= 11) {
+				RegisterUInt64(unknowne11);
+			}
 			RegisterUInt32(server_id);
 			Register16String(name);
 			if (version > 283) {
@@ -239,6 +293,10 @@ public:
 				RegisterUInt32(unknown7);
 				RegisterUInt8(tradeskill_class); // 887
 				RegisterUInt32(tradeskill_level); //887
+				if (entryVersion >= 7) RegisterUInt8(unknowne7);
+				if (entryVersion >= 8) RegisterUInt8(unknowne8);
+				if (entryVersion >= 9) RegisterUInt8(unknowne9);
+				if (entryVersion >= 10) RegisterUInt8(unknowne10);
 			}
 			RegisterUInt8(netAppearanceVersion);
 
@@ -270,7 +328,8 @@ public:
 				RegisterEQ2Color(hair_color1);
 				RegisterEQ2Color(hair_color2);
 				RegisterEQ2Color(hair_scatter);
-				RegisterUInt8(flags);
+				RescopeToReference(info_vis_flags, uint8_t);
+				RegisterUInt8(info_vis_flags);
 				return;
 			}
 
@@ -305,7 +364,8 @@ public:
 			else {
 				RegisterUInt32(unkType1);//netapp ver 21
 			}
-			RegisterUInt32(unknown10);
+			//Vis flags and interaction bitflags? (might be 4 bytes in that struct as well)
+			RegisterUInt32(info_vis_flags);
 			if (appVersion < 21) {
 				RescopeToReference(soga_race_type, uint16_t);
 				RegisterUInt16(soga_race_type);
@@ -332,6 +392,24 @@ public:
 				RescopeArrayElement(unknown18);
 				RegisterUInt8(unknown18)->SetCount(7);
 			}
+
+			if (entryVersion >= 12) RegisterUInt8(unknowne12);
+			if (entryVersion >= 13) {
+				RescopeArrayElement(unknowne13);
+				Register16String(unknowne13)->SetCount(3);
+			}
+			if (entryVersion >= 14) {
+				RegisterUInt8(unknowne14a);
+				RegisterUInt8(unknowne14b);
+			}
+			if (entryVersion >= 15) RegisterEQ2Color(unknowne15);
+			if (entryVersion >= 16) RegisterUInt8(unknowne16);
+			if (entryVersion >= 17) RegisterUInt8(unknowne17);
+			if (entryVersion >= 18) RegisterUInt8(unknowne18);
+			if (entryVersion >= 19) RegisterUInt8(unknowne19);
+			if (entryVersion >= 21) RegisterInt32(unknowne21);
+			if (entryVersion >= 22) RegisterUInt8(unknowne22);
+			if (entryVersion >= 23) RegisterUInt8(unknowne23);
 		}
 	};
 	std::vector<CharacterListEntry> CharacterList;
