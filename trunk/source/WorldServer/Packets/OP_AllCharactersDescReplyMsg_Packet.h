@@ -93,21 +93,11 @@ public:
 		EQ2Color model_color;
 		EQ2EquipmentItem equip[24]; // " Type = "EQ2_EquipmentItem" Size = "25" / >
 		EQ2EquipmentItem texture_slot_item;
-		uint32_t hair_type;
-		EQ2Color hair_type_color;
-		EQ2Color hair_type_highlight_color;
-		uint32_t hair_face_type;
-		EQ2Color hair_face_color;
-		EQ2Color hair_face_highlight_color;
-		uint32_t wing_type;
-		EQ2Color wing_color1;
-		EQ2Color wing_color2;
-		uint32_t chest_type;
-		EQ2Color shirt_color;
-		EQ2Color unknown_chest_color;
-		uint32_t legs_type;
-		EQ2Color pants_color;
-		EQ2Color unknown_legs_color;
+		EQ2EquipmentItem hair;
+		EQ2EquipmentItem hair_face;
+		EQ2EquipmentItem wings;
+		EQ2EquipmentItem shirt;
+		EQ2EquipmentItem pants;
 		union {
 			SpawnMorphSliders sliders;
 			int8_t sliderBytes[26];
@@ -133,16 +123,12 @@ public:
 		EQ2Color soga_hair_color1;
 		EQ2Color soga_hair_color2;
 		EQ2Color soga_hair_scatter;
-		uint32_t soga_hair_type;
-		EQ2Color soga_hair_type_color;
-		EQ2Color soga_hair_type_highlight_color;
-		uint32_t soga_hair_face_type;
-		EQ2Color soga_hair_face_color;
-		EQ2Color soga_hair_face_highlight_color;
+		EQ2EquipmentItem soga_hair;
+		EQ2EquipmentItem soga_hair_face;
 		uint8_t unknown15[7]; // " Type = "int8" Size = "7" / >
 		uint8_t unknown18[7]; //maybe soga version of unknown15?
 
-		uint32_t mountType;
+		EQ2EquipmentItem mount;
 		EQ2Color mountColor1;
 		EQ2Color mountColor2;
 		uint8_t flags;
@@ -177,11 +163,6 @@ public:
 			tradeskill_level = 0; //887
 			race_type = 0;
 
-			hair_type = 0;
-			hair_face_type = 0;
-			wing_type = 0;
-			chest_type = 0;
-			legs_type = 0;
 			memset(sliderBytes, 0, 26);
 			memset(sogaSliderBytes, 0, 26);
 
@@ -191,16 +172,6 @@ public:
 			unknown10 = 0;
 
 			soga_race_type = 0;
-			soga_hair_type = 0;
-			soga_hair_face_type = 0;
-			
-			mountType = 0;
-			mountColor1.Blue = 0;
-			mountColor1.Red = 0;
-			mountColor1.Green = 0;
-			mountColor2.Blue = 0;
-			mountColor2.Red = 0;
-			mountColor2.Green = 0;
 			flags = 0;
 
 			memset(unknown15, 0, sizeof(unknown15));
@@ -218,8 +189,11 @@ public:
 				entryVersion = 5;
 			}
 
-			if (version >= 60114) {
-				netAppearanceVersion = 20;
+			if (version >= 67650) {
+				netAppearanceVersion = 23;
+			}
+			else if (version >= 60114) {
+				netAppearanceVersion = 22;
 			}
 			else if (version >= 1193) {
 				netAppearanceVersion = 20;
@@ -292,95 +266,37 @@ public:
 			if (version <= 283) {
 				RescopeArrayElement(sliderBytes);
 				RegisterInt8(sliderBytes)->SetCount(26);
-				RescopeToReference(mountType, uint16_t);
-				RegisterUInt16(mountType);
-				RegisterEQ2Color(mountColor1);
-				RegisterEQ2Color(mountColor2);
-				RescopeToReference(hair_type, uint16_t);
-				RegisterUInt16(hair_type);
-				static uint8_t hair_type_byte3 = 0;
-				RegisterUInt8(hair_type_byte3);
-				RegisterEQ2Color(hair_type_color);
-				RegisterEQ2Color(hair_type_highlight_color);
+				RegisterEQ2EquipmentItem(mount, appVersion < 21);
+				RegisterEQ2Color(hair_color1);
+				RegisterEQ2Color(hair_color2);
+				RegisterEQ2Color(hair_scatter);
 				RegisterUInt8(flags);
 				return;
 			}
 
-			if (appVersion < 21) {
-				RescopeToReference(hair_type, uint16_t);
-				RegisterUInt16(hair_type);
-			}
-			else {
-				RegisterUInt32(hair_type);//netapp ver 21
-			}
-			RegisterEQ2Color(hair_type_color);
-			RegisterEQ2Color(hair_type_highlight_color);
-			if (appVersion < 21) {
-				RescopeToReference(hair_face_type, uint16_t);
-				RegisterUInt16(hair_face_type);
-			}
-			else {
-				RegisterUInt32(hair_face_type);//netapp ver 21
-			}
-			RegisterEQ2Color(hair_face_color);
-			RegisterEQ2Color(hair_face_highlight_color);
-			if (appVersion < 21) {
-				RescopeToReference(wing_type, uint16_t);
-				RegisterUInt16(wing_type);
-			}
-			else {
-				RegisterUInt32(wing_type);//netapp ver 21
-			}
-			RegisterEQ2Color(wing_color1);
-			RegisterEQ2Color(wing_color2);
-			if (appVersion < 21) {
-				RescopeToReference(chest_type, uint16_t);
-				RegisterUInt16(chest_type);
-			}
-			else {
-				RegisterUInt32(chest_type);//netapp ver 21
-			}
-			RegisterEQ2Color(shirt_color);
-			RegisterEQ2Color(unknown_chest_color);
-			if (appVersion < 21) {
-				RescopeToReference(legs_type, uint16_t);
-				RegisterUInt16(legs_type);
-			}
-			else {
-				RegisterUInt32(legs_type);//netapp ver 21
-			}
-			RegisterEQ2Color(pants_color);
-			RegisterEQ2Color(unknown_legs_color);
+			RegisterEQ2EquipmentItem(hair, appVersion < 21);
+			RegisterEQ2EquipmentItem(hair_face, appVersion < 21);
+			RegisterEQ2EquipmentItem(wings, appVersion < 21);
+			RegisterEQ2EquipmentItem(shirt, appVersion < 21);
+			RegisterEQ2EquipmentItem(pants, appVersion < 21);
 			if (appVersion >= 17) {
 				RegisterEQ2EquipmentItem(back_slot_item, appVersion < 21);
 			}
 			RescopeArrayElement(sliderBytes);
 			RegisterInt8(sliderBytes)->SetCount(26);
-			if (appVersion < 21) {
-				RescopeToReference(mountType, uint16_t);
-				RegisterUInt16(mountType);
-			}
-			else {
-				RegisterUInt32(mountType);//netapp ver 21
-			}
-			RegisterEQ2Color(mountColor1);
-			RegisterEQ2Color(mountColor2);
+			RegisterEQ2EquipmentItem(mount, appVersion < 21);
 			RegisterEQ2Color(hair_color1);
 			RegisterEQ2Color(hair_color2);
 			RegisterEQ2Color(hair_scatter);
 			if (appVersion < 22) {
 				RescopeToReference(combat_voice, uint16_t);
 				RegisterUInt16(combat_voice);
-			}
-			else {
-				RegisterUInt32(combat_voice);//netapp ver 22
-			}
-			if (appVersion < 22) {
 				RescopeToReference(emote_voice, uint16_t);
 				RegisterUInt16(emote_voice);
 			}
 			else {
-				RegisterUInt32(emote_voice);//netapp ver 22
+				RegisterUInt32(combat_voice);//netapp ver 22
+				RegisterUInt32(emote_voice);
 			}
 			if (appVersion < 21) {
 				RescopeToReference(unkType1, uint16_t);
@@ -407,24 +323,8 @@ public:
 			RegisterEQ2Color(soga_hair_color1);
 			RegisterEQ2Color(soga_hair_color2);
 			RegisterEQ2Color(soga_hair_scatter);
-			if (appVersion < 21) {
-				RescopeToReference(soga_hair_type, uint16_t);
-				RegisterUInt16(soga_hair_type);
-			}
-			else {
-				RegisterUInt32(soga_hair_type);//netapp ver 21
-			}
-			RegisterEQ2Color(soga_hair_type_color);
-			RegisterEQ2Color(soga_hair_type_highlight_color);
-			if (appVersion < 21) {
-				RescopeToReference(soga_hair_face_type, uint16_t);
-				RegisterUInt16(soga_hair_face_type);		
-			}
-			else {
-				RegisterUInt32(soga_hair_face_type);//netapp ver 21
-			}
-			RegisterEQ2Color(soga_hair_face_color);
-			RegisterEQ2Color(soga_hair_face_highlight_color);
+			RegisterEQ2EquipmentItem(soga_hair, appVersion < 21);
+			RegisterEQ2EquipmentItem(soga_hair_face, appVersion < 21);
 			uint8_t& Unknown15 = unknown15[0]; // " Type = "int8" Size = "7" / >
 			RegisterUInt8(Unknown15)->SetCount(7);
 

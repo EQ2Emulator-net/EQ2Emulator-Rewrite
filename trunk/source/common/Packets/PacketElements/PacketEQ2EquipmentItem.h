@@ -24,40 +24,40 @@ public:
 			return false;
 		}
 
-		if (bShortType) {
-			for (int i = 0; i < count; i++) {
-				EQ2EquipmentItem& e = element[i];
+		for (int i = 0; i < count; i++) {
+			EQ2EquipmentItem& e = element[i];
+			if (bShortType) {
 				e.type = *reinterpret_cast<const uint16_t*>(srcbuf + offset);
 				offset += 2;
-				memcpy(&e.color, srcbuf + offset, 6);
-				offset += 6;
 			}
+			else {
+				e.type = *reinterpret_cast<const uint32_t*>(srcbuf + offset);
+				offset += 4;
+			}
+			memcpy(&e.color, srcbuf + offset, 3);
+			offset += 3;
+			memcpy(&e.highlight, srcbuf + offset, 3);
+			offset += 3;
 		}
-		else {
-			uint32_t readSize = GetSize();
-			memcpy(element, srcbuf + offset, readSize);
-			offset += readSize;
-		}
-
 		return true;
 	}
 
 	void WriteElement(unsigned char* outbuf, uint32_t& offset) {
-		if (bShortType) {
-			for (int i = 0; i < count; i++) {
-				const EQ2EquipmentItem& e = element[i];
+		for (int i = 0; i < count; i++) {
+			const EQ2EquipmentItem& e = element[i];
+			if (bShortType) {
 				*reinterpret_cast<uint16_t*>(outbuf + offset) = static_cast<uint16_t>(e.type);
 				offset += 2;
-				memcpy(outbuf + offset, &e.color, 6);
-				offset += 6;
 			}
+			else {
+				*reinterpret_cast<uint32_t*>(outbuf + offset) = e.type;
+				offset += 4;
+			}
+			memcpy(outbuf + offset, &e.color, 3);
+			offset += 3;
+			memcpy(outbuf + offset, &e.highlight, 3);
+			offset += 3;
 		}
-		else {
-			uint32_t writeSize = GetSize();
-			memcpy(outbuf + offset, element, writeSize);
-			offset += writeSize;
-		}
-		
 	}
 
 	uint32_t GetSize() {
@@ -66,7 +66,7 @@ public:
 			return 8 * count;
 		}
 
-		return sizeof(EQ2EquipmentItem) * count;
+		return 10 * count;
 	}
 
 private:
