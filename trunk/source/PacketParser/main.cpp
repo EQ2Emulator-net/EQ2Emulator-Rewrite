@@ -21,7 +21,7 @@ int main() {
 
 	database.Start();
 
-	PacketLog test("test.log");
+	PacketLog test("VeksarSunkenTheater.log");
 	test.TransformPackets();
 
 	logging = false;

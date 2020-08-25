@@ -59,6 +59,7 @@ bool PacketLog::TransformPackets() {
 	std::string serverAddr;
 
 	uint32_t lineNum = 0;
+	uint32_t packetLine = 0;
 
 	while (std::getline(f, line)) {
 		++lineNum;
@@ -76,7 +77,7 @@ bool PacketLog::TransformPackets() {
 					logVersion = ReadLoginRequest(reinterpret_cast<const unsigned char*>(p.c_str()), static_cast<uint32_t>(p.size()));
 				}
 				else {
-					AddPacket(currentPacket, bServerPacket, lineNum);
+					AddPacket(currentPacket, bServerPacket, packetLine);
 				}
 				currentPacket.str("");
 				continue;
@@ -123,8 +124,10 @@ bool PacketLog::TransformPackets() {
 			}
 
 			//Get the address line
-			std::getline(f, line);
-			std::getline(f, line);
+			for (int i = 0; i < 2; i++) std::getline(f, line);
+
+			packetLine = lineNum;
+			lineNum += 2;
 			
 			if (bKeygenResponse) {
 				clientAddr = line.substr(0, line.find_first_of(' '));
