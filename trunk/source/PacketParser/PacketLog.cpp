@@ -58,7 +58,10 @@ bool PacketLog::TransformPackets() {
 	std::string clientAddr;
 	std::string serverAddr;
 
+	uint32_t lineNum = 0;
+
 	while (std::getline(f, line)) {
+		++lineNum;
 		if (bInPacket) {
 			if (line.empty()) {
 				bInPacket = false;
@@ -73,7 +76,7 @@ bool PacketLog::TransformPackets() {
 					logVersion = ReadLoginRequest(reinterpret_cast<const unsigned char*>(p.c_str()), static_cast<uint32_t>(p.size()));
 				}
 				else {
-					AddPacket(currentPacket, bServerPacket);
+					AddPacket(currentPacket, bServerPacket, lineNum);
 				}
 				currentPacket.str("");
 				continue;
@@ -143,7 +146,7 @@ bool PacketLog::TransformPackets() {
 
 //NOTE: Need to filter out opcode 0/1 packets (OP_LoginRequest and OP_LoginByNumRequest) before this function based on the name in the log
 //This is due to working around an error in packet collector that adds an extra 00 to the front of some packets
-void PacketLog::AddPacket(const std::ostringstream& ss, bool bServerPacket) {
+void PacketLog::AddPacket(const std::ostringstream& ss, bool bServerPacket, uint32_t lineNumber) {
 	size_t start = 0;
 	std::string bytes = ss.str();
 
@@ -195,5 +198,5 @@ void PacketLog::AddPacket(const std::ostringstream& ss, bool bServerPacket) {
 
 	bytes = bytes.substr(start, std::string::npos);
 
-	packets[opcode].emplace_back(std::move(bytes));
+	packets[opcode].emplace_back(lineNumber, std::move(bytes));
 }
