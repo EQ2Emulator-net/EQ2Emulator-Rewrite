@@ -191,37 +191,7 @@ void Client::SetPendingZone(uint32_t char_id, uint32_t zone_id, uint32_t instanc
 }
 
 void Client::ReadVersionPacket(const unsigned char* data, uint32_t size, uint32_t offset, uint16_t opcode) {
-	//Since this packet is what sets the version and that moves around, we need to try and determine the struct
-	//Find the approximate size of the packet not including strings to take a guess
-	string tmp;
-	Packet16String e(tmp);
-
-	uint32_t tmp_offset = offset;
-
-	for (int i = 0; i < 4; i++) {
-		e.ReadElement(data, tmp_offset, size);
-	}
-
-	uint32_t remaining_size = size - tmp_offset;
-
-	//Factor out the STATION string16 that gets sent for most client versions except really early ones
-	if (remaining_size >= 9) {
-		//7 char bytes + the 2 byte size
-		remaining_size -= 9;
-	}
-
-	//21 Bytes is the remaining size for the 1208 client, I'm assuming the largest struct before the change
-	uint16_t struct_version;
-	if (remaining_size == 1) {
-		struct_version = 283;
-	}
-	else if (remaining_size > 21) {
-		struct_version = 1212;
-	}
-	else {
-		struct_version = 284;
-	}
-
+	uint32_t struct_version = OP_LoginRequestMsg_Packet::DetermineStructVersion(data, size, offset);
 	//We want to handle this packet now because other packets rely on the version set from it
 	OP_LoginRequestMsg_Packet p(struct_version);
 

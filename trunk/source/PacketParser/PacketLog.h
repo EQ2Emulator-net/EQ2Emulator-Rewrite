@@ -2,7 +2,7 @@
 
 #include <cstdint>
 #include <string>
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include <sstream>
 
@@ -14,9 +14,13 @@ public:
 	bool TransformPackets();
 
 	std::string filename;
-
-	std::map<uint16_t, std::vector<std::string> > packets;
+	uint32_t logVersion;
+	std::unordered_map<uint16_t, std::vector<std::string> > packets;
+	std::unordered_map<std::string, uint16_t> opcodeLookup;
 
 private:
 	void AddPacket(const std::ostringstream& ss, bool bServerPacket);
+	uint32_t ReadLoginByNumRequest(const unsigned char* data, uint32_t size);
+	uint32_t ReadLoginRequest(const unsigned char* data, uint32_t size);
+	void SortClientCommands();
 };

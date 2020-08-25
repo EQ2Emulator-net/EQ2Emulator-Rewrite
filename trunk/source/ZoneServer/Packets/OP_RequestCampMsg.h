@@ -7,8 +7,10 @@
 #include "../Spawns/Entity.h"
 #include "../../common/Rules.h"
 #include "../../common/thread.h"
+#include "../ZoneServer/ZoneOperator.h"
 
 extern RuleManager g_ruleManager;
+extern ZoneOperator g_zoneOperator;
 
 class OP_RequestCampMsg_Packet : public EQ2Packet {
 public:

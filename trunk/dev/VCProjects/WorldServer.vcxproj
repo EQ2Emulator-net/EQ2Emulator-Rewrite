@@ -222,6 +222,7 @@
     <ClCompile Include="..\..\source\WorldServer\Database\WorldDatabase.cpp" />
     <ClCompile Include="..\..\source\WorldServer\main.cpp" />
     <ClCompile Include="..\..\source\WorldServer\Packets\EmuPacketHandlers.cpp" />
+    <ClCompile Include="..\..\source\WorldServer\Packets\EQ2WorldPacketHandlers.cpp" />
     <ClCompile Include="..\..\source\WorldServer\Packets\WorldServerPackets.cpp" />
     <ClCompile Include="..\..\source\WorldServer\Packets\WorldServerSubstructs.cpp" />
     <ClCompile Include="..\..\source\WorldServer\WorldServer\Character.cpp" />

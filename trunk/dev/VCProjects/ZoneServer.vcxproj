@@ -182,6 +182,7 @@
     </ClCompile>
     <ClCompile Include="..\..\source\ZoneServer\Packets\EmuPacketHandlers.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Packets\EncodedPackets.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Packets\EQ2ZonePacketHandlers.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Packets\ZoneServerPackets.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Packets\ZoneServerSubstructs.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Players\CharacterSheet.cpp" />

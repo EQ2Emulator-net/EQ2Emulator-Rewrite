@@ -36,8 +36,17 @@ public:
 	}
 
 	uint32_t Write(unsigned char*& buffer) {
+		PreWrite();
 		FindOpcode();
-		return Packet::Write(buffer);
+		bool ret = Packet::Write(buffer);
+		PostWrite();
+		return ret;
+	}
+
+	bool Read(const unsigned char* in_buf, uint32_t off, uint32_t bufsize) override {
+		bool ret = Packet::Read(in_buf, off, bufsize);
+		PostRead();
+		return ret;
 	}
 
 	bool TryCombine(EQ2Packet* rhs, uint32_t MaxLength);

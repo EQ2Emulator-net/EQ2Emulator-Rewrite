@@ -21,9 +21,9 @@ CREATE TABLE IF NOT EXISTS `opcodes` (
   `table_data_version` smallint(5) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `newindex` (`version_range1`,`name`,`version_range2`)
-) ENGINE=InnoDB AUTO_INCREMENT=21410 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21415 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table eq2rewrite.opcodes: ~21,408 rows (approximately)
+-- Dumping data for table eq2rewrite.opcodes: ~19,482 rows (approximately)
 /*!40000 ALTER TABLE `opcodes` DISABLE KEYS */;
 INSERT INTO `opcodes` (`id`, `version_range1`, `version_range2`, `name`, `opcode`, `table_data_version`) VALUES
 	(1, 0, 0, 'OP_LoginRequestMsg', 0, 1),
@@ -21255,8 +21255,8 @@ INSERT INTO `opcodes` (`id`, `version_range1`, `version_range2`, `name`, `opcode
 	(21226, 67650, 67742, 'OP_BagOptions', 501, 1),
 	(21227, 67650, 67742, 'OP_LFGGroupSearch', 502, 1),
 	(21228, 67650, 67742, 'OP_CharacterHousingList', 503, 1),
-	(21229, 67650, 67742, 'OP_DressingRoom', 504, 1),
-	(21230, 67650, 67742, 'OP_PlayLon', 505, 1),
+	(21229, 67650, 67742, 'OP_DressingRoom', 506, 1),
+	(21230, 67650, 67742, 'OP_PlayLon', 507, 1),
 	(21231, 67650, 67742, 'OP_SkillInfoRequest', 509, 1),
 	(21232, 67650, 67742, 'OP_SkillInfoResponse', 510, 1),
 	(21233, 67650, 67742, 'OP_LFGUpdateMsg', 513, 1),

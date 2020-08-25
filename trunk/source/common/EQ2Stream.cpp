@@ -883,7 +883,7 @@ EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size) {
 		opcode = data[0];
 	}
 
-	if (ClientVersion == 0 && (opcode == 0 || opcode == 1)) {
+	if (ClientVersion == 0 && opcode <= 1) {
 		ReadVersionPacket(data, size, offset, opcode);
 		return nullptr;
 	}
@@ -959,10 +959,8 @@ void EQ2Stream::InboundQueueClear() {
 }
 
 void EQ2Stream::QueuePacket(EQ2Packet* p, bool bDelete, bool bDump) {
-	p->PreWrite();
 	unsigned char* buf = nullptr;
 	p->Write(buf);
-	p->PostWrite();
 	if (p->bOpcodeError) {
 		//The opcode manager will spit out an error about this
 		if (bDelete)

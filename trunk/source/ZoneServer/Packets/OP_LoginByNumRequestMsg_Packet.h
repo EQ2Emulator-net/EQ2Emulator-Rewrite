@@ -3,9 +3,6 @@
 #include "../../common/Packets/PacketElements/PacketElements.h"
 #include "../../common/Packets/EQ2Packet.h"
 
-#include "../ZoneServer/ZoneOperator.h"
-
-extern ZoneOperator g_zoneOperator;
 
 class OP_LoginByNumRequestMsg_Packet : public EQ2Packet {
 public:
@@ -14,6 +11,22 @@ public:
 		version = 0;
 	}
 	~OP_LoginByNumRequestMsg_Packet() = default;
+
+	static uint32_t DetermineStructVersion(const unsigned char* data, uint32_t offset, uint32_t size) {
+		//Choose the struct version depending on the size of the data
+		uint32_t remaining_size = size - offset;
+		uint32_t pver;
+		if (remaining_size == 30) {
+			pver = 283;
+		}
+		else if (remaining_size > 34) {
+			pver = 1212;
+		}
+		else {
+			pver = 284;
+		}
+		return pver;
+	}
 
 	bool Read(const unsigned char* in_buf, uint32_t off, uint32_t bufsize) override {
 		bool ret = Packet::Read(in_buf, off, bufsize);
@@ -33,10 +46,9 @@ public:
 		return ret;
 	}
 
-	void HandlePacket(std::shared_ptr<Client> client) {
-		LogError(LOG_PACKET, 0, "Client with account id of %u connected", account_id);
-		g_zoneOperator.ClientLogIn(client, this);
-	}
+#ifndef EQ2_PARSER
+	void HandlePacket(std::shared_ptr<Client> client);
+#endif
 
 	uint32_t account_id;
 	uint32_t access_code;

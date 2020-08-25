@@ -127,19 +127,6 @@ void DumpBytes(const char *bytes, unsigned int len)  {
     DumpBytes((const unsigned char *)bytes, len);
 }
 
-void PrintWelcomeHeader(const char *name, int version_major, int version_minor, const char *version_phase, const char *url) {
-    printf("Module: %s, Version: %d.%d %s\n", name, version_major, version_minor, version_phase);
-    printf("\nCopyright (C) 2016 EVEmulator. ALL RIGHTS RESERVED\n");
-    printf("Proprietary and confidential\n");
-    printf("Private use only\n");
-    printf("You should not have this\n");
-    printf("In fact, do not even look at it\n");
-    printf("Close your eyes\n");
-    printf("Turn away\n");
-    printf("I MEAN IT!!!\n\n");
-    printf(" Website     : %s \n\n", url);
-}
-
 void UpdateWindowTitle(const char *title) {
 #if defined (_WIN32)
     SetConsoleTitle(title);

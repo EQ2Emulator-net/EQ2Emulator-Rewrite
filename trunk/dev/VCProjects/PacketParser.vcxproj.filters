@@ -9,9 +9,20 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="common">
+      <UniqueIdentifier>{9c289b62-8c9b-4762-8dec-30f99b1e8de3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ZoneServer">
+      <UniqueIdentifier>{14207332-0e31-4305-9cd0-fe4c4f4f89ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common\Packets">
+      <UniqueIdentifier>{71968ddb-fbd3-4300-a79e-a64e166b4aae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common\Packets\EQ2Packets">
+      <UniqueIdentifier>{00d968bc-74be-4ee8-9ea3-834520518e5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common\Packets\PacketElements">
+      <UniqueIdentifier>{92754328-b78c-4b9e-b54f-2e356a4b14b5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -24,9 +35,120 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\PacketParser\PacketLog_World.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\PacketParser\PacketLog_Zone.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\NetUtil.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\util.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Classes.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\CommonDatabase.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\ConfigReader.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\CRC16.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Crypto.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\database-result.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\EmuPacket.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\EQ2Stream.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\io.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\log.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Mutex.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\RC4.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Rules.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Separator.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Server.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\stdio.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Stream.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\string.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\TCPServer.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\thread.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\time.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\timer.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\UDPServer.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\database.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Packets\EQ2Packet.cpp">
+      <Filter>common\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Packets\ProtocolPacket.cpp">
+      <Filter>common\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Packets\XmlStructDumper.cpp">
+      <Filter>common\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Packets\EQ2Packets\OpcodeManager.cpp">
+      <Filter>common\Packets\EQ2Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Packets\PacketElements\PacketCriteria.cpp">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Packets\PacketElements\PacketEncodedData.cpp">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Packets\PacketElements\PacketSubstruct.cpp">
+      <Filter>common\Packets\PacketElements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\PacketParser\ParserDatabase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\PacketParser\PacketLog.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\PacketParser\ParserDatabase.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

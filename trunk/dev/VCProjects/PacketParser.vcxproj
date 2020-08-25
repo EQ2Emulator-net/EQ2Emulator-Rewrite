@@ -43,7 +43,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -78,8 +78,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Chris\Documents\EmuStuff\EQ2Emu\EQ2Emulator-Rewrite\source\depends\zlib\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Chris\Documents\EmuStuff\EQ2Emu\EQ2Emulator-Rewrite\source\depends\zlib\lib\win64-debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Chris\Documents\EmuStuff\EQ2Emu\EQ2Emulator-Rewrite\source\depends\mariadb-10.1.19\include;C:\Users\Chris\Documents\EmuStuff\EQ2Emu\EQ2Emulator-Rewrite\source\depends\zlib\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Chris\Documents\EmuStuff\EQ2Emu\EQ2Emulator-Rewrite\source\depends\mariadb-10.1.19\lib\64-debug;C:\Users\Chris\Documents\EmuStuff\EQ2Emu\EQ2Emulator-Rewrite\source\depends\zlib\lib\win64-debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)..\bin\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -117,14 +117,17 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>EQ2_PARSER;_DEBUG;_CONSOLE;_WINSOCK_DEPRECATED_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir);</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ws2_32.lib;zlibstat.lib;mysqlclient.lib;legacy_stdio_definitions.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -144,14 +147,51 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\source\common\Classes.cpp" />
+    <ClCompile Include="..\..\source\common\CommonDatabase.cpp" />
+    <ClCompile Include="..\..\source\common\ConfigReader.cpp" />
+    <ClCompile Include="..\..\source\common\CRC16.cpp" />
+    <ClCompile Include="..\..\source\common\Crypto.cpp" />
+    <ClCompile Include="..\..\source\common\database-result.cpp" />
+    <ClCompile Include="..\..\source\common\database.cpp" />
+    <ClCompile Include="..\..\source\common\EmuPacket.cpp" />
+    <ClCompile Include="..\..\source\common\EQ2Stream.cpp" />
+    <ClCompile Include="..\..\source\common\io.cpp" />
+    <ClCompile Include="..\..\source\common\log.cpp" />
+    <ClCompile Include="..\..\source\common\Mutex.cpp" />
+    <ClCompile Include="..\..\source\common\NetUtil.cpp" />
+    <ClCompile Include="..\..\source\common\Packets\EQ2Packet.cpp" />
+    <ClCompile Include="..\..\source\common\Packets\EQ2Packets\OpcodeManager.cpp" />
+    <ClCompile Include="..\..\source\common\Packets\PacketElements\PacketCriteria.cpp" />
+    <ClCompile Include="..\..\source\common\Packets\PacketElements\PacketEncodedData.cpp" />
+    <ClCompile Include="..\..\source\common\Packets\PacketElements\PacketSubstruct.cpp" />
+    <ClCompile Include="..\..\source\common\Packets\ProtocolPacket.cpp" />
+    <ClCompile Include="..\..\source\common\Packets\XmlStructDumper.cpp" />
+    <ClCompile Include="..\..\source\common\RC4.cpp" />
+    <ClCompile Include="..\..\source\common\Rules.cpp" />
+    <ClCompile Include="..\..\source\common\Separator.cpp" />
+    <ClCompile Include="..\..\source\common\Server.cpp" />
+    <ClCompile Include="..\..\source\common\stdio.cpp" />
+    <ClCompile Include="..\..\source\common\Stream.cpp" />
+    <ClCompile Include="..\..\source\common\string.cpp" />
+    <ClCompile Include="..\..\source\common\TCPServer.cpp" />
+    <ClCompile Include="..\..\source\common\thread.cpp" />
+    <ClCompile Include="..\..\source\common\time.cpp" />
+    <ClCompile Include="..\..\source\common\timer.cpp" />
+    <ClCompile Include="..\..\source\common\UDPServer.cpp" />
+    <ClCompile Include="..\..\source\common\util.cpp" />
     <ClCompile Include="..\..\source\PacketParser\main.cpp" />
     <ClCompile Include="..\..\source\PacketParser\PacketLog.cpp" />
+    <ClCompile Include="..\..\source\PacketParser\PacketLog_World.cpp" />
+    <ClCompile Include="..\..\source\PacketParser\PacketLog_Zone.cpp" />
+    <ClCompile Include="..\..\source\PacketParser\ParserDatabase.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\PacketParser\PacketLog.h" />
+    <ClInclude Include="..\..\source\PacketParser\ParserDatabase.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

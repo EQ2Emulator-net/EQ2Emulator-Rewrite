@@ -189,6 +189,9 @@
     <ClCompile Include="..\..\source\common\Packets\PacketElements\PacketSubstruct.cpp">
       <Filter>common\Packets\PacketElements</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\WorldServer\Packets\EQ2WorldPacketHandlers.cpp">
+      <Filter>source\Packets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\common\io.h">

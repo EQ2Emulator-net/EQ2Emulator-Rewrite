@@ -27,6 +27,41 @@ public:
 		memset(Unknown10, 0, sizeof(Unknown10));
 	}
 
+	static uint32_t DetermineStructVersion(const unsigned char* data, uint32_t size, uint32_t offset) {
+		//Since this packet is what sets the version and that moves around, we need to try and determine the struct
+		//Find the approximate size of the packet not including strings to take a guess
+		string tmp;
+		Packet16String e(tmp);
+
+		uint32_t tmp_offset = offset;
+
+		for (int i = 0; i < 4; i++) {
+			e.ReadElement(data, tmp_offset, size);
+		}
+
+		uint32_t remaining_size = size - tmp_offset;
+
+		//Factor out the STATION string16 that gets sent for most client versions except really early ones
+		if (remaining_size >= 9) {
+			//7 char bytes + the 2 byte size
+			remaining_size -= 9;
+		}
+
+		//21 Bytes is the remaining size for the 1208 client, I'm assuming the largest struct before the change
+		uint32_t struct_version;
+		if (remaining_size == 1) {
+			struct_version = 283;
+		}
+		else if (remaining_size > 21) {
+			struct_version = 1212;
+		}
+		else {
+			struct_version = 284;
+		}
+
+		return struct_version;
+	}
+
 	/*	
 <Struct Name="LS_LoginRequest" ClientVersion="1" OpcodeName="OP_LoginRequestMsg">
 <Data ElementName="accesscode" Type="EQ2_16BitString" />
@@ -72,14 +107,9 @@ public:
 	std::string GPUName;
 	std::string CPUName;
 
-	void HandlePacket(std::shared_ptr<Client> client) {
-		client->SetVersion((uint32_t)Version);
-
-		if (Password == "")
-			Password = AccessCode;
-
-		client->LogIn(Username, Password);
-	}
+#ifndef EQ2_PARSER
+	void HandlePacket(std::shared_ptr<Client> client);
+#endif
 
 	bool Read(const unsigned char* in_buf, uint32_t off, uint32_t bufsize) override {
 		bool ret = Packet::Read(in_buf, off, bufsize);

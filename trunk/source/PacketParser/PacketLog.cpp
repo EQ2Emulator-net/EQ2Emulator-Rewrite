@@ -1,9 +1,11 @@
 #include "stdafx.h"
 #include "PacketLog.h"
 #include <fstream>
-#include <array>
+#include "ParserDatabase.h"
 
-PacketLog::PacketLog(const std::string& file) : filename(file) {
+extern ParserDatabase database;
+
+PacketLog::PacketLog(const std::string& file) : filename(file), logVersion(0) {
 
 }
 
@@ -50,8 +52,9 @@ bool PacketLog::TransformPackets() {
 	std::ostringstream currentPacket;
 	bool bInPacket = false;
 	bool bServerPacket = false;
+	bool bLoginByNum = false;
+	bool bLoginRequest = false;
 	std::string line;
-
 	std::string clientAddr;
 	std::string serverAddr;
 
@@ -59,7 +62,19 @@ bool PacketLog::TransformPackets() {
 		if (bInPacket) {
 			if (line.empty()) {
 				bInPacket = false;
-				AddPacket(currentPacket, bServerPacket);
+				if (bLoginByNum) {
+					bLoginByNum = false;
+					std::string p = currentPacket.str();
+					logVersion = ReadLoginByNumRequest(reinterpret_cast<const unsigned char*>(p.c_str()), static_cast<uint32_t>(p.size()));
+				}
+				else if (bLoginRequest) {
+					bLoginRequest = false;
+					std::string p = currentPacket.str();
+					logVersion = ReadLoginRequest(reinterpret_cast<const unsigned char*>(p.c_str()), static_cast<uint32_t>(p.size()));
+				}
+				else {
+					AddPacket(currentPacket, bServerPacket);
+				}
 				currentPacket.str("");
 				continue;
 			}
@@ -73,7 +88,7 @@ bool PacketLog::TransformPackets() {
 
 			size_t end = line.size();
 			
-			std::array<char, 16> bytes;
+			char bytes[16];
 			size_t i = 0;
 			//Each byte is 2 hex characters followed by a space, I could use a regex here but it's too damn slow
 			for (; dataPos != end && i < 16; dataPos += 3, ++i) {
@@ -84,7 +99,7 @@ bool PacketLog::TransformPackets() {
 				bytes[i] = HexTextToByte(text);
 			}
 
-			currentPacket.write(bytes.data(), i);
+			currentPacket.write(bytes, i);
 		}
 		else if (line.find("--") == 0) {
 			if (line.find("-- Server Network Status Update") == 0 || line.find("-- Client Network Status Update") == 0
@@ -95,6 +110,14 @@ bool PacketLog::TransformPackets() {
 			}
 
 			bool bKeygenResponse = line.find("-- Client Keygen Response") == 0;
+			bLoginByNum = !bKeygenResponse && line.find("-- OP_LoginByNumRequestMsg --") == 0;
+			bLoginRequest = !bLoginByNum && !bKeygenResponse && line.find("-- OP_LoginRequestMsg --") == 0;
+
+			if ((bLoginByNum || bLoginRequest) && logVersion != 0) {
+				bLoginByNum = false;
+				bLoginRequest = false;
+				continue;
+			}
 
 			//Get the address line
 			std::getline(f, line);
@@ -111,10 +134,9 @@ bool PacketLog::TransformPackets() {
 		}
 	}
 
-	//Make sure we aren't losing a packet on the end
-	if (bInPacket) {
-		AddPacket(currentPacket, bServerPacket);
-	}
+	opcodeLookup = std::move(database.LoadOpcodesForVersion(logVersion));
+
+	SortClientCommands();
 
 	return true;
 }
@@ -165,16 +187,13 @@ void PacketLog::AddPacket(const std::ostringstream& ss, bool bServerPacket) {
 		}
 	}
 
-	uint16_t opcode = static_cast<unsigned char>(bytes[start]);
+	uint16_t opcode = static_cast<unsigned char>(bytes[start++]);
 	if (opcode == 0xFF) {
-		opcode = static_cast<unsigned char>(bytes[start + 1]);
-		opcode += static_cast<unsigned char>(bytes[start + 2]) << 8;
+		opcode = static_cast<unsigned char>(bytes[start++]);
+		opcode += static_cast<unsigned char>(bytes[start++]) << 8;
 	}
 
-	//Maybe process client command opcodes here too?
-	if (start != 0) {
-		bytes = bytes.substr(start, std::string::npos);
-	}
+	bytes = bytes.substr(start, std::string::npos);
 
 	packets[opcode].emplace_back(std::move(bytes));
 }

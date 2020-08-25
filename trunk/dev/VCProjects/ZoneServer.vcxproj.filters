@@ -414,6 +414,9 @@
     <ClCompile Include="..\..\source\ZoneServer\Players\NPCPathDebug.cpp">
       <Filter>source\Players</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Packets\EQ2ZonePacketHandlers.cpp">
+      <Filter>source\Packets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h">
