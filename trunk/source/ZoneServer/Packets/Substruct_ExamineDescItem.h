@@ -659,11 +659,17 @@ public:
 			}
 		}
 		else {
+			int32_t adornCount;
+			//Adjust the adorn count by version
+			if (GetVersion() >= 60114) {
+				adornCount = 11;
+			}
+			else adornCount = 6;
 			RescopeArrayElement(adornSlots);
 			auto e = RegisterUInt8(adornSlots);
-			e->SetCount(11);
+			e->SetCount(adornCount);
 		}
-		{
+		if (GetVersion() >= 60114){
 			auto e = RegisterUInt8(footerUnknownArrayCount);
 			e->SetMyArray(RegisterArray(footerUnknownArray, Substruct_FooterArrayUnknown));
 		}
@@ -671,7 +677,7 @@ public:
 			auto e = Register8String(setName);
 			RegisterSubstruct(itemSetDetails)->SetIsVariableSet(e);
 		}
-		{
+		if (itemVersion >= 60) {
 			auto e = RegisterUInt8(adornCount);
 			e->SetMyArray(RegisterArray(footerAdornmentArray, Substruct_ItemAdornmentDetails));
 		}
@@ -705,7 +711,14 @@ public:
 			RegisterUInt16(chargesRemaining)->SetIsVariableSet(e);
 		}
 		if (itemVersion >= 26) {
-			RegisterUInt64(unknown26Flags);
+			if (GetVersion() < 60114) {
+				//They changed this from a 2 byte to 8 byte without a version check
+				RescopeToReference(unknown26Flags, uint16_t);
+				RegisterUInt16(unknown26Flags);
+			}
+			else {
+				RegisterUInt64(unknown26Flags);
+			}
 		}
 		if (itemVersion >= 27) {
 			RegisterUInt8(unknown27);

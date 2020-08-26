@@ -63,7 +63,7 @@ public:
 		std::string zonedesc;
 		uint8_t unknowne14a;
 		uint8_t unknowne14b;
-		EQ2Color unknowne15;
+		EQ2Color torch_color;
 		uint8_t unknowne16;
 		uint8_t unknowne17;
 		uint8_t unknowne18;
@@ -206,7 +206,7 @@ public:
 				RegisterUInt8(unknowne14a);
 				RegisterUInt8(unknowne14b);
 			}
-			if (entryVersion >= 15) RegisterEQ2Color(unknowne15);
+			if (entryVersion >= 15) RegisterEQ2Color(torch_color);
 			if (entryVersion >= 16) RegisterUInt8(unknowne16);
 			if (entryVersion >= 17) RegisterUInt8(unknowne17);
 			if (entryVersion >= 18) RegisterUInt8(unknowne18);

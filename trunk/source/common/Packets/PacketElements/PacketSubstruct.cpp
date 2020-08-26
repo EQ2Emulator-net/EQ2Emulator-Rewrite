@@ -4,6 +4,7 @@
 #include "PacketArray.h"
 
 void PacketSubstruct::PreWrite() {
+	CheckElementsInitialized();
 	for (auto& e : elements) {
 		if (auto substr = dynamic_cast<PacketSubstructParentBase*>(e)) {
 			substr->PreWrite();

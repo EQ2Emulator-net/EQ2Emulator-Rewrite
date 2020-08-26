@@ -299,8 +299,7 @@ struct SpawnInfoStruct {
 	uint8_t							unknown5;
 	uint8_t						    heroic_flag;
 	uint8_t                         unknown1096;
-	uint32_t    					unknown7;
-	uint8_t                         unknown7_b;
+	uint8_t    				    	unknown7;
 	uint8_t							race;
 	uint8_t							gender;
 	uint8_t							adv_class;
@@ -337,6 +336,7 @@ struct SpawnInfoStruct {
 		SpawnMorphSliders               sogaSliders;
 		int8_t                         sogaSliderBytes[26];
 	};
+	EQ2Color                        torch_color;
 
 	//The above data is zeroed out
 	EQ2Color						equipment_colors[24];
@@ -385,8 +385,8 @@ struct SpawnInfoStruct {
 		//Hack to zero out most of the data allowing default values for the eq2 colors
 		memset(&model_type, 0, reinterpret_cast<size_t>(equipment_colors) - reinterpret_cast<size_t>(&model_type));
 		power_percent = 100;
-		hp_percent = 100 ^ 42;
-		unknown7 = 255;
+		hp_percent = 100;
+		unknown7 = 0xFF;
 	}
 
 protected:
@@ -408,6 +408,7 @@ public:
 
 	//We need to syncronize the data for equipment types pre int32 versions since this is a special case
 	void PostRead() override {
+		PacketSubstruct::PostRead();
 		if (version < 57080) {
 			for (int i = 0; i < 24; i++) {
 				equipment_types[i] = equipment_types_int16[i];
@@ -416,17 +417,18 @@ public:
 	}
 
 	void PreWrite() override {
+		PacketSubstruct::PreWrite();
 		if (version < 57080) {
 			for (int i = 0; i < 24; i++) {
 				equipment_types_int16[i] = static_cast<uint16_t>(equipment_types[i]);
 			}
 		}
 
-		//hp_percent = hp_percent ^ 100;
+		hp_percent ^= 100;
 	}
 
 	void PostWrite() override {
-		//hp_percent = hp_percent ^ 100;
+		hp_percent ^= 100;
 	}
 
 	void RegisterElements();

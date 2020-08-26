@@ -396,9 +396,7 @@ void Substruct_SpawnInfo::RegisterElements() {
 			}
 			RegisterUInt32(activity_timer);
 		}
-		RegisterUInt8(unknown7_b);
-		RescopeToReference(unknown7, uint16_t);
-		RegisterUInt16(unknown7);
+		RegisterEQ2Color(torch_color);
 	}
 	if (version < 57080) {
 		uint16_t& model_type = reinterpret_cast<uint16_t&>(this->model_type);
@@ -415,11 +413,13 @@ void Substruct_SpawnInfo::RegisterElements() {
 	if (version < 60055) {
 		RegisterEQ2Color(skin_color);
 		RegisterEQ2Color(eye_color);
+		if (version > 860) {
+			RegisterEQ2Color(model_color);
+		}
 		if (version > 283) {
 			RegisterEQ2Color(soga_eye_color);
 			RegisterEQ2Color(soga_skin_color);
-			if (version > 860) {
-				RegisterEQ2Color(model_color);
+			if (version > 860) {	
 				RegisterEQ2Color(soga_model_color);
 			}
 		}
@@ -686,7 +686,8 @@ void Substruct_SpawnInfo::RegisterElements() {
 		RegisterUInt8(level);
 		RegisterUInt8(unknown5);
 		RegisterUInt8(heroic_flag);
-		RegisterUInt32(unknown7);
+		RegisterUInt8(unknown7);
+		RegisterEQ2Color(torch_color);
 	}
 
 	RegisterUInt8(race);

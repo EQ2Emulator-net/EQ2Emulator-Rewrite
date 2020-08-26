@@ -36,11 +36,8 @@ public:
 	}
 
 	uint32_t Write(unsigned char*& buffer) {
-		PreWrite();
 		FindOpcode();
-		bool ret = Packet::Write(buffer);
-		PostWrite();
-		return ret;
+		return Packet::Write(buffer);
 	}
 
 	bool Read(const unsigned char* in_buf, uint32_t off, uint32_t bufsize) override {
