@@ -11,7 +11,8 @@
 #include "OP_MapFogDataInitMsg_Packet.h"
 #include "ItemPackets.h"
 #include "OP_PlayFlythroughCmd_Packet.h"
-
+#include "Substruct_SpellDesc.h"
+#include "Substruct_ExamineDescSpell.h"
 #define RegisterZoneSubstruct(pt, ...) RegisterXmlSubstruct(pt, "ZoneStructs.xml", __VA_ARGS__)
 
 //Order these so struct dependencies are registered before their dependents
@@ -72,6 +73,8 @@ RegisterZoneSubstruct(Substruct_FlythroughDesc_Movement_Strings, 1);
 RegisterZoneSubstruct(Substruct_FlythroughDesc_Movement, 1);
 RegisterZoneSubstruct(Substruct_FlythroughDesc_Scene, 1);
 RegisterZoneSubstruct(Substruct_FlythroughDesc, 1);
-//I would rather these 2 substructs not be inlined but analyzer has issues nesting arrays that deep
-//RegisterZoneSubstruct(Substruct_MapFogData, 1188);
-//RegisterZoneSubstruct(Substruct_MapData, 1188);
+RegisterZoneSubstruct(Substruct_SpellDesc, 1208, 60114, 67650);
+RegisterZoneSubstruct(Substruct_ExamineDescItem_SpellScroll, 1208, 60114, 67650);
+RegisterZoneSubstruct(Substruct_ExamineDescSpell, 1208, 60114, 67650);
+RegisterZoneSubstruct(Substruct_MapFogData, 1188);
+RegisterZoneSubstruct(Substruct_MapData, 1188);

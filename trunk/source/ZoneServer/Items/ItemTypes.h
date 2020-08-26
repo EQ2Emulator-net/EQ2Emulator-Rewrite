@@ -193,3 +193,11 @@ struct ItemRewardCrateData {
 	uint8_t unknown2;
 	std::vector<RewardCrateItem> items;
 };
+
+struct ItemSpellScrollData {
+	bool bScribed;
+	bool bScribed_better_version;
+	bool bRequire_previous_tier;
+	uint8_t unknown78a;
+	uint8_t unknown78b;
+};

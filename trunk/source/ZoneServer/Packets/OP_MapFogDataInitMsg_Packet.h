@@ -8,7 +8,7 @@
 
 class Substruct_MapData : public PacketSubstruct {
 public:
-	Substruct_MapData(uint32_t ver = 0) : PacketSubstruct(ver, true) {
+	Substruct_MapData(uint32_t ver = 0) : PacketSubstruct(ver) {
 		memset(unknown6, 0, sizeof(unknown6));
 		unknown7 = 1600;
 		unknown8 = 1200;

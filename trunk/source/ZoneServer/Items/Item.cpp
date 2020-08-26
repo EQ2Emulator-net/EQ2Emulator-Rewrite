@@ -175,6 +175,15 @@ std::unique_ptr<Substruct_ExamineDescItem> ItemHouseContainer::GetItemTypeData(c
 	return ret;
 }
 
+std::unique_ptr<Substruct_ExamineDescItem> ItemSpellScroll::GetItemTypeData(const std::shared_ptr<Client>& client) const {
+	uint32_t version = client->GetVersion();
+	auto ret = std::make_unique<Substruct_ExamineDescItem_SpellScroll>(version);
+
+	static_cast<ItemSpellScrollData&>(*ret) = static_cast<const ItemSpellScrollData&>(*this);
+
+	return ret;
+}
+
 //Copy functions
 Item::Item(const Item& rhs) : ItemDescBaseData(rhs), ItemDescFooterData(rhs), 
 bUseable(rhs.bUseable), scriptID(rhs.scriptID), appearance(rhs.appearance) {
@@ -253,6 +262,9 @@ std::shared_ptr<Item> ItemHouseContainer::Copy() const {
 	return std::make_shared<ItemHouseContainer>(*this);
 }
 
+std::shared_ptr<Item> ItemSpellScroll::Copy() const {
+	return std::make_shared<ItemSpellScroll>(*this);
+}
 
 EItemType Item::GetItemTypeFromName(const char* name) {
 	CStringCmpNoCopy cmp(name);
@@ -316,6 +328,9 @@ EItemType Item::GetItemTypeFromName(const char* name) {
 	else if (cmp == "Marketplace") {
 		return EItemType::EMARKETPLACE;
 	}
+	else if (cmp == "Scroll") {
+		return EItemType::ESPELL_SCROLL;
+	}
 
 	return EItemType::EINVALID;
 }
@@ -373,6 +388,8 @@ std::shared_ptr<Item> Item::CreateItemWithType(EItemType type) {
 		return std::make_shared<ItemRewardCrate>();
 	case EItemType::EAMMO:
 		return std::make_shared<ItemAmmo>();
+	case EItemType::ESPELL_SCROLL:
+		return std::make_shared<ItemSpellScroll>();
 	default:
 		return std::make_shared<ItemGeneric>();
 	}

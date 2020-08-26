@@ -3,58 +3,13 @@
 #include "Substruct_ExamineDescBase.h"
 #include "../Items/Item.h"
 
-inline uint8_t GetItemStructVersion(uint32_t version) {
-	uint8_t subVersion;
-
-	if (version >= 67727)
-		subVersion = 97;
-	else if (version >= 67650)
-		subVersion = 95;
-	else if (version >= 64707)
-		subVersion = 92;
-	else if (version >= 63119)
-		subVersion = 86;
-	else if (version >= 60024)
-		subVersion = 81;
-	else if (version >= 57107)
-		subVersion = 76;
-	else if (version >= 57048)
-		subVersion = 70;
-	else if (version >= 1199)
-		subVersion = 68;
-	else if (version >= 1195)
-		subVersion = 64;
-	else if (version >= 1193)
-		subVersion = 63;
-	else if (version >= 1190)
-		subVersion = 62;
-	else if (version >= 1188)
-		subVersion = 61;
-	else if (version >= 1096)
-		subVersion = 53;
-	else if (version >= 1027)
-		subVersion = 49;
-	else if (version >= 1008)
-		subVersion = 44;
-	else if (version >= 927)
-		subVersion = 35;
-	else if (version >= 893)
-		subVersion = 34;
-	else if (version >= 860)
-		subVersion = 32;
-	else
-		subVersion = 28;
-
-	return subVersion;
-}
-
 class Substruct_ItemStatMod : public PacketSubstruct, public ItemStatMod {
 private:
 	int16_t sValue_do_not_set;
 public:
 	Substruct_ItemStatMod(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
 		if (p_itemVersion == 0) {
-			itemVersion = GetItemStructVersion(ver);
+			itemVersion = GetDescriptionVersion(ver);
 		}
 		else {
 			itemVersion = p_itemVersion;
@@ -121,7 +76,7 @@ class Substruct_ItemStringMod : public PacketSubstruct, public ItemStringMod {
 public:
 	Substruct_ItemStringMod(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
 		if (p_itemVersion == 0) {
-			itemVersion = GetItemStructVersion(ver);
+			itemVersion = GetDescriptionVersion(ver);
 		}
 		else {
 			itemVersion = p_itemVersion;
@@ -132,7 +87,7 @@ public:
 	uint8_t itemVersion;
 
 	void RegisterElements() {
-		uint8_t itemVersion = GetItemStructVersion(GetVersion());
+		uint8_t itemVersion = GetDescriptionVersion(GetVersion());
 		Register8String(stringVal);
 		if (itemVersion >= 7) {
 			auto e = RegisterUInt8(unknown1);
@@ -179,7 +134,7 @@ public:
 class Substruct_ItemDescHeader : public PacketSubstruct, public ItemDescBaseData {
 public:
 	Substruct_ItemDescHeader(uint32_t ver = 0) : PacketSubstruct(ver) {
-		itemVersion = GetItemStructVersion(ver);
+		itemVersion = GetDescriptionVersion(ver);
 		RegisterElements();
 	}
 
@@ -307,7 +262,7 @@ class Substruct_ItemTierLineEntry : public PacketSubstruct, public ItemTierLineE
 public:
 	Substruct_ItemTierLineEntry(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
 		if (p_itemVersion == 0) {
-			itemVersion = GetItemStructVersion(ver);
+			itemVersion = GetDescriptionVersion(ver);
 		}
 		else {
 			itemVersion = p_itemVersion;
@@ -361,7 +316,7 @@ class Substruct_ItemSetBonus : public PacketSubstruct, public ItemSetBonus {
 public:
 	Substruct_ItemSetBonus(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
 		if (p_itemVersion == 0) {
-			itemVersion = GetItemStructVersion(ver);
+			itemVersion = GetDescriptionVersion(ver);
 		}
 		else {
 			itemVersion = p_itemVersion;
@@ -400,7 +355,7 @@ class Substruct_ItemSetItem : public PacketSubstruct, public ItemSetItem {
 public:
 	Substruct_ItemSetItem(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
 		if (p_itemVersion == 0) {
-			itemVersion = GetItemStructVersion(ver);
+			itemVersion = GetDescriptionVersion(ver);
 		}
 		else {
 			itemVersion = p_itemVersion;
@@ -423,7 +378,7 @@ class Substruct_ItemSetDetails : public PacketSubstruct, public ItemSetDetails {
 public:
 	Substruct_ItemSetDetails(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
 		if (p_itemVersion == 0) {
-			itemVersion = GetItemStructVersion(ver);
+			itemVersion = GetDescriptionVersion(ver);
 		}
 		else {
 			itemVersion = p_itemVersion;
@@ -463,7 +418,7 @@ class Substruct_ItemAdornmentLevel : public PacketSubstruct, public ItemAdornmen
 public:
 	Substruct_ItemAdornmentLevel(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
 		if (p_itemVersion == 0) {
-			itemVersion = GetItemStructVersion(ver);
+			itemVersion = GetDescriptionVersion(ver);
 		}
 		else {
 			itemVersion = p_itemVersion;
@@ -493,7 +448,7 @@ class Substruct_ItemAdornmentDetails : public PacketSubstruct, public ItemAdornm
 public:
 	Substruct_ItemAdornmentDetails(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
 		if (p_itemVersion == 0) {
-			itemVersion = GetItemStructVersion(ver);
+			itemVersion = GetDescriptionVersion(ver);
 		}
 		else {
 			itemVersion = p_itemVersion;
@@ -532,7 +487,7 @@ class Substruct_ItemAdornmentSlotDetails : public PacketSubstruct, public ItemAd
 public:
 	Substruct_ItemAdornmentSlotDetails(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
 		if (p_itemVersion == 0) {
-			itemVersion = GetItemStructVersion(ver);
+			itemVersion = GetDescriptionVersion(ver);
 		}
 		else {
 			itemVersion = p_itemVersion;
@@ -561,7 +516,7 @@ class Substruct_ItemDescFooter : public PacketSubstruct, public ItemDescFooterDa
 public:
 	Substruct_ItemDescFooter(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver) {
 		if (p_itemVersion == 0) {
-			itemVersion = GetItemStructVersion(ver);
+			itemVersion = GetDescriptionVersion(ver);
 		}
 		else {
 			itemVersion = p_itemVersion;
@@ -669,7 +624,8 @@ public:
 			auto e = RegisterUInt8(adornSlots);
 			e->SetCount(adornCount);
 		}
-		if (GetVersion() >= 60114){
+		if (GetVersion() >= 60114) {
+			//No version check in the client
 			auto e = RegisterUInt8(footerUnknownArrayCount);
 			e->SetMyArray(RegisterArray(footerUnknownArray, Substruct_FooterArrayUnknown));
 		}

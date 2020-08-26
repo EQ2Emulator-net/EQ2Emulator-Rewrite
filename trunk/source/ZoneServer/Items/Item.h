@@ -246,6 +246,7 @@ enum class EItemType : uint8_t {
 	EARMOR = 3,
 	ESHIELD = 4,
 	EBAG = 5,
+	ESPELL_SCROLL = 6,
 	ERECIPE_BOOK = 7,
 	EPROVISION = 8,
 	EBAUBLE = 9,
@@ -496,6 +497,16 @@ class ItemHouseContainer : public Item, public ItemHouseContainerData {
 public:
 	ItemHouseContainer() = default;
 	~ItemHouseContainer() = default;
+
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
+	std::shared_ptr<Item> Copy() const override;
+	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
+};
+
+class ItemSpellScroll : public Item, public ItemSpellScrollData {
+public:
+	ItemSpellScroll() = default;
+	~ItemSpellScroll() = default;
 
 	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(const std::shared_ptr<Client>& client) const override;
 	std::shared_ptr<Item> Copy() const override;

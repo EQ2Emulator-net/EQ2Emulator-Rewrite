@@ -2,6 +2,51 @@
 
 #include "../../common/Packets/PacketElements/PacketElements.h"
 
+inline uint8_t GetDescriptionVersion(uint32_t version) {
+	uint8_t subVersion;
+
+	if (version >= 67727)
+		subVersion = 97;
+	else if (version >= 67650)
+		subVersion = 95;
+	else if (version >= 64707)
+		subVersion = 92;
+	else if (version >= 63119)
+		subVersion = 86;
+	else if (version >= 60024)
+		subVersion = 81;
+	else if (version >= 57107)
+		subVersion = 76;
+	else if (version >= 57048)
+		subVersion = 70;
+	else if (version >= 1199)
+		subVersion = 68;
+	else if (version >= 1195)
+		subVersion = 64;
+	else if (version >= 1193)
+		subVersion = 63;
+	else if (version >= 1190)
+		subVersion = 62;
+	else if (version >= 1188)
+		subVersion = 61;
+	else if (version >= 1096)
+		subVersion = 53;
+	else if (version >= 1027)
+		subVersion = 49;
+	else if (version >= 1008)
+		subVersion = 44;
+	else if (version >= 927)
+		subVersion = 35;
+	else if (version >= 893)
+		subVersion = 34;
+	else if (version >= 860)
+		subVersion = 32;
+	else
+		subVersion = 28;
+
+	return subVersion;
+}
+
 class Substruct_ExamineDescBase : public PacketSubstruct {
 public:
 	Substruct_ExamineDescBase(uint32_t ver = 0, bool bInline = false) : PacketSubstruct(ver, bInline), examineType(0xFF), subVersion(0xFF), examineTypeOverride(0xFF), noExamineInfo{ 0xFF, 0xFF, 0xFF } {
