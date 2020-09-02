@@ -69,9 +69,28 @@ void CommandProcess::CommandSpawnSet(const std::shared_ptr<Client>& client, Sepa
 		SpawnSet(target, masterSpawn, SetModelType(sep.GetUInt32(1)));
 	}
 
+	if (cmd == "model_color" && sep.IsNumber(1) && sep.IsNumber(2) && sep.IsNumber(3)) {
+		EQ2Color color;
+		color.Red = static_cast<uint8_t>(sep.GetUInt32(1));
+		color.Green = static_cast<uint8_t>(sep.GetUInt32(2));
+		color.Blue = static_cast<uint8_t>(sep.GetUInt32(3));
+		SpawnSet(target, masterSpawn, SetModelColor(color));
+	}
+
+	if (cmd == "skin_color" && sep.IsNumber(1) && sep.IsNumber(2) && sep.IsNumber(3)) {
+		EQ2Color color;
+		color.Red = static_cast<uint8_t>(sep.GetUInt32(1));
+		color.Green = static_cast<uint8_t>(sep.GetUInt32(2));
+		color.Blue = static_cast<uint8_t>(sep.GetUInt32(3));
+		SpawnSet(target, masterSpawn, SetSkinColor(color));
+	}
+
 	// Vis struct
 
 	// Pos struct
+	if (cmd == "size" && sep.IsNumber(1)) {
+		SpawnSet(target, masterSpawn, SetSize(sep.GetFloat(1)));
+	}
 }
 
 void CommandProcess::CommandSpawnDetails(const std::shared_ptr<Client>& client, Separator& sep) {

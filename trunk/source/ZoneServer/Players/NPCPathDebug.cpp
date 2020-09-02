@@ -46,9 +46,9 @@ void NPCPathDebug::Start(std::shared_ptr<Spawn> target) {
 
 bool NPCPathDebug::GenerateSpawns() {
 	bool ret = false;
-	if (m_locations->size() > 0) {
+	if (m_locations.size() > 0) {
 		uint32_t index = 0;
-		for (std::shared_ptr<MovementLocationInfo> info : *m_locations) {
+		for (std::shared_ptr<MovementLocationInfo> info : m_locations) {
 			std::shared_ptr<Spawn> s = CreateLocationSpawn(info, ++index);
 			if (s) {
 				m_locationSpawns.push_back(s);
@@ -106,7 +106,7 @@ void NPCPathDebug::RemoveLocationsFromClient() {
 }
 
 void NPCPathDebug::ClearLocations() {
-	m_locations = nullptr;
+	m_locations.clear();
 	m_locationSpawns.clear();
 }
 
@@ -139,7 +139,7 @@ void NPCPathDebug::AddPathPoint() {
 	std::shared_ptr<Spawn> spawn = CreateLocationSpawn(loc, index);
 	spawn->SetGridID(player->GetGridID(), false);
 	m_locationSpawns.push_back(spawn);
-	m_locations->push_back(loc);
+	m_locations.push_back(loc);
 	zone->SendSpawnToClient(spawn, client);
 
 	std::string msg = "Added point " + std::to_string(index) + " to " + target->GetName() + "'s path";
@@ -163,7 +163,7 @@ void NPCPathDebug::RemovePathPoint(std::shared_ptr<Spawn> spawn) {
 	index--;
 	
 	// Erase the location from the path
-	m_locations->erase(m_locations->begin() + index);
+	m_locations.erase(m_locations.begin() + index);
 
 	// Nuke spawns from client
 	RemoveLocationsFromClient();

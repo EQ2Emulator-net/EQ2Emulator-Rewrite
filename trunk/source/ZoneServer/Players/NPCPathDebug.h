@@ -32,6 +32,6 @@ private:
 
 	std::weak_ptr<Client> m_client;
 	std::weak_ptr<Spawn> m_targetSpawn;
-	std::vector<std::shared_ptr<MovementLocationInfo> >* m_locations;
+	std::vector<std::shared_ptr<MovementLocationInfo> > m_locations;
 	std::vector<std::shared_ptr<Spawn> > m_locationSpawns;
 };
