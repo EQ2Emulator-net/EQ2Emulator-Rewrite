@@ -6,6 +6,7 @@
 #include "../Database/ZoneDatabase.h"
 #include "../Spawns/Spawn.h"
 #include "../Spawns/Entity.h"
+#include "../Spawns/PathPointSpawn.h"
 #include "../Controllers/PlayerController.h"
 #include "../ZoneServer/ZoneServer.h"
 #include "../Players/NPCPathDebug.h"
@@ -33,40 +34,58 @@ void CommandProcess::CommandSpawnSet(const std::shared_ptr<Client>& client, Sepa
 	std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::tolower);
 
 	if (cmd == "name") {
-		SpawnSet(target, masterSpawn, SetName(sep.GetString(1)));
+		std::string value = sep.GetString(1);
+		SpawnSet(target, masterSpawn, SetName(value));
+		client->chat.DisplayText("MOTD", "Setting spawns name to " + value, 0xff, false, "");
 	}
 
 	if (cmd == "lastname") {
-		SpawnSet(target, masterSpawn, SetLastName(sep.GetString(1)));
+		std::string value = sep.GetString(1);
+		SpawnSet(target, masterSpawn, SetLastName(value));
+		client->chat.DisplayText("MOTD", "Setting spawns lastname to " + value, 0xff, false, "");
 	}
 
 	if (cmd == "suffixtitle") {
-		SpawnSet(target, masterSpawn, SetSuffixTitle(sep.GetString(1)));
+		std::string value = sep.GetString(1);
+		SpawnSet(target, masterSpawn, SetSuffixTitle(value));
+		client->chat.DisplayText("MOTD", "Setting spawns suffixtitle to " + value, 0xff, false, "");
 	}
 
 	if (cmd == "prefixtitle") {
-		SpawnSet(target, masterSpawn, SetPrefixTitle(sep.GetString(1)));
+		std::string value = sep.GetString(1);
+		SpawnSet(target, masterSpawn, SetPrefixTitle(value));
+		client->chat.DisplayText("MOTD", "Setting spawns prefixtitle to " + value, 0xff, false, "");
 	}
 
 	if (cmd == "pvptitle") {
-		SpawnSet(target, masterSpawn, SetPvPTitle(sep.GetString(1)));
+		std::string value = sep.GetString(1);
+		SpawnSet(target, masterSpawn, SetPvPTitle(value));
+		client->chat.DisplayText("MOTD", "Setting spawns pvptitle to " + value, 0xff, false, "");
 	}
 
 	if (cmd == "guild") {
-		SpawnSet(target, masterSpawn, SetGuild(sep.GetString(1)));
+		std::string value = sep.GetString(1);
+		SpawnSet(target, masterSpawn, SetGuild(value));
+		client->chat.DisplayText("MOTD", "Setting spawns guild to " + value, 0xff, false, "");
 	}
 
 	// Info struct
 	if (cmd == "visual_state" && sep.IsNumber(1)) {
-		SpawnSet(target, masterSpawn, SetVisualState(sep.GetUInt32(1)));
+		uint32_t value = sep.GetUInt32(1);
+		SpawnSet(target, masterSpawn, SetVisualState(value));
+		client->chat.DisplayText("MOTD", "Setting spawns visual_state to " + to_string(value), 0xff, false, "");
 	}
 
 	if (cmd == "difficulty_offset" && sep.IsNumber(1)) {
-		SpawnSet(target, masterSpawn, SetDifficultyOffset(sep.GetUInt32(1)));
+		uint32_t value = sep.GetUInt32(1);
+		SpawnSet(target, masterSpawn, SetDifficultyOffset(value));
+		client->chat.DisplayText("MOTD", "Setting spawns difficulty_offset to " + to_string(value), 0xff, false, "");
 	}
 
 	if (cmd == "model_type" && sep.IsNumber(1)) {
-		SpawnSet(target, masterSpawn, SetModelType(sep.GetUInt32(1)));
+		uint32_t value = sep.GetUInt32(1);
+		SpawnSet(target, masterSpawn, SetModelType(value));
+		client->chat.DisplayText("MOTD", "Setting spawns model_type to " + to_string(value), 0xff, false, "");
 	}
 
 	if (cmd == "model_color" && sep.IsNumber(1) && sep.IsNumber(2) && sep.IsNumber(3)) {
@@ -75,6 +94,7 @@ void CommandProcess::CommandSpawnSet(const std::shared_ptr<Client>& client, Sepa
 		color.Green = static_cast<uint8_t>(sep.GetUInt32(2));
 		color.Blue = static_cast<uint8_t>(sep.GetUInt32(3));
 		SpawnSet(target, masterSpawn, SetModelColor(color));
+		client->chat.DisplayText("MOTD", "Setting spawns model_color to " + to_string(color.Red) + ", " + to_string(color.Green) + ", " + to_string(color.Blue), 0xff, false, "");
 	}
 
 	if (cmd == "skin_color" && sep.IsNumber(1) && sep.IsNumber(2) && sep.IsNumber(3)) {
@@ -83,13 +103,16 @@ void CommandProcess::CommandSpawnSet(const std::shared_ptr<Client>& client, Sepa
 		color.Green = static_cast<uint8_t>(sep.GetUInt32(2));
 		color.Blue = static_cast<uint8_t>(sep.GetUInt32(3));
 		SpawnSet(target, masterSpawn, SetSkinColor(color));
+		client->chat.DisplayText("MOTD", "Setting spawns skin_color to " + to_string(color.Red) + ", " + to_string(color.Green) + ", " + to_string(color.Blue), 0xff, false, "");
 	}
 
 	// Vis struct
 
 	// Pos struct
 	if (cmd == "size" && sep.IsNumber(1)) {
-		SpawnSet(target, masterSpawn, SetSize(sep.GetFloat(1)));
+		float value = sep.GetFloat(1);
+		SpawnSet(target, masterSpawn, SetSize(value));
+		client->chat.DisplayText("MOTD", "Setting spawns size to " + to_string(value), 0xff, false, "");
 	}
 }
 
@@ -252,6 +275,31 @@ void CommandProcess::CommandPath(const std::shared_ptr<Client>& client, Separato
 	if (cmd == "add")
 		path->AddPathPoint();
 
-	if (cmd == "remove")
-		path->RemovePathPoint(target);
+	if (cmd == "remove") {
+		if (target->IsPathPoint())
+			path->RemovePathPoint(dynamic_pointer_cast<PathPointSpawn>(target));
+		else
+			client->chat.DisplayText("Error Text", "Target must be a path point in order to remove it", 0xff, false, "");
+	}
+
+	if (cmd == "generate")
+		path->GenerateLua();
+
+	if (cmd == "set") {
+		if (target->IsPathPoint()) {
+			std::string set_cmd = sep.GetString(1);
+			std::transform(set_cmd.begin(), set_cmd.end(), set_cmd.begin(), ::tolower);
+			if (set_cmd == "speed")
+				path->SetPathPointSpeed(dynamic_pointer_cast<PathPointSpawn>(target), sep.GetFloat(2));
+			else if (set_cmd == "delay")
+				path->SetPathPointDelay(dynamic_pointer_cast<PathPointSpawn>(target), sep.GetFloat(2));
+			else if (set_cmd == "callback")
+				path->SetPathPointCallback(dynamic_pointer_cast<PathPointSpawn>(target), sep.GetString(2));
+			else 
+				client->chat.DisplayText("MOTD", "Syntax: /path set <field>\nFields: speed, delay, callback", 0xff, false, "");
+		}
+		else {
+			client->chat.DisplayText("Error Text", "Target must be a path point in order to change it", 0xff, false, "");
+		}
+	}
 }

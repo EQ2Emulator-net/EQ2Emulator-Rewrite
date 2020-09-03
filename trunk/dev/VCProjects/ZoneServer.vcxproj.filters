@@ -1094,5 +1094,8 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_ExamineDescSpell.h">
       <Filter>source\Packets\Server-&gt;Client</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Spawns\PathPointSpawn.h">
+      <Filter>source\Spawns</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

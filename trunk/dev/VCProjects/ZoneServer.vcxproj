@@ -417,6 +417,7 @@
     <ClInclude Include="..\..\source\ZoneServer\Spawns\EntityCommands.h" />
     <ClInclude Include="..\..\source\ZoneServer\Spawns\GroundSpawn.h" />
     <ClInclude Include="..\..\source\ZoneServer\Spawns\Object.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Spawns\PathPointSpawn.h" />
     <ClInclude Include="..\..\source\ZoneServer\Spawns\Sign.h" />
     <ClInclude Include="..\..\source\ZoneServer\Spawns\Spawn.h" />
     <ClInclude Include="..\..\source\ZoneServer\Spawns\SpawnGroupList.h" />
