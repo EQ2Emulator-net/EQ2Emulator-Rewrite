@@ -8,6 +8,7 @@
 #include "Packet16String.h"
 #include "Packet32String .h"
 #include "PacketChar.h"
+#include "PacketCharString.h"
 
 // Integers
 #include "PacketInt8.h"
@@ -57,5 +58,6 @@
 #define RegisterFloat(e) PushElementForRegistration(new PacketFloat(e), #e, PacketFloat)
 #define RegisterBool(e) PushElementForRegistration(new PacketBool(e), #e, PacketBool);
 #define RegisterDouble(e) PushElementForRegistration(new PacketDouble(e), #e, PacketDouble);
+#define RegisterCharString(e, n) PushElementForRegistration(new PacketCharString(e, (n)), #e, PacketCharString);
 #define RescopeArrayElement(e) auto& e = reinterpret_cast<decltype(this->e[0])&>(this->e[0]);
 #define RescopeToReference(e, t) auto& e = reinterpret_cast<t&>(this->e)

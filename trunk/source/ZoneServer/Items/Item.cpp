@@ -390,6 +390,8 @@ std::shared_ptr<Item> Item::CreateItemWithType(EItemType type) {
 		return std::make_shared<ItemAmmo>();
 	case EItemType::ESPELL_SCROLL:
 		return std::make_shared<ItemSpellScroll>();
+	case EItemType::ERECIPE_BOOK:
+		return std::make_shared<ItemRecipeBook>();
 	default:
 		return std::make_shared<ItemGeneric>();
 	}

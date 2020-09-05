@@ -392,9 +392,12 @@ void Substruct_SpawnInfo::RegisterElements() {
 			if (version < 1096 || version >= 1188) {
 				//Thinking this got moved by accident at some point then moved to the correct location again
 				RegisterUInt8(heroic_flag);
-				RegisterUInt8(unknown1096);
+				RegisterUInt32(activity_timer);
+				RegisterUInt8(heatLevel);
 			}
-			RegisterUInt32(activity_timer);
+			else {
+				RegisterUInt32(activity_timer);
+			}
 		}
 		RegisterEQ2Color(torch_color);
 	}
@@ -686,7 +689,7 @@ void Substruct_SpawnInfo::RegisterElements() {
 		RegisterUInt8(level);
 		RegisterUInt8(unknown5);
 		RegisterUInt8(heroic_flag);
-		RegisterUInt8(unknown7);
+		RegisterUInt8(heatLevel);
 		RegisterEQ2Color(torch_color);
 	}
 
@@ -736,4 +739,12 @@ void Substruct_SpawnInfo::RegisterElements() {
 			}
 		}
 	}
+}
+
+SpawnInfoStruct::SpawnInfoStruct() {
+	memset(this, 0, sizeof(*this));
+	power_percent = 100;
+	hp_percent = 100;
+	heatLevel = 0xff;//temp until we can set it properly
+	unknown5 = 1;
 }

@@ -298,8 +298,7 @@ struct SpawnInfoStruct {
 	uint16_t						level;
 	uint8_t							unknown5;
 	uint8_t						    heroic_flag;
-	uint8_t                         unknown1096;
-	uint8_t    				    	unknown7;
+	uint8_t    				    	heatLevel; //for heatvision (infravision)
 	uint8_t							race;
 	uint8_t							gender;
 	uint8_t							adv_class;
@@ -338,7 +337,6 @@ struct SpawnInfoStruct {
 	};
 	EQ2Color                        torch_color;
 
-	//The above data is zeroed out
 	EQ2Color						equipment_colors[24];
 	EQ2Color						hair_type_color;
 	EQ2Color						hair_face_color;
@@ -381,13 +379,7 @@ struct SpawnInfoStruct {
 	EQ2Color						soga_hair_color2;
 	EQ2Color						soga_hair_highlight;
 
-	SpawnInfoStruct() {
-		//Hack to zero out most of the data allowing default values for the eq2 colors
-		memset(&model_type, 0, reinterpret_cast<size_t>(equipment_colors) - reinterpret_cast<size_t>(&model_type));
-		power_percent = 100;
-		hp_percent = 100;
-		unknown7 = 0xFF;
-	}
+	SpawnInfoStruct();
 
 protected:
 	//Used for legacy clients

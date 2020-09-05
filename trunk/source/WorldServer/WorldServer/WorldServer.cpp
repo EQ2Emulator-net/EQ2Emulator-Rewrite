@@ -85,8 +85,8 @@ std::shared_ptr<Client> WorldServer::GetClientByAccessCode(uint32_t code) {
 void WorldServer::AddPendingClientTransfer(uint32_t access_code, const std::shared_ptr<Character>& character, const std::shared_ptr<ZoneStream>& stream) {
 	PendingClientTransfer pct;
 	pct.stream = stream;
-	//30 second timeout
-	pct.timeout = Timer::GetServerTime() + 30000;
+	//60 second timeout
+	pct.timeout = Timer::GetServerTime() + 60000;
 	pct.character = character;
 	pendingClientTransfers[access_code] = pct;
 }

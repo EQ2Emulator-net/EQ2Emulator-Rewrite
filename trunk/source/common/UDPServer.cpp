@@ -32,7 +32,7 @@ bool UDPServer::Open() {
 	memset(&address, 0, sizeof(address));
 	address.sin_family = AF_INET;
 	address.sin_port = htons(Port);
-	address.sin_addr.s_addr = Host;//htonl(INADDR_ANY);
+	address.sin_addr.s_addr = htonl(INADDR_ANY);
 
 	Sock = socket(AF_INET, SOCK_DGRAM, 0);
 	if (Sock < 0) {

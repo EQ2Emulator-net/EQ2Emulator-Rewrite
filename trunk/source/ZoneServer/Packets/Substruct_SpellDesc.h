@@ -178,6 +178,7 @@ public:
 		for (auto& itr : SpellDescInfo::effects) {
 			effects.emplace_back(itr, GetVersion());
 		}
+		PacketSubstruct::PreWrite();
 	}
 
 	void PostRead() override {
@@ -201,6 +202,7 @@ public:
 		for (auto& itr : effects) {
 			SpellDescInfo::effects.emplace_back(static_cast<SpellEffect&>(itr));
 		}
+		PacketSubstruct::PostRead();
 	}
 
 	void RegisterElements() override {
