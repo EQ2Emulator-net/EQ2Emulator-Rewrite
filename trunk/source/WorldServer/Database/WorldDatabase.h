@@ -46,6 +46,9 @@ public:
 	uint32_t GetZoneIDForCharacter(uint32_t char_id);
 	bool LoadNextItemUniqueIDRange(std::pair<uint32_t,uint32_t>& out);
 
+	bool SetServerStartTime();
+	bool SetServerLastUpdateTime();
+
 private:
 
 };

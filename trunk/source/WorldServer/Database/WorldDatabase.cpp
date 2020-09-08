@@ -1073,3 +1073,13 @@ bool WorldDatabase::LoadNextItemUniqueIDRange(std::pair<uint32_t,uint32_t>& out)
 
 	return true;
 }
+
+bool WorldDatabase::SetServerStartTime() {
+	bool ret = Query("INSERT INTO variables (variable_name, variable_value, comment) VALUES ('world_start_time', UTC_TIMESTAMP(), 'The time the server started') ON DUPLICATE KEY UPDATE variable_value=UTC_TIMESTAMP()");
+	return ret;
+}
+
+bool WorldDatabase::SetServerLastUpdateTime() {
+	bool ret = Query("INSERT INTO variables (variable_name, variable_value, comment) VALUES ('world_last_update_time', UTC_TIMESTAMP(), 'The time the server last updated') ON DUPLICATE KEY UPDATE variable_value=UTC_TIMESTAMP()");
+	return ret;
+}
