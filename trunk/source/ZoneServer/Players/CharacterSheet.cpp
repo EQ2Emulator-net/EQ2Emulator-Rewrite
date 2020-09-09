@@ -14,7 +14,13 @@ void UpdateCharacterSheetMsgData::PreWrite() {
 	tsVitality = static_cast<float>(experience.tsVitality);
 	hp = attributes->hp.currentValue;
 	maxHp = attributes->hp.maxValue;
-	baseHp = attributes->hp.baseValue;
+
+	if (GetVersion() >= 67742) {
+		advExp_do_not_set = advExp;
+		advExpNextLevel_do_not_set = advExpNextLevel;
+		tsExp_do_not_set = tsExp;
+		tsExpNextLevel_do_not_set = tsExpNextLevel;
+	}
 }
 
 void CharacterUpdateGenerator::LinkUpdateFields(const CharacterSheet& sheet) {

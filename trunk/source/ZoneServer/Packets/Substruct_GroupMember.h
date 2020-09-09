@@ -14,13 +14,13 @@ class Substruct_GroupMember : public PacketSubstruct {
 public:
 	~Substruct_GroupMember() = default;
 
-	uint64_t aomUnknown;
+	uint64_t uniqueId; //first 4 bytes is the "dbid" listed on census for players, not sure the second 4 bytes
 	uint32_t spawnId;
 	uint32_t petId;
 	int64_t hpCurrent;
 	int64_t hpMax;
-	int64_t powerCurrent;
-	int64_t powerMax;
+	int32_t powerCurrent;
+	int32_t powerMax;
 	int16_t effectiveLevel;
 	int16_t level;
 	uint8_t instance;
@@ -41,7 +41,7 @@ public:
 	std::string zoneName;
 
 	Substruct_GroupMember(uint32_t ver = 0) : PacketSubstruct(ver) {
-		memset(&aomUnknown, 0, reinterpret_cast<uint8_t*>(&name) - reinterpret_cast<uint8_t*>(&aomUnknown));
+		memset(&uniqueId, 0, reinterpret_cast<uint8_t*>(&name) - reinterpret_cast<uint8_t*>(&uniqueId));
 		//name = "Test";
 		//trauma = 1;
 		//curse = 2;
@@ -55,7 +55,7 @@ public:
 	}
 
 	void RegisterElements() override {
-		RegisterUInt64(aomUnknown);
+		RegisterUInt64(uniqueId);
 		RegisterUInt32(spawnId);
 		RegisterUInt32(petId);
 		if (GetVersion() >= 57048) {
@@ -68,16 +68,8 @@ public:
 			RegisterInt32(hpCurrent);
 			RegisterInt32(hpMax);
 		}
-		if (GetVersion() >= 61532) {
-			RegisterInt64(powerCurrent);
-			RegisterInt64(powerMax);
-		}
-		else {
-			int32_t& powerCurrent = power_do_not_set;
-			int32_t& powerMax = power_max_do_not_set;
-			RegisterInt32(powerCurrent);
-			RegisterInt32(powerMax);
-		}
+		RegisterInt32(powerCurrent);
+		RegisterInt32(powerMax);
 		RegisterInt16(effectiveLevel);
 		RegisterInt16(level);
 		RegisterCharString(name, 40);
@@ -103,8 +95,6 @@ public:
 		if (GetVersion() >= 57048) {
 			hp_do_not_set = static_cast<int32_t>(hpCurrent);
 			hp_max_do_not_set = static_cast<int32_t>(hpMax);
-			power_do_not_set = static_cast<int32_t>(powerCurrent);
-			power_max_do_not_set = static_cast<int32_t>(powerMax);
 		}
 	}
 
@@ -112,16 +102,12 @@ public:
 		if (GetVersion() < 57048) {
 			hpCurrent = hp_do_not_set;
 			hpMax = hp_max_do_not_set;
-			powerCurrent = power_do_not_set;
-			powerMax = power_max_do_not_set;
 		}
 	}
 
 private:
 	int32_t hp_do_not_set;
 	int32_t hp_max_do_not_set;
-	int32_t power_do_not_set;
-	int32_t power_max_do_not_set;
 };
 
 struct GroupMemberAppearanceData {
@@ -285,8 +271,10 @@ public:
 	void RegisterElements() override {
 		RegisterInt32(leaderIndex);
 		RegisterInt32(unknown);
-		RescopeArrayElement(appearances);
-		RegisterSubstruct(appearances)->SetCount(5);
+		if (GetVersion() >= 1188 && GetVersion() < 67650) {
+			RescopeArrayElement(appearances);
+			RegisterSubstruct(appearances)->SetCount(5);
+		}
 		RescopeArrayElement(members);
 		RegisterSubstruct(members)->SetCount(5);
 		RescopeArrayElement(locations);
@@ -301,6 +289,25 @@ public:
 	Substruct_GroupMember members[5];
 	Substruct_GroupMemberMapLocation locations[5];
 	uint8_t alignFiller[3];
+};
+
+class Substruct_RaidSheet : public PacketEncodedData {
+public:
+	Substruct_RaidSheet(uint32_t ver) : PacketEncodedData(ver), group_leaders{ -1,-1,-1,-1 } {
+		for (int i = 0; i < 24; i++) {
+			members[i].ResetVersion(ver);
+		}
+	}
+
+	void RegisterElements() override {
+		RescopeArrayElement(members);
+		RegisterSubstruct(members)->SetCount(24);
+		RescopeArrayElement(group_leaders);
+		RegisterInt8(group_leaders)->SetCount(4);
+	}
+
+	int8_t group_leaders[4];
+	Substruct_GroupMember members[24];
 };
 
 /*
