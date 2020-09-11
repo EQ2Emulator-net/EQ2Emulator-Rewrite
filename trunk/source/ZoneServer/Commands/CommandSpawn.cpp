@@ -10,6 +10,9 @@
 #include "../Controllers/PlayerController.h"
 #include "../ZoneServer/ZoneServer.h"
 #include "../Players/NPCPathDebug.h"
+#include "../ZoneServer/SpawnCamp.h"
+#include "../Spawns/SpawnCampSpawn.h"
+#include "../Players/SpawnCampDebug.h"
 
 #define SpawnSet(target, master, action) if(master) { master->action; } target->action
 
@@ -300,6 +303,122 @@ void CommandProcess::CommandPath(const std::shared_ptr<Client>& client, Separato
 		}
 		else {
 			client->chat.DisplayText("Error Text", "Target must be a path point in order to change it", 0xff, false, "");
+		}
+	}
+}
+
+void CommandProcess::CommandSpawnCamp(const std::shared_ptr<Client>& client, Separator& sep) {
+	std::shared_ptr<PlayerController> controller = client->GetController();
+	if (!controller) {
+		LogDebug(LOG_NPC, 0, "CommandSpawnCamp: unable to get player controller");
+		return;
+	}
+
+	std::shared_ptr<SpawnCampDebug> scd = controller->GetSpawnCampDebug();
+	if (!scd) {
+		scd = std::make_shared<SpawnCampDebug>(client);
+		controller->SetSpawnCampDebug(scd);
+	}
+
+	std::shared_ptr<Entity> player = controller->GetControlled();
+	std::shared_ptr<ZoneServer> zone = client->GetZone();
+
+	// Transform the sub command to lowercase
+	std::string cmd = sep.GetString(0);
+	std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::tolower);
+	if (cmd == "show") {
+		std::string cmd2 = sep.GetString(1);
+		std::transform(cmd2.begin(), cmd2.end(), cmd2.begin(), ::tolower);
+		if (cmd2 == "radius") {
+			std::shared_ptr<Spawn> target = controller->GetTarget();
+			if (target && target->IsSpawnCampSpawn()) {
+				std::shared_ptr<SpawnCamp> camp = dynamic_pointer_cast<SpawnCampSpawn>(target)->GetSpawnCamp();
+				if (camp)
+					scd->ShowSpawnCampRadius(camp);
+			}
+		}
+		else {
+			scd->Show();
+			client->chat.DisplayText("MOTD", "Showing all spawn camps in the zone", 0xff, false, "");
+		}
+		return;
+	}
+
+	if (cmd == "new") {
+		std::shared_ptr<SpawnCamp> sc = std::make_shared<SpawnCamp>(zone, player->GetX(), player->GetY(), player->GetZ(), player->GetGridID());
+		zone->AddSpawnCamp(sc);
+		client->chat.DisplayText("MOTD", "Created a new spawn camp", 0xff, false, "");
+		return;
+	}
+
+	if (cmd == "add" && sep.IsNumber(1)) {
+		uint32_t id = sep.GetUInt32(1);
+		std::shared_ptr<Spawn> target = controller->GetTarget();
+		if (target && target->IsSpawnCampSpawn()) {
+			std::shared_ptr<SpawnCamp> camp = dynamic_pointer_cast<SpawnCampSpawn>(target)->GetSpawnCamp();
+			if (camp) {
+				camp->AddSpawnID(id);
+				client->chat.DisplayText("MOTD", "Added spawn id " + to_string(id) + " to the spawn camps list", 0xff, false, "");
+				return;
+			}		
+		}
+	}
+
+	if (cmd == "reset") {
+		std::shared_ptr<Spawn> target = controller->GetTarget();
+		if (target && target->IsSpawnCampSpawn()) {
+			std::shared_ptr<SpawnCamp> camp = dynamic_pointer_cast<SpawnCampSpawn>(target)->GetSpawnCamp();
+			if (camp) {
+				client->chat.DisplayText("MOTD", "Resetting spawn camp", 0xff, false, "");
+				camp->Reset();
+			}
+		}
+	}
+
+	if (cmd == "set") {
+		std::string cmd2 = sep.GetString(1);
+		std::transform(cmd2.begin(), cmd2.end(), cmd2.begin(), ::tolower);
+		
+		if (cmd2 == "radius" && sep.IsNumber(2)) {
+			float radius = sep.GetFloat(2);
+			std::shared_ptr<Spawn> target = controller->GetTarget();
+			if (target && target->IsSpawnCampSpawn()) {
+				std::shared_ptr<SpawnCamp> camp = dynamic_pointer_cast<SpawnCampSpawn>(target)->GetSpawnCamp();
+				if (camp) {
+					camp->SetRadius(radius);
+					client->chat.DisplayText("MOTD", "Setting the spawn camps radius to " + to_string(radius), 0xff, false, "");
+					scd->UpdateSpawnCampRadius(camp);
+				}
+			}
+		}
+
+		if (cmd2 == "density" && sep.IsNumber(2)) {
+			uint16_t numEncounters = sep.GetUInt32(2);
+			std::shared_ptr<Spawn> target = controller->GetTarget();
+			if (target && target->IsSpawnCampSpawn()) {
+				std::shared_ptr<SpawnCamp> camp = dynamic_pointer_cast<SpawnCampSpawn>(target)->GetSpawnCamp();
+				if (camp) {
+					camp->SetNumRadiusEncounter(numEncounters);
+					client->chat.DisplayText("MOTD", "Setting spawn camps density to " + to_string(numEncounters), 0xff, false, "");
+				}
+			}
+		}
+	}
+
+	if (cmd == "details") {
+		std::shared_ptr<Spawn> target = controller->GetTarget();
+		if (target && target->IsSpawnCampSpawn()) {
+			std::shared_ptr<SpawnCamp> camp = dynamic_pointer_cast<SpawnCampSpawn>(target)->GetSpawnCamp();
+			if (camp) {
+				string text = "Radius = " + to_string(camp->GetRadius()) + "\n";
+				text += "Density = " + to_string(camp->GetNumRadiusEncounters()) + "\n";
+
+				client->chat.DisplayText("MOTD", text, 0xff, false, "");
+			}
+			else {
+				client->chat.DisplayText("Error Text", "Target must be a spawn camp", 0xff, false, "");
+			}
+
 		}
 	}
 }

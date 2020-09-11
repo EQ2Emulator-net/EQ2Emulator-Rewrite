@@ -1070,6 +1070,10 @@ void EQ2Stream::ProcessFragmentedData(ProtocolPacket* p) {
 			oversize_buffer = nullptr;
 			oversize_offset = 0;
 		}
+		else if (oversize_offset > oversize_length)
+		{
+			LogError(LOG_NET, 0, "WTF!!!");
+		}
 		return;
 	}
 

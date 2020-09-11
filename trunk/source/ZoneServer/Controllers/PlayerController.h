@@ -5,6 +5,7 @@
 #include <optional>
 
 class NPCPathDebug;
+class SpawnCampDebug;
 
 class PlayerController : public BaseController {
 public:
@@ -23,8 +24,12 @@ public:
 	std::shared_ptr<NPCPathDebug> GetNPCPathDebug() { return m_npcPathDebug; }
 	void SetNPCPathDebug(std::shared_ptr<NPCPathDebug> path) { m_npcPathDebug = path; }
 
+	std::shared_ptr<SpawnCampDebug> GetSpawnCampDebug() { return m_spawnCampDebug; }
+	void SetSpawnCampDebug(std::shared_ptr<SpawnCampDebug> camp) { m_spawnCampDebug = camp; }
+
 private:
 	uint32_t predictionCRC;
 	std::optional<CharacterSheet> charSheet;
 	std::shared_ptr<NPCPathDebug> m_npcPathDebug;
+	std::shared_ptr<SpawnCampDebug> m_spawnCampDebug;
 };

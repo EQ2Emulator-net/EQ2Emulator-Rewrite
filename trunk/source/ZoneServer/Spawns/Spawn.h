@@ -100,6 +100,7 @@ public:
 	virtual bool IsObject() { return false; }
 	virtual bool IsGroundSpawn() { return false; }
 	virtual bool IsPathPoint() { return false; }
+	virtual bool IsSpawnCampSpawn() { return false; }
 
 	float GetX() const { return m_posStruct.x; }
 	float GetY() const { return m_posStruct.y; }

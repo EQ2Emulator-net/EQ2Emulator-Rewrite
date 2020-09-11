@@ -15,6 +15,7 @@
 #include "../Lua/LuaGlobals.h"
 #include "MasterZoneLookup.h"
 #include "../WorldTalk/WorldStream.h"
+#include "../Players/SpawnCampDebug.h"
 
 // Packets
 #include "../Packets/OP_ZoneInfoMsg_Packet.h"
@@ -36,6 +37,7 @@
 #include "../Spawns/Widget.h"
 #include "../Spawns/Sign.h"
 #include "../Spawns/GroundSpawn.h"
+#include "SpawnCamp.h"
 
 extern ZoneDatabase database;
 extern ZoneOperator g_zoneOperator;
@@ -158,6 +160,11 @@ void ZoneServer::Process() {
 			for (std::pair<std::pair<int32_t, int32_t>, std::shared_ptr<Cell> > kvp : m_spGrid) {
 				if (kvp.second->IsActive())
 					kvp.second->Process();
+			}
+
+			// Process spawn camps
+			for (std::shared_ptr<SpawnCamp> camp : m_spawnCamps) {
+				camp->Process();
 			}
 		}
 
@@ -398,6 +405,73 @@ void ZoneServer::SendDestroyGhost(std::shared_ptr<Client> client, std::shared_pt
 	client->encoded_packets.RemoveBuffer(EEncodedPackets::EEncoded_UpdateSpawnVis, index);
 
 	spawn->RemoveClient(client);
+}
+
+void ZoneServer::RemoveSpawn(std::shared_ptr<Spawn> spawn) {
+	// Remove spawn from the lists
+	if (spawn->IsSign()) {
+		std::vector<std::shared_ptr<Spawn> >::iterator sign_itr;
+		for (sign_itr = m_signList.begin(); sign_itr != m_signList.end(); sign_itr++) {
+			if (spawn == *sign_itr) {
+				m_signList.erase(sign_itr);
+				break;
+			}
+		}
+	}
+	else if (spawn->IsWidget()) {
+		std::vector<std::shared_ptr<Spawn> >::iterator widget_itr;
+		for (widget_itr = m_widgetList.begin(); widget_itr != m_widgetList.end(); widget_itr++) {
+			if (spawn == *widget_itr) {
+				m_widgetList.erase(widget_itr);
+				break;
+			}
+		}
+	}
+	else if (spawn->IsObject()) {
+		std::vector<std::shared_ptr<Object> >::iterator object_itr;
+		for (object_itr = m_objectList.begin(); object_itr != m_objectList.end(); object_itr++) {
+			if (spawn == *object_itr) {
+				m_objectList.erase(object_itr);
+				break;
+			}
+		}
+	}
+	else if (spawn->IsGroundSpawn()) {
+		std::vector<std::shared_ptr<GroundSpawn> >::iterator ground_itr;
+		for (ground_itr = m_groundspawnList.begin(); ground_itr != m_groundspawnList.end(); ground_itr++) {
+			if (spawn == *ground_itr) {
+				m_groundspawnList.erase(ground_itr);
+				break;
+			}
+		}
+	}
+	else {
+		std::vector<std::shared_ptr<Entity> >::iterator entity_itr;
+		for (entity_itr = m_entityList.begin(); entity_itr != m_entityList.end(); entity_itr++) {
+			if (spawn == *entity_itr) {
+				m_entityList.erase(entity_itr);
+				break;
+			}
+		}
+	}
+
+	// Remove from global list or from cell list
+	if (spawn->IsGlobalSpawn()) {
+		std::vector<std::weak_ptr<Spawn> >::iterator global_itr;
+		for (global_itr = m_globalSpawns.begin(); global_itr != m_globalSpawns.end(); global_itr++) {
+			if (EmuWeakCmp(spawn, (*global_itr))) {
+				m_globalSpawns.erase(global_itr);
+				break;
+			}
+		}
+	}
+	else {
+		std::shared_ptr<Cell> cell = GetCell(spawn->GetCellCoordinates());
+		cell->RemoveSpawn(spawn);
+	}
+
+	// Remove from all clients
+	RemoveSpawnFromAllClients(spawn);
 }
 
 void ZoneServer::RemovePlayer(std::shared_ptr<Entity> player) {
@@ -1081,6 +1155,19 @@ void ZoneServer::AddSpawnToCell(std::shared_ptr<Spawn> spawn, std::pair<int32_t,
 	std::shared_ptr<Cell> cell = GetCell(cellCoords);
 	if (cell)
 		cell->AddSpawn(spawn);
+
+	// Send spawn to clients if cell is active
+	if (cell->IsActive()) {
+		for (std::pair<uint32_t, std::weak_ptr<Client> > kvp : Clients) {
+			std::shared_ptr<Client> client = kvp.second.lock();
+			if (client) {
+				if (!client->WasSentSpawn(spawn)) {
+					if (GetCellDistance(client->GetController()->GetControlled()->GetCellCoordinates(), cell->GetCellCoordinates()) < 2)
+						SendSpawnToClient(spawn, client);
+				}
+			}
+		}
+	}
 }
 
 void ZoneServer::TryActivateCells() {
@@ -1115,39 +1202,39 @@ std::vector<std::shared_ptr<Cell> > ZoneServer::GetNeighboringCells(std::pair<in
 	if (itr != m_spGrid.end())
 		ret.push_back(itr->second);
 
-itr = m_spGrid.find(std::make_pair(cellCoords.first - 1, cellCoords.second - 1));
-if (itr != m_spGrid.end())
-ret.push_back(itr->second);
+	itr = m_spGrid.find(std::make_pair(cellCoords.first - 1, cellCoords.second - 1));
+	if (itr != m_spGrid.end())
+		ret.push_back(itr->second);
 
-itr = m_spGrid.find(std::make_pair(cellCoords.first, cellCoords.second - 1));
-if (itr != m_spGrid.end())
-ret.push_back(itr->second);
+	itr = m_spGrid.find(std::make_pair(cellCoords.first, cellCoords.second - 1));
+	if (itr != m_spGrid.end())
+		ret.push_back(itr->second);
 
-itr = m_spGrid.find(std::make_pair(cellCoords.first + 1, cellCoords.second - 1));
-if (itr != m_spGrid.end())
-ret.push_back(itr->second);
+	itr = m_spGrid.find(std::make_pair(cellCoords.first + 1, cellCoords.second - 1));
+	if (itr != m_spGrid.end())
+		ret.push_back(itr->second);
 
-itr = m_spGrid.find(std::make_pair(cellCoords.first - 1, cellCoords.second));
-if (itr != m_spGrid.end())
-ret.push_back(itr->second);
+	itr = m_spGrid.find(std::make_pair(cellCoords.first - 1, cellCoords.second));
+	if (itr != m_spGrid.end())
+		ret.push_back(itr->second);
 
-itr = m_spGrid.find(std::make_pair(cellCoords.first + 1, cellCoords.second));
-if (itr != m_spGrid.end())
-ret.push_back(itr->second);
+	itr = m_spGrid.find(std::make_pair(cellCoords.first + 1, cellCoords.second));
+	if (itr != m_spGrid.end())
+		ret.push_back(itr->second);
 
-itr = m_spGrid.find(std::make_pair(cellCoords.first - 1, cellCoords.second + 1));
-if (itr != m_spGrid.end())
-ret.push_back(itr->second);
+	itr = m_spGrid.find(std::make_pair(cellCoords.first - 1, cellCoords.second + 1));
+	if (itr != m_spGrid.end())
+		ret.push_back(itr->second);
 
-itr = m_spGrid.find(std::make_pair(cellCoords.first, cellCoords.second + 1));
-if (itr != m_spGrid.end())
-ret.push_back(itr->second);
+	itr = m_spGrid.find(std::make_pair(cellCoords.first, cellCoords.second + 1));
+	if (itr != m_spGrid.end())
+		ret.push_back(itr->second);
 
-itr = m_spGrid.find(std::make_pair(cellCoords.first + 1, cellCoords.second + 1));
-if (itr != m_spGrid.end())
-ret.push_back(itr->second);
+	itr = m_spGrid.find(std::make_pair(cellCoords.first + 1, cellCoords.second + 1));
+	if (itr != m_spGrid.end())
+		ret.push_back(itr->second);
 
-return ret;
+	return ret;
 }
 
 std::pair<int32_t, int32_t> ZoneServer::GetCellCoordinatesForSpawn(std::shared_ptr<Spawn> spawn) {
@@ -1192,14 +1279,16 @@ void ZoneServer::ChangeSpawnCell(std::shared_ptr<Spawn> spawn, std::pair<int32_t
 					if (GetCellDistance(client->GetController()->GetControlled()->GetCellCoordinates(), newCell->GetCellCoordinates()) >= 2)
 						SendDestroyGhost(client, spawn);
 				}
-
+				 /*
+				 * Moved to AddSpawnToCell()
+				 * 
 				// if new cell is active send it to players that need it
 				if (newCell->IsActive()) {
 					if (!client->WasSentSpawn(spawn)) {
 						if (GetCellDistance(client->GetController()->GetControlled()->GetCellCoordinates(), newCell->GetCellCoordinates()) < 2)
 							SendSpawnToClient(spawn, client);
 					}
-				}
+				}*/
 			}
 		}
 	}
@@ -1455,4 +1544,22 @@ void ZoneServer::SaveCharactersInZone() {
 
 	//Detach a thread to run these queries since updates can be slow with several players
 	ThreadManager::ThreadStart("ZoneServer::SaveCharactersInZone", std::bind(saveHelper, std::move(updates), count)).detach();
+}
+
+void ZoneServer::AddSpawnCamp(std::shared_ptr<SpawnCamp> camp) {
+	m_spawnCamps.push_back(camp);
+
+	//std::map<uint32_t, std::weak_ptr<Client> > Clients;
+	for (std::pair<uint32_t, std::weak_ptr<Client> > kvp : Clients) {
+		std::shared_ptr<Client> client = kvp.second.lock();
+		if (client) {
+			std::shared_ptr<PlayerController> controller = client->GetController();
+			if (controller) {
+				std::shared_ptr<SpawnCampDebug> scd = controller->GetSpawnCampDebug();
+				if (scd) {
+					scd->AddSpawnCamp(camp);
+				}
+			}
+		}
+	}
 }

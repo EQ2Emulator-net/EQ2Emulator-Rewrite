@@ -3,6 +3,7 @@
 #include "PlayerController.h"
 #include "../Spawns/Entity.h"
 #include "../Players/NPCPathDebug.h"
+#include "../Players/SpawnCampDebug.h"
 
 bool PlayerController::Process() {
 	bool ret = true;
@@ -10,6 +11,9 @@ bool PlayerController::Process() {
 	if (m_npcPathDebug) {
 		ret = m_npcPathDebug->Process();
 	}
+
+	if (m_spawnCampDebug)
+		ret = m_spawnCampDebug->Process();
 
 	return ret;
 }

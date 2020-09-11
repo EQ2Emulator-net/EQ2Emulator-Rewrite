@@ -255,8 +255,19 @@ bool alpha_check(unsigned char val) {
 * @date 6 Mar 2019
 */
 std::mt19937& GetRandMT() {
-	thread_local std::mt19937 mt(std::random_device().operator()());
-	return mt;
+	class RandoEngine {
+	public:
+		std::random_device r;
+		std::seed_seq seed;
+		std::mt19937 mt;
+
+		RandoEngine() : seed{ r(), r(), r(), r(), r(), r(), r(), r() }, mt(seed) {
+
+		}
+	};
+
+	thread_local RandoEngine eng;
+	return eng.mt;
 }
 
 /**
