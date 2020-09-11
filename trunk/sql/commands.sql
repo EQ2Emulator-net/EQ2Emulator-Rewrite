@@ -23,9 +23,9 @@ CREATE TABLE IF NOT EXISTS `commands` (
   UNIQUE KEY `Index 2` (`command`,`parent_command`),
   KEY `FK_commands_new_commands_new` (`parent_command`),
   CONSTRAINT `FK_commands_new_commands_new` FOREIGN KEY (`parent_command`) REFERENCES `commands` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=524 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=525 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
--- Dumping data for table eq2_rewrite.commands: ~499 rows (approximately)
+-- Dumping data for table eq2_rewrite.commands: ~500 rows (approximately)
 /*!40000 ALTER TABLE `commands` DISABLE KEYS */;
 INSERT INTO `commands` (`id`, `command`, `parent_command`, `required_status`, `syntax`) VALUES
 	(1, 'who', NULL, NULL, NULL),
@@ -544,7 +544,8 @@ INSERT INTO `commands` (`id`, `command`, `parent_command`, `required_status`, `s
 	(520, 'cancel_aa_profile', NULL, NULL, NULL),
 	(521, 'save_aa_profile', NULL, NULL, NULL),
 	(522, 'devmode', NULL, NULL, NULL),
-	(523, 'path', NULL, NULL, NULL);
+	(523, 'path', NULL, NULL, NULL),
+	(524, 'camp', 199, NULL, NULL);
 /*!40000 ALTER TABLE `commands` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
