@@ -15,7 +15,7 @@ void UpdateCharacterSheetMsgData::PreWrite() {
 	hp = attributes->hp.currentValue;
 	maxHp = attributes->hp.maxValue;
 
-	if (GetVersion() >= 67742) {
+	if (GetVersion() >= 67730) {
 		advExp_do_not_set = advExp;
 		advExpNextLevel_do_not_set = advExpNextLevel;
 		tsExp_do_not_set = tsExp;

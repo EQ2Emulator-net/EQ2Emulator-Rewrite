@@ -264,6 +264,8 @@ std::mt19937& GetRandMT() {
 		RandoEngine() : seed{ r(), r(), r(), r(), r(), r(), r(), r() }, mt(seed) {
 
 		}
+
+		~RandoEngine() = default;
 	};
 
 	thread_local RandoEngine eng;

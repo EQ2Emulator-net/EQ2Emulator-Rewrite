@@ -10,6 +10,324 @@
 #include "Substruct_GroupMember.h"
 #include "../Players/CharacterSheet.h"
 
+struct SpellProps {
+	//These are the blue stats on items and also appear in the character sheet, a good way to find the switch in the client is to search for
+	//Blurs Vision ^ they appear in the same order as their id/index for that client
+
+	float hp_regen;
+	float power_regen;
+	float ooc_hp_regen;
+	float ooc_power_regen;
+	float ic_hp_regen_bonus;
+	float ic_power_regen_bonus;
+	float hp_max;
+	float hp_max_sta_bonus;
+	float hp_max_perc_total;
+	float ooc_run_speed;
+	float slow;
+	float speed_mount_ground;
+	float speed_mount_air;
+	float speed_mount_leap;
+	float mount_leap_distance;
+	float glide_efficiency;
+	float ic_run_speed;
+	float haste;
+	float haste_spell;
+	float power_max;
+	float power_max_perc;
+	float all_attributes;
+	float blur_vision;
+	float magic_level_immunity;
+	float hate_gain;
+	float combat_xp_mod;
+	float ts_xp_mod;
+	float aa_xp_mod;
+	float status_earned_mod;
+	float size_mod;
+	float dps;
+	float dps_spell;
+	float stealth;
+	float invis;
+	float see_stealth;
+	float see_invis;
+	float effective_level_mod;
+	float riposte_chance;
+	float parry_chance;
+	float dodge_chance;
+	float ae_autoattack_chance;
+	float ae_autoattack_chance_spell;
+	float flurry_chance;
+	float flurry_chance_spell;
+	float multi_attack_chance;
+	float multi_attack_chance_pvp;
+	float multi_attack_chance_spell;
+	float multi_attack_chance_spell_pvp;
+	float doublecast_chance_spell;
+	float doublecast_chance_ability;
+	float doublecast_chance_spell_pvp;
+	float melee_damage_multiplier;
+	float bountiful_harvest;
+	float block_chance_shield;
+	float hp_regen_bonus;
+	float power_regen_bonus;
+	float crit_chance;
+	float crit_avoidance;
+	float crit_chance_beneficial;
+	float crit_bonus;
+	float crit_bonus_pvp;
+	float hp_unconcious;
+	float ability_reuse_speed;
+	float ability_recovery_speed;
+	float ability_casting_speed;
+	float spell_reuse_speed;
+	float melee_weapon_range;
+	float ranged_weapon_range;
+	float falling_damage_reduction;
+	float riposte_damage;
+	float block_chance_minimum;
+	float movement_weave;
+	float ic_hp_regen;
+	float ic_power_regen;
+	float speed_contest_only;
+	float tracking_avoidance;
+	float speed_stealth_invis;
+	float loot_coin_mod;
+	float mitigation_increase;
+	float ammo_conservation_chance;
+	float strikethrough;
+	float status_bonus;
+	float accuracy;
+	float counter_strike;
+	float shield_bash;
+	float weapon_damage_bonus;
+	float weapon_damage_bonus_spell;
+	float weapon_damage_bonus_melee;
+	float riposte_chance_additional;
+	float crit_mit;
+	float potency;
+	float potency_pvp;
+	float toughness;
+	float lethality;
+	float stamina_bonus;
+	float wis_mit_bonus;
+	float heals_received;
+	float heals_received_pct;
+	float power_received;
+	float crit_mit_pvp;
+	float avoidance_base_bonus;
+	float ic_savagery_regen;
+	float ooc_savagery_regen;
+	float savagery_regen;
+	float savagery_gain_mod;
+	float savagery_level_max;
+	float ic_dissonance_regen;
+	float ooc_dissonance_regen;
+	float dissonance_regen;
+	float dissonance_gain_mod;
+	float ae_autoattack_avoid;
+	float agnostic_damage_bonus;
+	float agnostic_heal_bonus;
+	float tithe_gain;
+	float fervor;
+	float resolve;
+	float combat_mit;
+	float ability_mit;
+	float multi_attack_avoidance;
+	float doublecast_spell_avoidance;
+	float doublecast_ability_avoidance;
+	float dps_mit;
+	float fervor_mit;
+	float flurry_avoidance;
+	float weapon_damage_bonus_mit;
+	float weapon_damage_bonus_melee_mit;
+	float ability_mod_mit;
+	float melee_damage_multiplier_mit;
+	float heals_received_pot_mit;
+	float heals_received_critbonus_mit;
+	float heals_received_fervor_mit;
+	float heals_received_normalized_mit;
+
+	SpellProps() {
+		memset(this, 0, sizeof(*this));
+	}
+};
+
+class Substruct_SpellProps : public PacketSubstruct, public SpellProps {
+public:
+	Substruct_SpellProps(uint32_t ver = 0) : PacketSubstruct(ver) {
+
+	}
+
+	~Substruct_SpellProps() = default;
+
+	void RegisterElements() override {
+		const uint32_t ver = GetVersion();
+
+		RegisterFloat(hp_regen);
+		RegisterFloat(power_regen);
+		RegisterFloat(ooc_hp_regen);
+		RegisterFloat(ooc_power_regen);
+		RegisterFloat(ic_hp_regen_bonus);
+		RegisterFloat(ic_power_regen_bonus);
+		RegisterFloat(hp_max);
+		RegisterFloat(hp_max_sta_bonus);
+		RegisterFloat(hp_max_perc_total);
+		RegisterFloat(ooc_run_speed);
+		RegisterFloat(slow);
+		RegisterFloat(speed_mount_ground);
+		RegisterFloat(speed_mount_air);
+		RegisterFloat(speed_mount_leap);
+		RegisterFloat(mount_leap_distance);
+		RegisterFloat(glide_efficiency);
+		RegisterFloat(ic_run_speed);
+		RegisterFloat(haste);
+		if (ver < 60114) {
+			RegisterFloat(haste_spell);
+		}
+		RegisterFloat(power_max);
+		RegisterFloat(power_max_perc);
+		RegisterFloat(all_attributes);
+		RegisterFloat(blur_vision);
+		RegisterFloat(magic_level_immunity);
+		RegisterFloat(hate_gain);
+		RegisterFloat(combat_xp_mod);
+		RegisterFloat(ts_xp_mod);
+		RegisterFloat(aa_xp_mod);
+		if (ver >= 60114) {
+			RegisterFloat(status_earned_mod);
+		}
+		RegisterFloat(size_mod);
+		RegisterFloat(dps);
+		if (ver < 60114) {
+			RegisterFloat(dps_spell);
+		}
+		RegisterFloat(stealth);
+		RegisterFloat(invis);
+		RegisterFloat(see_stealth);
+		RegisterFloat(see_invis);
+		RegisterFloat(effective_level_mod);
+		RegisterFloat(riposte_chance);
+		RegisterFloat(parry_chance);
+		RegisterFloat(dodge_chance);
+		RegisterFloat(ae_autoattack_chance);
+		if (ver < 60114) {
+			RegisterFloat(ae_autoattack_chance_spell);
+		}
+		RegisterFloat(multi_attack_chance);
+		if (ver < 60114) {
+			RegisterFloat(multi_attack_chance_pvp);
+			RegisterFloat(multi_attack_chance_spell);
+			RegisterFloat(multi_attack_chance_spell_pvp);
+		}
+		RegisterFloat(doublecast_chance_spell);
+		if (ver < 60114) {
+			RegisterFloat(doublecast_chance_spell_pvp);
+		}
+		else if (ver >= 67650) {
+			RegisterFloat(doublecast_chance_ability);
+		}
+		RegisterFloat(flurry_chance);
+		if (ver < 60114) {
+			RegisterFloat(flurry_chance_spell);
+		}
+		RegisterFloat(melee_damage_multiplier);
+		RegisterFloat(bountiful_harvest);
+		RegisterFloat(block_chance_shield);
+		RegisterFloat(hp_regen_bonus);
+		RegisterFloat(power_regen_bonus);
+		RegisterFloat(crit_chance);
+		RegisterFloat(crit_avoidance);
+		RegisterFloat(crit_chance_beneficial);
+		RegisterFloat(crit_bonus);
+		if (ver < 60114) {
+			RegisterFloat(crit_bonus_pvp);
+		}
+		RegisterFloat(potency);
+		if (ver < 60114) {
+			RegisterFloat(potency_pvp);
+		}
+		RegisterFloat(hp_unconcious);
+		RegisterFloat(ability_reuse_speed);
+		RegisterFloat(ability_recovery_speed);
+		RegisterFloat(ability_casting_speed);
+		RegisterFloat(spell_reuse_speed);
+		RegisterFloat(melee_weapon_range);
+		RegisterFloat(ranged_weapon_range);
+		RegisterFloat(falling_damage_reduction);
+		RegisterFloat(riposte_damage);
+		RegisterFloat(block_chance_minimum);
+		RegisterFloat(movement_weave);
+		RegisterFloat(ic_hp_regen);
+		RegisterFloat(ic_power_regen);
+		RegisterFloat(speed_contest_only);
+		RegisterFloat(tracking_avoidance);
+		RegisterFloat(speed_stealth_invis);
+		RegisterFloat(loot_coin_mod);
+		RegisterFloat(mitigation_increase);
+		RegisterFloat(ammo_conservation_chance);
+		RegisterFloat(strikethrough);
+		RegisterFloat(status_bonus);
+		RegisterFloat(accuracy);
+		RegisterFloat(counter_strike);
+		RegisterFloat(shield_bash);
+		if (ver < 67650) {
+			RegisterFloat(weapon_damage_bonus);
+		}
+		if (ver >= 60114) {
+			RegisterFloat(weapon_damage_bonus_spell);
+		}
+		RegisterFloat(weapon_damage_bonus_melee);
+		RegisterFloat(riposte_chance_additional);
+		RegisterFloat(crit_mit);
+		RegisterFloat(toughness);
+		RegisterFloat(lethality);
+		RegisterFloat(stamina_bonus);
+		RegisterFloat(wis_mit_bonus);
+		RegisterFloat(heals_received);
+		RegisterFloat(heals_received_pct);
+		if (ver >= 67650) {
+			RegisterFloat(power_received);
+		}
+		RegisterFloat(crit_mit_pvp);
+		RegisterFloat(avoidance_base_bonus);
+		RegisterFloat(ic_savagery_regen);
+		RegisterFloat(ooc_savagery_regen);
+		RegisterFloat(savagery_regen);
+		RegisterFloat(savagery_gain_mod);
+		RegisterFloat(savagery_level_max);
+		if (ver >= 60114) {
+			RegisterFloat(ic_dissonance_regen);
+			RegisterFloat(ooc_dissonance_regen);
+			RegisterFloat(dissonance_regen);
+			RegisterFloat(dissonance_gain_mod);
+			RegisterFloat(ae_autoattack_avoid);
+			RegisterFloat(agnostic_damage_bonus);
+			RegisterFloat(agnostic_heal_bonus);
+			RegisterFloat(tithe_gain);
+			if (ver >= 67650) {
+				RegisterFloat(fervor);
+				RegisterFloat(resolve);
+				RegisterFloat(combat_mit);
+				RegisterFloat(ability_mit);
+				RegisterFloat(multi_attack_avoidance);
+				RegisterFloat(doublecast_spell_avoidance);
+				RegisterFloat(doublecast_ability_avoidance);
+				RegisterFloat(dps_mit);
+				RegisterFloat(fervor_mit);
+				RegisterFloat(flurry_avoidance);
+				RegisterFloat(weapon_damage_bonus_mit);
+				RegisterFloat(weapon_damage_bonus_melee_mit);
+				RegisterFloat(ability_mod_mit);
+				RegisterFloat(melee_damage_multiplier_mit);
+				RegisterFloat(heals_received_pot_mit);
+				RegisterFloat(heals_received_critbonus_mit);
+				RegisterFloat(heals_received_fervor_mit);
+				RegisterFloat(heals_received_normalized_mit);
+			}
+		}
+	}
+};
+
 //This is all the primitive data which can be zeroed
 //Need to make this crap less ridiculous at some point
 struct CharacterSheetMiscData {
@@ -29,14 +347,6 @@ struct CharacterSheetMiscData {
 	float tsExpNextLevel;
 	float tsExpDebt;
 	float tsVitality;
-
-protected:
-	double advExp_do_not_set;
-	double advExpNextLevel_do_not_set;
-	double tsExp_do_not_set;
-	double tsExpNextLevel_do_not_set;
-
-public:
 
 	int32_t gmLevel;
 	uint16_t account_age_base;
@@ -181,309 +491,6 @@ public:
 	float base_spell_crit;
 	float base_taunt_crit;
 	float base_heal_crit;
-	float unknown109;
-	float unknown110;
-	float out_of_combat_health_regen;
-	float out_of_combat_power_regen;
-	float in_combat_regen;
-	float deflect;
-	float increase_max_health;
-	float increase_max_health2;
-	float unknown117;
-	float increase_speed;
-	float unknown119;
-	float increase_ground_speed;
-	float increase_air_speed;
-	float unknown122;
-	float unknown123;
-	float unknown124;
-	float in_combat_movement_speed;
-	float haste;
-	float increase_max_power;
-	float increase_max_power2;
-	float unknown128;
-	float drunk;
-	float unknown129;
-	float hate_mod;
-	float adventure_effects_bonus;
-	float tradeskill_effects_bonus;
-	float aa_effects_bonus;
-	float unknown131;
-	float unknown131A;
-	float dps;
-	float unknown132;
-	float unknown133;
-	float unknown134;
-	float base_avoidance;
-	float unknown136;
-	float uncontested_riposte_pve;
-	float uncontested_parry_pve;
-	float unknown139;
-	float spell_multi_attack;
-	float unknown140;
-	float bountiful_harvest;
-	float block_chance;
-	float unknown141;
-	float unknown142;
-	float crit_chance;
-	float unknown143;
-	float unknown144;
-	float crit_bonus;
-	float potency;
-	float unknown145;
-	float reuse_speed;
-	float recovery_speed;
-	float casting_speed;
-	float spell_reuse_speed;
-	float unknown146;
-	float unknown147;
-	float decrease_falling_dmg;
-	float unknown149;
-	float unknown150;
-	float unknown151;
-	float unknown152;
-	float unknown153;
-	float unknown154;
-	float unknown155;
-	float unknown156;
-	float loot_coin;
-	float mitigation_increase;
-	float unknown159;
-	float strikethrough;
-	float unknown160;
-	float accuracy;
-	float unknown161;
-	float unknown162;
-	float wdb;
-	float spell_wdb;
-	float unknown165;
-	float unknown166;
-	float unknown167;
-	float unknown168;
-	float lethality_pve;
-	float unknown170;
-	float unknown171;
-	float unknown172;
-	float unknown173;
-	float pvp_crit_mit;
-	float unknown175;
-	float unknown200;
-	float unknown201;
-	float unknown202;
-	float unknown203;
-	float unknown204;
-	float unknown205;
-	float unknown206;
-	float unknown207;
-	float unknown208;
-	float unknown209;
-	float unknown210;
-	float unknown211;
-	float unknown212;
-	float unknown213;
-	float unknown214;
-	float unknown215;
-	float unknown216;
-	float unknown217;
-	float unknown218;
-	float unknown219;
-	float unknown220;
-	float unknown221;
-	float unknown222;
-	float unknown223;
-	float unknown224;
-	float unknown225;
-	float unknown226;
-	float unknown227;
-	float unknown228;
-	float unknown229;
-	float unknown230;
-	float unknown231;
-	float unknown232;
-	float unknown233;
-	float unknown234;
-	float unknown235;
-	float unknown236;
-	float unknown237;
-	float unknown238;
-	float unknown239;
-	float unknown240;
-	float unknown241;
-	float unknown242;
-	float unknown243;
-	float unknown244;
-	float unknown245;
-	float unknown246;
-	float unknown247;
-	float uncontested_riposte_gear_cap;
-	float uncontested_parry_gear_cap;
-	float uncontested_dodge_gear_cap;
-	float unknown251;
-	float unknown252;
-	float unknown253;
-	float unknown254;
-	float unknown255;
-	float unknown256;
-	float unknown257;
-	float unknown258;
-	float unknown259;
-	float unknown260;
-	float unknown261;
-	float unknown262;
-	float unknown263;
-	float unknown264;
-	float unknown265;
-	float unknown266;
-	float unknown267;
-	float unknown268;
-	float unknown269;
-	float unknown270;
-	float unknown271;
-	float unknown272;
-	float unknown273;
-	float unknown274;
-	float unknown275;
-	float unknown276;
-	float unknown277;
-	float unknown278;
-	float unknown279;
-	float unknown280;
-	float unknown281;
-	float unknown282;
-	float unknown283;
-	float unknown284;
-	float unknown285;
-	float unknown286;
-	float unknown287;
-	float unknown288;
-	float unknown289;
-	float unknown290;
-	float unknown291;
-	float unknown292;
-	float unknown293;
-	float unknown294;
-	float unknown295;
-	float unknown296;
-	float unknown297;
-	float unknown298;
-	float unknown299;
-	float unknown300;
-	float unknown301;
-	float unknown302;
-	float unknown303;
-	float unknown304;
-	float unknown305;
-	float unknown306;
-	float unknown307;
-	float unknown308;
-	float out_of_combat_health_regen_pvp;
-	float out_of_combat_power_regen_pvp;
-	float in_combat_regen_pvp;
-	float deflect_pvp;
-	float increase_max_heath_pvp;
-	float increase_max_health2_pvp;
-	float unknown312;
-	float increase_speed_pvp;
-	float unknown313;
-	float increase_ground_speed_pvp;
-	float increase_air_speed_pvp;
-	float unknown314;
-	float unknown315;
-	float unknown316;
-	float in_combat_movement_speed_pvp;
-	float Haste_pvp;
-	float increase_max_power_pvp;
-	float increase_max_power2_pvp;
-	float unknown321;
-	float unknown322;
-	float unknown323;
-	float hate_mod_pvp;
-	float unknown325;
-	float unknown326;
-	float unknown327;
-	float unknown328;
-	float dps_pvp;
-	float unknown330;
-	float unknown331;
-	float unknown332;
-	float base_avoidance_pvp;
-	float unknown334;
-	float uncontested_riposte_pvp;
-	float uncontested_parry_pvp;
-	float unknown337;
-	float unknown338;
-	float multi_attack_pvp;
-	float spell_multi_attack_pvp;
-	float unknown341;
-	float unknown342;
-	float unknown343;
-	float block_chance_pvp;
-	float unknown345;
-	float unknown346;
-	float crit_chance_pvp;
-	float unknown348;
-	float unknown349;
-	float crit_bonus_pvp;
-	float potency_pvp;
-	float unknown352;
-	float reuse_speed_pvp;
-	float recovery_speed_pvp;
-	float casting_speed_pvp;
-	float unknown356;
-	float unknown357;
-	float unknown358;
-	float decrease_falling_dmg_pvp;
-	float unknown360;
-	float unknown361;
-	float unknown362;
-	float adventure_effects_bonus_2;
-	float tradeskill_effects_bonus_2;
-	float aa_effects_bonus_2;
-	float unknown366;
-	float unknown367;
-	float loot_coin_pvp;
-	float mitigation_increase_pvp;
-	float unknown370;
-	float strikethrough_pvp;
-	float unknown372;
-	float unknown373;
-	float unknown374;
-	float unknown375;
-	float unknown376;
-	float unknown377;
-	float unknown378;
-	float unknown379;
-	float unknown380;
-	float unknown381;
-	float lethality_pvp;
-	float unknown383;
-	float unknown384;
-	float unknown385;
-	float unknown386;
-	float unknown387;
-	float unknown388;
-	float unknown389;
-	float unknown390;
-	float unknown391;
-	float unknown392;
-	float unknown393;
-	float unknown394;
-	float unknown395;
-	float unknown396;
-	float unknown397;
-	float unknown398;
-	float unknown399;
-	float unknown400;
-	float unknown401;
-	float unknown402;
-	float unknown403;
-	float unknown404;
-	float unknown405;
-	float unknown406;
-	float unknown407;
-	float unknown408;
-	float unknown409;
-	float unknown410;
 	float durability_mod;
 	float durability_add;
 	float progress_mod;
@@ -619,11 +626,10 @@ public:
 	//a bunch of others but not sure that anything else actually "does" anything for the client
 	uint64_t spell_state_flags;
 	uint8_t unknown525b[6];
-	float rain;
+	float humidity;
 	float wind_direction;
 	uint8_t unknown527[4];
-	uint32_t status_points;
-	uint32_t guild_status;
+	uint64_t guild_status;
 	uint8_t unknownAOMa;
 	uint8_t unknown526[151];
 	uint8_t unknown188[52];
@@ -643,7 +649,8 @@ public:
 		RegisterElements();
 	}
 
-	UpdateCharacterSheetMsgData(uint32_t version, const CharacterSheet& sheet) : PacketEncodedData(version), CharacterSheet(sheet), groupSheet(version) {
+	UpdateCharacterSheetMsgData(uint32_t version, const CharacterSheet& sheet) : PacketEncodedData(version), CharacterSheet(sheet),
+		groupSheet(version), pve_props(version), pvp_props(version), unk_props(version), unk_props2(version) {
 		for (uint8_t i = 0; i < 45; i++)
 			spell_effects[i].ResetVersion(version);
 		for (uint8_t i = 0; i < 45; i++)
@@ -663,7 +670,17 @@ public:
 	Substruct_MaintainedEffects maintained_effects[30];
 	Substruct_GroupSheet groupSheet;
 
+	Substruct_SpellProps pve_props;
+	Substruct_SpellProps unk_props;
+	Substruct_SpellProps pvp_props;
+	Substruct_SpellProps unk_props2;
+
 private:
+	double advExp_do_not_set;
+	double advExpNextLevel_do_not_set;
+	double tsExp_do_not_set;
+	double tsExpNextLevel_do_not_set;
+
 	void RegisterElements() {
 		if (version >= 67650) {
 			RegisterElements67650();
@@ -965,315 +982,11 @@ private:
 		RegisterUInt32(flags2);
 		static std::string afk_message = "afk_message";
 		RegisterCharString(afk_message, 256);
-		RegisterFloat(unknown109);
-		RegisterFloat(unknown110);
-		RegisterFloat(out_of_combat_health_regen);
-		RegisterFloat(out_of_combat_power_regen);
-		RegisterFloat(in_combat_regen);
-		RegisterFloat(deflect);
-		RegisterFloat(increase_max_health);
-		RegisterFloat(increase_max_health2);
-		RegisterFloat(unknown117);
-		RegisterFloat(increase_speed);
-		RegisterFloat(unknown119);
-		RegisterFloat(increase_ground_speed);
-		RegisterFloat(increase_air_speed);
-		RegisterFloat(unknown122);
-		RegisterFloat(unknown123);
-		RegisterFloat(unknown124);
-		RegisterFloat(in_combat_movement_speed);
-		RegisterFloat(haste);
-		RegisterFloat(increase_max_power);
-		RegisterFloat(increase_max_power2);
-		RegisterFloat(unknown128);
-		RegisterFloat(drunk);
-		RegisterFloat(unknown129);
-		RegisterFloat(hate_mod);
-		RegisterFloat(adventure_effects_bonus);
-		RegisterFloat(tradeskill_effects_bonus);
-		RegisterFloat(aa_effects_bonus);
-		RegisterFloat(unknown131);
-		RegisterFloat(unknown131A);
-		RegisterFloat(dps);
-		RegisterFloat(unknown132);
-		RegisterFloat(unknown133);
-		RegisterFloat(unknown134);
-		RegisterFloat(base_avoidance);
-		RegisterFloat(unknown136);
-		RegisterFloat(uncontested_riposte_pve);
-		RegisterFloat(uncontested_parry_pve);
-		RegisterFloat(unknown139);
-		float& melee_ae = attributes->aeAttackChance.currentValue;
-		RegisterFloat(melee_ae);
-		float& multi_attack = attributes->multiAttackChance.baseValue;
-		RegisterFloat(multi_attack);
-		RegisterFloat(spell_multi_attack);
-		float& flurry = attributes->flurryChance.baseValue;
-		RegisterFloat(flurry);
-		RegisterFloat(unknown140);
-		RegisterFloat(bountiful_harvest);
-		RegisterFloat(block_chance);
-		RegisterFloat(unknown141);
-		RegisterFloat(unknown142);
-		RegisterFloat(crit_chance);
-		RegisterFloat(unknown143);
-		RegisterFloat(unknown144);
-		RegisterFloat(crit_bonus);
-		RegisterFloat(potency);
-		RegisterFloat(unknown145);
-		RegisterFloat(reuse_speed);
-		RegisterFloat(recovery_speed);
-		RegisterFloat(casting_speed);
-		RegisterFloat(spell_reuse_speed);
-		RegisterFloat(unknown146);
-		RegisterFloat(unknown147);
-		RegisterFloat(decrease_falling_dmg);
-		RegisterFloat(unknown149);
-		RegisterFloat(unknown150);
-		RegisterFloat(unknown151);
-		RegisterFloat(unknown152);
-		RegisterFloat(unknown153);
-		RegisterFloat(unknown154);
-		RegisterFloat(unknown155);
-		RegisterFloat(unknown156);
-		RegisterFloat(loot_coin);
-		RegisterFloat(mitigation_increase);
-		RegisterFloat(unknown159);
-		RegisterFloat(strikethrough);
-		RegisterFloat(unknown160);
-		RegisterFloat(accuracy);
-		RegisterFloat(unknown161);
-		RegisterFloat(unknown162);
-		RegisterFloat(wdb);
-		RegisterFloat(spell_wdb);
-		RegisterFloat(unknown165);
-		RegisterFloat(unknown166);
-		RegisterFloat(unknown167);
-		RegisterFloat(unknown168);
-		RegisterFloat(lethality_pve);
-		RegisterFloat(unknown170);
-		RegisterFloat(unknown171);
-		RegisterFloat(unknown172);
-		RegisterFloat(unknown173);
-		RegisterFloat(pvp_crit_mit);
-		RegisterFloat(unknown175);
-		RegisterFloat(unknown200);
-		RegisterFloat(unknown201);
-		RegisterFloat(unknown202);
-		RegisterFloat(unknown203);
-		RegisterFloat(unknown204);
-		RegisterFloat(unknown205);
-		RegisterFloat(unknown206);
-		RegisterFloat(unknown207);
-		RegisterFloat(unknown208);
-		RegisterFloat(unknown209);
-		RegisterFloat(unknown210);
-		RegisterFloat(unknown211);
-		RegisterFloat(unknown212);
-		RegisterFloat(unknown213);
-		RegisterFloat(unknown214);
-		RegisterFloat(unknown215);
-		RegisterFloat(unknown216);
-		RegisterFloat(unknown217);
-		RegisterFloat(unknown218);
-		RegisterFloat(unknown219);
-		RegisterFloat(unknown220);
-		RegisterFloat(unknown221);
-		RegisterFloat(unknown222);
-		RegisterFloat(unknown223);
-		RegisterFloat(unknown224);
-		RegisterFloat(unknown225);
-		RegisterFloat(unknown226);
-		RegisterFloat(unknown227);
-		RegisterFloat(unknown228);
-		RegisterFloat(unknown229);
-		RegisterFloat(unknown230);
-		RegisterFloat(unknown231);
-		RegisterFloat(unknown232);
-		RegisterFloat(unknown233);
-		RegisterFloat(unknown234);
-		RegisterFloat(unknown235);
-		RegisterFloat(unknown236);
-		RegisterFloat(unknown237);
-		RegisterFloat(unknown238);
-		RegisterFloat(unknown239);
-		RegisterFloat(unknown240);
-		RegisterFloat(unknown241);
-		RegisterFloat(unknown242);
-		RegisterFloat(unknown243);
-		RegisterFloat(unknown244);
-		RegisterFloat(unknown245);
-		RegisterFloat(unknown246);
-		RegisterFloat(unknown247);
-		RegisterFloat(uncontested_riposte_gear_cap);
-		RegisterFloat(uncontested_parry_gear_cap);
-		RegisterFloat(uncontested_dodge_gear_cap);
-		RegisterFloat(unknown251);
-		RegisterFloat(unknown252);
-		RegisterFloat(unknown253);
-		RegisterFloat(unknown254);
-		RegisterFloat(unknown255);
-		RegisterFloat(unknown256);
-		RegisterFloat(unknown257);
-		RegisterFloat(unknown258);
-		RegisterFloat(unknown259);
-		RegisterFloat(unknown260);
-		RegisterFloat(unknown261);
-		RegisterFloat(unknown262);
-		RegisterFloat(unknown263);
-		RegisterFloat(unknown264);
-		RegisterFloat(unknown265);
-		RegisterFloat(unknown266);
-		RegisterFloat(unknown267);
-		RegisterFloat(unknown268);
-		RegisterFloat(unknown269);
-		RegisterFloat(unknown270);
-		RegisterFloat(unknown271);
-		RegisterFloat(unknown272);
-		RegisterFloat(unknown273);
-		RegisterFloat(unknown274);
-		RegisterFloat(unknown275);
-		RegisterFloat(unknown276);
-		RegisterFloat(unknown277);
-		RegisterFloat(unknown278);
-		RegisterFloat(unknown279);
-		RegisterFloat(unknown280);
-		RegisterFloat(unknown281);
-		RegisterFloat(unknown282);
-		RegisterFloat(unknown283);
-		RegisterFloat(unknown284);
-		RegisterFloat(unknown285);
-		RegisterFloat(unknown286);
-		RegisterFloat(unknown287);
-		RegisterFloat(unknown288);
-		RegisterFloat(unknown289);
-		RegisterFloat(unknown290);
-		RegisterFloat(unknown291);
-		RegisterFloat(unknown292);
-		RegisterFloat(unknown293);
-		RegisterFloat(unknown294);
-		RegisterFloat(unknown295);
-		RegisterFloat(unknown296);
-		RegisterFloat(unknown297);
-		RegisterFloat(unknown298);
-		RegisterFloat(unknown299);
-		RegisterFloat(unknown300);
-		RegisterFloat(unknown301);
-		RegisterFloat(unknown302);
-		RegisterFloat(unknown303);
-		RegisterFloat(unknown304);
-		RegisterFloat(unknown305);
-		RegisterFloat(unknown306);
-		RegisterFloat(unknown307);
-		RegisterFloat(unknown308);
-		RegisterFloat(out_of_combat_health_regen_pvp);
-		RegisterFloat(out_of_combat_power_regen_pvp);
-		RegisterFloat(in_combat_regen_pvp);
-		RegisterFloat(deflect_pvp);
-		RegisterFloat(increase_max_heath_pvp);
-		RegisterFloat(increase_max_health2_pvp);
-		RegisterFloat(unknown312);
-		RegisterFloat(increase_speed_pvp);
-		RegisterFloat(unknown313);
-		RegisterFloat(increase_ground_speed_pvp);
-		RegisterFloat(increase_air_speed_pvp);
-		RegisterFloat(unknown314);
-		RegisterFloat(unknown315);
-		RegisterFloat(unknown316);
-		RegisterFloat(in_combat_movement_speed_pvp);
-		RegisterFloat(Haste_pvp);
-		RegisterFloat(increase_max_power_pvp);
-		RegisterFloat(increase_max_power2_pvp);
-		RegisterFloat(unknown321);
-		RegisterFloat(unknown322);
-		RegisterFloat(unknown323);
-		RegisterFloat(hate_mod_pvp);
-		RegisterFloat(unknown325);
-		RegisterFloat(unknown326);
-		RegisterFloat(unknown327);
-		RegisterFloat(unknown328);
-		RegisterFloat(dps_pvp);
-		RegisterFloat(unknown330);
-		RegisterFloat(unknown331);
-		RegisterFloat(unknown332);
-		RegisterFloat(base_avoidance_pvp);
-		RegisterFloat(unknown334);
-		RegisterFloat(uncontested_riposte_pvp);
-		RegisterFloat(uncontested_parry_pvp);
-		RegisterFloat(unknown337);
-		RegisterFloat(unknown338);
-		RegisterFloat(multi_attack_pvp);
-		RegisterFloat(spell_multi_attack_pvp);
-		RegisterFloat(unknown341);
-		RegisterFloat(unknown342);
-		RegisterFloat(unknown343);
-		RegisterFloat(block_chance_pvp);
-		RegisterFloat(unknown345);
-		RegisterFloat(unknown346);
-		RegisterFloat(crit_chance_pvp);
-		RegisterFloat(unknown348);
-		RegisterFloat(unknown349);
-		RegisterFloat(crit_bonus_pvp);
-		RegisterFloat(potency_pvp);
-		RegisterFloat(unknown352);
-		RegisterFloat(reuse_speed_pvp);
-		RegisterFloat(recovery_speed_pvp);
-		RegisterFloat(casting_speed_pvp);
-		RegisterFloat(unknown356);
-		RegisterFloat(unknown357);
-		RegisterFloat(unknown358);
-		RegisterFloat(decrease_falling_dmg_pvp);
-		RegisterFloat(unknown360);
-		RegisterFloat(unknown361);
-		RegisterFloat(unknown362);
-		RegisterFloat(adventure_effects_bonus_2);
-		RegisterFloat(tradeskill_effects_bonus_2);
-		RegisterFloat(aa_effects_bonus_2);
-		RegisterFloat(unknown366);
-		RegisterFloat(unknown367);
-		RegisterFloat(loot_coin_pvp);
-		RegisterFloat(mitigation_increase_pvp);
-		RegisterFloat(unknown370);
-		RegisterFloat(strikethrough_pvp);
-		RegisterFloat(unknown372);
-		RegisterFloat(unknown373);
-		RegisterFloat(unknown374);
-		RegisterFloat(unknown375);
-		RegisterFloat(unknown376);
-		RegisterFloat(unknown377);
-		RegisterFloat(unknown378);
-		RegisterFloat(unknown379);
-		RegisterFloat(unknown380);
-		RegisterFloat(unknown381);
-		RegisterFloat(lethality_pvp);
-		RegisterFloat(unknown383);
-		RegisterFloat(unknown384);
-		RegisterFloat(unknown385);
-		RegisterFloat(unknown386);
-		RegisterFloat(unknown387);
-		RegisterFloat(unknown388);
-		RegisterFloat(unknown389);
-		RegisterFloat(unknown390);
-		RegisterFloat(unknown391);
-		RegisterFloat(unknown392);
-		RegisterFloat(unknown393);
-		RegisterFloat(unknown394);
-		RegisterFloat(unknown395);
-		RegisterFloat(unknown396);
-		RegisterFloat(unknown397);
-		RegisterFloat(unknown398);
-		RegisterFloat(unknown399);
-		RegisterFloat(unknown400);
-		RegisterFloat(unknown401);
-		RegisterFloat(unknown402);
-		RegisterFloat(unknown403);
-		RegisterFloat(unknown404);
-		RegisterFloat(unknown405);
-		RegisterFloat(unknown406);
-		RegisterFloat(unknown407);
-		RegisterFloat(unknown408);
-		RegisterFloat(unknown409);
-		RegisterFloat(unknown410);
+		RegisterSubstruct(pve_props);
+		RegisterSubstruct(unk_props);
+		RegisterSubstruct(pvp_props);
+
+		//Tradeskill sheet
 		RegisterFloat(durability_mod);
 		RegisterFloat(durability_add);
 		RegisterFloat(progress_mod);
@@ -1292,7 +1005,8 @@ private:
 		RegisterFloat(ex_crit_failure_mod);
 		RegisterFloat(ex_progress_mod);
 		RegisterFloat(ex_progress_add);
-		RegisterFloat(ex_success_mod);;
+		RegisterFloat(ex_success_mod);
+
 		RegisterFloat(unknown430);
 		RegisterFloat(unknown431);
 		RegisterFloat(unknown432);
@@ -1408,10 +1122,12 @@ private:
 		
 		RegisterSubstruct(groupSheet);
 
-		RegisterFloat(rain);
+		RegisterFloat(humidity);
 		RegisterFloat(wind_direction);
 
-		RegisterUInt32(status_points);
+		RescopeToReference(statusPoints, uint32_t);
+		RescopeToReference(guild_status, uint32_t);
+		RegisterUInt32(statusPoints);
 		RegisterUInt32(guild_status);
 
 		RegisterUInt8(unknownAOMa);
@@ -1427,10 +1143,7 @@ private:
 		static std::string bind_zone = "bind zone";
 		RegisterCharString(bind_zone, 32);
 		uint8_t& Unknown188 = unknown188[0];
-		RegisterUInt8(Unknown188)->SetCount(45);
-		static float tester = 1.f;
-		RegisterFloat(tester);
-		RegisterUInt8(Unknown188)->SetCount(3);
+		RegisterUInt8(Unknown188)->SetCount(42);
 	}
 
 	void RegisterElements67650() {
@@ -1605,7 +1318,7 @@ private:
 		RegisterUInt16(noxious_dmg_reduction_pct);
 		RegisterUInt16(arcane_dmg_reduction_pct);
 
-		if (ver >= 67742) {
+		if (ver >= 67730) {
 			double& advExp = advExp_do_not_set;
 			double& advExpNextLevel = advExpNextLevel_do_not_set;
 			RegisterDouble(advExp);
@@ -1617,7 +1330,7 @@ private:
 		}
 		RegisterFloat(advExpDebt);
 
-		if (ver >= 67742) {
+		if (ver >= 67730) {
 			double& tsExp = tsExp_do_not_set;
 			double& tsExpNextLevel = tsExpNextLevel_do_not_set;
 			RegisterDouble(tsExp);
@@ -1629,7 +1342,7 @@ private:
 		}
 		RegisterFloat(tsExpDebt);
 
-		if (ver >= 67742) {
+		if (ver >= 67730) {
 			static double titheExp = 0;
 			static double titheExpNextLevel = 0;
 			RegisterDouble(titheExp);
@@ -1644,7 +1357,7 @@ private:
 		static float titheExpDebt = 0;
 		RegisterFloat(titheExpDebt);
 
-		if (ver >= 67742) {
+		if (ver >= 67730) {
 			static double ascensionExp = 0;
 			static double ascensionExpNextLevel = 0;
 			RegisterDouble(ascensionExp);
@@ -1661,7 +1374,7 @@ private:
 		RegisterUInt8(ascensionUnk);
 		RegisterFloat(ascensionExpDebt); //guess
 
-		if (ver >= 67742) {
+		if (ver >= 67730) {
 			static float unknownBOLc = 0;
 			RegisterFloat(unknownBOLc); //guess
 		}
@@ -1766,17 +1479,12 @@ private:
 		RegisterUInt32(flags2);
 		static std::string afk_message = "afk_message";
 		RegisterCharString(afk_message, 256);
+		RegisterSubstruct(pve_props);
+		RegisterSubstruct(unk_props);
+		RegisterSubstruct(unk_props2);
+		RegisterSubstruct(pvp_props);
 
-		static uint8_t g_unknown2e0d[0x2e61 - 0x2e0d];
-		uint8_t& unknown2e0d = g_unknown2e0d[0];
-		RegisterUInt8(unknown2e0d)->SetCount(sizeof(g_unknown2e0d));
-
-		RegisterFloat(drunk);
-
-		static uint8_t g_unknown2e65[0x359d - 0x2e65];
-		uint8_t& unknown2e65 = g_unknown2e65[0];
-		RegisterUInt8(unknown2e65)->SetCount(sizeof(g_unknown2e65));
-
+		//Tradeskill sheet
 		RegisterFloat(durability_mod);
 		RegisterFloat(durability_add);
 		RegisterFloat(progress_mod);
@@ -1808,14 +1516,11 @@ private:
 		RegisterUInt8(unknown3805)->SetCount(sizeof(g_unknown3805));
 
 		RegisterSubstruct(groupSheet);
-		RegisterFloat(rain);
+		RegisterFloat(humidity);
 		RegisterFloat(wind_direction);
-		RegisterUInt32(statusPoints);
-		RegisterUInt32(guild_status);
+		RegisterUInt64(statusPoints);
+		RegisterUInt64(guild_status);
 
-		static uint8_t g_unknown3de3[0x3deb - 0x3de3];
-		uint8_t& unknown3de3 = g_unknown3de3[0];
-		RegisterUInt8(unknown3de3)->SetCount(sizeof(g_unknown3de3));
 
 		RegisterUInt8(unknownAOMa);
 		//house zone and the following 151 bytes (199 total) appear to be the same object
@@ -1834,7 +1539,7 @@ private:
 
 		static uint8_t g_unknown3ed3[filler_size];
 		uint8_t& unknown3ed3 = g_unknown3ed3[0];
-		RegisterUInt8(unknown3ed3)->SetCount(ver >= 67742 ? (0x3f33 - 0x3ef7) : (0x3f0f - 0x3ed3));
+		RegisterUInt8(unknown3ed3)->SetCount(ver >= 67730 ? (0x3f33 - 0x3ef7) : (0x3f0f - 0x3ed3));
 	}
 };
 

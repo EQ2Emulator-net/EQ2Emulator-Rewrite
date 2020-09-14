@@ -746,5 +746,4 @@ SpawnInfoStruct::SpawnInfoStruct() {
 	power_percent = 100;
 	hp_percent = 100;
 	heatLevel = 0xff;//temp until we can set it properly
-	unknown5 = 1;
 }
