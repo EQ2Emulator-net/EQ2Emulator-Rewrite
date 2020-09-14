@@ -10,6 +10,65 @@
 #include "Substruct_GroupMember.h"
 #include "../Players/CharacterSheet.h"
 
+struct TsSpellProps {
+	TsSpellProps() {
+		memset(this, 0, sizeof(*this));
+	}
+
+	float durability_mod;
+	float durability_add;
+	float progress_mod;
+	float progress_add;
+	float success_mod;
+	float crit_success_mod;
+	float crit_failure_mod;
+	float rare_harvest_chance;
+	float max_crafting_quantity;
+	float component_refund;
+	float ex_attempts;
+	float refine_quantity_mod;
+	float ex_durability_mod;
+	float ex_durability_add;
+	float ex_crit_success_mod;
+	float ex_crit_failure_mod;
+	float ex_progress_mod;
+	float ex_progress_add;
+	float ex_success_mod;
+};
+
+class Substruct_TsSpellProps : public PacketSubstruct, public TsSpellProps {
+public:
+	Substruct_TsSpellProps(uint32_t ver = 0) : PacketSubstruct(ver) {
+		RegisterElements();
+	}
+
+	~Substruct_TsSpellProps() = default;
+
+	void RegisterElements() override {
+		RegisterFloat(durability_mod);
+		RegisterFloat(durability_add);
+		RegisterFloat(progress_mod);
+		RegisterFloat(progress_add);
+		RegisterFloat(success_mod);
+		RegisterFloat(crit_success_mod);
+		RegisterFloat(crit_failure_mod);
+		RegisterFloat(rare_harvest_chance);
+		RegisterFloat(max_crafting_quantity);
+		RegisterFloat(component_refund);
+		RegisterFloat(ex_attempts);
+		if (GetVersion() >= 60114) {
+			RegisterFloat(refine_quantity_mod);
+		}
+		RegisterFloat(ex_durability_mod);
+		RegisterFloat(ex_durability_add);
+		RegisterFloat(ex_crit_success_mod);
+		RegisterFloat(ex_crit_failure_mod);
+		RegisterFloat(ex_progress_mod);
+		RegisterFloat(ex_progress_add);
+		RegisterFloat(ex_success_mod);
+	}
+};
+
 struct SpellProps {
 	//These are the blue stats on items and also appear in the character sheet, a good way to find the switch in the client is to search for
 	//Blurs Vision ^ they appear in the same order as their id/index for that client
@@ -155,7 +214,7 @@ struct SpellProps {
 class Substruct_SpellProps : public PacketSubstruct, public SpellProps {
 public:
 	Substruct_SpellProps(uint32_t ver = 0) : PacketSubstruct(ver) {
-
+		RegisterElements();
 	}
 
 	~Substruct_SpellProps() = default;
@@ -350,7 +409,7 @@ struct CharacterSheetMiscData {
 
 	int32_t gmLevel;
 	uint16_t account_age_base;
-	uint16_t account_age_bonus;
+	uint32_t account_age_bonus;
 	
 	int32_t base_savagery;
 	int32_t savagery_level;
@@ -391,19 +450,19 @@ struct CharacterSheetMiscData {
 	uint16_t uncontested_riposte;
 	uint16_t uncontested_dodge;
 	uint16_t uncontested_parry;
-	uint16_t unknown14;
+	uint16_t physical_absorb_pve;
 	uint16_t elemental_absorb_pve;
 	uint16_t noxious_absorb_pve;
 	uint16_t arcane_absorb_pve;
-	uint16_t unknown15;
+	uint16_t physical_absorb_pvp;
 	uint16_t elemental_absorb_pvp;
 	uint16_t noxious_absorb_pvp;
 	uint16_t arcane_absorb_pvp;
-	uint16_t unknown16;
+	uint16_t physical_dmg_reduction;
 	uint16_t elemental_dmg_reduction;
 	uint16_t noxious_dmg_reduction;
 	uint16_t arcane_dmg_reduction;
-	uint16_t unknown17;
+	uint16_t physical_dmg_reduction_pct;
 	uint16_t elemental_dmg_reduction_pct;
 	uint16_t noxious_dmg_reduction_pct;
 	uint16_t arcane_dmg_reduction_pct;
@@ -491,25 +550,7 @@ struct CharacterSheetMiscData {
 	float base_spell_crit;
 	float base_taunt_crit;
 	float base_heal_crit;
-	float durability_mod;
-	float durability_add;
-	float progress_mod;
-	float progress_add;
-	float success_mod;
-	float crit_success_mod;
-	float crit_failure_mod;
-	float rare_harvest_chance;
-	float max_crafting;
-	float component_refund;
-	float ex_attempts;
-	float refine_quantity_mod;
-	float ex_durability_mod;
-	float ex_durability_add;
-	float ex_crit_success_mod;
-	float ex_crit_failure_mod;
-	float ex_progress_mod;
-	float ex_progress_add;
-	float ex_success_mod;
+	
 	float unknown430;
 	float unknown431;
 	float unknown432;
@@ -637,7 +678,8 @@ struct CharacterSheetMiscData {
 
 class UpdateCharacterSheetMsgData : public CharacterSheetMiscData, public CharacterSheet, public PacketEncodedData {
 public:
-	UpdateCharacterSheetMsgData(uint32_t ver) : PacketEncodedData(ver), CharacterSheet(nullptr), groupSheet(ver) {
+	UpdateCharacterSheetMsgData(uint32_t ver) : PacketEncodedData(ver), CharacterSheet(nullptr), groupSheet(ver),
+		pve_props(version), pvp_props(version), unk_props(version), unk_props2(version), ts_props(version) {
 		for (uint8_t i = 0; i < 45; i++)
 			spell_effects[i].ResetVersion(version);
 		for (uint8_t i = 0; i < 45; i++)
@@ -650,7 +692,7 @@ public:
 	}
 
 	UpdateCharacterSheetMsgData(uint32_t version, const CharacterSheet& sheet) : PacketEncodedData(version), CharacterSheet(sheet),
-		groupSheet(version), pve_props(version), pvp_props(version), unk_props(version), unk_props2(version) {
+		groupSheet(version), pve_props(version), pvp_props(version), unk_props(version), unk_props2(version), ts_props(version) {
 		for (uint8_t i = 0; i < 45; i++)
 			spell_effects[i].ResetVersion(version);
 		for (uint8_t i = 0; i < 45; i++)
@@ -674,6 +716,7 @@ public:
 	Substruct_SpellProps unk_props;
 	Substruct_SpellProps pvp_props;
 	Substruct_SpellProps unk_props2;
+	Substruct_TsSpellProps ts_props;
 
 private:
 	double advExp_do_not_set;
@@ -711,6 +754,7 @@ private:
 		RegisterUInt16(tsLevel);
 		RegisterInt32(gmLevel); //0-15
 		RegisterUInt16(account_age_base);
+		RescopeToReference(account_age_bonus, uint16_t);
 		RegisterUInt16(account_age_bonus);
 
 		//Replace deity/fb/twitter later
@@ -829,19 +873,19 @@ private:
 		RegisterInt32(noxious_base);
 		RegisterInt32(arcane_base);
 
-		RegisterUInt16(unknown14);
+		RegisterUInt16(physical_absorb_pve);
 		RegisterUInt16(elemental_absorb_pve);
 		RegisterUInt16(noxious_absorb_pve);
 		RegisterUInt16(arcane_absorb_pve);
-		RegisterUInt16(unknown15);
+		RegisterUInt16(physical_absorb_pvp);
 		RegisterUInt16(elemental_absorb_pvp);
 		RegisterUInt16(noxious_absorb_pvp);
 		RegisterUInt16(arcane_absorb_pvp);
-		RegisterUInt16(unknown16);
+		RegisterUInt16(physical_dmg_reduction);
 		RegisterUInt16(elemental_dmg_reduction);
 		RegisterUInt16(noxious_dmg_reduction);
 		RegisterUInt16(arcane_dmg_reduction);
-		RegisterUInt16(unknown17);
+		RegisterUInt16(physical_dmg_reduction_pct);
 		RegisterUInt16(elemental_dmg_reduction_pct);
 		RegisterUInt16(noxious_dmg_reduction_pct);
 		RegisterUInt16(arcane_dmg_reduction_pct);
@@ -985,27 +1029,7 @@ private:
 		RegisterSubstruct(pve_props);
 		RegisterSubstruct(unk_props);
 		RegisterSubstruct(pvp_props);
-
-		//Tradeskill sheet
-		RegisterFloat(durability_mod);
-		RegisterFloat(durability_add);
-		RegisterFloat(progress_mod);
-		RegisterFloat(progress_add);
-		RegisterFloat(success_mod);
-		RegisterFloat(crit_success_mod);
-		RegisterFloat(crit_failure_mod);
-		RegisterFloat(rare_harvest_chance);
-		RegisterFloat(max_crafting);
-		RegisterFloat(component_refund);
-		RegisterFloat(ex_attempts);
-		RegisterFloat(refine_quantity_mod);
-		RegisterFloat(ex_durability_mod);
-		RegisterFloat(ex_durability_add);
-		RegisterFloat(ex_crit_success_mod);
-		RegisterFloat(ex_crit_failure_mod);
-		RegisterFloat(ex_progress_mod);
-		RegisterFloat(ex_progress_add);
-		RegisterFloat(ex_success_mod);
+		RegisterSubstruct(ts_props);
 
 		RegisterFloat(unknown430);
 		RegisterFloat(unknown431);
@@ -1172,11 +1196,9 @@ private:
 		RegisterUInt16(level);
 		RegisterUInt16(effective_level);
 		RegisterUInt16(tsLevel);
-		static int16_t unknownBOLa;
-		RegisterInt16(unknownBOLa);
-		RegisterInt32(gmLevel); //0-15
 		RegisterUInt16(account_age_base);
-		RegisterUInt16(account_age_bonus);
+		RegisterInt32(gmLevel); //0-15
+		RegisterUInt32(account_age_bonus); //maybe there are other account flags in this? changed to 4 byte from 2 byte
 
 		//Replace deity/fb/twitter later
 		static std::string deity = "deity";
@@ -1298,22 +1320,22 @@ private:
 		RegisterInt32(noxious_base);
 		RegisterInt32(arcane_base);
 
-		RegisterUInt16(unknown14);
+		RegisterUInt16(physical_absorb_pve);
 		RegisterUInt16(elemental_absorb_pve);
 		RegisterUInt16(noxious_absorb_pve);
 		RegisterUInt16(arcane_absorb_pve);
 
-		RegisterUInt16(unknown15);
+		RegisterUInt16(physical_absorb_pvp);
 		RegisterUInt16(elemental_absorb_pvp);
 		RegisterUInt16(noxious_absorb_pvp);
 		RegisterUInt16(arcane_absorb_pvp);
 
-		RegisterUInt16(unknown16);
+		RegisterUInt16(physical_dmg_reduction);
 		RegisterUInt16(elemental_dmg_reduction);
 		RegisterUInt16(noxious_dmg_reduction);
 		RegisterUInt16(arcane_dmg_reduction);
 
-		RegisterUInt16(unknown17);
+		RegisterUInt16(physical_dmg_reduction_pct);
 		RegisterUInt16(elemental_dmg_reduction_pct);
 		RegisterUInt16(noxious_dmg_reduction_pct);
 		RegisterUInt16(arcane_dmg_reduction_pct);
@@ -1483,27 +1505,7 @@ private:
 		RegisterSubstruct(unk_props);
 		RegisterSubstruct(unk_props2);
 		RegisterSubstruct(pvp_props);
-
-		//Tradeskill sheet
-		RegisterFloat(durability_mod);
-		RegisterFloat(durability_add);
-		RegisterFloat(progress_mod);
-		RegisterFloat(progress_add);
-		RegisterFloat(success_mod);
-		RegisterFloat(crit_success_mod);
-		RegisterFloat(crit_failure_mod);
-		RegisterFloat(rare_harvest_chance);
-		RegisterFloat(max_crafting);
-		RegisterFloat(component_refund);
-		RegisterFloat(ex_attempts);
-		RegisterFloat(refine_quantity_mod);
-		RegisterFloat(ex_durability_mod);
-		RegisterFloat(ex_durability_add);
-		RegisterFloat(ex_crit_success_mod);
-		RegisterFloat(ex_crit_failure_mod);
-		RegisterFloat(ex_progress_mod);
-		RegisterFloat(ex_progress_add);
-		RegisterFloat(ex_success_mod);
+		RegisterSubstruct(ts_props);
 
 		static uint8_t g_unknown35e9[0x37fd - 0x35e9];
 		uint8_t& unknown35e9 = g_unknown35e9[0];

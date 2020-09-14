@@ -38,6 +38,7 @@ RegisterZoneSubstruct(Substruct_GroupMemberMapLocation, 60114);
 RegisterZoneSubstruct(Substruct_GroupSheet, 1, 1188, 67650);
 RegisterZoneSubstruct(Substruct_RaidSheet, 1);
 RegisterZoneSubstruct(Substruct_SpellProps, 1208, 60114, 67650);
+RegisterZoneSubstruct(Substruct_TsSpellProps, 1208, 60114);
 RegisterZoneSubstruct(UpdateCharacterSheetMsgData, 1, 60114, 67650, 67730);
 RegisterZoneSubstruct(Substruct_SpawnInfoUpdate, 1);
 RegisterZoneSubstruct(Substruct_SpawnPosUpdate, 1, 1188);
