@@ -398,6 +398,7 @@ struct CharacterSheetMiscData {
 	//Some elements are a different format in the packet from what we use, convert them here
 	int64_t hp;
 	int64_t maxHp;
+	int64_t maxHpBase;
 	float advExp;
 	float advExpNextLevel;
 	float advExpDebt;
@@ -420,7 +421,7 @@ struct CharacterSheetMiscData {
 	int32_t base_dissonance;
 	uint32_t hp_regen;
 	uint32_t power_regen;
-	uint32_t unknown6[2];
+	int32_t unknown6[2];
 	float ranged_attack_min_distance;
 	float ranged_attack_max_distance;
 	float stat_bonus_health;
@@ -550,107 +551,6 @@ struct CharacterSheetMiscData {
 	float base_spell_crit;
 	float base_taunt_crit;
 	float base_heal_crit;
-	
-	float unknown430;
-	float unknown431;
-	float unknown432;
-	float unknown433;
-	float unknown434;
-	float unknown435;
-	float unknown436;
-	float unknown437;
-	float unknown438;
-	float unknown439;
-	float unknown440;
-	float unknown441;
-	uint8_t unknown180;
-	uint8_t unknown524;
-	uint8_t unknown181a;
-	uint8_t unknown181b;
-	float unknown442;
-	float unknown443;
-	float unknown444;
-	float unknown445;
-	uint32_t hate_2;
-	float unknown447;
-	float unknown448;
-	float unknown449;
-	float unknown450;
-	float unknown451;
-	uint32_t hate_mod_2;
-	float unknown453;
-	float unknown454;
-	float unknown455;
-	float unknown456;
-	float unknown457;
-	uint32_t dps_2;
-	float unknown459;
-	float unknown460;
-	float unknown461;
-	float unknown462;
-	float unknown463;
-	float unknown464;
-	float unknown465;
-	float unknown466;
-	uint32_t ae_autoattack_2;
-	float unknown468;
-	uint32_t spell_doublecast_2;
-	uint32_t flurry_2;
-	float unknown471;
-	uint32_t bountiful_harvest_2;
-	uint32_t block_chance_2;
-	float unknown474;
-	float unknown475;
-	uint32_t crit_chance_2;
-	float unknown477;
-	float unknown478;
-	uint32_t crit_bonus_2;
-	float unknown480;
-	float unknown481;
-	uint32_t reuse_speed_2;
-	uint32_t recovery_speed_2;
-	uint32_t casting_speed_2;
-	uint32_t spell_reuse_speed_2;
-	float unknown486;
-	float unknown487;
-	float unknown488;
-	float unknown489;
-	float unknown490;
-	float unknown491;
-	float unknown492;
-	float unknown493;
-	float unknown494;
-	float unknown495;
-	float unknown496;
-	float unknown497;
-	float unknown498;
-	float unknown499;
-	uint32_t strikethrough_2;
-	float unknown501;
-	uint32_t accuracy_2;
-	float unknown503;
-	float unknown504;
-	uint32_t wdb_2;
-	uint32_t spell_wdb_2;
-	float unknown507;
-	float unknown508;
-	float unknown509;
-	float unknown510;
-	float unknown511;
-	float unknown512;
-	float unknown513;
-	float unknown514;
-	uint32_t haste_tt;
-	uint32_t dps_pve_tt;
-	uint32_t dps_pvp_tt;
-	float multi_attack_pve_tt;
-	float multi_attack_pvp_tt;
-	float unknown520;
-	float unknown521;
-	float unknown522;
-	float unknown523;
-	uint8_t unknown550;
-	uint8_t unknown552[27];
 	float adventure_effects_cap;
 	float tradeskill_effects_cap;
 	float aa_effects_cap;
@@ -679,7 +579,7 @@ struct CharacterSheetMiscData {
 class UpdateCharacterSheetMsgData : public CharacterSheetMiscData, public CharacterSheet, public PacketEncodedData {
 public:
 	UpdateCharacterSheetMsgData(uint32_t ver) : PacketEncodedData(ver), CharacterSheet(nullptr), groupSheet(ver),
-		pve_props(version), pvp_props(version), unk_props(version), unk_props2(version), ts_props(version) {
+		pve_props(version), pvp_props(version), unk_props(version), unk_props2(version), ts_props(version), prop_caps(version) {
 		for (uint8_t i = 0; i < 45; i++)
 			spell_effects[i].ResetVersion(version);
 		for (uint8_t i = 0; i < 45; i++)
@@ -692,7 +592,7 @@ public:
 	}
 
 	UpdateCharacterSheetMsgData(uint32_t version, const CharacterSheet& sheet) : PacketEncodedData(version), CharacterSheet(sheet),
-		groupSheet(version), pve_props(version), pvp_props(version), unk_props(version), unk_props2(version), ts_props(version) {
+		groupSheet(version), pve_props(version), pvp_props(version), unk_props(version), unk_props2(version), ts_props(version), prop_caps(version) {
 		for (uint8_t i = 0; i < 45; i++)
 			spell_effects[i].ResetVersion(version);
 		for (uint8_t i = 0; i < 45; i++)
@@ -717,6 +617,7 @@ public:
 	Substruct_SpellProps pvp_props;
 	Substruct_SpellProps unk_props2;
 	Substruct_TsSpellProps ts_props;
+	Substruct_SpellProps prop_caps;
 
 private:
 	double advExp_do_not_set;
@@ -770,10 +671,7 @@ private:
 
 		RegisterInt64(hp);
 		RegisterInt64(maxHp);
-		int32_t& baseHp = attributes->hp.baseValue;
-		RegisterInt32(baseHp);
-		static int32_t unconciousHp = 0;
-		RegisterInt32(unconciousHp);
+		RegisterInt64(maxHpBase);
 
 		int32_t& current_power = attributes->power.currentValue;
 		int32_t& max_power = attributes->power.maxValue;
@@ -803,8 +701,8 @@ private:
 		RegisterUInt32(hp_regen);
 		RegisterUInt32(power_regen);
 
-		uint32_t& Unknown6 = unknown6[0];
-		RegisterUInt32(Unknown6)->SetCount(2);
+		int32_t& Unknown6 = unknown6[0];
+		RegisterInt32(Unknown6)->SetCount(2);
 		
 		RegisterFloat(ranged_attack_min_distance);
 		RegisterFloat(ranged_attack_max_distance);
@@ -1030,109 +928,7 @@ private:
 		RegisterSubstruct(unk_props);
 		RegisterSubstruct(pvp_props);
 		RegisterSubstruct(ts_props);
-
-		RegisterFloat(unknown430);
-		RegisterFloat(unknown431);
-		RegisterFloat(unknown432);
-		RegisterFloat(unknown433);
-		RegisterFloat(unknown434);
-		RegisterFloat(unknown435);
-		RegisterFloat(unknown436);
-		RegisterFloat(unknown437);
-		RegisterFloat(unknown438);
-		RegisterFloat(unknown439);
-		RegisterFloat(unknown440);
-		RegisterFloat(unknown441);
-		RegisterUInt8(unknown180);
-		RegisterUInt8(unknown524);
-		RegisterUInt8(unknown181a);
-		RegisterUInt8(unknown181b);
-		RegisterFloat(unknown442);
-		RegisterFloat(unknown443);
-		RegisterFloat(unknown444);
-		RegisterFloat(unknown445);
-		RegisterUInt32(hate_2);
-		RegisterFloat(unknown447);
-		RegisterFloat(unknown448);
-		RegisterFloat(unknown449);
-		RegisterFloat(unknown450);
-		RegisterFloat(unknown451);
-		RegisterUInt32(hate_mod_2);
-		RegisterFloat(unknown453);
-		RegisterFloat(unknown454);
-		RegisterFloat(unknown455);
-		RegisterFloat(unknown456);
-		RegisterFloat(unknown457);
-		RegisterUInt32(dps_2);
-		RegisterFloat(unknown459);
-		RegisterFloat(unknown460);
-		RegisterFloat(unknown461);
-		RegisterFloat(unknown462);
-		RegisterFloat(unknown463);
-		RegisterFloat(unknown464);
-		RegisterFloat(unknown465);
-		RegisterFloat(unknown466);
-		RegisterUInt32(ae_autoattack_2);
-		RegisterFloat(unknown468);
-		RegisterUInt32(spell_doublecast_2);
-		RegisterUInt32(flurry_2);
-		RegisterFloat(unknown471);
-		RegisterUInt32(bountiful_harvest_2);
-		RegisterUInt32(block_chance_2);
-		RegisterFloat(unknown474);
-		RegisterFloat(unknown475);
-		RegisterUInt32(crit_chance_2);
-		RegisterFloat(unknown477);
-		RegisterFloat(unknown478);
-		RegisterUInt32(crit_bonus_2);
-		RegisterFloat(unknown480);
-		RegisterFloat(unknown481);
-		RegisterUInt32(reuse_speed_2);
-		RegisterUInt32(recovery_speed_2);
-		RegisterUInt32(casting_speed_2);
-		RegisterUInt32(spell_reuse_speed_2);
-		RegisterFloat(unknown486);
-		RegisterFloat(unknown487);
-		RegisterFloat(unknown488);
-		RegisterFloat(unknown489);
-		RegisterFloat(unknown490);
-		RegisterFloat(unknown491);
-		RegisterFloat(unknown492);
-		RegisterFloat(unknown493);
-		RegisterFloat(unknown494);
-		RegisterFloat(unknown495);
-		RegisterFloat(unknown496);
-		RegisterFloat(unknown497);
-		RegisterFloat(unknown498);
-		RegisterFloat(unknown499);
-		RegisterUInt32(strikethrough_2);
-		RegisterFloat(unknown501);
-		RegisterUInt32(accuracy_2);
-		RegisterFloat(unknown503);
-		RegisterFloat(unknown504);
-		RegisterUInt32(wdb_2);
-		RegisterUInt32(spell_wdb_2);
-		RegisterFloat(unknown507);
-		RegisterFloat(unknown508);
-		RegisterFloat(unknown509);
-		RegisterFloat(unknown510);
-		RegisterFloat(unknown511);
-		RegisterFloat(unknown512);
-		RegisterFloat(unknown513);
-		RegisterFloat(unknown514);
-		RegisterUInt32(haste_tt);
-		RegisterUInt32(dps_pve_tt);
-		RegisterUInt32(dps_pvp_tt);
-		RegisterFloat(multi_attack_pve_tt);
-		RegisterFloat(multi_attack_pvp_tt);
-		RegisterFloat(unknown520);
-		RegisterFloat(unknown521);
-		RegisterFloat(unknown522);
-		RegisterFloat(unknown523);
-		RegisterUInt8(unknown550);
-
-		uint8_t& Unknown552 = unknown552[0];
-		RegisterUInt8(Unknown552)->SetCount(27);
+		RegisterSubstruct(prop_caps);
 
 		RegisterFloat(adventure_effects_cap);
 		RegisterFloat(tradeskill_effects_cap);
@@ -1219,10 +1015,7 @@ private:
 
 		RegisterInt64(hp);
 		RegisterInt64(maxHp);
-		int32_t& baseHp = attributes->hp.baseValue;
-		RegisterInt32(baseHp);
-		static int32_t unconciousHp = 0;
-		RegisterInt32(unconciousHp);
+		RegisterInt64(maxHpBase);
 
 		int32_t& current_power = attributes->power.currentValue;
 		int32_t& max_power = attributes->power.maxValue;
@@ -1254,8 +1047,8 @@ private:
 		RegisterUInt32(hp_regen);
 		RegisterUInt32(power_regen);
 
-		uint32_t& Unknown6 = unknown6[0];
-		RegisterUInt32(Unknown6)->SetCount(2);
+		int32_t& Unknown6 = unknown6[0];
+		RegisterInt32(Unknown6)->SetCount(2);
 
 		RegisterFloat(ranged_attack_min_distance);
 		RegisterFloat(ranged_attack_max_distance);
@@ -1506,10 +1299,11 @@ private:
 		RegisterSubstruct(unk_props2);
 		RegisterSubstruct(pvp_props);
 		RegisterSubstruct(ts_props);
+		RegisterSubstruct(prop_caps);
 
-		static uint8_t g_unknown35e9[0x37fd - 0x35e9];
-		uint8_t& unknown35e9 = g_unknown35e9[0];
-		RegisterUInt8(unknown35e9)->SetCount(sizeof(g_unknown35e9));
+		static uint8_t g_unknown37cd[0x37fd - 0x37cd];
+		uint8_t& unknown37cd = g_unknown37cd[0];
+		RegisterUInt8(unknown37cd)->SetCount(sizeof(g_unknown37cd));
 
 		RegisterUInt64(spell_state_flags);
 
@@ -1522,7 +1316,6 @@ private:
 		RegisterFloat(wind_direction);
 		RegisterUInt64(statusPoints);
 		RegisterUInt64(guild_status);
-
 
 		RegisterUInt8(unknownAOMa);
 		//house zone and the following 151 bytes (199 total) appear to be the same object

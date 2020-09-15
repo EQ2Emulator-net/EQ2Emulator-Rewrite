@@ -14,6 +14,7 @@ void UpdateCharacterSheetMsgData::PreWrite() {
 	tsVitality = static_cast<float>(experience.tsVitality);
 	hp = attributes->hp.currentValue;
 	maxHp = attributes->hp.maxValue;
+	maxHpBase = attributes->hp.baseValue;
 
 	if (GetVersion() >= 67730) {
 		advExp_do_not_set = advExp;
