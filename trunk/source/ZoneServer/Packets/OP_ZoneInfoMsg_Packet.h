@@ -143,7 +143,7 @@ public:
 
 	uint32_t num_client_setup;
 	struct ClientCommands : public PacketSubstruct {
-		std::string client_cmds;
+		std::string client_cmd;
 
 		ClientCommands(uint32_t ver = 0) : PacketSubstruct(ver, true) {
 			//client_cmds = "";
@@ -152,7 +152,7 @@ public:
 		}
 
 		void RegisterElements() {
-			Register8String(client_cmds);
+			Register8String(client_cmd);
 		}
 	};
 	std::vector<ClientCommands> client_cmd_array;

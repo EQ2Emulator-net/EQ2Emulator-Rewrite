@@ -111,7 +111,7 @@ void UDPServer::ReaderThread() {
 		FD_ZERO(&readset);
 		FD_SET(Sock, &readset);
 
-		if ((num = select(static_cast<int>(Sock + 1), &readset, NULL, NULL, &sleep_time)) < 0) {
+		if ((num = select(static_cast<int>(Sock + 1), &readset, nullptr, nullptr, &sleep_time)) < 0) {
 			LogError(LOG_NET, 0, "select error");
 			continue;
 		}
@@ -125,14 +125,13 @@ void UDPServer::ReaderThread() {
 			if ((length = recvfrom(Sock, (char*)buffer, 2048, 0, (struct sockaddr*)&from, &socklen)) < 0)
 #else
 			if ((length = recvfrom(Sock, buffer, 2048, 0, (sockaddr*)&from, (socklen_t*)&socklen)) < 0)
-#endif // _WIN32
+#endif
 			{
-				/*LogError(LOG_NET, 0, "recvfrom error (%i)", WSAGetLastError());
-				return false;*/
+				LogError(LOG_NET, 0, "recvfrom error (%s)", NetUtil::SocketError().c_str());
 			}
 			else {
 				if (NetDebugEnabled()) {
-					LogError(LOG_NET, 0, "received %i", length);
+					DumpBytes(buffer, length, "recvfrom", true);
 				}
 				uint64_t clientKey = static_cast<uint32_t>(from.sin_addr.s_addr);
 				clientKey <<= 16;
@@ -150,9 +149,6 @@ void UDPServer::ReaderThread() {
 					s->UpdateHeartbeat(currentTime);
 				}
 				else {
-					if (NetDebugEnabled()) {
-						LogError(LOG_NET, 0, "found stream");
-					}
 					std::shared_ptr<Stream> currentStream = stream_itr->second;
 
 					currentStream->Process(buffer, length);

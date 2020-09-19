@@ -77,8 +77,9 @@ void EQ2Packet::FindOpcode() {
 }
 
 void EQ2Packet::HandlePacket(std::shared_ptr<Client> client) {
-	LogWarn(LOG_PACKET, 0, "Unhandled packet, opcode = %u", GetOpcode());
-	DumpBytes(buffer, Size);
+	std::ostringstream ss;
+	ss << "Unhandled packet, opcode = " << GetOpcode();
+	DumpBytes(buffer, Size, ss.str().c_str());
 }
 
 //This function makes the assumption that the rhs is not combined!
@@ -134,11 +135,6 @@ bool EQ2Packet::TryCombine(EQ2Packet* rhs, uint32_t MaxLength) {
 
 	//Copy the new packet's data
 	memcpy(combBuf + offset, rhs->buffer + 2, addSize);
-
-	if (NetDebugEnabled()) {
-		LogError(LOG_PACKET, 0, "Combined app packet");
-		DumpBytes(combBuf, newSize);
-	}
 
 	//Cleanup our old buffer
 	delete[] buffer;

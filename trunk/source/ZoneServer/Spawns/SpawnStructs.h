@@ -276,7 +276,11 @@ struct SpawnInfoStruct {
 	uint32_t						visual_state;
 	uint32_t						mood_state;
 	uint32_t						emote_state;
-	uint8_t							unknown600552[52];
+	uint32_t                        primary_slot_state;//only visual states that have weapon in their name seem to have worked for these so far, ex: 28240 drinal_trail_weapon_poison
+	uint32_t                        secondary_slot_state;
+	uint32_t                        ranged_slot_state;
+	uint32_t                        spell_visuals[8];
+	uint8_t                         spell_visual_levels[8];
 	uint32_t						target_id;
 	uint32_t						follow_target;
 	uint32_t						size_unknown;
@@ -291,8 +295,9 @@ struct SpawnInfoStruct {
 	uint8_t							unknown600554[10];
 	uint32_t						hp_percent; //this is sent as 100 ^ percentage remaining
 	uint32_t						power_percent;
-	int32_t							unknown600553; // if set from 1.0 to -1.0 you shrink so small you can't see yourself
-	uint8_t							unknown600553b;
+	float							cast_percentage;
+	uint32_t                        cast_unknown;
+	uint8_t							threat_level_secondary; // i think this is the threat percentage of the person 2nd on the hate list (shows up for the #1 hated's threat window for that spawn)
 	uint8_t							unknown600553c;
 	uint16_t						orig_level;  // This is the original level and should not change when the level value changes when mentoring
 	uint16_t						level;
@@ -323,7 +328,7 @@ struct SpawnInfoStruct {
 	uint8_t                         unknown13b;
 	uint8_t                         unknown14a[14];
 	uint8_t                         body_age;
-	uint32_t                        size_mod;
+	float                           size_mod; // if set from 1.0 to -1.0 you shrink so small you can't see yourself
 	uint32_t                        unknown67633;
 	uint8_t                         unknown67633b;
 	union {

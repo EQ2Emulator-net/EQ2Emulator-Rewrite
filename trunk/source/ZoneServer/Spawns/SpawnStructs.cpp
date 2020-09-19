@@ -663,8 +663,13 @@ void Substruct_SpawnInfo::RegisterElements() {
 	}
 
 	if (version >= 60055) {
-		RescopeArrayElement(unknown600552);
-		RegisterUInt8(unknown600552)->SetCount(52);
+		RegisterUInt32(primary_slot_state);
+		RegisterUInt32(secondary_slot_state);
+		RegisterUInt32(ranged_slot_state);
+		RescopeArrayElement(spell_visuals);
+		RegisterUInt32(spell_visuals)->SetCount(8);
+		RescopeArrayElement(spell_visual_levels);
+		RegisterUInt8(spell_visual_levels)->SetCount(8);
 		RescopeArrayElement(spell_effects);
 		RegisterSubstruct(spell_effects)->SetCount(30);
 		RegisterUInt32(target_id);
@@ -675,16 +680,15 @@ void Substruct_SpawnInfo::RegisterElements() {
 		RegisterUInt32(entityFlags);
 		RegisterUInt32(unknownpk1);
 		RegisterUInt32(activity_timer);
-		RescopeArrayElement(unknown600554);
-		RegisterUInt8(unknown600554)->SetCount(4);
+		RegisterUInt32(cast_unknown);
 		RegisterUInt32(hp_percent);
 		RegisterUInt32(power_percent);
-		RegisterUInt32(size_mod);
-		RegisterInt32(unknown600553);
+		RegisterFloat(size_mod);
+		RegisterFloat(cast_percentage);
 		if (GetVersion() >= 67633) {
 			RegisterUInt32(unknown67633);
 		}
-		RegisterUInt8(unknown600553b);
+		RegisterUInt8(threat_level_secondary);
 		RegisterUInt8(orig_level);
 		RegisterUInt8(level);
 		RegisterUInt8(unknown5);

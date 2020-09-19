@@ -153,3 +153,720 @@ bool CharacterUpdateGenerator::GenerateUpdate(std::ostringstream& ss) {
 	ret |= characterDetailsUpdates.CheckForUpdates(ss);
 	return ret;
 }
+
+void UpdateCharacterSheetMsgData::RegisterElements() {
+	if (version >= 67650) {
+		RegisterElements67650();
+		return;
+	}
+
+	static EntityAttributeSheet structDumperHackSheet;
+
+	EntityAttributeSheet* attributes = this->attributes ? this->attributes : &structDumperHackSheet;
+
+	std::string& char_name = namingInfo->name;
+	RegisterCharString(char_name, 42);
+	uint8_t& race = *this->race;
+	RegisterUInt8(race);
+	uint8_t& gender = *this->gender;
+	RegisterUInt8(gender);
+	RegisterUInt8(alignment);
+	RegisterUInt32(advArchetype);
+	RegisterUInt32(advBaseClass);
+	RegisterUInt32(advClass);
+	RegisterUInt32(tsArchetype);
+	RegisterUInt32(tsBaseClass);
+	RegisterUInt32(tsClass);
+	uint16_t& level = *advOrigLevel;
+	uint16_t& effective_level = *advLevel;
+	RegisterUInt16(level);
+	RegisterUInt16(effective_level);
+	RegisterUInt16(tsLevel);
+	RegisterInt32(gmLevel); //0-15
+	RegisterUInt16(account_age_base);
+	RescopeToReference(account_flags, uint16_t);
+	RegisterUInt16(account_flags);
+
+	//Replace deity/fb/twitter later
+	static std::string deity = "deity";
+	RegisterCharString(deity, 32);
+	std::string& last_name = namingInfo->last_name;
+	RegisterCharString(last_name, 21);
+	std::string& twitter_prepend = namingInfo->name;
+	RegisterCharString(twitter_prepend, 42);
+	std::string& facebook_prepend = namingInfo->name;
+	RegisterCharString(facebook_prepend, 42);
+
+
+	RegisterInt64(hp);
+	RegisterInt64(maxHp);
+	RegisterInt64(maxHpBase);
+
+	int32_t& current_power = attributes->power.currentValue;
+	int32_t& max_power = attributes->power.maxValue;
+	int32_t& base_power = attributes->power.baseValue;
+	RegisterInt32(current_power);
+	RegisterInt32(max_power);
+	RegisterInt32(base_power);
+
+	auto& conc_used = reinterpret_cast<uint8_t&>(attributes->concentration.currentValue);
+	auto& conc_max = reinterpret_cast<uint8_t&>(attributes->concentration.maxValue);
+	RegisterUInt8(conc_used);
+	RegisterUInt8(conc_max);
+
+	int32_t& savagery = attributes->savagery.currentValue;
+	int32_t& max_savagery = attributes->savagery.maxValue;
+	int32_t& base_savagery = attributes->savagery.baseValue;
+	RegisterInt32(savagery);
+	RegisterInt32(max_savagery);
+	RegisterInt32(base_savagery);
+	RegisterInt32(savagery_level);
+	RegisterInt32(max_savagery_level);
+	RegisterInt32(base_savagery_level);
+	RegisterInt32(dissonance);
+	RegisterInt32(max_dissonance);
+	RegisterInt32(base_dissonance);
+
+	RegisterInt32(hp_regen);
+	RegisterInt32(power_regen);
+	RegisterInt32(savagery_regen_per_sec);
+	RegisterInt32(dissipation);
+
+	RegisterFloat(ranged_attack_min_distance);
+	RegisterFloat(ranged_attack_max_distance);
+	RegisterFloat(stat_bonus_health);
+	RegisterFloat(stat_bonus_power);
+	RegisterInt64(bonus_health);
+	RegisterInt32(bonus_power);
+	RegisterFloat(stat_bonus_damage);
+	RegisterUInt16(mitigation_pct_pve);
+	RegisterUInt16(mitigation_pct_pvp);
+	RegisterUInt16(toughness);
+	RegisterFloat(toughness_resist_dmg_pvp);
+	RegisterUInt16(lethality);
+	RegisterFloat(lethality_pct);
+	RegisterInt16(avoidance_overall_chance);
+	RegisterInt16(avoidance_base);
+	RegisterInt16(avoidance_riposte_chance);
+	RegisterInt16(avoidance_riposte_chance_base);
+	RegisterInt16(avoidance_base_chance);
+	RegisterInt16(avoidance_base_chance_base);
+	RegisterInt16(avoidance_parry_chance);
+	RegisterInt16(avoidance_parry_chance_base);
+	RegisterInt16(avoidance_block_chance);
+	RegisterInt16(avoidance_block_chance_base);
+	RegisterInt16(avoidance_block_uncontested);
+	RegisterInt16(avoidance_deflection_uncontested);
+	RegisterInt16(avoidance_riposte_uncontested);
+	RegisterInt16(avoidance_dodge_uncontested);
+	RegisterInt16(avoidance_parry_uncontested);
+	int32_t& str = attributes->str.currentValue;
+	int32_t& sta = attributes->sta.currentValue;
+	int32_t& agi = attributes->agi.currentValue;
+	int32_t& wis = attributes->wis.currentValue;
+	int32_t& intel = attributes->intel.currentValue;
+	RegisterInt32(str);
+	RegisterInt32(sta);
+	RegisterInt32(agi);
+	RegisterInt32(wis);
+	RegisterInt32(intel);
+	int32_t& str_base = attributes->str.baseValue;
+	int32_t& sta_base = attributes->sta.baseValue;
+	int32_t& agi_base = attributes->agi.baseValue;
+	int32_t& wis_base = attributes->wis.baseValue;
+	int32_t& intel_base = attributes->intel.baseValue;
+	RegisterInt32(str_base);
+	RegisterInt32(sta_base);
+	RegisterInt32(agi_base);
+	RegisterInt32(wis_base);
+	RegisterInt32(intel_base);
+	int32_t& mitigation_cur = attributes->mitigation.currentValue;
+	RegisterInt32(mitigation_cur);
+
+	int32_t& noxious = attributes->noxious.currentValue;
+	int32_t& elemental = attributes->elemental.currentValue;
+	int32_t& arcane = attributes->arcane.currentValue;
+	RegisterInt32(elemental);
+	RegisterInt32(noxious);
+	RegisterInt32(arcane);
+	int32_t& mitigation_base = attributes->mitigation.baseValue;
+	RegisterInt32(mitigation_base);
+	int32_t& noxious_base = attributes->noxious.baseValue;
+	int32_t& elemental_base = attributes->elemental.baseValue;
+	int32_t& arcane_base = attributes->arcane.baseValue;
+	RegisterInt32(elemental_base);
+	RegisterInt32(noxious_base);
+	RegisterInt32(arcane_base);
+
+	RegisterUInt16(physical_absorb_pve);
+	RegisterUInt16(elemental_absorb_pve);
+	RegisterUInt16(noxious_absorb_pve);
+	RegisterUInt16(arcane_absorb_pve);
+	RegisterUInt16(physical_absorb_pvp);
+	RegisterUInt16(elemental_absorb_pvp);
+	RegisterUInt16(noxious_absorb_pvp);
+	RegisterUInt16(arcane_absorb_pvp);
+	RegisterUInt16(physical_dmg_reduction);
+	RegisterUInt16(elemental_dmg_reduction);
+	RegisterUInt16(noxious_dmg_reduction);
+	RegisterUInt16(arcane_dmg_reduction);
+	RegisterUInt16(physical_dmg_reduction_pct);
+	RegisterUInt16(elemental_dmg_reduction_pct);
+	RegisterUInt16(noxious_dmg_reduction_pct);
+	RegisterUInt16(arcane_dmg_reduction_pct);
+
+	RegisterFloat(advExp);
+	RegisterFloat(advExpNextLevel);
+	RegisterFloat(advExpDebt);
+	RegisterFloat(tsExp);
+	RegisterFloat(tsExpNextLevel);
+	RegisterFloat(tsExpDebt);
+
+	if (GetVersion() < 60114) {
+		RescopeArrayElement(unknown18);
+		RegisterUInt16(unknown18)->SetCount(6);
+	}
+
+	RegisterUInt16(server_bonus);
+	RegisterUInt16(adventure_vet_bonus);
+	RegisterUInt16(tradeskill_vet_bonus);
+	RegisterUInt16(dungeon_finder_bonus);
+	RegisterUInt32(recruit_friend_bonus);
+	RegisterUInt16(unknown19);
+	RegisterUInt16(adventure_vitality);
+	RegisterUInt16(adventure_vitality_yellow_arrow);
+	RegisterUInt16(adventure_vitality_blue_arrow);
+	RegisterUInt16(tradeskill_vitality);
+	RegisterUInt16(tradeskill_vitality_purple_arrow);
+	RegisterUInt16(tradeskill_vitality_blue_arrow);
+	RegisterUInt16(mentor_bonus);
+	RegisterUInt8(unknown20);
+	RegisterUInt16(assigned_aa);
+	RegisterUInt16(max_aa);
+	RegisterUInt16(unassigned_aa);
+	RegisterUInt16(aa_green_bar);
+	RegisterUInt16(adv_xp_to_aa_xp_slider);
+	RegisterUInt16(unknown21);
+	RegisterUInt16(aa_blue_bar);
+	RegisterUInt16(bonus_achievement_xp);
+
+	uint8_t& Unknown22 = unknown22[0];
+	RegisterUInt8(Unknown22)->SetCount(2);
+
+	uint8_t& Unknown23 = unknown23[0];
+	RegisterUInt8(Unknown23)->SetCount(2);
+
+	RegisterUInt32(items_found);
+	RegisterUInt32(named_npcs_killed);
+	RegisterUInt32(quests_completed);
+	RegisterUInt32(exploration_events);
+	RegisterUInt32(completed_collections);
+
+	uint16_t& Unknown24 = unknown24[0];
+	RegisterUInt16(Unknown24)->SetCount(10);
+
+	RegisterUInt8(unknown25);
+	RegisterUInt16(total_prestige_points);
+	RegisterUInt16(unassigned_prestige_points);
+	RegisterUInt16(unknown26);
+	RegisterUInt16(unknown27);
+	RegisterUInt16(total_tradeskill_points);
+	RegisterUInt16(unassigned_tradeskill_points);
+	RegisterUInt16(unknown28);
+	RegisterUInt16(unknown29);
+	RegisterUInt16(total_tradeskill_prestige_points);
+	RegisterUInt16(unassigned_tradeskill_prestige_points);
+	RegisterUInt16(unknown30);
+	RegisterUInt16(unknown31);
+	RegisterUInt16(unknown32);
+	RegisterUInt16(unknown33);
+
+	uint32_t& coins_copper = currency.copper;
+	uint32_t& coins_silver = currency.silver;
+	uint32_t& coins_gold = currency.gold;
+	uint32_t& coins_plat = currency.platinum;
+	RegisterUInt32(coins_copper);
+	RegisterUInt32(coins_silver);
+	RegisterUInt32(coins_gold);
+	RegisterUInt32(coins_plat);
+
+	RescopeArrayElement(unknown34);
+	RegisterUInt32(unknown34)->SetCount(5);
+
+	// Error parsing the struct, unknown is an unknown type(spell_effects);
+	RescopeArrayElement(spell_effects);
+	RegisterSubstruct(spell_effects)->SetCount(45);
+
+	// Error parsing the struct, unknown is an unknown type(detrimental_spell_effects);
+	RescopeArrayElement(detrimental_spell_effects);
+	RegisterSubstruct(detrimental_spell_effects)->SetCount(45);
+
+	RescopeArrayElement(passive_spell_effects);
+	RegisterSubstruct(passive_spell_effects)->SetCount(100);
+	RescopeArrayElement(passive_unk_bool)
+		auto pe = RegisterBool(passive_unk_bool);
+	pe->SetCount(128);
+	RegisterInt32(passive_last_index);
+
+	uint8_t& Unknown35 = unknown35[0];
+	RegisterUInt8(Unknown35)->SetCount(354);
+
+	RegisterUInt8(trauma_count);
+	RegisterUInt8(arcane_count);
+	RegisterUInt8(noxious_count);
+	RegisterUInt8(elemental_count);
+	RegisterUInt8(curse_count);
+
+	// Error parsing the struct, unknown is an unknown type(maintained_effects);
+	RescopeArrayElement(maintained_effects);
+	RegisterSubstruct(maintained_effects)->SetCount(30);
+
+	RegisterFloat(breath);
+	RegisterUInt32(breathable_environment_flags);
+	RegisterUInt8(unknown36);
+	RegisterUInt32(melee_pri_dmg_min);
+	RegisterUInt32(melee_pri_dmg_max);
+	RegisterFloat(melee_pri_delay);
+	RegisterUInt32(melee_sec_dmg_min);
+	RegisterUInt32(melee_sec_dmg_max);
+	RegisterFloat(melee_sec_delay);
+	RegisterUInt32(ranged_dmg_min);
+	RegisterUInt32(ranged_dmg_max);
+	RegisterFloat(ranged_delay);
+	RegisterUInt32(unknown37);
+	RegisterUInt32(unknown38);
+	RegisterUInt32(unknown39);
+	RegisterUInt32(unknown40);
+	RegisterFloat(ability_mod_pve);
+	RegisterFloat(unknown41);
+	RegisterFloat(unknown42);
+	RegisterFloat(unknown43);
+	RegisterFloat(unknown44);
+	RegisterFloat(ability_mod_pvp);
+	RegisterFloat(base_melee_crit);
+	RegisterFloat(base_spell_crit);
+	RegisterFloat(base_taunt_crit);
+	RegisterFloat(base_heal_crit);
+	RegisterUInt32(flags);
+	RegisterUInt32(flags2);
+	static std::string afk_message = "afk_message";
+	RegisterCharString(afk_message, 256);
+	RegisterSubstruct(pve_props);
+	RegisterSubstruct(unk_props);
+	RegisterSubstruct(pvp_props);
+	RegisterSubstruct(ts_props);
+	RegisterSubstruct(prop_caps);
+
+	RegisterFloat(adventure_effects_cap);
+	RegisterFloat(tradeskill_effects_cap);
+	RegisterFloat(aa_effects_cap);
+
+	RescopeArrayElement(unknown525a);
+	RegisterUInt8(unknown525a)->SetCount(36);
+	RegisterUInt64(spell_state_flags);
+	RescopeArrayElement(unknown525b);
+	RegisterUInt8(unknown525b)->SetCount(6);
+
+	RegisterSubstruct(groupSheet);
+
+	RegisterFloat(humidity);
+	RegisterFloat(wind_direction);
+
+	RescopeToReference(statusPoints, uint32_t);
+	RescopeToReference(guild_status, uint32_t);
+	RegisterUInt32(statusPoints);
+	RegisterUInt32(guild_status);
+
+	RegisterUInt8(unknownAOMa);
+
+	//house zone and the following 151 bytes (199 total) appear to be the same object
+	static std::string house_zone = "house zone";
+	RegisterCharString(house_zone, 48);
+	uint8_t& Unknown526 = unknown526[0];
+	RegisterUInt8(Unknown526)->SetCount(151);
+
+
+	//bind zone and the following bytes (84 total) appear to be the same object
+	static std::string bind_zone = "bind zone";
+	RegisterCharString(bind_zone, 32);
+	uint8_t& Unknown188 = unknown188[0];
+	RegisterUInt8(Unknown188)->SetCount(42);
+}
+
+void UpdateCharacterSheetMsgData::RegisterElements67650() {
+	const uint32_t ver = GetVersion();
+
+	//Eventually break up the stat blocks into substructs so we can combine these register functions cleanly
+	static EntityAttributeSheet structDumperHackSheet;
+
+	EntityAttributeSheet* attributes = this->attributes ? this->attributes : &structDumperHackSheet;
+
+	std::string& char_name = namingInfo->name;
+	RegisterCharString(char_name, 42);
+	uint8_t& race = *this->race;
+	RegisterUInt8(race);
+	uint8_t& gender = *this->gender;
+	RegisterUInt8(gender);
+	RegisterUInt8(alignment);
+	RegisterUInt32(advArchetype);
+	RegisterUInt32(advBaseClass);
+	RegisterUInt32(advClass);
+	RegisterUInt32(tsArchetype);
+	RegisterUInt32(tsBaseClass);
+	RegisterUInt32(tsClass);
+	uint16_t& level = *advOrigLevel;
+	uint16_t& effective_level = *advLevel;
+	RegisterUInt16(level);
+	RegisterUInt16(effective_level);
+	RegisterUInt16(tsLevel);
+	RegisterUInt16(account_age_base);
+	RegisterInt32(gmLevel); //0-15
+	RegisterUInt32(account_flags);
+
+	//Replace deity/fb/twitter later
+	static std::string deity = "deity";
+	RegisterCharString(deity, 32);
+	static std::string ascension_class = "ascension_class";
+	RegisterCharString(ascension_class, 32);
+	static int16_t ascension_level = 0;
+	RegisterInt16(ascension_level);
+	static int16_t ascension_unknown = 0;
+	RegisterInt16(ascension_unknown);
+	std::string& last_name = namingInfo->last_name;
+	RegisterCharString(last_name, 21);
+	std::string& twitter_prepend = namingInfo->name;
+	RegisterCharString(twitter_prepend, 42);
+	std::string& facebook_prepend = namingInfo->name;
+	RegisterCharString(facebook_prepend, 42);
+
+
+	RegisterInt64(hp);
+	RegisterInt64(maxHp);
+	RegisterInt64(maxHpBase);
+
+	int32_t& current_power = attributes->power.currentValue;
+	int32_t& max_power = attributes->power.maxValue;
+	int32_t& base_power = attributes->power.baseValue;
+	RegisterInt32(current_power);
+	RegisterInt32(max_power);
+	RegisterInt32(base_power);
+
+	auto& conc_used = reinterpret_cast<uint8_t&>(attributes->concentration.currentValue);
+	auto& conc_max = reinterpret_cast<uint8_t&>(attributes->concentration.maxValue);
+	RegisterUInt8(conc_used);
+	RegisterUInt8(conc_max);
+
+	int32_t& savagery = attributes->savagery.currentValue;
+	int32_t& max_savagery = attributes->savagery.maxValue;
+	int32_t& base_savagery = attributes->savagery.baseValue;
+	RegisterInt32(savagery);
+	RegisterInt32(max_savagery);
+	RegisterInt32(base_savagery);
+
+	RegisterInt32(savagery_level);
+	RegisterInt32(max_savagery_level);
+	RegisterInt32(base_savagery_level);
+
+	RegisterInt32(dissonance);
+	RegisterInt32(max_dissonance);
+	RegisterInt32(base_dissonance);
+
+	RegisterInt32(hp_regen);
+	RegisterInt32(power_regen);
+	RegisterInt32(savagery_regen_per_sec);
+	RegisterInt32(dissipation);
+
+	RegisterFloat(ranged_attack_min_distance);
+	RegisterFloat(ranged_attack_max_distance);
+	RegisterFloat(stat_bonus_health);
+	RegisterFloat(stat_bonus_power);
+	RegisterInt64(bonus_health);
+	RegisterInt32(bonus_power);
+	RegisterFloat(stat_bonus_damage);
+	RegisterUInt16(mitigation_pct_pve);
+	RegisterUInt16(mitigation_pct_pvp);
+	RegisterUInt16(toughness);
+	RegisterFloat(toughness_resist_dmg_pvp);
+	RegisterUInt16(lethality);
+	RegisterFloat(lethality_pct);
+
+	RegisterInt16(avoidance_overall_chance);
+	RegisterInt16(avoidance_base);
+	RegisterInt16(avoidance_riposte_chance);
+	RegisterInt16(avoidance_riposte_chance_base);
+	RegisterInt16(avoidance_base_chance);
+	RegisterInt16(avoidance_base_chance_base);
+	RegisterInt16(avoidance_parry_chance);
+	RegisterInt16(avoidance_parry_chance_base);
+	RegisterInt16(avoidance_block_chance);
+	RegisterInt16(avoidance_block_chance_base);
+	RegisterInt16(avoidance_block_uncontested);
+	RegisterInt16(avoidance_deflection_uncontested); //i think this was just left in by accident, not used
+	RegisterInt16(avoidance_riposte_uncontested);
+	RegisterInt16(avoidance_dodge_uncontested);
+	RegisterInt16(avoidance_parry_uncontested);
+
+	int32_t& str = attributes->str.currentValue;
+	int32_t& sta = attributes->sta.currentValue;
+	int32_t& agi = attributes->agi.currentValue;
+	int32_t& wis = attributes->wis.currentValue;
+	int32_t& intel = attributes->intel.currentValue;
+	RegisterInt32(str);
+	RegisterInt32(sta);
+	RegisterInt32(agi);
+	RegisterInt32(wis);
+	RegisterInt32(intel);
+
+	int32_t& str_base = attributes->str.baseValue;
+	int32_t& sta_base = attributes->sta.baseValue;
+	int32_t& agi_base = attributes->agi.baseValue;
+	int32_t& wis_base = attributes->wis.baseValue;
+	int32_t& intel_base = attributes->intel.baseValue;
+	RegisterInt32(str_base);
+	RegisterInt32(sta_base);
+	RegisterInt32(agi_base);
+	RegisterInt32(wis_base);
+	RegisterInt32(intel_base);
+
+	int32_t& mitigation_cur = attributes->mitigation.currentValue;
+	int32_t& noxious = attributes->noxious.currentValue;
+	int32_t& elemental = attributes->elemental.currentValue;
+	int32_t& arcane = attributes->arcane.currentValue;
+	RegisterInt32(mitigation_cur);
+	RegisterInt32(elemental);
+	RegisterInt32(noxious);
+	RegisterInt32(arcane);
+
+
+	int32_t& mitigation_base = attributes->mitigation.baseValue;
+	int32_t& noxious_base = attributes->noxious.baseValue;
+	int32_t& elemental_base = attributes->elemental.baseValue;
+	int32_t& arcane_base = attributes->arcane.baseValue;
+	RegisterInt32(mitigation_base);
+	RegisterInt32(elemental_base);
+	RegisterInt32(noxious_base);
+	RegisterInt32(arcane_base);
+
+	RegisterUInt16(physical_absorb_pve);
+	RegisterUInt16(elemental_absorb_pve);
+	RegisterUInt16(noxious_absorb_pve);
+	RegisterUInt16(arcane_absorb_pve);
+
+	RegisterUInt16(physical_absorb_pvp);
+	RegisterUInt16(elemental_absorb_pvp);
+	RegisterUInt16(noxious_absorb_pvp);
+	RegisterUInt16(arcane_absorb_pvp);
+
+	RegisterUInt16(physical_dmg_reduction);
+	RegisterUInt16(elemental_dmg_reduction);
+	RegisterUInt16(noxious_dmg_reduction);
+	RegisterUInt16(arcane_dmg_reduction);
+
+	RegisterUInt16(physical_dmg_reduction_pct);
+	RegisterUInt16(elemental_dmg_reduction_pct);
+	RegisterUInt16(noxious_dmg_reduction_pct);
+	RegisterUInt16(arcane_dmg_reduction_pct);
+
+	if (ver >= 67730) {
+		double& advExp = advExp_do_not_set;
+		double& advExpNextLevel = advExpNextLevel_do_not_set;
+		RegisterDouble(advExp);
+		RegisterDouble(advExpNextLevel);
+	}
+	else {
+		RegisterFloat(advExp);
+		RegisterFloat(advExpNextLevel);
+	}
+	RegisterFloat(advExpDebt);
+
+	if (ver >= 67730) {
+		double& tsExp = tsExp_do_not_set;
+		double& tsExpNextLevel = tsExpNextLevel_do_not_set;
+		RegisterDouble(tsExp);
+		RegisterDouble(tsExpNextLevel);
+	}
+	else {
+		RegisterFloat(tsExp);
+		RegisterFloat(tsExpNextLevel);
+	}
+	RegisterFloat(tsExpDebt);
+
+	if (ver >= 67730) {
+		static double titheExp = 0;
+		static double titheExpNextLevel = 0;
+		RegisterDouble(titheExp);
+		RegisterDouble(titheExpNextLevel);
+	}
+	else {
+		static float titheExp = 0;
+		static float titheExpNextLevel = 0;
+		RegisterFloat(titheExp);
+		RegisterFloat(titheExpNextLevel);
+	}
+	static float titheExpDebt = 0;
+	RegisterFloat(titheExpDebt);
+
+	if (ver >= 67730) {
+		static double ascensionExp = 0;
+		static double ascensionExpNextLevel = 0;
+		RegisterDouble(ascensionExp);
+		RegisterDouble(ascensionExpNextLevel);
+	}
+	else {
+		static float ascensionExp = 0;
+		static float ascensionExpNextLevel = 0;
+		RegisterFloat(ascensionExp);
+		RegisterFloat(ascensionExpNextLevel);
+	}
+	static float ascensionExpDebt = 0;
+	uint8_t ascensionUnk = 0;
+	RegisterUInt8(ascensionUnk);
+	RegisterFloat(ascensionExpDebt); //guess
+
+	if (ver >= 67730) {
+		static float unknownBOLc = 0;
+		RegisterFloat(unknownBOLc); //guess
+	}
+
+	RegisterUInt16(server_bonus);
+	RegisterUInt16(adventure_vet_bonus);
+	RegisterUInt16(tradeskill_vet_bonus);
+	RegisterUInt16(dungeon_finder_bonus);
+	RegisterUInt32(recruit_friend_bonus);
+
+	static bool bCanLevelPast90 = true; //if false xp bar hover at level 90 gives message about needing 280 aas and a certain xpac to level past 90
+	RegisterBool(bCanLevelPast90);
+
+	RegisterUInt16(adventure_vitality);
+	RegisterUInt16(adventure_vitality_yellow_arrow);
+	RegisterUInt16(adventure_vitality_blue_arrow);
+	RegisterUInt16(tradeskill_vitality);
+	RegisterUInt16(tradeskill_vitality_purple_arrow);
+	RegisterUInt16(tradeskill_vitality_blue_arrow);
+
+	static float mentor_xp_mod = 0.f;
+	RegisterFloat(mentor_xp_mod);
+	RegisterUInt16(assigned_aa);
+	RegisterUInt16(max_aa);
+	RegisterUInt16(unassigned_aa);
+	RegisterUInt16(aa_green_bar);
+	RegisterUInt16(adv_xp_to_aa_xp_slider);
+	RegisterUInt16(unknown21);
+	RegisterUInt16(aa_blue_bar);
+	RegisterUInt16(bonus_achievement_xp);
+	static int32_t aa_level_up_bonus_count = 0;
+	RegisterInt32(aa_level_up_bonus_count);
+	RegisterUInt32(items_found);
+	RegisterUInt32(named_npcs_killed);
+	RegisterUInt32(quests_completed);
+	RegisterUInt32(exploration_events);
+	RegisterUInt32(completed_collections);
+
+	static uint8_t g_unknown251[0x266 - 0x251];
+	uint8_t& unknown251 = g_unknown251[0];
+	RegisterUInt8(unknown251)->SetCount(sizeof(g_unknown251));
+
+	RegisterUInt16(total_prestige_points);
+	RegisterUInt16(unassigned_prestige_points);
+	RegisterUInt16(unknown26);
+	RegisterUInt16(unknown27);
+	RegisterUInt16(total_tradeskill_points);
+	RegisterUInt16(unassigned_tradeskill_points);
+	RegisterUInt16(unknown28);
+	RegisterUInt16(unknown29);
+	RegisterUInt16(total_tradeskill_prestige_points);
+	RegisterUInt16(unassigned_tradeskill_prestige_points);
+	RegisterUInt16(unknown30);
+	RegisterUInt16(unknown31);
+	RegisterUInt16(unknown32);
+	RegisterUInt16(unknown33);
+
+	uint32_t& coins_copper = currency.copper;
+	uint32_t& coins_silver = currency.silver;
+	uint32_t& coins_gold = currency.gold;
+	uint32_t& coins_plat = currency.platinum;
+	RegisterUInt32(coins_copper);
+	RegisterUInt32(coins_silver);
+	RegisterUInt32(coins_gold);
+	RegisterUInt32(coins_plat);
+
+	static uint8_t g_unknown2c9[0x2dd - 0x2c9];
+	uint8_t& unknown2c9 = g_unknown2c9[0];
+	RegisterUInt8(unknown2c9)->SetCount(sizeof(g_unknown2c9));
+
+	RescopeArrayElement(spell_effects);
+	RegisterSubstruct(spell_effects)->SetCount(45);
+	RescopeArrayElement(detrimental_spell_effects);
+	RegisterSubstruct(detrimental_spell_effects)->SetCount(45);
+	RescopeArrayElement(passive_spell_effects);
+	RegisterSubstruct(passive_spell_effects)->SetCount(100);
+	RescopeArrayElement(passive_unk_bool);
+	auto pe = RegisterBool(passive_unk_bool);
+	pe->SetCount(128);
+	RegisterInt32(passive_last_index);
+
+	static uint8_t g_unknown2053[0x21b5 - 0x2053];
+	uint8_t& unknown2053 = g_unknown2053[0];
+	RegisterUInt8(unknown2053)->SetCount(sizeof(g_unknown2053));
+
+	RegisterUInt8(trauma_count);
+	RegisterUInt8(arcane_count);
+	RegisterUInt8(noxious_count);
+	RegisterUInt8(elemental_count);
+	RegisterUInt8(curse_count);
+	RescopeArrayElement(maintained_effects);
+	RegisterSubstruct(maintained_effects)->SetCount(30);
+	RegisterFloat(breath);
+	RegisterUInt32(breathable_environment_flags);
+	RegisterUInt8(unknown36);
+
+	static uint8_t g_unknown2ca9[0x2d05 - 0x2ca9];
+	uint8_t& unknown2ca9 = g_unknown2ca9[0];
+	RegisterUInt8(unknown2ca9)->SetCount(sizeof(g_unknown2ca9));
+
+	RegisterUInt32(flags);
+	RegisterUInt32(flags2);
+	static std::string afk_message = "afk_message";
+	RegisterCharString(afk_message, 256);
+	RegisterSubstruct(pve_props);
+	RegisterSubstruct(unk_props);
+	RegisterSubstruct(unk_props2);
+	RegisterSubstruct(pvp_props);
+	RegisterSubstruct(ts_props);
+	RegisterSubstruct(prop_caps);
+
+	static uint8_t g_unknown37cd[0x37fd - 0x37cd];
+	uint8_t& unknown37cd = g_unknown37cd[0];
+	RegisterUInt8(unknown37cd)->SetCount(sizeof(g_unknown37cd));
+
+	RegisterUInt64(spell_state_flags);
+
+	static uint8_t g_unknown3805[0x380f - 0x3805];
+	uint8_t& unknown3805 = g_unknown3805[0];
+	RegisterUInt8(unknown3805)->SetCount(sizeof(g_unknown3805));
+
+	RegisterSubstruct(groupSheet);
+	RegisterFloat(humidity);
+	RegisterFloat(wind_direction);
+	RegisterUInt64(statusPoints);
+	RegisterUInt64(guild_status);
+
+	RegisterUInt8(unknownAOMa);
+	//house zone and the following 151 bytes (199 total) appear to be the same object
+	static std::string house_zone = "house zone";
+	RegisterCharString(house_zone, 48);
+
+	static uint8_t g_unknown3e1c[0x3eb3 - 0x3e1c];
+	uint8_t& unknown3e1c = g_unknown3e1c[0];
+	RegisterUInt8(unknown3e1c)->SetCount(sizeof(g_unknown3e1c));
+
+	//bind zone and the following bytes (84 total) appear to be the same object
+	static std::string bind_zone = "bind zone";
+	RegisterCharString(bind_zone, 32);
+
+	constexpr uint32_t filler_size = std::max<uint32_t>(0x3f33 - 0x3ef7, 0x3f0f - 0x3ed3);
+
+	static uint8_t g_unknown3ed3[filler_size];
+	uint8_t& unknown3ed3 = g_unknown3ed3[0];
+	RegisterUInt8(unknown3ed3)->SetCount(ver >= 67730 ? (0x3f33 - 0x3ef7) : (0x3f0f - 0x3ed3));
+}

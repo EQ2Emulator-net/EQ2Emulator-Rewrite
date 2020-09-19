@@ -39,10 +39,6 @@ void Client::Process() {
 	GetController()->Process();
 
 	while (EQ2Packet* p = PopPacket()) {
-		if (NetDebugEnabled()) {
-			LogError(LOG_PACKET, 0, "ZoneServer client packet dump");
-			DumpBytes(p->buffer, p->Size);
-		}
 		p->HandlePacket(std::static_pointer_cast<Client>(shared_from_this()));
 		delete p;
 	}

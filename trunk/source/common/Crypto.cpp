@@ -19,19 +19,10 @@
 */
 
 #include "stdafx.h"
-
 #include "Crypto.h"
 
-
 uint64_t Crypto::RSADecrypt(unsigned char* text, uint16_t size){
-	uint64_t ret = 0;
-	unsigned char* buffer = new unsigned char[8];
-	for(int i=7;i>=0;i--)
-		buffer[7-i] = text[i];
-	memcpy(&ret, buffer, 8);
-	if (buffer)
-		delete[] buffer;
-	return ret;
+    return ntohll(*reinterpret_cast<uint64_t*>(text));
 }
 
 void Crypto::RC4Decrypt(unsigned char* text, uint32_t size){

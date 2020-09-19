@@ -214,6 +214,11 @@ bool ZoneServer::AddClient(std::shared_ptr<Client> c) {
 	zone->zone_flags = 25189220;
 	zone->unknown11 = 4294967292;
 
+	zone->client_cmd_array.emplace_back(c->GetVersion());
+	zone->client_cmd_array.back().client_cmd = "census_paperdoll_enabled 0"; //not sure if paperdoll images are sent on a separate thread that isn't sync'd or what but they are BUGGY
+	zone->client_cmd_array.emplace_back(c->GetVersion());
+	zone->client_cmd_array.back().client_cmd = "chat_linkbrackets_item 1";
+
 	if (zone->GetVersion() >= 67650) {
 		//The expansion bytes changed from 2 8 byte vals to 2 9 byte arrays here
 		static const unsigned char unk4Bytes[] = { 0x7F, 0xFF, 0xF8, 0x90, 0x44, 0x94, 0x00, 0x10, 0x10 };
@@ -257,7 +262,7 @@ std::shared_ptr<Entity> ZoneServer::LoadCharacter(const std::shared_ptr<Client>&
 	// Set this in the spawn constructor
 	entity->SetState(16512, false);
 	entity->SetSize(0.875f, false);
-	entity->SetCollisionRadius(28, false);
+	entity->SetCollisionRadius(1.0f, false);
 	entity->SetSizeRatio(1.0f, false);
 	entity->SetInteractionFlag(12, false);
 	if (oldZoneID != GetID()) {

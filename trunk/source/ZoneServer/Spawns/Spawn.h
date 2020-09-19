@@ -13,7 +13,7 @@
 const uint32_t EntityFlagAlive = 1;
 const uint32_t EntityIsNpc = 1 << 1;
 const uint32_t EntityIsMercenary = 1 << 2;
-const uint32_t EntityFlagStaticObject = 1 << 3;
+const uint32_t EntityFlagIsPet = 1 << 3;
 const uint32_t EntityFlagMerchant = 1 << 4;
 const uint32_t EntityFlagHideIcon = 1 << 9; //hides any special icons for this spawn
 const uint32_t EntityFlagInteractable = 1 << 10; //shows the hand icon
@@ -71,7 +71,7 @@ public:
 	~Spawn();
 
 	bool IsMercenary() { return (GetInfoStruct()->entityFlags & EntityIsMercenary) != 0; }
-	bool IsStaticObject() { return (GetInfoStruct()->entityFlags & EntityFlagStaticObject) != 0; }
+	bool IsPet() { return (GetInfoStruct()->entityFlags & EntityFlagIsPet) != 0; }
 	bool IsMerchant() { return (GetInfoStruct()->entityFlags & EntityFlagMerchant) != 0; }
 	bool ShouldShowLevel() { return bShowLevel; }
 	bool IsInteractable() { return (GetInfoStruct()->entityFlags & EntityFlagInteractable) != 0; }

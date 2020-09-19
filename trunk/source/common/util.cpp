@@ -86,7 +86,7 @@ const char * GetElapsedTime(time_t seconds, char *dst, unsigned int size) {
 
 #define IS_PRINTABLE(c) ((c) >= 32 && (c) <= 126)
 
-void DumpBytes(const unsigned char* bytes, unsigned int size, const char* header) {
+void DumpBytes(const unsigned char* bytes, unsigned int size, const char* header, bool bTrace) {
 	std::ostringstream ss;
 	if (header) {
 		ss << header << "\n";
@@ -120,7 +120,12 @@ void DumpBytes(const unsigned char* bytes, unsigned int size, const char* header
 		ss << std::endl;
 	}
 
-	LogDebug(LOG_PACKET, 0, "DumpBytes: \n%s", ss.str().c_str());
+	if (bTrace) {
+		LogTrace(LOG_PACKET, 0, "DumpBytes: \n%s", ss.str().c_str());
+	}
+	else {
+		LogDebug(LOG_PACKET, 0, "DumpBytes: \n%s", ss.str().c_str());
+	}
 }
 
 void DumpBytes(const char *bytes, unsigned int len)  {

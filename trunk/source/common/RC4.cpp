@@ -30,6 +30,7 @@ RC4::RC4(uint64_t nKey)
 	{
 		for(uint16_t i = 0; i < 256; i++ )
 			g_byInitState[i] = (uint8_t)i;
+		g_bInitStateInitialized = true;
 	}
 	Init(nKey);
 }
