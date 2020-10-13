@@ -75,7 +75,7 @@ void Substruct_SpawnVisualization::RegisterElements() {
 		RegisterBool(bShowAggro);
 	}
 	if (version >= 1142) {
-		RegisterUInt8(unknowna);
+		RegisterUInt8(pet_threat);
 	}
 	if (version >= 1188) {
 		RegisterUInt8(name_quest_icon);
@@ -105,8 +105,8 @@ void Substruct_SpawnVisualization::RegisterElements() {
 	}
 
 	if (version >= 1188) {
-		RegisterUInt8(tag1);
-		RegisterUInt8(tag2);
+		RegisterUInt8(tag_icon);
+		RegisterUInt8(tag_number);
 		RegisterUInt8(unknown3);
 	}
 }
@@ -684,7 +684,8 @@ void Substruct_SpawnInfo::RegisterElements() {
 		RegisterUInt32(hp_percent);
 		RegisterUInt32(power_percent);
 		RegisterFloat(size_mod);
-		RegisterFloat(cast_percentage);
+		RegisterInt16(cast_percentage);
+		RegisterInt16(unknown3c2);
 		if (GetVersion() >= 67633) {
 			RegisterUInt32(unknown67633);
 		}

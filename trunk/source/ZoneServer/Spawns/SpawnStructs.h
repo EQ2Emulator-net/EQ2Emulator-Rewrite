@@ -163,9 +163,9 @@ struct SpawnVisualizationStruct {
 	uint8_t		merc_icon;
 	//npc_hate in old code
 	bool        bShowAggro;
-	uint8_t		unknowna;
+	uint8_t		pet_threat;
 	uint8_t		name_quest_icon;
-	uint32_t	unknowna2;
+	uint32_t	unknowna2; //quest related, maybe id
 	uint8_t		unknownb[3];
 	bool    	bShowHandFlag;
 	uint32_t    unknown2b;
@@ -173,8 +173,8 @@ struct SpawnVisualizationStruct {
 	uint8_t		unknown2[6];
 	uint8_t		unknown2a[3];
 	uint8_t     pvp_difficulty;
-	uint8_t     tag1;
-	uint8_t     tag2;
+	uint8_t     tag_icon;
+	uint8_t     tag_number;
 	uint8_t     unknown3;
 	uint16_t    vis_flags;
 
@@ -295,7 +295,8 @@ struct SpawnInfoStruct {
 	uint8_t							unknown600554[10];
 	uint32_t						hp_percent; //this is sent as 100 ^ percentage remaining
 	uint32_t						power_percent;
-	float							cast_percentage;
+	int16_t							cast_percentage;
+	int16_t                         unknown3c2;
 	uint32_t                        cast_unknown;
 	uint8_t							threat_level_secondary; // i think this is the threat percentage of the person 2nd on the hate list (shows up for the #1 hated's threat window for that spawn)
 	uint8_t							unknown600553c;
