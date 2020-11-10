@@ -12,6 +12,7 @@
 #include "ItemPackets.h"
 #include "OP_PlayFlythroughCmd_Packet.h"
 #include "Substruct_SpellDesc.h"
+#include "Substruct_AADesc.h"
 #include "Substruct_ExamineDescSpell.h"
 #define RegisterZoneSubstruct(pt, ...) RegisterXmlSubstruct(pt, "ZoneStructs.xml", __VA_ARGS__)
 
@@ -81,5 +82,6 @@ RegisterZoneSubstruct(Substruct_FlythroughDesc, 1);
 RegisterZoneSubstruct(Substruct_SpellDesc, 1208, 60114, 67650);
 RegisterZoneSubstruct(Substruct_ExamineDescItem_SpellScroll, 1208, 60114, 67650);
 RegisterZoneSubstruct(Substruct_ExamineDescSpell, 1208, 60114, 67650);
+RegisterZoneSubstruct(Substruct_AADesc, 1193);
 RegisterZoneSubstruct(Substruct_MapFogData, 1188);
 RegisterZoneSubstruct(Substruct_MapData, 1188);

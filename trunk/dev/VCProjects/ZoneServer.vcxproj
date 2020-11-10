@@ -406,6 +406,7 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_UpdateTargetMsg.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_UpdateTitleCmd_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_ZoneInfoMsg_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_AADesc.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_ExamineDescBase.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_ExamineDescItem.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_ExamineDescSpell.h" />

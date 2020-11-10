@@ -1119,5 +1119,8 @@
     <ClInclude Include="..\..\source\ZoneServer\Spawns\SpawnCampSpawn.h">
       <Filter>source\Spawns</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_AADesc.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
