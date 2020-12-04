@@ -745,8 +745,18 @@ public:
 };
 
 class Substruct_ExamineDescItem : public Substruct_ExamineDescBase {
+protected:
+	enum class EIsPvpDesc {
+		ETRUE
+	};
+	Substruct_ExamineDescItem(uint32_t ver, EIsPvpDesc) : Substruct_ExamineDescBase(ver, false, false),
+		header(ver), footer(ver, header.itemVersion), pvp(nullptr) {
+		SetItemStructVersion();
+	}
+
 public:
-	Substruct_ExamineDescItem(uint32_t ver = 0) : Substruct_ExamineDescBase(ver), header(ver), footer(ver, header.itemVersion) {
+	Substruct_ExamineDescItem(uint32_t ver = 0, const Substruct_ExamineDescItem* p_pvp = nullptr) : Substruct_ExamineDescBase(ver),
+		header(ver), footer(ver, header.itemVersion), pvp(p_pvp) {
 		SetItemStructVersion();
 	}
 
@@ -760,4 +770,6 @@ public:
 
 	Substruct_ItemDescHeader header;
 	Substruct_ItemDescFooter footer;
+
+	const Substruct_ExamineDescItem* pvp;
 };

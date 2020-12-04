@@ -18,7 +18,9 @@ public:
 		conc_used = 0;
 		total_time = 0;
 		expire_timestamp = 0;
-		memset(CoEunknown, 0, sizeof(CoEunknown));
+		stack_count = 0;
+		amount_remaining = 0;
+		flags = 0;
 	}
 
 	char name[60];
@@ -32,7 +34,9 @@ public:
 	uint8_t conc_used;
 	float total_time;
 	uint32_t expire_timestamp;
-	uint8_t CoEunknown[6];
+	int16_t stack_count;
+	int16_t amount_remaining;
+	uint16_t flags;
 
 private:
 	void RegisterElements() {
@@ -49,8 +53,11 @@ private:
 		RegisterFloat(total_time);
 		RegisterUInt32(expire_timestamp);
 		if (GetVersion() >= 1193) {
-			RescopeArrayElement(CoEunknown);
-			RegisterUInt8(CoEunknown)->SetCount(GetVersion() >= 57048 ? 6 : 4);
+			RegisterInt16(stack_count);
+			RegisterInt16(amount_remaining);
+			if (GetVersion() >= 57048) {
+				RegisterUInt16(flags);
+			}
 		}
 	}
 

@@ -15,6 +15,19 @@ void UpdateCharacterSheetMsgData::PreWrite() {
 	hp = attributes->hp.currentValue;
 	maxHp = attributes->hp.maxValue;
 	maxHpBase = attributes->hp.baseValue;
+	bonus_health_do_not_set = static_cast<int32_t>(bonus_health);
+
+	str_do_not_set = static_cast<int16_t>(attributes->str.currentValue);
+	sta_do_not_set = static_cast<int16_t>(attributes->sta.currentValue);
+	wis_do_not_set = static_cast<int16_t>(attributes->wis.currentValue);
+	int_do_not_set = static_cast<int16_t>(attributes->intel.currentValue);
+	agi_do_not_set = static_cast<int16_t>(attributes->agi.currentValue);
+
+	str_base_do_not_set = static_cast<int16_t>(attributes->str.baseValue);
+	sta_base_do_not_set = static_cast<int16_t>(attributes->sta.baseValue);
+	wis_base_do_not_set = static_cast<int16_t>(attributes->wis.baseValue);
+	int_base_do_not_set = static_cast<int16_t>(attributes->intel.baseValue);
+	agi_base_do_not_set = static_cast<int16_t>(attributes->agi.baseValue);
 
 	if (GetVersion() >= 67730) {
 		advExp_do_not_set = advExp;
@@ -154,7 +167,55 @@ bool CharacterUpdateGenerator::GenerateUpdate(std::ostringstream& ss) {
 	return ret;
 }
 
+void UpdateCharacterSheetMsgData::RegisterAttributeElements() {
+	if (version >= 60114) {
+		int32_t& str = attributes->str.currentValue;
+		int32_t& sta = attributes->sta.currentValue;
+		int32_t& agi = attributes->agi.currentValue;
+		int32_t& wis = attributes->wis.currentValue;
+		int32_t& intel = attributes->intel.currentValue;
+		RegisterInt32(str);
+		RegisterInt32(sta);
+		RegisterInt32(agi);
+		RegisterInt32(wis);
+		RegisterInt32(intel);
+		int32_t& str_base = attributes->str.baseValue;
+		int32_t& sta_base = attributes->sta.baseValue;
+		int32_t& agi_base = attributes->agi.baseValue;
+		int32_t& wis_base = attributes->wis.baseValue;
+		int32_t& intel_base = attributes->intel.baseValue;
+		RegisterInt32(str_base);
+		RegisterInt32(sta_base);
+		RegisterInt32(agi_base);
+		RegisterInt32(wis_base);
+		RegisterInt32(intel_base);
+	}
+	else {
+		int16_t& str = str_do_not_set;
+		int16_t& sta = sta_do_not_set;
+		int16_t& agi = agi_do_not_set;
+		int16_t& wis = wis_do_not_set;
+		int16_t& intel = int_do_not_set;	
+		RegisterInt16(str);
+		RegisterInt16(sta);
+		RegisterInt16(agi);
+		RegisterInt16(wis);
+		RegisterInt16(intel);
+		int16_t& str_base = str_base_do_not_set;
+		int16_t& sta_base = sta_base_do_not_set;
+		int16_t& agi_base = agi_base_do_not_set;
+		int16_t& wis_base = wis_base_do_not_set;
+		int16_t& intel_base = int_base_do_not_set;
+		RegisterInt16(str_base);
+		RegisterInt16(sta_base);
+		RegisterInt16(agi_base);
+		RegisterInt16(wis_base);
+		RegisterInt16(intel_base);
+	}
+}
+
 void UpdateCharacterSheetMsgData::RegisterElements() {
+	const uint32_t version = this->version;
 	if (version >= 67650) {
 		RegisterElements67650();
 		return;
@@ -197,10 +258,20 @@ void UpdateCharacterSheetMsgData::RegisterElements() {
 	std::string& facebook_prepend = namingInfo->name;
 	RegisterCharString(facebook_prepend, 42);
 
+	if (version <= 1208) {
+		int32_t& hp = attributes->hp.currentValue;
+		int32_t& maxHp = attributes->hp.maxValue;
+		int32_t& maxHpBase = attributes->hp.baseValue;
 
-	RegisterInt64(hp);
-	RegisterInt64(maxHp);
-	RegisterInt64(maxHpBase);
+		RegisterInt32(hp);
+		RegisterInt32(maxHp);
+		RegisterInt32(maxHpBase);
+	}
+	else {
+		RegisterInt64(hp);
+		RegisterInt64(maxHp);
+		RegisterInt64(maxHpBase);
+	}
 
 	int32_t& current_power = attributes->power.currentValue;
 	int32_t& max_power = attributes->power.maxValue;
@@ -223,20 +294,34 @@ void UpdateCharacterSheetMsgData::RegisterElements() {
 	RegisterInt32(savagery_level);
 	RegisterInt32(max_savagery_level);
 	RegisterInt32(base_savagery_level);
-	RegisterInt32(dissonance);
-	RegisterInt32(max_dissonance);
-	RegisterInt32(base_dissonance);
+
+	if (version >= 60114) {
+		RegisterInt32(dissonance);
+		RegisterInt32(max_dissonance);
+		RegisterInt32(base_dissonance);
+	}
 
 	RegisterInt32(hp_regen);
 	RegisterInt32(power_regen);
 	RegisterInt32(savagery_regen_per_sec);
-	RegisterInt32(dissipation);
+
+	if (version >= 60114) {
+		RegisterInt32(dissipation);
+	}
 
 	RegisterFloat(ranged_attack_min_distance);
 	RegisterFloat(ranged_attack_max_distance);
 	RegisterFloat(stat_bonus_health);
 	RegisterFloat(stat_bonus_power);
-	RegisterInt64(bonus_health);
+
+	if (version < 57048) {
+		int32_t& bonus_health = bonus_health_do_not_set;
+		RegisterInt32(bonus_health);
+	}
+	else {
+		RegisterInt64(bonus_health);
+	}
+
 	RegisterInt32(bonus_power);
 	RegisterFloat(stat_bonus_damage);
 	RegisterUInt16(mitigation_pct_pve);
@@ -256,30 +341,17 @@ void UpdateCharacterSheetMsgData::RegisterElements() {
 	RegisterInt16(avoidance_block_chance);
 	RegisterInt16(avoidance_block_chance_base);
 	RegisterInt16(avoidance_block_uncontested);
-	RegisterInt16(avoidance_deflection_uncontested);
-	RegisterInt16(avoidance_riposte_uncontested);
+	if (version >= 60114) {
+		RegisterInt16(avoidance_deflection_uncontested);
+		RegisterInt16(avoidance_riposte_uncontested);
+	}
 	RegisterInt16(avoidance_dodge_uncontested);
-	RegisterInt16(avoidance_parry_uncontested);
-	int32_t& str = attributes->str.currentValue;
-	int32_t& sta = attributes->sta.currentValue;
-	int32_t& agi = attributes->agi.currentValue;
-	int32_t& wis = attributes->wis.currentValue;
-	int32_t& intel = attributes->intel.currentValue;
-	RegisterInt32(str);
-	RegisterInt32(sta);
-	RegisterInt32(agi);
-	RegisterInt32(wis);
-	RegisterInt32(intel);
-	int32_t& str_base = attributes->str.baseValue;
-	int32_t& sta_base = attributes->sta.baseValue;
-	int32_t& agi_base = attributes->agi.baseValue;
-	int32_t& wis_base = attributes->wis.baseValue;
-	int32_t& intel_base = attributes->intel.baseValue;
-	RegisterInt32(str_base);
-	RegisterInt32(sta_base);
-	RegisterInt32(agi_base);
-	RegisterInt32(wis_base);
-	RegisterInt32(intel_base);
+	if (version >= 60114) {
+		RegisterInt16(avoidance_parry_uncontested);
+	}
+
+	RegisterAttributeElements();
+
 	int32_t& mitigation_cur = attributes->mitigation.currentValue;
 	RegisterInt32(mitigation_cur);
 
@@ -322,64 +394,62 @@ void UpdateCharacterSheetMsgData::RegisterElements() {
 	RegisterFloat(tsExpNextLevel);
 	RegisterFloat(tsExpDebt);
 
-	if (GetVersion() < 60114) {
-		RescopeArrayElement(unknown18);
-		RegisterUInt16(unknown18)->SetCount(6);
+	if (version < 60114) {
+		//Not sure what this was, but COE has it
+		static float pvpExp = 0.f;
+		float& pvpExpNextLevel = pvpExp;
+		float& pvpExpDebt = pvpExp;
+
+		RegisterFloat(pvpExp);
+		RegisterFloat(pvpExpNextLevel);
+		RegisterFloat(pvpExpDebt);
 	}
 
 	RegisterUInt16(server_bonus);
 	RegisterUInt16(adventure_vet_bonus);
 	RegisterUInt16(tradeskill_vet_bonus);
 	RegisterUInt16(dungeon_finder_bonus);
-	RegisterUInt32(recruit_friend_bonus);
-	RegisterUInt16(unknown19);
+	RegisterUInt16(recruit_friend_count);
+	RegisterUInt16(recruit_friend_bonus);
+	RegisterBool(bCanLevelPast90);
 	RegisterUInt16(adventure_vitality);
 	RegisterUInt16(adventure_vitality_yellow_arrow);
 	RegisterUInt16(adventure_vitality_blue_arrow);
 	RegisterUInt16(tradeskill_vitality);
 	RegisterUInt16(tradeskill_vitality_purple_arrow);
 	RegisterUInt16(tradeskill_vitality_blue_arrow);
-	RegisterUInt16(mentor_bonus);
-	RegisterUInt8(unknown20);
-	RegisterUInt16(assigned_aa);
+	RegisterFloat(mentor_bonus);
+	RegisterUInt16(earned_aa);
 	RegisterUInt16(max_aa);
 	RegisterUInt16(unassigned_aa);
 	RegisterUInt16(aa_green_bar);
 	RegisterUInt16(adv_xp_to_aa_xp_slider);
-	RegisterUInt16(unknown21);
 	RegisterUInt16(aa_blue_bar);
-	RegisterUInt16(bonus_achievement_xp);
+	RegisterUInt16(aa_next_level);
+	RegisterUInt16(aa_bonus_xp);
 
-	uint8_t& Unknown22 = unknown22[0];
-	RegisterUInt8(Unknown22)->SetCount(2);
+	RegisterUInt32(aa_level_up_events);
+	RegisterUInt32(aa_items_found);
+	RegisterUInt32(aa_named_npcs_killed);
+	RegisterUInt32(aa_quests_completed);
+	RegisterUInt32(aa_exploration_events);
+	RegisterUInt32(aa_completed_collections);
 
-	uint8_t& Unknown23 = unknown23[0];
-	RegisterUInt8(Unknown23)->SetCount(2);
+	uint8_t& Unknown24 = unknown24[0];
+	RegisterUInt8(Unknown24)->SetCount(16);
 
-	RegisterUInt32(items_found);
-	RegisterUInt32(named_npcs_killed);
-	RegisterUInt32(quests_completed);
-	RegisterUInt32(exploration_events);
-	RegisterUInt32(completed_collections);
-
-	uint16_t& Unknown24 = unknown24[0];
-	RegisterUInt16(Unknown24)->SetCount(10);
-
-	RegisterUInt8(unknown25);
-	RegisterUInt16(total_prestige_points);
-	RegisterUInt16(unassigned_prestige_points);
-	RegisterUInt16(unknown26);
-	RegisterUInt16(unknown27);
-	RegisterUInt16(total_tradeskill_points);
-	RegisterUInt16(unassigned_tradeskill_points);
-	RegisterUInt16(unknown28);
-	RegisterUInt16(unknown29);
-	RegisterUInt16(total_tradeskill_prestige_points);
-	RegisterUInt16(unassigned_tradeskill_prestige_points);
-	RegisterUInt16(unknown30);
-	RegisterUInt16(unknown31);
-	RegisterUInt16(unknown32);
-	RegisterUInt16(unknown33);
+	RegisterUInt32(lastPictureSubmitionTime);
+	RegisterUInt8(unknown25d);
+	RegisterUInt16(prestige_earned_points);
+	RegisterUInt16(prestige_max_points);
+	RegisterFloat(prestige_xp_current);
+	RegisterUInt16(ts_aa_earned_points);
+	RegisterUInt16(ts_aa_max_points);
+	RegisterFloat(ts_aa_experience_current);
+	RegisterUInt16(ts_prestige_earned_points);
+	RegisterUInt16(ts_prestige_max_points);
+	RegisterFloat(ts_prestige_experience_current);
+	RegisterFloat(pet_experience_current);
 
 	uint32_t& coins_copper = currency.copper;
 	uint32_t& coins_silver = currency.silver;
@@ -408,8 +478,10 @@ void UpdateCharacterSheetMsgData::RegisterElements() {
 	pe->SetCount(128);
 	RegisterInt32(passive_last_index);
 
-	uint8_t& Unknown35 = unknown35[0];
-	RegisterUInt8(Unknown35)->SetCount(354);
+	if (version >= 60114) {
+		uint8_t& Unknown35 = unknown35[0];
+		RegisterUInt8(Unknown35)->SetCount(354);
+	}
 
 	RegisterUInt8(trauma_count);
 	RegisterUInt8(arcane_count);
@@ -452,7 +524,9 @@ void UpdateCharacterSheetMsgData::RegisterElements() {
 	static std::string afk_message = "afk_message";
 	RegisterCharString(afk_message, 256);
 	RegisterSubstruct(pve_props);
-	RegisterSubstruct(unk_props);
+	if (version >= 60114) {
+		RegisterSubstruct(unk_props);
+	}
 	RegisterSubstruct(pvp_props);
 	RegisterSubstruct(ts_props);
 	RegisterSubstruct(prop_caps);
@@ -462,10 +536,10 @@ void UpdateCharacterSheetMsgData::RegisterElements() {
 	RegisterFloat(aa_effects_cap);
 
 	RescopeArrayElement(unknown525a);
-	RegisterUInt8(unknown525a)->SetCount(36);
+	RegisterUInt8(unknown525a)->SetCount(version >= 60114 ? 36 : 28);
 	RegisterUInt64(spell_state_flags);
 	RescopeArrayElement(unknown525b);
-	RegisterUInt8(unknown525b)->SetCount(6);
+	RegisterUInt8(unknown525b)->SetCount(version >= 60114 ? 6 : 4);
 
 	RegisterSubstruct(groupSheet);
 
@@ -477,7 +551,7 @@ void UpdateCharacterSheetMsgData::RegisterElements() {
 	RegisterUInt32(statusPoints);
 	RegisterUInt32(guild_status);
 
-	RegisterUInt8(unknownAOMa);
+	RegisterUInt8(unknownCOEa);
 
 	//house zone and the following 151 bytes (199 total) appear to be the same object
 	static std::string house_zone = "house zone";
@@ -490,7 +564,7 @@ void UpdateCharacterSheetMsgData::RegisterElements() {
 	static std::string bind_zone = "bind zone";
 	RegisterCharString(bind_zone, 32);
 	uint8_t& Unknown188 = unknown188[0];
-	RegisterUInt8(Unknown188)->SetCount(42);
+	RegisterUInt8(Unknown188)->SetCount(version >= 60114 ? 42 : 39);
 }
 
 void UpdateCharacterSheetMsgData::RegisterElements67650() {
@@ -606,27 +680,7 @@ void UpdateCharacterSheetMsgData::RegisterElements67650() {
 	RegisterInt16(avoidance_dodge_uncontested);
 	RegisterInt16(avoidance_parry_uncontested);
 
-	int32_t& str = attributes->str.currentValue;
-	int32_t& sta = attributes->sta.currentValue;
-	int32_t& agi = attributes->agi.currentValue;
-	int32_t& wis = attributes->wis.currentValue;
-	int32_t& intel = attributes->intel.currentValue;
-	RegisterInt32(str);
-	RegisterInt32(sta);
-	RegisterInt32(agi);
-	RegisterInt32(wis);
-	RegisterInt32(intel);
-
-	int32_t& str_base = attributes->str.baseValue;
-	int32_t& sta_base = attributes->sta.baseValue;
-	int32_t& agi_base = attributes->agi.baseValue;
-	int32_t& wis_base = attributes->wis.baseValue;
-	int32_t& intel_base = attributes->intel.baseValue;
-	RegisterInt32(str_base);
-	RegisterInt32(sta_base);
-	RegisterInt32(agi_base);
-	RegisterInt32(wis_base);
-	RegisterInt32(intel_base);
+	RegisterAttributeElements();
 
 	int32_t& mitigation_cur = attributes->mitigation.currentValue;
 	int32_t& noxious = attributes->noxious.currentValue;
@@ -732,9 +786,10 @@ void UpdateCharacterSheetMsgData::RegisterElements67650() {
 	RegisterUInt16(adventure_vet_bonus);
 	RegisterUInt16(tradeskill_vet_bonus);
 	RegisterUInt16(dungeon_finder_bonus);
-	RegisterUInt32(recruit_friend_bonus);
+	RegisterUInt16(recruit_friend_count);
+	RegisterUInt16(recruit_friend_bonus);
 
-	static bool bCanLevelPast90 = true; //if false xp bar hover at level 90 gives message about needing 280 aas and a certain xpac to level past 90
+	//if false xp bar hover at level 90 gives message about needing 280 aas and a certain xpac to level past 90
 	RegisterBool(bCanLevelPast90);
 
 	RegisterUInt16(adventure_vitality);
@@ -744,42 +799,36 @@ void UpdateCharacterSheetMsgData::RegisterElements67650() {
 	RegisterUInt16(tradeskill_vitality_purple_arrow);
 	RegisterUInt16(tradeskill_vitality_blue_arrow);
 
-	static float mentor_xp_mod = 0.f;
-	RegisterFloat(mentor_xp_mod);
-	RegisterUInt16(assigned_aa);
+	RegisterFloat(mentor_bonus);
+	RegisterUInt16(earned_aa);
 	RegisterUInt16(max_aa);
 	RegisterUInt16(unassigned_aa);
 	RegisterUInt16(aa_green_bar);
 	RegisterUInt16(adv_xp_to_aa_xp_slider);
-	RegisterUInt16(unknown21);
 	RegisterUInt16(aa_blue_bar);
-	RegisterUInt16(bonus_achievement_xp);
-	static int32_t aa_level_up_bonus_count = 0;
-	RegisterInt32(aa_level_up_bonus_count);
-	RegisterUInt32(items_found);
-	RegisterUInt32(named_npcs_killed);
-	RegisterUInt32(quests_completed);
-	RegisterUInt32(exploration_events);
-	RegisterUInt32(completed_collections);
+	RegisterUInt16(aa_next_level);
+	RegisterUInt16(aa_bonus_xp);
+	RegisterUInt32(aa_level_up_events);
+	RegisterUInt32(aa_items_found);
+	RegisterUInt32(aa_named_npcs_killed);
+	RegisterUInt32(aa_quests_completed);
+	RegisterUInt32(aa_exploration_events);
+	RegisterUInt32(aa_completed_collections);
 
 	static uint8_t g_unknown251[0x266 - 0x251];
 	uint8_t& unknown251 = g_unknown251[0];
 	RegisterUInt8(unknown251)->SetCount(sizeof(g_unknown251));
 
-	RegisterUInt16(total_prestige_points);
-	RegisterUInt16(unassigned_prestige_points);
-	RegisterUInt16(unknown26);
-	RegisterUInt16(unknown27);
-	RegisterUInt16(total_tradeskill_points);
-	RegisterUInt16(unassigned_tradeskill_points);
-	RegisterUInt16(unknown28);
-	RegisterUInt16(unknown29);
-	RegisterUInt16(total_tradeskill_prestige_points);
-	RegisterUInt16(unassigned_tradeskill_prestige_points);
-	RegisterUInt16(unknown30);
-	RegisterUInt16(unknown31);
-	RegisterUInt16(unknown32);
-	RegisterUInt16(unknown33);
+	RegisterUInt16(prestige_earned_points);
+	RegisterUInt16(prestige_max_points);
+	RegisterFloat(prestige_xp_current);
+	RegisterUInt16(ts_aa_earned_points);
+	RegisterUInt16(ts_aa_max_points);
+	RegisterFloat(ts_aa_experience_current);
+	RegisterUInt16(ts_prestige_earned_points);
+	RegisterUInt16(ts_prestige_max_points);
+	RegisterFloat(ts_prestige_experience_current);
+	RegisterFloat(pet_experience_current);
 
 	uint32_t& coins_copper = currency.copper;
 	uint32_t& coins_silver = currency.silver;
@@ -851,7 +900,7 @@ void UpdateCharacterSheetMsgData::RegisterElements67650() {
 	RegisterUInt64(statusPoints);
 	RegisterUInt64(guild_status);
 
-	RegisterUInt8(unknownAOMa);
+	RegisterUInt8(unknownCOEa);
 	//house zone and the following 151 bytes (199 total) appear to be the same object
 	static std::string house_zone = "house zone";
 	RegisterCharString(house_zone, 48);

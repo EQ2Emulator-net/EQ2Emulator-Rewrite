@@ -185,18 +185,48 @@ public:
 	~Substruct_GroupMemberAppearance() = default;
 
 	void RegisterElements() override {
-		RegisterUInt32(model_type);
-		RegisterUInt32(soga_model_type);
-		RegisterUInt32(head_slot_type);
-		RegisterUInt32(chest_slot_type);
-		RegisterUInt32(shoulders_slot_type);
-		RegisterUInt32(textures_slot_type);
-		RegisterUInt32(hair_slot_type);
-		RegisterUInt32(hair_face_slot_type);
-		RegisterUInt32(wings_slot_type);
-		RegisterUInt32(soga_hair_slot_type);
-		RegisterUInt32(soga_hair_face_slot_type);
-		RegisterUInt32(vis_flags);
+		if (version >= 57048) {
+			RegisterUInt32(model_type);
+			RegisterUInt32(soga_model_type);
+			RegisterUInt32(head_slot_type);
+			RegisterUInt32(chest_slot_type);
+			RegisterUInt32(shoulders_slot_type);
+			RegisterUInt32(textures_slot_type);
+			RegisterUInt32(hair_slot_type);
+			RegisterUInt32(hair_face_slot_type);
+			RegisterUInt32(wings_slot_type);
+			RegisterUInt32(soga_hair_slot_type);
+			RegisterUInt32(soga_hair_face_slot_type);
+			RegisterUInt32(vis_flags);
+		}
+		else {
+			RescopeToReference(model_type, uint16_t);
+			RescopeToReference(soga_model_type, uint16_t);
+			RescopeToReference(head_slot_type, uint16_t);
+			RescopeToReference(chest_slot_type, uint16_t);
+			RescopeToReference(shoulders_slot_type, uint16_t);
+			RescopeToReference(textures_slot_type, uint16_t);
+			RescopeToReference(hair_slot_type, uint16_t);
+			RescopeToReference(hair_face_slot_type, uint16_t);
+			RescopeToReference(wings_slot_type, uint16_t);
+			RescopeToReference(soga_hair_slot_type, uint16_t);
+			RescopeToReference(soga_hair_face_slot_type, uint16_t);
+			RescopeToReference(vis_flags, uint16_t);
+
+			RegisterUInt16(model_type);
+			RegisterUInt16(soga_model_type);
+			RegisterUInt16(head_slot_type);
+			RegisterUInt16(chest_slot_type);
+			RegisterUInt16(shoulders_slot_type);
+			RegisterUInt16(textures_slot_type);
+			RegisterUInt16(hair_slot_type);
+			RegisterUInt16(hair_face_slot_type);
+			RegisterUInt16(wings_slot_type);
+			RegisterUInt16(soga_hair_slot_type);
+			RegisterUInt16(soga_hair_face_slot_type);
+			RegisterUInt16(vis_flags);
+		}
+
 		RegisterEQ2Color(eye_color);
 		RegisterEQ2Color(skin_color);
 		RegisterEQ2Color(model_color);
@@ -269,18 +299,34 @@ public:
 	}
 
 	void RegisterElements() override {
-		RegisterInt32(leaderIndex);
-		RegisterInt32(unknown);
-		if (GetVersion() >= 1188 && GetVersion() < 67650) {
-			RescopeArrayElement(appearances);
-			RegisterSubstruct(appearances)->SetCount(5);
+		const uint32_t version = GetVersion();
+
+		if (version >= 60114) {
+			RegisterInt32(leaderIndex);
+			RegisterInt32(unknown);
+			if (version < 67650) {
+				RescopeArrayElement(appearances);
+				RegisterSubstruct(appearances)->SetCount(5);
+			}
+			RescopeArrayElement(members);
+			RegisterSubstruct(members)->SetCount(5);
+			RescopeArrayElement(locations);
+			RegisterSubstruct(locations)->SetCount(5);
+			RescopeArrayElement(alignFiller);
+			RegisterUInt8(alignFiller)->SetCount(3);
 		}
-		RescopeArrayElement(members);
-		RegisterSubstruct(members)->SetCount(5);
-		RescopeArrayElement(locations);
-		RegisterSubstruct(locations)->SetCount(5);
-		RescopeArrayElement(alignFiller);
-		RegisterUInt8(alignFiller)->SetCount(3);
+		else {
+			RescopeArrayElement(members);
+			RegisterSubstruct(members)->SetCount(5);
+			RescopeArrayElement(locations);
+			RegisterSubstruct(locations)->SetCount(5);
+			if (version >= 1188) {
+				RescopeArrayElement(appearances);
+				RegisterSubstruct(appearances)->SetCount(5);
+			}
+			RegisterInt32(leaderIndex);
+			RegisterInt32(unknown);
+		}
 	}
 
 	int32_t leaderIndex;

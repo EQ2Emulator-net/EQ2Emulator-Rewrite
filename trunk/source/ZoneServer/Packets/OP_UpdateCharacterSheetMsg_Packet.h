@@ -393,6 +393,7 @@ struct CharacterSheetMiscData {
 	CharacterSheetMiscData() {
 		memset(this, 0, sizeof(*this));
 		breath = 30.f;
+		bCanLevelPast90 = true;
 	}
 
 	//Some elements are a different format in the packet from what we use, convert them here
@@ -467,52 +468,48 @@ struct CharacterSheetMiscData {
 	uint16_t elemental_dmg_reduction_pct;
 	uint16_t noxious_dmg_reduction_pct;
 	uint16_t arcane_dmg_reduction_pct;
-	uint16_t unknown18[6];
 	uint16_t server_bonus;
 	uint16_t adventure_vet_bonus;
 	uint16_t tradeskill_vet_bonus;
 	uint16_t dungeon_finder_bonus;
-	uint32_t recruit_friend_bonus;
-	uint16_t unknown19;
+	uint16_t recruit_friend_bonus;
+	uint16_t recruit_friend_count;
+	bool bCanLevelPast90;
 	uint16_t adventure_vitality;
 	uint16_t adventure_vitality_yellow_arrow;
 	uint16_t adventure_vitality_blue_arrow;
 	uint16_t tradeskill_vitality;
 	uint16_t tradeskill_vitality_purple_arrow;
 	uint16_t tradeskill_vitality_blue_arrow;
-	uint16_t mentor_bonus;
-	uint8_t unknown20;
-	uint16_t assigned_aa;
+	float mentor_bonus;
+	uint16_t earned_aa;
 	uint16_t max_aa;
 	uint16_t unassigned_aa;
 	uint16_t aa_green_bar;
 	uint16_t adv_xp_to_aa_xp_slider;
 	uint16_t unknown21;
 	uint16_t aa_blue_bar;
-	uint16_t bonus_achievement_xp;
-	uint8_t unknown22[2];
-	uint8_t unknown23[2];
-	uint32_t items_found;
-	uint32_t named_npcs_killed;
-	uint32_t quests_completed;
-	uint32_t exploration_events;
-	uint32_t completed_collections;
-	uint16_t unknown24[10];
-	uint8_t unknown25;
-	uint16_t total_prestige_points;
-	uint16_t unassigned_prestige_points;
-	uint16_t unknown26;
-	uint16_t unknown27;
-	uint16_t total_tradeskill_points;
-	uint16_t unassigned_tradeskill_points;
-	uint16_t unknown28;
-	uint16_t unknown29;
-	uint16_t total_tradeskill_prestige_points;
-	uint16_t unassigned_tradeskill_prestige_points;
-	uint16_t unknown30;
-	uint16_t unknown31;
-	uint16_t unknown32;
-	uint16_t unknown33;
+	uint16_t aa_bonus_xp;
+	uint16_t aa_next_level;
+	uint32_t aa_items_found;
+	uint32_t aa_named_npcs_killed;
+	uint32_t aa_quests_completed;
+	uint32_t aa_exploration_events;
+	uint32_t aa_completed_collections;
+	uint32_t aa_level_up_events;
+	uint8_t unknown24[16];
+	uint32_t lastPictureSubmitionTime;
+	uint8_t unknown25d;
+	uint16_t prestige_earned_points;
+	uint16_t prestige_max_points;
+	float prestige_xp_current;
+	uint16_t ts_aa_earned_points;
+	uint16_t ts_aa_max_points;
+	float ts_aa_experience_current;
+	uint16_t ts_prestige_earned_points;
+	uint16_t ts_prestige_max_points;
+	float ts_prestige_experience_current;
+	float pet_experience_current;
 	uint32_t unknown34[5];
 	
 	bool passive_unk_bool[128];
@@ -571,9 +568,14 @@ struct CharacterSheetMiscData {
 	float wind_direction;
 	uint8_t unknown527[4];
 	uint64_t guild_status;
-	uint8_t unknownAOMa;
+
+	//Not sure if this was added in coe but that is the earliest struct so far i've added with it
+	uint8_t unknownCOEa;
 	uint8_t unknown526[151];
 	uint8_t unknown188[52];
+
+protected:
+	int32_t bonus_health_do_not_set;
 };
 
 class UpdateCharacterSheetMsgData : public CharacterSheetMiscData, public CharacterSheet, public PacketEncodedData {
@@ -625,8 +627,22 @@ private:
 	double tsExp_do_not_set;
 	double tsExpNextLevel_do_not_set;
 
+	int16_t str_do_not_set;
+	int16_t sta_do_not_set;
+	int16_t agi_do_not_set;
+	int16_t wis_do_not_set;
+	int16_t int_do_not_set;
+
+	int16_t str_base_do_not_set;
+	int16_t sta_base_do_not_set;
+	int16_t agi_base_do_not_set;
+	int16_t wis_base_do_not_set;
+	int16_t int_base_do_not_set;
+
 	void RegisterElements() override;
 	void RegisterElements67650();
+
+	void RegisterAttributeElements();
 };
 
 class OP_UpdateCharacterSheetMsg_Packet : public UpdateCharacterSheetMsgData, public EQ2Packet {

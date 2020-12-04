@@ -150,7 +150,7 @@ int Deflate(unsigned char* in_data, int in_length, unsigned char* out_data, int 
 	zstream.zalloc = Z_NULL;
 	zstream.zfree = Z_NULL;
 	zstream.opaque = Z_NULL;
-	deflateInit(&zstream, Z_FINISH);
+	deflateInit2(&zstream, Z_DEFAULT_COMPRESSION, Z_DEFLATED, 13, 8, Z_DEFAULT_STRATEGY);
 	zstream.next_out = out_data;
 	zstream.avail_out = max_out_length;
 	zerror = deflate(&zstream, Z_FINISH);
@@ -182,7 +182,7 @@ int Inflate(unsigned char* indata, int indatalen, unsigned char* outdata, int ou
 	zstream.zfree = Z_NULL;
 	zstream.opaque = Z_NULL;
 
-	i = inflateInit2(&zstream, 15);
+	i = inflateInit2(&zstream, 13);
 	if (i != Z_OK) {
 		return 0;
 	}

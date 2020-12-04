@@ -809,6 +809,7 @@ void EQ2Stream::AdjustRates(uint32_t average_delta) {
 }
 
 uint16_t EQ2Stream::processRSAKey(ProtocolPacket* p) {
+	DumpBytes(p->buffer, p->Size, "RSA Key");
 	//The key is the last 8 bytes in the packet
 	crypto.setRC4Key(Crypto::RSADecrypt((p->buffer + p->Size) - 8, 8));
 	return 0;
