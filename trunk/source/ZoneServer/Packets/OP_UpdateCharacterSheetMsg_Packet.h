@@ -394,6 +394,7 @@ struct CharacterSheetMiscData {
 		memset(this, 0, sizeof(*this));
 		breath = 30.f;
 		bCanLevelPast90 = true;
+		unknownCOEa = 6 ;
 	}
 
 	//Some elements are a different format in the packet from what we use, convert them here

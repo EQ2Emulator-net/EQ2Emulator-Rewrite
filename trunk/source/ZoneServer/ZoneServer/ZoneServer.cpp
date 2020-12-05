@@ -211,7 +211,11 @@ bool ZoneServer::AddClient(std::shared_ptr<Client> c) {
 	zone->unknown7[0] = 1.0;
 	zone->unknown7[1] = 1.0;
 	zone->unknown9 = 13;
-	zone->zone_flags = 25189220;
+
+	// 1<<1 = arena, 1<<2 = pvp, 1<<9 = battlegrounds, 1<<11 = dungeon maker zone, 1<<12 = dungeon maker build mode
+	//1<<16 and 1<<31 are values that seem to usually be sent but not sure what they do
+	zone->zone_flags = 1 << 16 | 1 << 31;
+
 	zone->unknown11 = 4294967292;
 
 	zone->client_cmd_array.emplace_back(c->GetVersion());

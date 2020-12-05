@@ -564,7 +564,7 @@ void UpdateCharacterSheetMsgData::RegisterElements() {
 	static std::string bind_zone = "bind zone";
 	RegisterCharString(bind_zone, 32);
 	uint8_t& Unknown188 = unknown188[0];
-	RegisterUInt8(Unknown188)->SetCount(version >= 60114 ? 42 : 39);
+	RegisterUInt8(Unknown188)->SetCount(version >= 60114 ? 42 : 49);
 }
 
 void UpdateCharacterSheetMsgData::RegisterElements67650() {

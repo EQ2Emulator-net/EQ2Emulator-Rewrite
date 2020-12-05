@@ -36,7 +36,8 @@ public:
 		unknown8ArraySize = 0;
 		unknown9 = 0;
 		zone_flags = 0;
-		unknown10b = 0;
+		unknown10ba = 64;
+		unknown10bb = 0x5b;
 		unknown10c = 0;
 
 		unknown10d = 0;
@@ -113,7 +114,8 @@ public:
 	uint8_t unknown8ArraySize;
 	float unknown9;
 	uint32_t zone_flags;
-	uint16_t unknown10b;
+	uint8_t unknown10ba;
+	uint8_t unknown10bb;
 	uint8_t unknown10c;
 	uint8_t unknown10d;
 	uint8_t unknown10e;
@@ -279,12 +281,15 @@ private:
 			RegisterSubstruct(flythrough)->SetIsVariableSet(e);
 			RegisterFloat(unknown9);
 		}
+		if (GetVersion() >= 942) {
+			RegisterUInt8(unknown10ba);
+			RegisterUInt8(unknown10bb);
+		}
+
 		RegisterUInt32(zone_flags);
 		if (GetVersion() < 284) {
 			return;
 		}
-		if (GetVersion() >= 942)
-			RegisterUInt16(unknown10b);
 		if (GetVersion() >= 1142) {
 			RegisterUInt8(unknown10c);
 			RegisterUInt8(unknown10d);
