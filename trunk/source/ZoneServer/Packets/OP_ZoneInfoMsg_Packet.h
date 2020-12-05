@@ -36,14 +36,10 @@ public:
 		unknown8ArraySize = 0;
 		unknown9 = 0;
 		zone_flags = 0;
-		unknown10ba = 64;
-		unknown10bb = 0x5b;
+		levelA = 64;
+		levelB = 91;
 		unknown10c = 0;
-
-		unknown10d = 0;
-		unknown10e = 0;
 		permission_level = 0;
-		unknown10f = 0;
 		
 		num_adv = 0;
 		// Error parsing the struct, XMLStructConverter.Element is an unknown type
@@ -114,13 +110,11 @@ public:
 	uint8_t unknown8ArraySize;
 	float unknown9;
 	uint32_t zone_flags;
-	uint8_t unknown10ba;
-	uint8_t unknown10bb;
-	uint8_t unknown10c;
-	uint8_t unknown10d;
-	uint8_t unknown10e;
+	//these 2 appear to be levels (I see the max combat level of 120 being sent alot) but not sure what they are exactly
+	uint8_t levelA;
+	uint8_t levelB;
+	int32_t unknown10c;
 	uint8_t permission_level;
-	uint8_t unknown10f;
 	bool bHasFlythrough;
 	Substruct_FlythroughDesc flythrough;
 
@@ -282,8 +276,8 @@ private:
 			RegisterFloat(unknown9);
 		}
 		if (GetVersion() >= 942) {
-			RegisterUInt8(unknown10ba);
-			RegisterUInt8(unknown10bb);
+			RegisterUInt8(levelA);
+			RegisterUInt8(levelB);
 		}
 
 		RegisterUInt32(zone_flags);
@@ -291,11 +285,8 @@ private:
 			return;
 		}
 		if (GetVersion() >= 1142) {
-			RegisterUInt8(unknown10c);
-			RegisterUInt8(unknown10d);
-			RegisterUInt8(unknown10e);
+			RegisterInt32(unknown10c);
 			RegisterUInt8(permission_level);
-			RegisterUInt8(unknown10f);
 		}
 		
 		PacketUInt32* asize32 = RegisterUInt32(num_adv);

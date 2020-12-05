@@ -212,9 +212,10 @@ bool ZoneServer::AddClient(std::shared_ptr<Client> c) {
 	zone->unknown7[1] = 1.0;
 	zone->unknown9 = 13;
 
-	// 1<<1 = arena, 1<<2 = pvp, 1<<9 = battlegrounds, 1<<11 = dungeon maker zone, 1<<12 = dungeon maker build mode
-	//1<<16 and 1<<31 are values that seem to usually be sent but not sure what they do
-	zone->zone_flags = 1 << 16 | 1 << 31;
+	// 1<<1 = arena, 1<<2 = pvp, 1<<9 = battlegrounds (hides most eq2 button menu options), 1<<10 show battlegrounds leaderboard, 1<<11 = dungeon maker zone, 1<<12 = dungeon maker build mode
+	//Guesses : 1<<5 = instance, 1<<6 = no mounts
+	//1<<7 and 1<<8 are values that seem to usually be sent but not sure what they do, maybe allowed illusions/mercs/size mods
+	zone->zone_flags = 1 << 7 | 1 << 8;
 
 	zone->unknown11 = 4294967292;
 
