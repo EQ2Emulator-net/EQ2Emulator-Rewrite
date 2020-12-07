@@ -200,24 +200,22 @@ bool ZoneServer::AddClient(std::shared_ptr<Client> c) {
 	zone->minute = 35;
 	zone->seconds = 44;
 	zone->unknown1[1] = 1;
-	zone->expansions_enabled = 524161;
-	zone->unknown3[0] = 70;
-	zone->unknown3[1] = 459276223;
-	zone->unknown3[2] = 8388607;
+	zone->account_flags_1 = 0x460007ff81;
+	zone->account_flags_2 = 0x7fffff1b5fffbf;
 	zone->auction_website = "eq2emulator.net";
 	zone->auction_port = 80;
 	zone->upload_page = "test_upload.m";
 	zone->upload_key = "dsya987yda9";
 	zone->unknown7[0] = 1.0;
 	zone->unknown7[1] = 1.0;
-	zone->unknown9 = 13;
+	zone->unknown9 = 13.f;
 
 	// 1<<1 = arena, 1<<2 = pvp, 1<<9 = battlegrounds (hides most eq2 button menu options), 1<<10 show battlegrounds leaderboard, 1<<11 = dungeon maker zone, 1<<12 = dungeon maker build mode
 	//Guesses : 1<<5 = instance, 1<<6 = no mounts
 	//1<<7 and 1<<8 are values that seem to usually be sent but not sure what they do, maybe allowed illusions/mercs/size mods
 	zone->zone_flags = 1 << 7 | 1 << 8;
 
-	zone->unknown11 = 4294967292;
+	zone->unknown11 = -4;
 
 	zone->client_cmd_array.emplace_back(c->GetVersion());
 	zone->client_cmd_array.back().client_cmd = "census_paperdoll_enabled 0"; //not sure if paperdoll images are sent on a separate thread that isn't sync'd or what but they are BUGGY
@@ -225,12 +223,12 @@ bool ZoneServer::AddClient(std::shared_ptr<Client> c) {
 	zone->client_cmd_array.back().client_cmd = "chat_linkbrackets_item 1";
 
 	if (zone->GetVersion() >= 67650) {
-		//The expansion bytes changed from 2 8 byte vals to 2 9 byte arrays here
+		//The expansion bytes changed from 2 8 byte vals to 2 9 byte arrays here, I think these are just server side and we don't need them
 		static const unsigned char unk4Bytes[] = { 0x7F, 0xFF, 0xF8, 0x90, 0x44, 0x94, 0x00, 0x10, 0x10 };
 		static const unsigned char unk7Bytes[] = { 0x7F, 0xFF, 0xFB, 0xF6, 0xC7, 0xFF, 0xFF, 0xFF, 0xFF };
 
-		zone->bolUnknown4.assign(reinterpret_cast<const char*>(unk4Bytes), 9);
-		zone->bolUnknown7.assign(reinterpret_cast<const char*>(unk7Bytes), 9);
+		zone->account_flags_1_string.assign(reinterpret_cast<const char*>(unk4Bytes), 9);
+		zone->account_flags_2_string.assign(reinterpret_cast<const char*>(unk7Bytes), 9);
 	}
 
 	c->QueuePacket(zone);

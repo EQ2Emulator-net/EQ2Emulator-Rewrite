@@ -14,10 +14,8 @@ public:
 		//server2 = "";
 		unknown1[0] = 0;
 		unknown1[1] = 0;
-		expansions_enabled = 0;
-		unknown3[0] = 0;
-		unknown3[1] = 0;
-		unknown3[2] = 0;
+		account_flags_1 = 0;
+		account_flags_2 = 0;
 		unknown2b = 0;
 		unknown3b = 0;
 		unknown3c = 0;
@@ -39,49 +37,25 @@ public:
 		levelA = 64;
 		levelB = 91;
 		unknown10c = 0;
-		permission_level = 0;
-		
+		permission_level = 0;		
 		num_adv = 0;
-		// Error parsing the struct, XMLStructConverter.Element is an unknown type
 		num_client_setup = 0;
-		// Error parsing the struct, XMLStructConverter.Element is an unknown type
 		unknown11 = 0;
 		tab_count = 0;
-		// Error parsing the struct, XMLStructConverter.Element is an unknown type
+		unknown67650Count;
 
 		unknown_mj = 0;
-		unknown_mj1 = 0;
-		unknown_mj2 = 0;
-		unknown_mj3 = 0;
-		unknown_mj4 = 0;
-		unknown_mj5 = 0;
-		unknown_mj6 = 0;
-		unknown_mj7 = 0;
-		unknown_mj8 = 0;
-		unknown_mj9 = 0;
-		unknown_mj10 = 0;
-		unknown_mj11 = 0;
-		unknown_mj12 = 0;
-		unknown_mj13 = 0;
-		unknown_mj14 = 0;
-		unknown_mj15 = 0;
-		unknown_mj16 = 0;
-		unknown_mj17 = 0;
-		unknown_mj18 = 0;
-		unknown_mj19 = 0;
-		unknown_mj20 = 0;
-		unknown_mj21 = 0;
-		unknown_mj22 = 0;
+		unkArrayCount = 0;
 		bHasFlythrough = false;
 	}
 
 	std::string server1;
 	std::string server2;
 	uint8_t unknown1[2];
-	std::string bolUnknown4;
-	std::string bolUnknown7;
-	uint32_t expansions_enabled;
-	uint32_t unknown3[3];
+	std::string account_flags_1_string;
+	std::string account_flags_2_string;
+	uint64_t account_flags_1;
+	uint64_t account_flags_2;
 	uint32_t unknown2b;
 	uint32_t unknown3b;
 	uint32_t unknown3c;
@@ -153,7 +127,7 @@ public:
 	};
 	std::vector<ClientCommands> client_cmd_array;
 
-	uint32_t unknown11;
+	int32_t unknown11;
 
 	uint16_t num_news_items;
 	struct NewsItem : public PacketSubstruct {
@@ -193,61 +167,69 @@ public:
 	};
 	std::vector<Tabs> tab_array;
 	
+	uint32_t unknown67650Count;
 	uint8_t unknown_mj;
-	uint32_t unknown_mj1;
-	uint32_t unknown_mj2;
-	uint32_t unknown_mj3;
-	uint32_t unknown_mj4;
-	uint32_t unknown_mj5;
-	uint32_t unknown_mj6;
-	uint32_t unknown_mj7;
-	uint32_t unknown_mj8;
-	uint32_t unknown_mj9;
-	uint32_t unknown_mj10;
-	uint32_t unknown_mj11;
-	uint32_t unknown_mj12;
-	uint32_t unknown_mj13;
-	uint32_t unknown_mj14;
-	uint32_t unknown_mj15;
-	uint32_t unknown_mj16;
-	uint32_t unknown_mj17;
-	uint32_t unknown_mj18;
-	uint32_t unknown_mj19;
-	uint32_t unknown_mj20;
-	uint32_t unknown_mj21;
-	uint32_t unknown_mj22;
+	uint32_t unkArrayCount;
+
+	struct UnknownArray : public PacketSubstruct {
+		int32_t unkArr1;
+		int32_t unkArr2;
+		int32_t unkArr3;
+		int32_t unkArr4;
+		int32_t unkArr5;
+
+		UnknownArray(uint32_t ver = 0) : PacketSubstruct(ver, true),
+			unkArr1(0), unkArr2(0), unkArr3(0), unkArr4(0), unkArr5(0) {
+			RegisterElements();
+		}
+
+		void RegisterElements() {
+			RegisterInt32(unkArr1);
+			RegisterInt32(unkArr2);
+			RegisterInt32(unkArr3);
+			RegisterInt32(unkArr4);
+			RegisterInt32(unkArr5);
+		}
+	};
+
+	std::vector<UnknownArray> unkArray;
+
+	void PreWrite() override {
+
+	}
 
 private:
 	void RegisterElements() {
-		if (GetVersion() > 283) {
+		const uint32_t version = GetVersion();
+		if (version > 283) {
 			Register8String(server1);
 			Register8String(server2);
 			uint8_t& Unknown1 = unknown1[0];
 			RegisterUInt8(Unknown1)->SetCount(2);
-			if (GetVersion() >= 67650) {
-				Register32String(bolUnknown4);
-				Register32String(bolUnknown7);
+			if (version >= 63182) {
+				std::string& account_flags_1 = account_flags_1_string;
+				std::string& account_flags_2 = account_flags_2_string;
+				Register32String(account_flags_1);
+				Register32String(account_flags_2);
 			}
 			else {
-				RegisterUInt32(expansions_enabled);
-
-				uint32_t& Unknown3 = unknown3[0];
-				if (GetVersion() < 1142)
-					RegisterUInt32(Unknown3);
-				else
-					RegisterUInt32(Unknown3)->SetCount(3);
-
-				if (GetVersion() >= 63182) {
-					RegisterUInt32(unknown2b);
-					RegisterUInt32(unknown3b);
-					RegisterUInt32(unknown3c);
+				if (version < 1142) {
+					RescopeToReference(account_flags_1, uint32_t);
+					RescopeToReference(account_flags_2, uint32_t);
+					RegisterUInt32(account_flags_1);
+					RegisterUInt32(account_flags_2);
 				}
+				else {
+					RegisterUInt64(account_flags_1);
+					RegisterUInt64(account_flags_2);
+				}
+
 				Register8String(auction_website);
 				RegisterUInt32(auction_port);
 				Register8String(upload_page);
 			}
 			Register8String(upload_key);
-			if (GetVersion() >= 1067)
+			if (version >= 1067)
 				Register8String(upload_key2);
 		}
 		Register8String(zone);
@@ -256,7 +238,7 @@ private:
 		Register8String(zone_unknown2);
 		Register8String(zone_desc);
 		Register8String(char_name);
-		if (GetVersion() >= 957 && GetVersion() < 959)
+		if (version >= 957 && version < 959)
 			Register16String(motd);
 		RegisterFloat(x);
 		RegisterFloat(y);
@@ -267,7 +249,7 @@ private:
 		RegisterUInt8(hour);
 		RegisterUInt8(minute);
 		RegisterUInt8(seconds);
-		if (GetVersion() > 283) {
+		if (version > 283) {
 			float& Unknown7 = unknown7[0];
 			RegisterFloat(Unknown7)->SetCount(2);
 			RegisterUInt8(unknown8ArraySize);
@@ -275,16 +257,16 @@ private:
 			RegisterSubstruct(flythrough)->SetIsVariableSet(e);
 			RegisterFloat(unknown9);
 		}
-		if (GetVersion() >= 942) {
+		if (version >= 942) {
 			RegisterUInt8(levelA);
 			RegisterUInt8(levelB);
 		}
 
 		RegisterUInt32(zone_flags);
-		if (GetVersion() < 284) {
+		if (version < 284) {
 			return;
 		}
-		if (GetVersion() >= 1142) {
+		if (version >= 1142) {
 			RegisterInt32(unknown10c);
 			RegisterUInt8(permission_level);
 		}
@@ -295,42 +277,25 @@ private:
 		asize32 = RegisterUInt32(num_client_setup);
 		asize32->SetMyArray(RegisterArray(client_cmd_array, ClientCommands));
 
-		RegisterUInt32(unknown11);
+		RegisterInt32(unknown11);
 
-		if (GetVersion() >= 959 && GetVersion() < 1096) {
+		if (version >= 959 && version < 1096) {
 			PacketUInt16* asize16 = RegisterUInt16(num_news_items);
 			asize16->SetMyArray(RegisterArray(news_item_array, NewsItem));
 		}
 
-		if (GetVersion() >= 1193 && GetVersion() < 67696) {
+		if (version >= 67650) {
+			RegisterUInt32(unknown67650Count);
+		}
+		else if (version >= 1193) {
 			asize32 = RegisterUInt32(tab_count);
 			asize32->SetMyArray(RegisterArray(tab_array, Tabs));
 		}
 
-		if (GetVersion() >= 63319) {
+		if (version >= 63319) {
 			RegisterUInt8(unknown_mj);
-			RegisterUInt32(unknown_mj1);
-			RegisterUInt32(unknown_mj2);
-			RegisterUInt32(unknown_mj3);
-			RegisterUInt32(unknown_mj4);
-			RegisterUInt32(unknown_mj5);
-			RegisterUInt32(unknown_mj6);
-			RegisterUInt32(unknown_mj7);
-			RegisterUInt32(unknown_mj8);
-			RegisterUInt32(unknown_mj9);
-			RegisterUInt32(unknown_mj10);
-			RegisterUInt32(unknown_mj11);
-			RegisterUInt32(unknown_mj12);
-			RegisterUInt32(unknown_mj13);
-			RegisterUInt32(unknown_mj14);
-			RegisterUInt32(unknown_mj15);
-			RegisterUInt32(unknown_mj16);
-			RegisterUInt32(unknown_mj17);
-			RegisterUInt32(unknown_mj18);
-			RegisterUInt32(unknown_mj19);
-			RegisterUInt32(unknown_mj20);
-			RegisterUInt32(unknown_mj21);
-			RegisterUInt32(unknown_mj22);
+			asize32 = RegisterUInt32(unkArrayCount);
+			asize32->SetMyArray(RegisterArray(unkArray, UnknownArray));
 		}
 	}
 
