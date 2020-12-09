@@ -625,16 +625,37 @@ void Substruct_SpawnInfo::RegisterElements() {
 
 		RescopeArrayElement(unknown18);
 		if (version >= 57080) {
+			RescopeToReference(primary_slot_state, uint16_t);
+			RescopeToReference(secondary_slot_state, uint16_t);
+			RescopeToReference(ranged_slot_state, uint16_t);
 
-			RegisterUInt8(unknown18)->SetCount(46);
+			RegisterUInt16(primary_slot_state);
+			RegisterUInt16(secondary_slot_state);
+			RegisterUInt16(ranged_slot_state);
+
+			RescopeArrayElement(spell_visuals);
+			RegisterUInt32(spell_visuals)->SetCount(8);
+			RescopeArrayElement(spell_visual_levels);
+			RegisterUInt8(spell_visual_levels)->SetCount(8);
 		}
 		else if (version >= 864) {
-			RegisterUInt8(unknown18)->SetCount(30);
+			RescopeToReference(primary_slot_state, uint16_t);
+			RescopeToReference(secondary_slot_state, uint16_t);
+			RescopeToReference(ranged_slot_state, uint16_t);
+
+			RegisterUInt16(primary_slot_state);
+			RegisterUInt16(secondary_slot_state);
+			RegisterUInt16(ranged_slot_state);
+			uint16_t& spell_visuals = spell_visuals_do_not_set[0];
+			RegisterUInt16(spell_visuals)->SetCount(8);
+			RescopeArrayElement(spell_visual_levels);
+			RegisterUInt8(spell_visual_levels)->SetCount(8);
 		}
 		else if (version >= 860) {
 			RegisterUInt8(unknown18)->SetCount(36);
 		}
 		else {
+			//This probably has the above elements (spell visuals) and then something else that was removed but need to confirm
 			RegisterUInt8(unknown18)->SetCount(32);
 		}
 	}
