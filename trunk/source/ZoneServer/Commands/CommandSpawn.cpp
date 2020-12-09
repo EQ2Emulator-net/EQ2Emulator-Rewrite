@@ -346,8 +346,15 @@ void CommandProcess::CommandSpawnCamp(const std::shared_ptr<Client>& client, Sep
 
 	if (cmd == "new") {
 		std::shared_ptr<SpawnCamp> sc = std::make_shared<SpawnCamp>(zone, player->GetX(), player->GetY(), player->GetZ(), player->GetGridID());
-		zone->AddSpawnCamp(sc);
-		client->chat.DisplayText("MOTD", "Created a new spawn camp", 0xff, false, "");
+		uint32_t id = database.InsertNewSpawnCamp(sc);
+		if (id > 0) {
+			sc->SetID(id);
+			zone->AddSpawnCamp(sc);
+			client->chat.DisplayText("MOTD", "Created a new spawn camp", 0xff, false, "");
+		}
+		else
+			client->chat.DisplayText("Error Text", "Failed to save the new spawn camp to the DB", 0xff, false, "");
+
 		return;
 	}
 
@@ -378,30 +385,49 @@ void CommandProcess::CommandSpawnCamp(const std::shared_ptr<Client>& client, Sep
 	if (cmd == "set") {
 		std::string cmd2 = sep.GetString(1);
 		std::transform(cmd2.begin(), cmd2.end(), cmd2.begin(), ::tolower);
+
+		std::shared_ptr<SpawnCamp> camp = nullptr;
+		std::shared_ptr<Spawn> target = controller->GetTarget();
+		if (target && target->IsSpawnCampSpawn())
+			camp = dynamic_pointer_cast<SpawnCampSpawn>(target)->GetSpawnCamp();
+
+		if (!camp) {
+			client->chat.DisplayText("Error Text", "Target must be a spawn camp for the '/spawn camp set' command", 0xff, false, "");
+			return;
+		}
+
+		bool success = false;
 		
 		if (cmd2 == "radius" && sep.IsNumber(2)) {
 			float radius = sep.GetFloat(2);
-			std::shared_ptr<Spawn> target = controller->GetTarget();
-			if (target && target->IsSpawnCampSpawn()) {
-				std::shared_ptr<SpawnCamp> camp = dynamic_pointer_cast<SpawnCampSpawn>(target)->GetSpawnCamp();
-				if (camp) {
-					camp->SetRadius(radius);
-					client->chat.DisplayText("MOTD", "Setting the spawn camps radius to " + to_string(radius), 0xff, false, "");
-					scd->UpdateSpawnCampRadius(camp);
-				}
-			}
+			camp->SetRadius(radius);
+			client->chat.DisplayText("MOTD", "Setting the spawn camps radius to " + to_string(radius), 0xff, false, "");
+			scd->UpdateSpawnCampRadius(camp);
+			success = true;
 		}
 
 		if (cmd2 == "density" && sep.IsNumber(2)) {
 			uint16_t numEncounters = sep.GetUInt32(2);
-			std::shared_ptr<Spawn> target = controller->GetTarget();
-			if (target && target->IsSpawnCampSpawn()) {
-				std::shared_ptr<SpawnCamp> camp = dynamic_pointer_cast<SpawnCampSpawn>(target)->GetSpawnCamp();
-				if (camp) {
-					camp->SetNumRadiusEncounter(numEncounters);
-					client->chat.DisplayText("MOTD", "Setting spawn camps density to " + to_string(numEncounters), 0xff, false, "");
-				}
-			}
+			camp->SetNumRadiusEncounter(numEncounters);
+			client->chat.DisplayText("MOTD", "Setting spawn camps density to " + to_string(numEncounters), 0xff, false, "");
+			success = true;
+		}
+
+		if (cmd2 == "name") {
+			std::string name = sep.GetString(2);
+			camp->SetName(name);
+			target->SetGuild(camp->GetName() + " (" + ::to_string(camp->GetID()) + ")");
+			client->chat.DisplayText("MOTD", "Setting the spawn camp name to " + name, 0xff, false, "");
+			success = true;
+		}
+
+		if (success) {
+			bool result = database.SaveSpawnCamp(camp);
+			if (!result)
+				client->chat.DisplayText("Error Text", "Failed to save the spawn camp to the DB", 0xff, false, "");
+		}
+		else {
+			// TODO: print syntax for '/spawn camp set'
 		}
 	}
 

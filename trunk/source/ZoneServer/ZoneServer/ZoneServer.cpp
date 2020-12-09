@@ -1405,6 +1405,10 @@ void ZoneServer::LoadSpawns() {
 	database.LoadGroundSpawnLocations(this);
 	LogInfo(LOG_NPC, 0, "-Load GroundSpawn spawn location data complete!");
 
+	LogInfo(LOG_NPC, 0, "-Loading SpawnCamp data...");
+	database.LoadSpawnCampsForZone(shared_from_this());
+	LogInfo(LOG_NPC, 0, "-Load SpawnCamp data complete!");
+
 	database.LoadSpawnLocationGroups(this);
 	database.LoadSpawnGroupChances(this);
 	database.LoadSpawnLocationGroupAssociations(this);

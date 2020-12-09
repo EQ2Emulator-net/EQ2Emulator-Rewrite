@@ -50,6 +50,7 @@ std::shared_ptr<SpawnCampSpawn> SpawnCampDebug::CreateSpawnCampSpawn(std::shared
 
 	std::string name = "Spawn Camp";
 	ret->SetName(name, false);
+	ret->SetGuild(camp->GetName() + " (" + ::to_string(camp->GetID()) + ")");
 	ret->SetSize(0.5f, false);
 	ret->SetSizeRatio(1.0f, false);
 	ret->SetCollisionRadius(1.0f, false);

@@ -13,6 +13,7 @@ class DatabaseResult;
 class LuaGlobals;
 class CharacterSheet;
 class Item;
+class SpawnCamp;
 
 class ZoneDatabase : public CommonDatabase {
 public:
@@ -76,6 +77,11 @@ public:
 	void LoadMasterItems(class MasterItemList& masterItems);
 	uint32_t ProcessItemRewardVoucherResult(DatabaseResult& result, const std::shared_ptr<class ItemRewardVoucher>& item);
 	uint32_t ProcessItemRewardCrateResult(DatabaseResult& result, const std::shared_ptr<class ItemRewardCrate>& item);
+
+	// Spawn Camps
+	bool LoadSpawnCampsForZone(std::shared_ptr<ZoneServer> z);
+	uint32_t InsertNewSpawnCamp(std::shared_ptr<SpawnCamp> camp);
+	bool SaveSpawnCamp(std::shared_ptr<SpawnCamp> camp);
 
 private:
 	//The return value is the next indice in the query result

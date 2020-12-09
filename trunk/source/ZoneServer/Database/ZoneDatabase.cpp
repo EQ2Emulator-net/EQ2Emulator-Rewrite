@@ -9,6 +9,7 @@
 #include "../Spawns/GroundSpawn.h"
 #include "../Players/CharacterSheet.h"
 #include "../../common/Classes.h"
+#include "../ZoneServer/SpawnCamp.h"
 
 extern ZoneOperator g_zoneOperator;
 extern MasterEntityCommandList g_masterEntityCommandList;
@@ -1348,4 +1349,48 @@ void ZoneDatabase::ProcessNpcAppearanceEquipment(DatabaseResult& result, std::un
 
 		entity->SetAppearanceEquipmentItem(slot, item, false);
 	}
+}
+
+bool ZoneDatabase::LoadSpawnCampsForZone(std::shared_ptr<ZoneServer> z) {
+	DatabaseResult result;
+	bool ret = Select(&result, "SELECT * FROM spawn_camp WHERE zone_id = %u", z->GetID());
+
+	if (!ret)
+		return ret;
+
+	uint32_t count = 0;
+	while (result.Next()) {
+		uint32_t id = result.GetUInt32(0);
+		std::shared_ptr<SpawnCamp> camp = std::make_shared<SpawnCamp>(z, result.GetFloat(3), result.GetFloat(4), result.GetFloat(5), result.GetUInt32(6));
+		camp->SetID(id);
+		camp->SetName(result.GetString(1));
+		camp->SetRadius(result.GetFloat(7));
+		camp->SetNumRadiusEncounter(result.GetUInt16(8));
+		count++;
+
+		z->AddSpawnCamp(camp);
+		LogDebug(LOG_NPC, 5, "---Loading Spawn Camp: '%s' (%u)", camp->GetName().c_str(), id);
+	}
+
+	LogInfo(LOG_NPC, 0, "--Loaded %u Spawn Camp(s).", count);
+	return ret;
+}
+
+uint32_t ZoneDatabase::InsertNewSpawnCamp(std::shared_ptr<SpawnCamp> camp) {
+	uint32_t ret = 0;
+
+	bool result = Query("INSERT INTO spawn_camp (zone_id, x, y, z, grid) VALUES (%u, %f, %f, %f, %u)", camp->GetZone()->GetID(), camp->GetX(), camp->GetY(), camp->GetZ(), camp->GetGridID());
+	if (result) {
+		DatabaseResult dbResult;
+		bool select = Select(&dbResult, "SELECT LAST_INSERT_ID()");
+		if (select && dbResult.Next()) {
+			ret = dbResult.GetUInt32(0);
+		}
+	}
+
+	return ret;
+}
+
+bool ZoneDatabase::SaveSpawnCamp(std::shared_ptr<SpawnCamp> camp) {
+	return Query("UPDATE spawn_camp SET name = '%s', x = %f, y = %f, z = %f, grid = %u, radius = %f, num_radius_encounters = %u WHERE id = %u", camp->GetName().c_str(), camp->GetX(), camp->GetY(), camp->GetZ(), camp->GetGridID(), camp->GetRadius(), camp->GetNumRadiusEncounters(), camp->GetID());
 }
