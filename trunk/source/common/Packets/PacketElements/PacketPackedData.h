@@ -45,17 +45,9 @@ public:
 
 		int32_t outsize = 0;
 
-		if (bClassic) {
-			if ( (outsize = DoUnpackClassic(tmpSrc.data(), lastPackedSize, tmpDst.data(), static_cast<uint32_t>(tmpDst.size()))) < 0) {
-				LogDebug(LOG_PACKET, 0, "PacketPackedData::ReadElement unable to unpack data!");
-				return false;
-			}
-		}
-		else {
-			if (!DoUnpack(lastPackedSize, tmpSrc.data(), outsize, tmpDst.data(), static_cast<uint32_t>(tmpDst.size()), true)) {
-				LogDebug(LOG_PACKET, 0, "PacketPackedData::ReadElement unable to unpack data!");
-				return false;
-			}
+		if (!DoUnpack(lastPackedSize, tmpSrc.data(), outsize, tmpDst.data(), static_cast<uint32_t>(tmpDst.size()), !bClassic)) {
+			LogDebug(LOG_PACKET, 0, "PacketPackedData::ReadElement unable to unpack data!");
+			return false;
 		}
 
 		tmpSrc.clear();
@@ -120,13 +112,8 @@ public:
 		if (unpackedSize == 0) {
 			packedSize = 0;
 		}
-		else if (bClassic) {
-			packedSize = DoPackClassic(tmp.data(), static_cast<uint32_t>(tmp.size()), buf.data(), unpackedSize) - 4;
-			//vector<unsigned char> derp(unpackedSize + 10);
-			//assert(DoUnpackClassic(buf.data(), packedSize + 4, derp.data(), derp.size()) - 4 == unpackedSize);
-		}
 		else {
-			packedSize = DoPack(buf.data(), tmp.data(), unpackedSize, static_cast<uint32_t>(buf.size())) - 4;
+			packedSize = DoPack(buf.data(), tmp.data(), unpackedSize, static_cast<uint32_t>(buf.size()), !bClassic) - 4;
 		}
 
 		uint32_t effectiveSize = nSizeBytes;
@@ -172,7 +159,7 @@ public:
 		}
 	}
 
-	static uint32_t DoPack(uint8_t* data, uint8_t* src, uint16_t srcLen, uint16_t dstLen) {
+	static uint32_t DoPack(uint8_t* data, uint8_t* src, uint16_t srcLen, uint16_t dstLen, bool bReverse) {
 		uint16_t	real_pos = 4;
 		uint32_t	pos = 0;
 		uint32_t	code = 0;
@@ -184,13 +171,9 @@ public:
 		while (pos < srcLen) {
 			if (src[pos] || codeLen) {
 				if (!codeLen) {
-					if (zeroLen > 5) {
+					if (zeroLen) {
 						data[real_pos++] = zeroLen;
 						zeroLen = 0;
-					}
-					else if (zeroLen >= 1 && zeroLen <= 5) {
-						for (; zeroLen > 0; zeroLen--)
-							codeLen++;
 					}
 					codePos = real_pos;
 					code = 0;
@@ -224,74 +207,12 @@ public:
 		else if (zeroLen) {
 			data[real_pos++] = zeroLen;
 		}
-		DoPackReverse(data + 4, real_pos - 4);
+		if (bReverse) {
+			DoPackReverse(data + 4, real_pos - 4);
+		}
 		uint32_t dataLen = real_pos - 4;
 		memcpy(&data[0], &dataLen, sizeof(uint32_t));
 		return dataLen + 4;
-	}
-
-	static uint32_t DoPackClassic(const uint8_t* input, int32_t inputSize, uint8_t* outBuf, int32_t outBufSize) {
-		assert(outBufSize > 4);
-		int32_t inputCount = inputSize;
-		uint8_t* outBufStart = outBuf;
-		outBufSize -= 4;
-		outBuf += 4;
-		memset(outBuf, 0, outBufSize);
-
-		while (inputCount) {
-			int32_t code = std::min<>(7, inputCount);
-			int32_t zeroLen = 0;
-			zeroLen = 0;
-			uint8_t bVar5 = 0;
-
-			auto ZeroFillBlock = [&code, &zeroLen, &input, &inputCount, &outBuf] {
-				inputCount -= code;
-				while ((input[zeroLen] == '\0' && zeroLen < 0x7f) && inputCount) {
-					++zeroLen;
-					--inputCount;
-				}
-				*outBuf = zeroLen;
-				++outBuf;
-			};
-
-			if (code == 0) {
-				ZeroFillBlock();
-			}
-			else {
-				do {
-					if (input[zeroLen] != '\0') {
-						bVar5 = bVar5 | 1 << (zeroLen & 0x1f);
-					}
-					++zeroLen;
-				} while (zeroLen < code);
-
-				if (bVar5 == 0) {
-					ZeroFillBlock();
-				}
-				else {
-					*outBuf = bVar5 | 0x80;
-					++outBuf;
-
-					zeroLen = 0;
-					do {
-						if ((static_cast<uint32_t>(bVar5 | 0x80) & 1 << (zeroLen & 0x1f)) != 0) {
-							*outBuf = input[zeroLen];
-							++outBuf;
-						}
-						++zeroLen;
-					} while (zeroLen < code);
-					inputCount -= code;
-					zeroLen = code;
-				}
-			}
-
-			input += zeroLen;
-		}
-
-		uint32_t packSize = static_cast<uint32_t>(outBuf - outBufStart);
-		memcpy(outBufStart, &packSize, sizeof(uint32_t));
-
-		return packSize + 4;
 	}
 
 	static bool DoUnpack(uint32_t srcLen, uint8_t* data, int32_t& outsize, uint8_t* dst, uint16_t dstLen, bool reverse) {
@@ -331,86 +252,6 @@ public:
 
 		outsize = dst_pos;
 		return src_pos == srcLen;
-	}
-
-	static int32_t DoUnpackClassic(const uint8_t* input, int32_t inputSize, uint8_t* outBuf, int32_t outBufSize) {
-		assert(outBufSize > 4);
-
-		if (inputSize < 4) {
-			return -1;
-		}
-
-		int32_t packedSize = *reinterpret_cast<const int32_t*>(input);
-
-		if (packedSize == 0) {
-			return 0;
-		}
-
-		if (4 + packedSize > inputSize) {
-			return 0;
-		}
-
-		input += 4;
-		inputSize -= 4;
-
-		uint8_t* outStart = outBuf;
-		outBuf += 4;
-		outBufSize -= 4;
-
-		uint32_t nOutRemaining = outBufSize;
-
-		while (outBufSize != 0) {
-			if (inputSize-- == 0) {
-				break;
-			}
-
-			uint8_t code = *input;
-			++input;
-			if (code & 0x80) {
-				uint8_t zeroLen = 0;
-				bool bBreak = false;
-				do {
-					if ((static_cast<uint32_t>(zeroLen) & 1 << (zeroLen & 0x1f)) == 0) {
-						*outBuf = 0;
-					}
-					else {
-						*outBuf = *input;
-						++input;
-						--inputSize;
-					}
-					++outBuf;
-					if (--nOutRemaining == 0 || --inputSize == 0) {
-						bBreak = true;
-						break;
-					}
-					++zeroLen;
-				} while (zeroLen < 7);
-
-				if (bBreak) {
-					break;
-				}
-			}
-			else {
-				if (nOutRemaining < code) {
-					return -1;
-				}
-
-				uint8_t zeroLen = code / 4;
-				uint8_t* ptr = outBuf;
-				memset(ptr, 0, zeroLen);
-				ptr += zeroLen;
-				zeroLen = code % 4;
-				memset(ptr, 0, zeroLen);
-				outBuf += code;
-				nOutRemaining -= code;
-			}
-			outBufSize = nOutRemaining;
-		}
-
-		uint32_t unpackedSize = static_cast<uint32_t>(outBuf - outStart - 4);
-		memcpy(outStart, &unpackedSize, sizeof(unpackedSize));
-
-		return unpackedSize + 4;
 	}
 
 	//This will add an external substruct to this packed data's elements list

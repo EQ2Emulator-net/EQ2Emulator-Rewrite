@@ -55,7 +55,6 @@ public:
 			OP_UpdateCharacterSheetMsg_Packet* char_sheet = new OP_UpdateCharacterSheetMsg_Packet(client->GetVersion(), *controller->GetCharacterSheet());
 			char_sheet->SetEncodedBuffer(client->encoded_packets.GetBuffer(EEncoded_UpdateCharSheet));
 	
-
 			client->QueuePacket(char_sheet);
 		}
 	}

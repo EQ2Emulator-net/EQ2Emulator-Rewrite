@@ -113,7 +113,7 @@ bool WorldDatabase::LoadCharacterAppearances(uint32_t account, OP_AllCharactersD
 	DatabaseResult result;
 	DatabaseResult result2;
 
-	ret = Select(&result, "SELECT id, server_id, name, race, class, gender, deity, body_size, body_age, current_zone_id, level, tradeskill_class, tradeskill_level, soga_wing_type, soga_chest_type, soga_legs_type, soga_hair_type, soga_facial_hair_type, soga_model_type, legs_type, chest_type, wing_type, hair_type, facial_hair_type, model_type, unix_timestamp(created_date), unix_timestamp(last_played) FROM characters WHERE account_id = %u AND deleted = 0", account);
+	ret = Select(&result, "SELECT id, server_id, name, race, class, gender, deity, body_size, body_age, current_zone_id, level, tradeskill_class, tradeskill_level, soga_wing_type, soga_chest_type, soga_legs_type, soga_hair_type, soga_facial_hair_type, soga_model_type, legs_type, chest_type, wing_type, hair_type, facial_hair_type, model_type, tail_type, unix_timestamp(created_date), unix_timestamp(last_played) FROM characters WHERE account_id = %u AND deleted = 0", account);
 	if (!ret)
 		return ret;
 
@@ -156,22 +156,23 @@ bool WorldDatabase::LoadCharacterAppearances(uint32_t account, OP_AllCharactersD
 		//c.soga_legs_type = result.GetUInt16(15);
 
 		
-		app.soga_hair.type = result.GetUInt16(16);
-		app.soga_hair_face.type = result.GetUInt16(17);
-		app.soga_race_type = result.GetUInt16(18);
+		app.soga_hair.type = result.GetUInt32(16);
+		app.soga_hair_face.type = result.GetUInt32(17);
+		app.soga_race_type = result.GetUInt32(18);
 
 		/* NORMAL Appearances */
-		app.pants.type = result.GetUInt16(19);
-		app.shirt.type = result.GetUInt16(20);
-		app.wings.type = result.GetUInt16(21);
-		app.hair.type = result.GetUInt16(22);
-		app.hair_face.type = result.GetUInt16(23);
-		app.race_type = result.GetUInt16(24);
+		app.pants.type = result.GetUInt32(19);
+		app.shirt.type = result.GetUInt32(20);
+		app.wings.type = result.GetUInt32(21);
+		app.hair.type = result.GetUInt32(22);
+		app.hair_face.type = result.GetUInt32(23);
+		app.race_type = result.GetUInt32(24);
+		app.tail.type = result.GetUInt32(25);
 
 		if (!result.IsNull(25))
-			c.created_date = result.GetUInt32(25);
+			c.created_date = result.GetUInt32(26);
 		if (!result.IsNull(26))
-			c.last_played = result.GetUInt32(26);
+			c.last_played = result.GetUInt32(27);
 
 
 		// TODO char_colors table
@@ -238,9 +239,19 @@ bool WorldDatabase::LoadCharacterAppearances(uint32_t account, OP_AllCharactersD
 				app.wings.color.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "wing_color2") {
-				app.wings.color.Red = result2.GetUInt8(1);
-				app.wings.color.Green = result2.GetUInt8(2);
-				app.wings.color.Blue = result2.GetUInt8(3);
+				app.wings.highlight.Red = result2.GetUInt8(1);
+				app.wings.highlight.Green = result2.GetUInt8(2);
+				app.wings.highlight.Blue = result2.GetUInt8(3);
+			}
+			else if (type == "tail_color1") {
+				app.tail.color.Red = result2.GetUInt8(1);
+				app.tail.color.Green = result2.GetUInt8(2);
+				app.tail.color.Blue = result2.GetUInt8(3);
+			}
+			else if (type == "tail_color2") {
+				app.tail.highlight.Red = result2.GetUInt8(1);
+				app.tail.highlight.Green = result2.GetUInt8(2);
+				app.tail.highlight.Blue = result2.GetUInt8(3);
 			}
 			else if (type == "shirt_color") {
 				app.shirt.color.Red = result2.GetUInt8(1);
@@ -452,11 +463,13 @@ uint32_t WorldDatabase::CreateCharacter(uint32_t account_id, OP_CreateCharacterR
 	const char* create_char =
 		"INSERT INTO characters (account_id, server_id, name, race, class, gender, deity, body_size, body_age, soga_wing_type, soga_chest_type,"
 		"soga_legs_type, soga_hair_type, soga_model_type, legs_type, chest_type, wing_type, hair_type, model_type, facial_hair_type, "
-		"soga_facial_hair_type, created_date, last_saved, admin_status) "
-		"VALUES (%i, %i, '%s', %i, %i, %i, %i, %f, %f, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, now(), unix_timestamp(), %i)";
+		"soga_facial_hair_type, created_date, last_saved, admin_status, tail_type) "
+		"VALUES (%i, %i, '%s', %i, %i, %i, %i, %f, %f, %u, %u, %u, %u, %u, %u, %u, %u, %u, %u, %u, %u, now(), unix_timestamp(), NULL, %u)";
 	 
 	const Substruct_CharacterCustomization& custom = packet->customization;
 	const Substruct_CharacterCustomization& soga = packet->soga_customization;
+
+	std::array<uint32_t, 13> ids = GetCreateAppearanceIDs(custom, soga);
 
 	QueryResult res = QueryWithFetchedResult(QUERY_RESULT_FLAG_LAST_INSERT_ID, create_char,
 		account_id,
@@ -468,18 +481,19 @@ uint32_t WorldDatabase::CreateCharacter(uint32_t account_id, OP_CreateCharacterR
 		packet->deity,
 		custom.floatSliders.bodyscale,
 		custom.floatSliders.bumpscale,
-		GetAppearanceID(soga.wingAsset.file),
-		GetAppearanceID(soga.chestAsset.file),
-		GetAppearanceID(soga.legsAsset.file),
-		GetAppearanceID(soga.hairAsset.file),
-		GetAppearanceID(soga.race_file),
-		GetAppearanceID(custom.legsAsset.file),
-		GetAppearanceID(custom.chestAsset.file),
-		GetAppearanceID(custom.wingAsset.file),
-		GetAppearanceID(custom.hairAsset.file),
-		GetAppearanceID(custom.race_file),
-		GetAppearanceID(custom.faceAsset.file),
-		GetAppearanceID(soga.faceAsset.file)
+		ids[0],
+		ids[1],
+		ids[2],
+		ids[3],
+		ids[4],
+		ids[5],
+		ids[6],
+		ids[7],
+		ids[8],
+		ids[9],
+		ids[10],
+		ids[11],
+		ids[12]
 		);
 
 	if (!res) {
@@ -537,6 +551,8 @@ uint32_t WorldDatabase::CreateCharacter(uint32_t account_id, OP_CreateCharacterR
 	SaveCharacterColors(char_id, "chin_type", custom.sliders.chin);
 	SaveCharacterColors(char_id, "nose_type", custom.sliders.nose);
 	SaveCharacterFloats(char_id, "body_size", custom.sliders.bodyscale, 0, 0);
+	SaveCharacterColors(char_id, "tail_color1", custom.tailAsset.color);
+	SaveCharacterColors(char_id, "tail_color2", custom.tailAsset.highlight);
 
 	SaveCharacterColors(char_id, "soga_skin_color", soga.skin_color);
 	SaveCharacterColors(char_id, "soga_model_color", soga.model_color);
@@ -566,17 +582,60 @@ uint32_t WorldDatabase::CreateCharacter(uint32_t account_id, OP_CreateCharacterR
 	return char_id;
 }
 
-uint16_t WorldDatabase::GetAppearanceID(std::string name) {
-	uint16_t id = 0;
+//13 asset ids stored in the character table from char create, add more as needed in order
+//TODO: should probably just cache these
+std::array<uint32_t, 13> WorldDatabase::GetCreateAppearanceIDs(const Substruct_CharacterCustomization& custom, const Substruct_CharacterCustomization& soga) {
+	std::array<uint32_t, 13> ret;
+	ret.fill(0);
+
+	std::array<std::string, 13> lookupRef;
+
+	lookupRef[0] = soga.wingAsset.file;
+	lookupRef[1] = soga.chestAsset.file;
+	lookupRef[2] = soga.legsAsset.file;
+	lookupRef[3] = soga.hairAsset.file;
+	lookupRef[4] = soga.race_file;
+	lookupRef[5] = custom.legsAsset.file;
+	lookupRef[6] = custom.chestAsset.file;
+	lookupRef[7] = custom.wingAsset.file;
+	lookupRef[8] = custom.hairAsset.file;
+	lookupRef[9] = custom.race_file;
+	lookupRef[10] = custom.faceAsset.file;
+	lookupRef[11] = soga.faceAsset.file;
+	lookupRef[12] = custom.tailAsset.file;
+
+	std::ostringstream ss;
+
+	ss << "SELECT appearance_id, `name` FROM appearances WHERE `name` IN (";
+	
+	bool bFirst = true;
+
+	for (auto& itr : lookupRef) {
+		if (itr.empty()) continue;
+		else if (bFirst) bFirst = false;
+		else ss << ',';
+
+		ss << '\'' << Escape(itr) << '\'';
+	}
+
+	ss << ");";
+
 	DatabaseResult result;
-	bool success;
-	string name_esc = Escape(name);
 
-	success = Select(&result, "SELECT appearance_id FROM appearances WHERE name = '%s'", name_esc.c_str());
-	if (success && result.Next())
-		id = result.GetUInt16(0);
+	if (!Select(&result, "%s", ss.str().c_str())) {
+		//Error
+		return ret;
+	}
 
-	return id;
+	while (result.Next()) {
+		for (int i = 0; i < lookupRef.size(); i++) {
+			if (lookupRef[i] == result.GetString(1)) {
+				ret[i] = result.GetUInt32(0);
+			}
+		}
+	}
+
+	return ret;
 }
 
 void WorldDatabase::UpdateStartingFactions(uint32_t char_id, uint16_t choice) {

@@ -115,6 +115,7 @@ void ZoneDatabase::ProcessCharactersTableResult(DatabaseResult& result, const st
 	// Set Account Age
 	charSheet.zoneID = result.GetUInt32(28);
 	charSheet.instanceID = result.GetUInt32(29);
+	entity->SetTailType(result.GetUInt32(30), false);
 }
 
 void ZoneDatabase::ProcessCharacterDetailsResult(DatabaseResult& res, const std::shared_ptr<Entity>& entity, CharacterSheet& sheet) {
@@ -217,7 +218,7 @@ bool ZoneDatabase::LoadCharacter(uint32_t char_id, uint32_t account_id, std::sha
 
 	//First we need to set up the query
 	std::ostringstream query;
-	const char* characterSelect = "SELECT `name`, `race`, `class`, `gender`, `deity`, `body_size`, `body_age`, `level`, `tradeskill_class`, `tradeskill_level`, `soga_wing_type`, `soga_chest_type`, `soga_legs_type`, `soga_hair_type`, `soga_facial_hair_type`, `soga_model_type`, `legs_type`, `chest_type`, `wing_type`, `hair_type`, `facial_hair_type`, `model_type`, `x`, `y`, `z`, `heading`, `starting_city`, DATEDIFF(curdate(), `created_date`) as accage, current_zone_id, instance_id FROM characters ";
+	const char* characterSelect = "SELECT `name`, `race`, `class`, `gender`, `deity`, `body_size`, `body_age`, `level`, `tradeskill_class`, `tradeskill_level`, `soga_wing_type`, `soga_chest_type`, `soga_legs_type`, `soga_hair_type`, `soga_facial_hair_type`, `soga_model_type`, `legs_type`, `chest_type`, `wing_type`, `hair_type`, `facial_hair_type`, `model_type`, `x`, `y`, `z`, `heading`, `starting_city`, DATEDIFF(curdate(), `created_date`) as accage, current_zone_id, instance_id, tail_type FROM characters ";
 	//`characters`
 	query << characterSelect << "WHERE id = " << char_id << " AND account_id = " << account_id << " AND deleted = 0;\n";
 	//`char_colors`
@@ -1179,6 +1180,12 @@ void ZoneDatabase::ProcessEntityColors(DatabaseResult& result, std::unordered_ma
 		}
 		else if (type == "wing_color2") {
 			entity->SetWingHighlightColor(c, false);
+		}
+		else if (type == "tail_color1") {
+			entity->SetTailColor(c, false);
+		}
+		else if (type == "tail_color2") {
+			entity->SetTailHighlightColor(c, false);
 		}
 		else if (type == "shirt_color") {
 			entity->SetChestColor(c, false);

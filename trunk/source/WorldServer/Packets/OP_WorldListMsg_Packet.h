@@ -22,7 +22,7 @@ public:
 		Load = 0;	// valid values seem to be 0, 1, and 2
 		NumOnlineFlag = 1;
 		memset(FeatureSet, 0, sizeof(FeatureSet));
-		AllowedRaces = 0x001FFFFF;
+		AllowedRaces = 0x003FFFFF;
 		Unknown2 = 0;
 	}
 

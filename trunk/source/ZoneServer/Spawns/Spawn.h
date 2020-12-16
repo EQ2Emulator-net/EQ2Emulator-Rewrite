@@ -287,6 +287,9 @@ public:
 	void SetWingType(uint32_t value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.wing_type_id, value, updateFlags);
 	}
+	void SetTailType(uint32_t value, bool updateFlags = true) {
+		SetInfo(&m_infoStruct.tail_type_id, value, updateFlags);
+	}
 	void SetChestType(uint32_t value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.chest_type_id, value, updateFlags);
 	}
@@ -340,6 +343,12 @@ public:
 	}
 	void SetSogaWingColor(EQ2Color value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.soga_wing_color1, value, updateFlags);
+	}
+	void SetTailColor(EQ2Color value, bool updateFlags = true) {
+		SetInfo(&m_infoStruct.tail_color1, value, updateFlags);
+	}
+	void SetTailHighlightColor(EQ2Color value, bool updateFlags = true) {
+		SetInfo(&m_infoStruct.tail_color2, value, updateFlags);
 	}
 	void SetSogaWingHighlightColor(EQ2Color value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.wing_color2, value, updateFlags);

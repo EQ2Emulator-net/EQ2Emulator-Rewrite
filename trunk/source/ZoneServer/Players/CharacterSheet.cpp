@@ -395,7 +395,7 @@ void UpdateCharacterSheetMsgData::RegisterElements() {
 	RegisterFloat(tsExpDebt);
 
 	if (version < 60114) {
-		//Not sure what this was, but COE has it
+		//Fame/Infamy/Noteriety for pvp
 		static float pvpExp = 0.f;
 		float& pvpExpNextLevel = pvpExp;
 		float& pvpExpDebt = pvpExp;
@@ -529,7 +529,7 @@ void UpdateCharacterSheetMsgData::RegisterElements() {
 	}
 	RegisterSubstruct(pvp_props);
 	RegisterSubstruct(ts_props);
-	RegisterSubstruct(prop_caps);
+	RegisterSubstruct(base_props);
 
 	RegisterFloat(adventure_effects_cap);
 	RegisterFloat(tradeskill_effects_cap);
@@ -882,11 +882,19 @@ void UpdateCharacterSheetMsgData::RegisterElements67650() {
 	RegisterSubstruct(unk_props2);
 	RegisterSubstruct(pvp_props);
 	RegisterSubstruct(ts_props);
-	RegisterSubstruct(prop_caps);
+	RegisterSubstruct(base_props);
 
-	static uint8_t g_unknown37cd[0x37fd - 0x37cd];
-	uint8_t& unknown37cd = g_unknown37cd[0];
-	RegisterUInt8(unknown37cd)->SetCount(sizeof(g_unknown37cd));
+	if (version >= 67804) {
+		//They added some stuff here
+		static uint8_t g_unknown382d[0x385d - 0x382d];
+		uint8_t& unknown382d = g_unknown382d[0];
+		RegisterUInt8(unknown382d)->SetCount(sizeof(g_unknown382d));
+	}
+	else {
+		static uint8_t g_unknown37cd[0x37fd - 0x37cd];
+		uint8_t& unknown37cd = g_unknown37cd[0];
+		RegisterUInt8(unknown37cd)->SetCount(sizeof(g_unknown37cd));
+	}
 
 	RegisterUInt64(spell_state_flags);
 

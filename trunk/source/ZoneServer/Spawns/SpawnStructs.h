@@ -257,6 +257,7 @@ struct SpawnInfoStruct {
 	uint32_t						hair_type_id;
 	uint32_t						facial_hair_type_id;
 	uint32_t						wing_type_id;
+	uint32_t                        tail_type_id;
 	uint32_t                        soga_wing_type_id;
 	uint32_t						chest_type_id;
 	uint32_t                        soga_chest_type_id;
@@ -349,6 +350,8 @@ struct SpawnInfoStruct {
 	EQ2Color                        textures_slot_color;
 	EQ2Color						mount_adornment_color;
 	EQ2Color                        mount_armor_color;
+	EQ2Color                        tail_color1;
+	EQ2Color                        tail_color2;
 	EQ2Color						wing_color1;
 	EQ2Color                        soga_wing_color1;
 	EQ2Color                        chest_type_color;

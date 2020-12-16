@@ -60,6 +60,7 @@ public:
 	Substruct_CharacterCustomization_Asset hairAsset;
 	Substruct_CharacterCustomization_Asset faceAsset;
 	Substruct_CharacterCustomization_Asset wingAsset;
+	Substruct_CharacterCustomization_Asset tailAsset;
 	Substruct_CharacterCustomization_Asset chestAsset;
 	Substruct_CharacterCustomization_Asset legsAsset;
 
@@ -87,6 +88,9 @@ public:
 		RegisterSubstruct(faceAsset);
 		if (GetVersion() > 283) {
 			RegisterSubstruct(wingAsset);
+			if (GetVersion() >= 67804) {
+				RegisterSubstruct(tailAsset);
+			}
 		}
 		RegisterSubstruct(chestAsset);
 		RegisterSubstruct(legsAsset);

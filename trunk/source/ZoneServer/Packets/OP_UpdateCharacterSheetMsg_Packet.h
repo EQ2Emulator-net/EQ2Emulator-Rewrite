@@ -204,7 +204,10 @@ struct SpellProps {
 	float heals_received_pot_mit;
 	float heals_received_critbonus_mit;
 	float heals_received_fervor_mit;
+	float power_received_fervor_mit;
 	float heals_received_normalized_mit;
+	float flurry_multiplier;
+	float flurry_multiplier_mitigation;
 
 	SpellProps() {
 		memset(this, 0, sizeof(*this));
@@ -381,7 +384,14 @@ public:
 				RegisterFloat(heals_received_pot_mit);
 				RegisterFloat(heals_received_critbonus_mit);
 				RegisterFloat(heals_received_fervor_mit);
+				if (version >= 67804) {
+					RegisterFloat(power_received_fervor_mit);
+				}
 				RegisterFloat(heals_received_normalized_mit);
+				if (version >= 67804) {
+					RegisterFloat(flurry_multiplier);
+					RegisterFloat(flurry_multiplier_mitigation);
+				}
 			}
 		}
 	}
@@ -582,7 +592,7 @@ protected:
 class UpdateCharacterSheetMsgData : public CharacterSheetMiscData, public CharacterSheet, public PacketEncodedData {
 public:
 	UpdateCharacterSheetMsgData(uint32_t ver) : PacketEncodedData(ver), CharacterSheet(nullptr), groupSheet(ver),
-		pve_props(version), pvp_props(version), unk_props(version), unk_props2(version), ts_props(version), prop_caps(version) {
+		pve_props(version), pvp_props(version), unk_props(version), unk_props2(version), ts_props(version), base_props(version) {
 		for (uint8_t i = 0; i < 45; i++)
 			spell_effects[i].ResetVersion(version);
 		for (uint8_t i = 0; i < 45; i++)
@@ -595,7 +605,7 @@ public:
 	}
 
 	UpdateCharacterSheetMsgData(uint32_t version, const CharacterSheet& sheet) : PacketEncodedData(version), CharacterSheet(sheet),
-		groupSheet(version), pve_props(version), pvp_props(version), unk_props(version), unk_props2(version), ts_props(version), prop_caps(version) {
+		groupSheet(version), pve_props(version), pvp_props(version), unk_props(version), unk_props2(version), ts_props(version), base_props(version) {
 		for (uint8_t i = 0; i < 45; i++)
 			spell_effects[i].ResetVersion(version);
 		for (uint8_t i = 0; i < 45; i++)
@@ -620,7 +630,7 @@ public:
 	Substruct_SpellProps pvp_props;
 	Substruct_SpellProps unk_props2;
 	Substruct_TsSpellProps ts_props;
-	Substruct_SpellProps prop_caps;
+	Substruct_SpellProps base_props;
 
 private:
 	double advExp_do_not_set;

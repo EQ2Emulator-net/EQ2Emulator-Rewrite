@@ -2,6 +2,7 @@
 
 #include "../../common/CommonDatabase.h"
 #include "../WorldServer/Client.h"
+#include <array>
 
 class OP_AllCharactersDescReplyMsg_Packet;
 class OP_CreateCharacterRequestMsg_Packet;
@@ -26,7 +27,7 @@ public:
 
 	bool SaveClientLog(const std::string& type, const std::string& message, uint32_t version);
 	uint32_t CreateCharacter(uint32_t account_id, OP_CreateCharacterRequestMsg_Packet* packet);
-	uint16_t GetAppearanceID(std::string name);
+	std::array<uint32_t, 13> GetCreateAppearanceIDs(const class Substruct_CharacterCustomization& assets, const class Substruct_CharacterCustomization& sogaAssets);
 	void UpdateStartingFactions(uint32_t char_id, uint16_t choice);
 	void UpdateStartingZone(uint32_t char_id, uint8_t class_id, uint8_t race_id, uint16_t choice);
 	void UpdateStartingItems(uint32_t char_id, uint8_t class_id, uint8_t race_id, bool base_class = false);

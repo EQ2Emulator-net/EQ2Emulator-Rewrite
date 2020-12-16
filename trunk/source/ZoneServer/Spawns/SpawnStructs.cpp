@@ -338,26 +338,24 @@ void Substruct_SpawnInfo::RegisterElements() {
 		if (version < 936) {
 			RegisterUInt8(unknown3)->SetCount(288);
 		}
-		else {
-			if (version < 1096) {
+		else if (version < 1096) {
 				RegisterUInt8(unknown3)->SetCount(258);
+		}
+		else {
+			if (version < 1188) {
+				RegisterUInt8(unknown3)->SetCount(242);
 			}
 			else {
-				if (version < 1188) {
-					RegisterUInt8(unknown3)->SetCount(242);
-				}
-				else {
-					RescopeArrayElement(spell_effects);
-					RegisterSubstruct(spell_effects)->SetCount(30);
-				}
-				RegisterUInt32(target_id);
-				RegisterUInt32(follow_target);
-				RescopeArrayElement(unknown3b);
-				RegisterUInt8(unknown3b)->SetCount(version >= 1198 ? 8 : 7);
-				if (version < 1198) {
-					RescopeToReference(heroic_flag, uint8_t);
-					RegisterUInt8(heroic_flag);
-				}
+				RescopeArrayElement(spell_effects);
+				RegisterSubstruct(spell_effects)->SetCount(30);
+			}
+			RegisterUInt32(target_id);
+			RegisterUInt32(follow_target);
+			RescopeArrayElement(unknown3b);
+			RegisterUInt8(unknown3b)->SetCount(version >= 1198 ? 8 : 7);
+			if (version < 1198) {
+				RescopeToReference(heroic_flag, uint8_t);
+				RegisterUInt8(heroic_flag);
 			}
 		}
 		if (version < 936) {
@@ -471,6 +469,9 @@ void Substruct_SpawnInfo::RegisterElements() {
 		RegisterUInt32(hair_type_id);
 		RegisterUInt32(facial_hair_type_id);
 		RegisterUInt32(wing_type_id);
+		if (version >= 67804) {
+			RegisterUInt32(tail_type_id);
+		}
 		RegisterUInt32(chest_type_id);
 		RegisterUInt32(legs_type_id);
 	}
@@ -522,6 +523,9 @@ void Substruct_SpawnInfo::RegisterElements() {
 	RegisterEQ2Color(hair_face_color);
 	if (version > 283) {
 		RegisterEQ2Color(wing_color1);
+		if (version >= 67804) {
+			RegisterEQ2Color(tail_color1);
+		}
 	}
 
 	RegisterEQ2Color(chest_type_color);
@@ -542,6 +546,9 @@ void Substruct_SpawnInfo::RegisterElements() {
 	}
 	RegisterEQ2Color(hair_type_highlight_color);
 	RegisterEQ2Color(hair_face_highlight_color);
+	if (version >= 67804) {
+		RegisterEQ2Color(tail_color2);
+	}
 	RegisterEQ2Color(wing_color2);
 
 	RegisterEQ2Color(chest_type_highlight);
@@ -590,6 +597,12 @@ void Substruct_SpawnInfo::RegisterElements() {
 		RegisterEQ2Color(soga_hair_color1);
 		RegisterEQ2Color(soga_hair_color2);
 		RegisterEQ2Color(soga_hair_highlight);
+		if (version >= 67804) {
+			//This version needed filler to align NetAppearance to 4 bytes, this may go away at some point
+			static uint8_t s_alignFiller[2] = { 0, 0 };
+			uint8_t& alignFiller = s_alignFiller[0];
+			RegisterUInt8(alignFiller)->SetCount(2);
+		}
 	}
 	if (version < 60055) {
 		if (version >= 1188) {
@@ -624,7 +637,8 @@ void Substruct_SpawnInfo::RegisterElements() {
 		RegisterUInt8(interaction_flag);
 
 		RescopeArrayElement(unknown18);
-		if (version >= 57080) {
+
+		if (version >= 864) {
 			RescopeToReference(primary_slot_state, uint16_t);
 			RescopeToReference(secondary_slot_state, uint16_t);
 			RescopeToReference(ranged_slot_state, uint16_t);
@@ -633,21 +647,15 @@ void Substruct_SpawnInfo::RegisterElements() {
 			RegisterUInt16(secondary_slot_state);
 			RegisterUInt16(ranged_slot_state);
 
-			RescopeArrayElement(spell_visuals);
-			RegisterUInt32(spell_visuals)->SetCount(8);
-			RescopeArrayElement(spell_visual_levels);
-			RegisterUInt8(spell_visual_levels)->SetCount(8);
-		}
-		else if (version >= 864) {
-			RescopeToReference(primary_slot_state, uint16_t);
-			RescopeToReference(secondary_slot_state, uint16_t);
-			RescopeToReference(ranged_slot_state, uint16_t);
+			if (version >= 57080) {
+				RescopeArrayElement(spell_visuals);
+				RegisterUInt32(spell_visuals)->SetCount(8);		
+			}
+			else {
+				uint16_t& spell_visuals = spell_visuals_do_not_set[0];
+				RegisterUInt16(spell_visuals)->SetCount(8);
+			}
 
-			RegisterUInt16(primary_slot_state);
-			RegisterUInt16(secondary_slot_state);
-			RegisterUInt16(ranged_slot_state);
-			uint16_t& spell_visuals = spell_visuals_do_not_set[0];
-			RegisterUInt16(spell_visuals)->SetCount(8);
 			RescopeArrayElement(spell_visual_levels);
 			RegisterUInt8(spell_visual_levels)->SetCount(8);
 		}
@@ -655,7 +663,7 @@ void Substruct_SpawnInfo::RegisterElements() {
 			RegisterUInt8(unknown18)->SetCount(36);
 		}
 		else {
-			//This probably has the above elements (spell visuals) and then something else that was removed but need to confirm
+			//This probably has the above elements (spell visuals) and then something else that was removed or needs to be combined into an above unknown but need to confirm
 			RegisterUInt8(unknown18)->SetCount(32);
 		}
 	}

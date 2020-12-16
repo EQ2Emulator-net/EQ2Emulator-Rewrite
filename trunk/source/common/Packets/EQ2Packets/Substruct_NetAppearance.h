@@ -61,6 +61,7 @@ public:
 	EQ2EquipmentItem wings;
 	EQ2EquipmentItem shirt;
 	EQ2EquipmentItem pants;
+	EQ2EquipmentItem tail;
 	union {
 		SpawnMorphSliders sliders;
 		int8_t sliderBytes[26];
@@ -96,7 +97,10 @@ public:
 
 	uint8_t GetNetAppearanceVersion() {
 		const uint32_t version = GetVersion();
-		if (version >= 67650) {
+		if (version >= 67804) {
+			netAppearanceVersion = 24;
+		}
+		else if (version >= 67650) {
 			netAppearanceVersion = 23;
 		}
 		else if (version >= 60114) {
@@ -154,6 +158,9 @@ public:
 		RegisterEQ2EquipmentItem(hair, appVersion < 21);
 		RegisterEQ2EquipmentItem(hair_face, appVersion < 21);
 		RegisterEQ2EquipmentItem(wings, appVersion < 21);
+		if (appVersion >= 24) {
+			RegisterEQ2EquipmentItem(tail, appVersion < 21);
+		}
 		RegisterEQ2EquipmentItem(shirt, appVersion < 21);
 		RegisterEQ2EquipmentItem(pants, appVersion < 21);
 		if (appVersion >= 17) {
