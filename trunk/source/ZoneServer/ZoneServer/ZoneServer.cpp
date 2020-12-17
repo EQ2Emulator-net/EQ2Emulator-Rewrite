@@ -29,6 +29,7 @@
 #include "../../common/Rules.h"
 #include "../../common/Packets/EmuPackets/Emu_ClientSessionEnded_Packet.h"
 #include "../../common/Packets/EmuPackets/Emu_NotifyCharacterLinkdead_Packet.h"
+#include "../../common/Packets/EmuPackets/Emu_CharacterLinkdeadTimeout_Packet.h"
 
 // Spawns
 #include "../Spawns/Spawn.h"
@@ -524,6 +525,12 @@ void ZoneServer::OnClientRemoval(const std::shared_ptr<Client>& client) {
 			}
 		}
 		m_playerClientList.erase(player->GetServerID());
+	}
+	else if (ws) {
+		//Player made it to the login function but not fully loaded before disconnecting, let the world server know to mark their char offline
+		auto p = new Emu_CharacterLinkdeadTimeout_Packet;
+		p->characterID = client->GetCharacterID();
+		g_zoneOperator.GetWorldStream()->QueuePacket(p);
 	}
 
 	if (ws) {
