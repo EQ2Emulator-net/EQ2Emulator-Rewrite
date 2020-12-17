@@ -34,6 +34,7 @@ void Character::SetOnline() {
 }
 
 void Character::SetOffline() {
+	bPendingZoneConnection = false;
 	bOnline = false;
 	bLinkdead = false;
 	//Offline events here

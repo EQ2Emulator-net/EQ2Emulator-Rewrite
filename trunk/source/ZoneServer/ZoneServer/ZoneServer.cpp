@@ -530,7 +530,7 @@ void ZoneServer::OnClientRemoval(const std::shared_ptr<Client>& client) {
 		//Player made it to the login function but not fully loaded before disconnecting, let the world server know to mark their char offline
 		auto p = new Emu_CharacterLinkdeadTimeout_Packet;
 		p->characterID = client->GetCharacterID();
-		g_zoneOperator.GetWorldStream()->QueuePacket(p);
+		ws->QueuePacket(p);
 	}
 
 	if (ws) {

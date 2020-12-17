@@ -563,9 +563,11 @@ ProtocolPacket* EQ2Stream::SequencedPop() {
 }
 
 void EQ2Stream::NonSequencedPush(ProtocolPacket* p) {
-	p->SetVersion(ClientVersion);
-	WriteLocker lock(nonSeqQueueLock);
-	NonSequencedQueue.push_back(p);
+	if (State == EQStreamState::ESTABLISHED) {
+		p->SetVersion(ClientVersion);
+		WriteLocker lock(nonSeqQueueLock);
+		NonSequencedQueue.push_back(p);
+	}
 }
 
 void EQ2Stream::Write() {
@@ -997,6 +999,8 @@ void EQ2Stream::SendDisconnect(uint16_t reason) {
 	disconnect->Reason = reason;
 
 	NonSequencedPush(disconnect);
+
+	State = EQStreamState::CLOSING;
 
 	Disconnected();
 }

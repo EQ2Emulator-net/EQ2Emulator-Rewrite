@@ -195,6 +195,7 @@ std::shared_ptr<PlayerController> Client::GetController() {
 }
 
 void Client::ConnectionTimeout() {
+	SendDisconnect(4);
 	auto player = GetController()->GetControlled();
 	if (!player || player->IsLinkdead()) {
 		return;
