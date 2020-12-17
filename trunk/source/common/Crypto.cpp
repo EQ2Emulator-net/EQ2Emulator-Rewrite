@@ -33,7 +33,7 @@ uint64_t Crypto::RSADecrypt(unsigned char* text, uint16_t size) {
         ret |= static_cast<uint64_t>(ntohl(*reinterpret_cast<uint32_t*>(text + 4)));
     }
     else {
-        ret = *reinterpret_cast<uint64_t*>(text)
+        ret = *reinterpret_cast<uint64_t*>(text);
     }
     return ret;
 #endif
