@@ -1,4 +1,4 @@
-/*  
+/*
     EQ2Emulator:  Everquest II Server Emulator
     Copyright (C) 2007  EQ2EMulator Development Team (http://www.eq2emulator.net)
 
@@ -21,14 +21,22 @@
 #include "stdafx.h"
 #include "Crypto.h"
 
-uint64_t Crypto::RSADecrypt(unsigned char* text, uint16_t size){
+uint64_t Crypto::RSADecrypt(unsigned char* text, uint16_t size) {
+#ifdef _WIN32
     return ntohll(*reinterpret_cast<uint64_t*>(text));
+#else
+    uint64_t ret;
+    ret = ntohl(*reinterpret_cast<uint32_t*>(text));
+    ret <<= 32;
+    ret |= static_cast<uint64_t>(ntohl(*reinterpret_cast<uint32_t*>(text + 4)));
+    return ret;
+#endif
 }
 
-void Crypto::RC4Decrypt(unsigned char* text, uint32_t size){
-	client->Cypher(text, size);
+void Crypto::RC4Decrypt(unsigned char* text, uint32_t size) {
+    client->Cypher(text, size);
 }
 
-void Crypto::RC4Encrypt(unsigned char* text, uint32_t size){
-	server->Cypher(text, size);
+void Crypto::RC4Encrypt(unsigned char* text, uint32_t size) {
+    server->Cypher(text, size);
 }

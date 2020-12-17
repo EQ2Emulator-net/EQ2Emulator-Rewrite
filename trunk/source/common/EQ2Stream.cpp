@@ -887,7 +887,7 @@ EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size) {
 	}
 	else {
 		std::ostringstream ss;
-		ss << "Unhandled opcode " << opcode;
+		ss << "Unhandled opcode " << opcode << " ClientVersion: " << ClientVersion;
 		std::string header = ss.str();
 		DumpBytes(data + offset, size - offset, header.c_str());
 		if (NetDebugEnabled()) {
