@@ -592,7 +592,7 @@ protected:
 class UpdateCharacterSheetMsgData : public CharacterSheetMiscData, public CharacterSheet, public PacketEncodedData {
 public:
 	UpdateCharacterSheetMsgData(uint32_t ver) : PacketEncodedData(ver), CharacterSheet(nullptr), groupSheet(ver),
-		pve_props(version), pvp_props(version), unk_props(version), unk_props2(version), ts_props(version), base_props(version) {
+		pve_props(version), pvp_props(version), gear_cap_props(version), unk_props2(version), ts_props(version), base_props(version) {
 		for (uint8_t i = 0; i < 45; i++)
 			spell_effects[i].ResetVersion(version);
 		for (uint8_t i = 0; i < 45; i++)
@@ -605,7 +605,7 @@ public:
 	}
 
 	UpdateCharacterSheetMsgData(uint32_t version, const CharacterSheet& sheet) : PacketEncodedData(version), CharacterSheet(sheet),
-		groupSheet(version), pve_props(version), pvp_props(version), unk_props(version), unk_props2(version), ts_props(version), base_props(version) {
+		groupSheet(version), pve_props(version), pvp_props(version), gear_cap_props(version), unk_props2(version), ts_props(version), base_props(version) {
 		for (uint8_t i = 0; i < 45; i++)
 			spell_effects[i].ResetVersion(version);
 		for (uint8_t i = 0; i < 45; i++)
@@ -626,9 +626,10 @@ public:
 	Substruct_GroupSheet groupSheet;
 
 	Substruct_SpellProps pve_props;
-	Substruct_SpellProps unk_props;
+	//I think these are the max values you can get of blue stats from gear if set? i only ever see uncontested riposte/parry/dodge
+	Substruct_SpellProps gear_cap_props;
 	Substruct_SpellProps pvp_props;
-	Substruct_SpellProps unk_props2;
+	Substruct_SpellProps hard_cap_props;
 	Substruct_TsSpellProps ts_props;
 	Substruct_SpellProps base_props;
 

@@ -68,6 +68,7 @@ void EQ2Stream::Process(const unsigned char* data, unsigned int length) {
 
 	if (!ValidateCRC(data, length, Key)) {
 		LogError(LOG_NET, 0, "Packet CRC check failed. Client %s", ToString().c_str());
+		DumpBytes(data, length, "CRCFail");
 		return;
 	}
 

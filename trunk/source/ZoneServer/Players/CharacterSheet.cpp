@@ -525,7 +525,7 @@ void UpdateCharacterSheetMsgData::RegisterElements() {
 	RegisterCharString(afk_message, 256);
 	RegisterSubstruct(pve_props);
 	if (version >= 60114) {
-		RegisterSubstruct(unk_props);
+		RegisterSubstruct(gear_cap_props);
 	}
 	RegisterSubstruct(pvp_props);
 	RegisterSubstruct(ts_props);
@@ -557,8 +557,11 @@ void UpdateCharacterSheetMsgData::RegisterElements() {
 	static std::string house_zone = "house zone";
 	RegisterCharString(house_zone, 48);
 	uint8_t& Unknown526 = unknown526[0];
-	RegisterUInt8(Unknown526)->SetCount(151);
+	RegisterUInt8(Unknown526)->SetCount(150);
 
+	//2 is "Member", the client is doing mathemetical NOT to this for some reason even though I don't see it so send ~2
+	static uint8_t subscriptionLevel = ~2;
+	RegisterUInt8(subscriptionLevel);
 
 	//bind zone and the following bytes (84 total) appear to be the same object
 	static std::string bind_zone = "bind zone";
@@ -878,7 +881,7 @@ void UpdateCharacterSheetMsgData::RegisterElements67650() {
 	static std::string afk_message = "afk_message";
 	RegisterCharString(afk_message, 256);
 	RegisterSubstruct(pve_props);
-	RegisterSubstruct(unk_props);
+	RegisterSubstruct(gear_cap_props);
 	RegisterSubstruct(unk_props2);
 	RegisterSubstruct(pvp_props);
 	RegisterSubstruct(ts_props);
@@ -913,9 +916,13 @@ void UpdateCharacterSheetMsgData::RegisterElements67650() {
 	static std::string house_zone = "house zone";
 	RegisterCharString(house_zone, 48);
 
-	static uint8_t g_unknown3e1c[0x3eb3 - 0x3e1c];
+	static uint8_t g_unknown3e1c[0x3eb2 - 0x3e1c];
 	uint8_t& unknown3e1c = g_unknown3e1c[0];
 	RegisterUInt8(unknown3e1c)->SetCount(sizeof(g_unknown3e1c));
+
+	//2 is "Member", the client is doing NOT to this for some reason even though I don't see it so send ~2
+	static uint8_t subscriptionLevel = ~2;
+	RegisterUInt8(subscriptionLevel);
 
 	//bind zone and the following bytes (84 total) appear to be the same object
 	static std::string bind_zone = "bind zone";

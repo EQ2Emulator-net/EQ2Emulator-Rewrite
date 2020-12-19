@@ -50,7 +50,7 @@ void Client::SendLoginReply(uint8_t reply) {
 		r->DoNotForceSoga = 1;
 		r->RaceUnknown = 63;
 		r->Unknown11 = 7;
-		r->SubscriptionLevel = 2;
+		//r->SubscriptionLevel = 2;
 		r->RaceFlag = GetAllowedRaces();
 		r->ClassFlag = GetAllowedClasses();
 

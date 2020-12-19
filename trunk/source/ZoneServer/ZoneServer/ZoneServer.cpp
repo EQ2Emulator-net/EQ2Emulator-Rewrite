@@ -507,7 +507,7 @@ void ZoneServer::OnClientRemoval(const std::shared_ptr<Client>& client) {
 		if (client->bZoningDisconnect || player->IsCamping()) {
 			RemovePlayer(player);
 		}
-		else {
+		else if (!player->IsLinkdead()){
 			static const uint32_t linkdeadTimeoutMS = g_ruleManager.GetGlobalRule(ERuleCategory::R_World, ERuleType::LinkDeadTimer)->GetUInt32();
 			player->SetActivityTimer(Timer::GetServerTime() + linkdeadTimeoutMS);
 			player->EnableEntityFlags(EntityFlagLinkdead);
