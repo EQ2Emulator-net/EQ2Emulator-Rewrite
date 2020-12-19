@@ -882,7 +882,7 @@ void UpdateCharacterSheetMsgData::RegisterElements67650() {
 	RegisterCharString(afk_message, 256);
 	RegisterSubstruct(pve_props);
 	RegisterSubstruct(gear_cap_props);
-	RegisterSubstruct(unk_props2);
+	RegisterSubstruct(hard_cap_props);
 	RegisterSubstruct(pvp_props);
 	RegisterSubstruct(ts_props);
 	RegisterSubstruct(base_props);
