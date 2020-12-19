@@ -592,7 +592,7 @@ protected:
 class UpdateCharacterSheetMsgData : public CharacterSheetMiscData, public CharacterSheet, public PacketEncodedData {
 public:
 	UpdateCharacterSheetMsgData(uint32_t ver) : PacketEncodedData(ver), CharacterSheet(nullptr), groupSheet(ver),
-		pve_props(version), pvp_props(version), gear_cap_props(version), unk_props2(version), ts_props(version), base_props(version) {
+		pve_props(version), pvp_props(version), gear_cap_props(version), hard_cap_props(version), ts_props(version), base_props(version) {
 		for (uint8_t i = 0; i < 45; i++)
 			spell_effects[i].ResetVersion(version);
 		for (uint8_t i = 0; i < 45; i++)
@@ -605,7 +605,7 @@ public:
 	}
 
 	UpdateCharacterSheetMsgData(uint32_t version, const CharacterSheet& sheet) : PacketEncodedData(version), CharacterSheet(sheet),
-		groupSheet(version), pve_props(version), pvp_props(version), gear_cap_props(version), unk_props2(version), ts_props(version), base_props(version) {
+		groupSheet(version), pve_props(version), pvp_props(version), gear_cap_props(version), hard_cap_props(version), ts_props(version), base_props(version) {
 		for (uint8_t i = 0; i < 45; i++)
 			spell_effects[i].ResetVersion(version);
 		for (uint8_t i = 0; i < 45; i++)
