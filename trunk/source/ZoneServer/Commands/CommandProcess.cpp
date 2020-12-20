@@ -50,6 +50,7 @@ void CommandProcess::RegisterCommands() {
 	RegisterCommandHandler(341, CommandSetCombatVoice);
 	RegisterCommandHandler(523, CommandPath);
 	RegisterCommandHandler(524, CommandSpawnCamp);
+	RegisterCommandHandler(220, CommandSpawnRemove);
 }
 
 void CommandProcess::RegisterCommandHandler(uint32_t handler_id, CommandHandler_t handler) {

@@ -83,6 +83,10 @@ public:
 	uint32_t InsertNewSpawnCamp(std::shared_ptr<SpawnCamp> camp);
 	bool SaveSpawnCamp(std::shared_ptr<SpawnCamp> camp);
 
+
+	uint32_t GetSpawnLocationCount(uint32_t locationID, std::shared_ptr<Spawn> spawn);
+	bool RemoveSpawnFromSpawnLocation(std::shared_ptr<Spawn> spawn);
+
 private:
 	//The return value is the next indice in the query result
 	uint32_t ProcessSpawnTableFields(const std::shared_ptr<class Spawn>& spawn, class DatabaseResult& result);
