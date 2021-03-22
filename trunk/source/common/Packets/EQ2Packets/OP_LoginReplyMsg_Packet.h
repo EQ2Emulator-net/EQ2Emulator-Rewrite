@@ -32,7 +32,7 @@ public:
 		NumClassItems = 0;
 		UnknownArraySize = 0;
 		Unknown11 = 0;
-		SubscriptionLevel = 2;
+		SubscriptionLevel = ~2;
 		RaceFlag = 0;
 		ClassFlag = 0;
 		//Password = "";

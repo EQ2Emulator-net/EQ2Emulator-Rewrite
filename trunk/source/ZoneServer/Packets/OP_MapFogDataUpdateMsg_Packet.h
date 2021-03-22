@@ -17,7 +17,7 @@ public:
 
 class Substruct_MapFogData : public PacketSubstruct {
 public:
-	Substruct_MapFogData(uint32_t ver = 0) : PacketSubstruct(ver, true) { }
+	Substruct_MapFogData(uint32_t ver = 0) : PacketSubstruct(ver) { }
 
 	void RegisterElements() override {
 		RegisterInt32(unknown1);

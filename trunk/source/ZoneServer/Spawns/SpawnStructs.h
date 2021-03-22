@@ -163,9 +163,9 @@ struct SpawnVisualizationStruct {
 	uint8_t		merc_icon;
 	//npc_hate in old code
 	bool        bShowAggro;
-	uint8_t		unknowna;
+	uint8_t		pet_threat;
 	uint8_t		name_quest_icon;
-	uint32_t	unknowna2;
+	uint32_t	unknowna2; //quest related, maybe id
 	uint8_t		unknownb[3];
 	bool    	bShowHandFlag;
 	uint32_t    unknown2b;
@@ -173,8 +173,8 @@ struct SpawnVisualizationStruct {
 	uint8_t		unknown2[6];
 	uint8_t		unknown2a[3];
 	uint8_t     pvp_difficulty;
-	uint8_t     tag1;
-	uint8_t     tag2;
+	uint8_t     tag_icon;
+	uint8_t     tag_number;
 	uint8_t     unknown3;
 	uint16_t    vis_flags;
 
@@ -250,18 +250,20 @@ struct SpawnMorphSliders {
 struct SpawnInfoStruct {
 	uint32_t						model_type;
 	uint32_t						soga_model_type;
-	uint32_t						equipment_types[25];
-	uint32_t						unknownType26;
-	uint32_t						unknownType27;
+	uint32_t						equipment_types[24];
+	uint32_t                        textures_slot_type;
+	uint32_t						mount_adornment_type;
+	uint32_t                        mount_armor_type;
 	uint32_t						hair_type_id;
 	uint32_t						facial_hair_type_id;
 	uint32_t						wing_type_id;
+	uint32_t                        tail_type_id;
 	uint32_t                        soga_wing_type_id;
 	uint32_t						chest_type_id;
 	uint32_t                        soga_chest_type_id;
 	uint32_t						legs_type_id;
 	uint32_t                        soga_legs_type_id;
-	uint32_t						unknown_new_type_id;
+	uint32_t						back_slot_type_id;
 	uint32_t						soga_hair_type_id;
 	uint32_t						soga_facial_hair_type_id;
 	uint32_t						mount_type;
@@ -275,7 +277,11 @@ struct SpawnInfoStruct {
 	uint32_t						visual_state;
 	uint32_t						mood_state;
 	uint32_t						emote_state;
-	uint8_t							unknown600552[52];
+	uint32_t                        primary_slot_state;//only visual states that have weapon in their name seem to have worked for these so far, ex: 28240 drinal_trail_weapon_poison
+	uint32_t                        secondary_slot_state;
+	uint32_t                        ranged_slot_state;
+	uint32_t                        spell_visuals[8];
+	uint8_t                         spell_visual_levels[8];
 	uint32_t						target_id;
 	uint32_t						follow_target;
 	uint32_t						size_unknown;
@@ -290,16 +296,16 @@ struct SpawnInfoStruct {
 	uint8_t							unknown600554[10];
 	uint32_t						hp_percent; //this is sent as 100 ^ percentage remaining
 	uint32_t						power_percent;
-	int32_t							unknown600553; // if set from 1.0 to -1.0 you shrink so small you can't see yourself
-	uint8_t							unknown600553b;
+	int16_t							cast_percentage;
+	int16_t                         unknown3c2;
+	uint32_t                        cast_unknown;
+	uint8_t							threat_level_secondary; // i think this is the threat percentage of the person 2nd on the hate list (shows up for the #1 hated's threat window for that spawn)
 	uint8_t							unknown600553c;
 	uint16_t						orig_level;  // This is the original level and should not change when the level value changes when mentoring
 	uint16_t						level;
 	uint8_t							unknown5;
 	uint8_t						    heroic_flag;
-	uint8_t                         unknown1096;
-	uint32_t    					unknown7;
-	uint8_t                         unknown7_b;
+	uint8_t    				    	heatLevel; //for heatvision (infravision)
 	uint8_t							race;
 	uint8_t							gender;
 	uint8_t							adv_class;
@@ -324,7 +330,7 @@ struct SpawnInfoStruct {
 	uint8_t                         unknown13b;
 	uint8_t                         unknown14a[14];
 	uint8_t                         body_age;
-	uint32_t                        size_mod;
+	float                           size_mod; // if set from 1.0 to -1.0 you shrink so small you can't see yourself
 	uint32_t                        unknown67633;
 	uint8_t                         unknown67633b;
 	union {
@@ -336,29 +342,33 @@ struct SpawnInfoStruct {
 		SpawnMorphSliders               sogaSliders;
 		int8_t                         sogaSliderBytes[26];
 	};
+	EQ2Color                        torch_color;
 
-	//The above data is zeroed out
-	EQ2Color						equipment_colors[25];
+	EQ2Color						equipment_colors[24];
 	EQ2Color						hair_type_color;
 	EQ2Color						hair_face_color;
-	EQ2Color						unknownType26Color;
-	EQ2Color                        unknownType27Color;
+	EQ2Color                        textures_slot_color;
+	EQ2Color						mount_adornment_color;
+	EQ2Color                        mount_armor_color;
+	EQ2Color                        tail_color1;
+	EQ2Color                        tail_color2;
 	EQ2Color						wing_color1;
 	EQ2Color                        soga_wing_color1;
 	EQ2Color                        chest_type_color;
 	EQ2Color                        legs_type_color;
-	EQ2Color                        unknown_new_type_color;
+	EQ2Color                        back_slot_type_color;
 	EQ2Color						unknown10[3];
-	EQ2Color						equipment_highlights[25];
-	EQ2Color						unknownType26Highlight;
-	EQ2Color                        unknownType27Highlight;
+	EQ2Color						equipment_highlights[24];
+	EQ2Color                        textures_slot_highlight;
+	EQ2Color						mount_adornment_highlight;
+	EQ2Color                        mount_armor_highlight;
 	EQ2Color						hair_type_highlight_color;
 	EQ2Color						hair_face_highlight_color;
 	EQ2Color						wing_color2;
 	EQ2Color                        soga_wing_color2;
 	EQ2Color						chest_type_highlight;
 	EQ2Color                        legs_type_highlight;
-	EQ2Color                        unknown_new_type_highlight;
+	EQ2Color                        back_slot_type_highlight;
 	EQ2Color						soga_hair_type_color;
 	EQ2Color						soga_hair_type_highlight_color;
 	EQ2Color						soga_hair_face_color;
@@ -367,8 +377,8 @@ struct SpawnInfoStruct {
 	EQ2Color						eye_color;
 	EQ2Color						soga_eye_color;
 	EQ2Color						soga_skin_color;
-	EQ2Color						kunark_unknown_color1;
-	EQ2Color						kunark_unknown_color2;
+	EQ2Color						model_color;
+	EQ2Color						soga_model_color;
 	EQ2Color						mount_color;
 	EQ2Color						mount_saddle_color;
 	EQ2Color						hair_color1;
@@ -378,17 +388,11 @@ struct SpawnInfoStruct {
 	EQ2Color						soga_hair_color2;
 	EQ2Color						soga_hair_highlight;
 
-	SpawnInfoStruct() {
-		//Hack to zero out most of the data allowing default values for the eq2 colors
-		memset(&model_type, 0, reinterpret_cast<size_t>(equipment_colors) - reinterpret_cast<size_t>(&model_type));
-		power_percent = 100;
-		hp_percent = 100;
-		unknown7 = 255;
-	}
+	SpawnInfoStruct();
 
 protected:
 	//Used for legacy clients
-	uint16_t equipment_types_int16[25];
+	uint16_t equipment_types_int16[24];
 };
 
 class Substruct_SpawnInfo : public SpawnInfoStruct, public PacketEncodedData {
@@ -405,17 +409,22 @@ public:
 
 	//We need to syncronize the data for equipment types pre int32 versions since this is a special case
 	void PostRead() override {
+		PacketSubstruct::PostRead();
 		if (version < 57080) {
-			for (int i = 0; i < 25; i++) {
+			for (int i = 0; i < 24; i++) {
 				equipment_types[i] = equipment_types_int16[i];
 			}
 		}
 	}
 
 	void PreWrite() override {
+		PacketSubstruct::PreWrite();
 		if (version < 57080) {
-			for (int i = 0; i < 25; i++) {
+			for (int i = 0; i < 24; i++) {
 				equipment_types_int16[i] = static_cast<uint16_t>(equipment_types[i]);
+			}
+			for (int i = 0; i < 8; i++) {
+				spell_visuals_do_not_set[i] = static_cast<uint16_t>(spell_visuals[i]);
 			}
 		}
 
@@ -427,6 +436,10 @@ public:
 	}
 
 	void RegisterElements();
+
+private:
+	//Legacy clients
+	uint16_t spell_visuals_do_not_set[8];
 };
 
 struct SpawnTitleStruct {

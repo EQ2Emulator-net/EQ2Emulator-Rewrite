@@ -15,6 +15,7 @@
 #include "../Lua/LuaGlobals.h"
 #include "MasterZoneLookup.h"
 #include "../WorldTalk/WorldStream.h"
+#include "../Players/SpawnCampDebug.h"
 
 // Packets
 #include "../Packets/OP_ZoneInfoMsg_Packet.h"
@@ -28,6 +29,7 @@
 #include "../../common/Rules.h"
 #include "../../common/Packets/EmuPackets/Emu_ClientSessionEnded_Packet.h"
 #include "../../common/Packets/EmuPackets/Emu_NotifyCharacterLinkdead_Packet.h"
+#include "../../common/Packets/EmuPackets/Emu_CharacterLinkdeadTimeout_Packet.h"
 
 // Spawns
 #include "../Spawns/Spawn.h"
@@ -36,6 +38,7 @@
 #include "../Spawns/Widget.h"
 #include "../Spawns/Sign.h"
 #include "../Spawns/GroundSpawn.h"
+#include "SpawnCamp.h"
 
 extern ZoneDatabase database;
 extern ZoneOperator g_zoneOperator;
@@ -159,6 +162,11 @@ void ZoneServer::Process() {
 				if (kvp.second->IsActive())
 					kvp.second->Process();
 			}
+
+			// Process spawn camps
+			for (std::shared_ptr<SpawnCamp> camp : m_spawnCamps) {
+				camp->Process();
+			}
 		}
 
 		if (m_saveCharactersTimer.Check()) {
@@ -193,27 +201,35 @@ bool ZoneServer::AddClient(std::shared_ptr<Client> c) {
 	zone->minute = 35;
 	zone->seconds = 44;
 	zone->unknown1[1] = 1;
-	zone->expansions_enabled = 524161;
-	zone->unknown3[0] = 70;
-	zone->unknown3[1] = 459276223;
-	zone->unknown3[2] = 8388607;
+	zone->account_flags_1 = 0x460007ff81;
+	zone->account_flags_2 = 0x7fffff1b5fffbf;
 	zone->auction_website = "eq2emulator.net";
 	zone->auction_port = 80;
 	zone->upload_page = "test_upload.m";
 	zone->upload_key = "dsya987yda9";
 	zone->unknown7[0] = 1.0;
 	zone->unknown7[1] = 1.0;
-	zone->unknown9 = 13;
-	zone->zone_flags = 25189220;
-	zone->unknown11 = 4294967292;
+	zone->unknown9 = 13.f;
+
+	// 1<<1 = arena, 1<<2 = pvp, 1<<9 = battlegrounds (hides most eq2 button menu options), 1<<10 show battlegrounds leaderboard, 1<<11 = dungeon maker zone, 1<<12 = dungeon maker build mode
+	//Guesses : 1<<5 = instance, 1<<6 = no mounts
+	//1<<7 and 1<<8 are values that seem to usually be sent but not sure what they do, maybe allowed illusions/mercs/size mods
+	zone->zone_flags = 1 << 7 | 1 << 8;
+
+	zone->unknown11 = -4;
+
+	zone->client_cmd_array.emplace_back(c->GetVersion());
+	zone->client_cmd_array.back().client_cmd = "census_paperdoll_enabled 0"; //not sure if paperdoll images are sent on a separate thread that isn't sync'd or what but they are BUGGY
+	zone->client_cmd_array.emplace_back(c->GetVersion());
+	zone->client_cmd_array.back().client_cmd = "chat_linkbrackets_item 1";
 
 	if (zone->GetVersion() >= 67650) {
-		//The expansion bytes changed from 2 8 byte vals to 2 9 byte arrays here
+		//The expansion bytes changed from 2 8 byte vals to 2 9 byte arrays here, I think these are just server side and we don't need them
 		static const unsigned char unk4Bytes[] = { 0x7F, 0xFF, 0xF8, 0x90, 0x44, 0x94, 0x00, 0x10, 0x10 };
 		static const unsigned char unk7Bytes[] = { 0x7F, 0xFF, 0xFB, 0xF6, 0xC7, 0xFF, 0xFF, 0xFF, 0xFF };
 
-		zone->bolUnknown4.assign(reinterpret_cast<const char*>(unk4Bytes), 9);
-		zone->bolUnknown7.assign(reinterpret_cast<const char*>(unk7Bytes), 9);
+		zone->account_flags_1_string.assign(reinterpret_cast<const char*>(unk4Bytes), 9);
+		zone->account_flags_2_string.assign(reinterpret_cast<const char*>(unk7Bytes), 9);
 	}
 
 	c->QueuePacket(zone);
@@ -250,7 +266,7 @@ std::shared_ptr<Entity> ZoneServer::LoadCharacter(const std::shared_ptr<Client>&
 	// Set this in the spawn constructor
 	entity->SetState(16512, false);
 	entity->SetSize(0.875f, false);
-	entity->SetCollisionRadius(28, false);
+	entity->SetCollisionRadius(1.0f, false);
 	entity->SetSizeRatio(1.0f, false);
 	entity->SetInteractionFlag(12, false);
 	if (oldZoneID != GetID()) {
@@ -400,6 +416,73 @@ void ZoneServer::SendDestroyGhost(std::shared_ptr<Client> client, std::shared_pt
 	spawn->RemoveClient(client);
 }
 
+void ZoneServer::RemoveSpawn(std::shared_ptr<Spawn> spawn) {
+	// Remove spawn from the lists
+	if (spawn->IsSign()) {
+		std::vector<std::shared_ptr<Spawn> >::iterator sign_itr;
+		for (sign_itr = m_signList.begin(); sign_itr != m_signList.end(); sign_itr++) {
+			if (spawn == *sign_itr) {
+				m_signList.erase(sign_itr);
+				break;
+			}
+		}
+	}
+	else if (spawn->IsWidget()) {
+		std::vector<std::shared_ptr<Spawn> >::iterator widget_itr;
+		for (widget_itr = m_widgetList.begin(); widget_itr != m_widgetList.end(); widget_itr++) {
+			if (spawn == *widget_itr) {
+				m_widgetList.erase(widget_itr);
+				break;
+			}
+		}
+	}
+	else if (spawn->IsObject()) {
+		std::vector<std::shared_ptr<Object> >::iterator object_itr;
+		for (object_itr = m_objectList.begin(); object_itr != m_objectList.end(); object_itr++) {
+			if (spawn == *object_itr) {
+				m_objectList.erase(object_itr);
+				break;
+			}
+		}
+	}
+	else if (spawn->IsGroundSpawn()) {
+		std::vector<std::shared_ptr<GroundSpawn> >::iterator ground_itr;
+		for (ground_itr = m_groundspawnList.begin(); ground_itr != m_groundspawnList.end(); ground_itr++) {
+			if (spawn == *ground_itr) {
+				m_groundspawnList.erase(ground_itr);
+				break;
+			}
+		}
+	}
+	else {
+		std::vector<std::shared_ptr<Entity> >::iterator entity_itr;
+		for (entity_itr = m_entityList.begin(); entity_itr != m_entityList.end(); entity_itr++) {
+			if (spawn == *entity_itr) {
+				m_entityList.erase(entity_itr);
+				break;
+			}
+		}
+	}
+
+	// Remove from global list or from cell list
+	if (spawn->IsGlobalSpawn()) {
+		std::vector<std::weak_ptr<Spawn> >::iterator global_itr;
+		for (global_itr = m_globalSpawns.begin(); global_itr != m_globalSpawns.end(); global_itr++) {
+			if (EmuWeakCmp(spawn, (*global_itr))) {
+				m_globalSpawns.erase(global_itr);
+				break;
+			}
+		}
+	}
+	else {
+		std::shared_ptr<Cell> cell = GetCell(spawn->GetCellCoordinates());
+		cell->RemoveSpawn(spawn);
+	}
+
+	// Remove from all clients
+	RemoveSpawnFromAllClients(spawn);
+}
+
 void ZoneServer::RemovePlayer(std::shared_ptr<Entity> player) {
 	std::vector<std::shared_ptr<Entity> >::iterator itr = std::find(players.begin(), players.end(), player);
 	if (itr != players.end()) {
@@ -424,7 +507,7 @@ void ZoneServer::OnClientRemoval(const std::shared_ptr<Client>& client) {
 		if (client->bZoningDisconnect || player->IsCamping()) {
 			RemovePlayer(player);
 		}
-		else {
+		else if (!player->IsLinkdead()){
 			static const uint32_t linkdeadTimeoutMS = g_ruleManager.GetGlobalRule(ERuleCategory::R_World, ERuleType::LinkDeadTimer)->GetUInt32();
 			player->SetActivityTimer(Timer::GetServerTime() + linkdeadTimeoutMS);
 			player->EnableEntityFlags(EntityFlagLinkdead);
@@ -442,6 +525,12 @@ void ZoneServer::OnClientRemoval(const std::shared_ptr<Client>& client) {
 			}
 		}
 		m_playerClientList.erase(player->GetServerID());
+	}
+	else if (ws) {
+		//Player made it to the login function but not fully loaded before disconnecting, let the world server know to mark their char offline
+		auto p = new Emu_CharacterLinkdeadTimeout_Packet;
+		p->characterID = client->GetCharacterID();
+		ws->QueuePacket(p);
 	}
 
 	if (ws) {
@@ -1081,6 +1170,19 @@ void ZoneServer::AddSpawnToCell(std::shared_ptr<Spawn> spawn, std::pair<int32_t,
 	std::shared_ptr<Cell> cell = GetCell(cellCoords);
 	if (cell)
 		cell->AddSpawn(spawn);
+
+	// Send spawn to clients if cell is active
+	if (cell->IsActive()) {
+		for (std::pair<uint32_t, std::weak_ptr<Client> > kvp : Clients) {
+			std::shared_ptr<Client> client = kvp.second.lock();
+			if (client) {
+				if (!client->WasSentSpawn(spawn)) {
+					if (GetCellDistance(client->GetController()->GetControlled()->GetCellCoordinates(), cell->GetCellCoordinates()) < 2)
+						SendSpawnToClient(spawn, client);
+				}
+			}
+		}
+	}
 }
 
 void ZoneServer::TryActivateCells() {
@@ -1115,39 +1217,39 @@ std::vector<std::shared_ptr<Cell> > ZoneServer::GetNeighboringCells(std::pair<in
 	if (itr != m_spGrid.end())
 		ret.push_back(itr->second);
 
-itr = m_spGrid.find(std::make_pair(cellCoords.first - 1, cellCoords.second - 1));
-if (itr != m_spGrid.end())
-ret.push_back(itr->second);
+	itr = m_spGrid.find(std::make_pair(cellCoords.first - 1, cellCoords.second - 1));
+	if (itr != m_spGrid.end())
+		ret.push_back(itr->second);
 
-itr = m_spGrid.find(std::make_pair(cellCoords.first, cellCoords.second - 1));
-if (itr != m_spGrid.end())
-ret.push_back(itr->second);
+	itr = m_spGrid.find(std::make_pair(cellCoords.first, cellCoords.second - 1));
+	if (itr != m_spGrid.end())
+		ret.push_back(itr->second);
 
-itr = m_spGrid.find(std::make_pair(cellCoords.first + 1, cellCoords.second - 1));
-if (itr != m_spGrid.end())
-ret.push_back(itr->second);
+	itr = m_spGrid.find(std::make_pair(cellCoords.first + 1, cellCoords.second - 1));
+	if (itr != m_spGrid.end())
+		ret.push_back(itr->second);
 
-itr = m_spGrid.find(std::make_pair(cellCoords.first - 1, cellCoords.second));
-if (itr != m_spGrid.end())
-ret.push_back(itr->second);
+	itr = m_spGrid.find(std::make_pair(cellCoords.first - 1, cellCoords.second));
+	if (itr != m_spGrid.end())
+		ret.push_back(itr->second);
 
-itr = m_spGrid.find(std::make_pair(cellCoords.first + 1, cellCoords.second));
-if (itr != m_spGrid.end())
-ret.push_back(itr->second);
+	itr = m_spGrid.find(std::make_pair(cellCoords.first + 1, cellCoords.second));
+	if (itr != m_spGrid.end())
+		ret.push_back(itr->second);
 
-itr = m_spGrid.find(std::make_pair(cellCoords.first - 1, cellCoords.second + 1));
-if (itr != m_spGrid.end())
-ret.push_back(itr->second);
+	itr = m_spGrid.find(std::make_pair(cellCoords.first - 1, cellCoords.second + 1));
+	if (itr != m_spGrid.end())
+		ret.push_back(itr->second);
 
-itr = m_spGrid.find(std::make_pair(cellCoords.first, cellCoords.second + 1));
-if (itr != m_spGrid.end())
-ret.push_back(itr->second);
+	itr = m_spGrid.find(std::make_pair(cellCoords.first, cellCoords.second + 1));
+	if (itr != m_spGrid.end())
+		ret.push_back(itr->second);
 
-itr = m_spGrid.find(std::make_pair(cellCoords.first + 1, cellCoords.second + 1));
-if (itr != m_spGrid.end())
-ret.push_back(itr->second);
+	itr = m_spGrid.find(std::make_pair(cellCoords.first + 1, cellCoords.second + 1));
+	if (itr != m_spGrid.end())
+		ret.push_back(itr->second);
 
-return ret;
+	return ret;
 }
 
 std::pair<int32_t, int32_t> ZoneServer::GetCellCoordinatesForSpawn(std::shared_ptr<Spawn> spawn) {
@@ -1192,14 +1294,16 @@ void ZoneServer::ChangeSpawnCell(std::shared_ptr<Spawn> spawn, std::pair<int32_t
 					if (GetCellDistance(client->GetController()->GetControlled()->GetCellCoordinates(), newCell->GetCellCoordinates()) >= 2)
 						SendDestroyGhost(client, spawn);
 				}
-
+				 /*
+				 * Moved to AddSpawnToCell()
+				 * 
 				// if new cell is active send it to players that need it
 				if (newCell->IsActive()) {
 					if (!client->WasSentSpawn(spawn)) {
 						if (GetCellDistance(client->GetController()->GetControlled()->GetCellCoordinates(), newCell->GetCellCoordinates()) < 2)
 							SendSpawnToClient(spawn, client);
 					}
-				}
+				}*/
 			}
 		}
 	}
@@ -1307,6 +1411,10 @@ void ZoneServer::LoadSpawns() {
 	LogInfo(LOG_NPC, 0, "-Loading GroundSpawn spawn location data...");
 	database.LoadGroundSpawnLocations(this);
 	LogInfo(LOG_NPC, 0, "-Load GroundSpawn spawn location data complete!");
+
+	LogInfo(LOG_NPC, 0, "-Loading SpawnCamp data...");
+	database.LoadSpawnCampsForZone(shared_from_this());
+	LogInfo(LOG_NPC, 0, "-Load SpawnCamp data complete!");
 
 	database.LoadSpawnLocationGroups(this);
 	database.LoadSpawnGroupChances(this);
@@ -1455,4 +1563,63 @@ void ZoneServer::SaveCharactersInZone() {
 
 	//Detach a thread to run these queries since updates can be slow with several players
 	ThreadManager::ThreadStart("ZoneServer::SaveCharactersInZone", std::bind(saveHelper, std::move(updates), count)).detach();
+}
+
+void ZoneServer::AddSpawnCamp(std::shared_ptr<SpawnCamp> camp) {
+	m_spawnCamps.push_back(camp);
+
+	//std::map<uint32_t, std::weak_ptr<Client> > Clients;
+	for (std::pair<uint32_t, std::weak_ptr<Client> > kvp : Clients) {
+		std::shared_ptr<Client> client = kvp.second.lock();
+		if (client) {
+			std::shared_ptr<PlayerController> controller = client->GetController();
+			if (controller) {
+				std::shared_ptr<SpawnCampDebug> scd = controller->GetSpawnCampDebug();
+				if (scd) {
+					scd->AddSpawnCamp(camp);
+				}
+			}
+		}
+	}
+}
+
+void ZoneServer::DeleteSpawnFromLocation(std::shared_ptr<Spawn> spawn, bool remove) {
+	if (database.RemoveSpawnFromSpawnLocation(spawn)) {
+		uint32_t entryID = spawn->GetSpawnEntryID();
+		uint32_t locationID = spawn->GetSpawnLocationID();
+		uint32_t spawnID = spawn->GetDatabaseID();
+
+		std::map<uint32_t, std::shared_ptr<SpawnLocation> >* list = nullptr;
+		if (spawn->IsObject()) {
+			list = GetSpawnLocationList(SpawnEntryType::EOBJECT);
+			m_masterObjectList.erase(spawnID);
+		}
+		else if (spawn->IsSign()) {
+			list = GetSpawnLocationList(SpawnEntryType::ESIGN);
+			m_masterSignList.erase(spawnID);
+		}
+		else if (spawn->IsWidget()) {
+			list = GetSpawnLocationList(SpawnEntryType::EWIDGET);
+			m_masterWidgetList.erase(spawnID);
+		}
+		else if (spawn->IsGroundSpawn()) {
+			list = GetSpawnLocationList(SpawnEntryType::EGROUNDSPAWN);
+			m_masterGroundSpawnList.erase(spawnID);
+		}
+		else if (spawn->IsNPC()) {
+			list = GetSpawnLocationList(SpawnEntryType::ENPC);
+			m_masterNPCList.erase(spawnID);
+		}
+
+		if (list != nullptr) {
+			std::map<uint32_t, std::shared_ptr<SpawnLocation> >::iterator find_itr = list->find(locationID);
+			if (find_itr != list->end())
+				find_itr->second->RemoveEntry(entryID);
+		}
+
+		if (remove)
+			RemoveSpawn(spawn);
+		else
+			spawn->SetSpawnLocationID(0);
+	}
 }

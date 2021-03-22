@@ -86,7 +86,7 @@ const char * GetElapsedTime(time_t seconds, char *dst, unsigned int size) {
 
 #define IS_PRINTABLE(c) ((c) >= 32 && (c) <= 126)
 
-void DumpBytes(const unsigned char* bytes, unsigned int size, const char* header) {
+void DumpBytes(const unsigned char* bytes, unsigned int size, const char* header, bool bTrace) {
 	std::ostringstream ss;
 	if (header) {
 		ss << header << "\n";
@@ -120,24 +120,16 @@ void DumpBytes(const unsigned char* bytes, unsigned int size, const char* header
 		ss << std::endl;
 	}
 
-	LogDebug(LOG_PACKET, 0, "DumpBytes: \n%s", ss.str().c_str());
+	if (bTrace) {
+		LogTrace(LOG_PACKET, 0, "DumpBytes: \n%s", ss.str().c_str());
+	}
+	else {
+		LogDebug(LOG_PACKET, 0, "DumpBytes: \n%s", ss.str().c_str());
+	}
 }
 
 void DumpBytes(const char *bytes, unsigned int len)  {
     DumpBytes((const unsigned char *)bytes, len);
-}
-
-void PrintWelcomeHeader(const char *name, int version_major, int version_minor, const char *version_phase, const char *url) {
-    printf("Module: %s, Version: %d.%d %s\n", name, version_major, version_minor, version_phase);
-    printf("\nCopyright (C) 2016 EVEmulator. ALL RIGHTS RESERVED\n");
-    printf("Proprietary and confidential\n");
-    printf("Private use only\n");
-    printf("You should not have this\n");
-    printf("In fact, do not even look at it\n");
-    printf("Close your eyes\n");
-    printf("Turn away\n");
-    printf("I MEAN IT!!!\n\n");
-    printf(" Website     : %s \n\n", url);
 }
 
 void UpdateWindowTitle(const char *title) {
@@ -158,7 +150,7 @@ int Deflate(unsigned char* in_data, int in_length, unsigned char* out_data, int 
 	zstream.zalloc = Z_NULL;
 	zstream.zfree = Z_NULL;
 	zstream.opaque = Z_NULL;
-	deflateInit(&zstream, Z_FINISH);
+	deflateInit2(&zstream, Z_DEFAULT_COMPRESSION, Z_DEFLATED, 13, 8, Z_DEFAULT_STRATEGY);
 	zstream.next_out = out_data;
 	zstream.avail_out = max_out_length;
 	zerror = deflate(&zstream, Z_FINISH);
@@ -190,7 +182,7 @@ int Inflate(unsigned char* indata, int indatalen, unsigned char* outdata, int ou
 	zstream.zfree = Z_NULL;
 	zstream.opaque = Z_NULL;
 
-	i = inflateInit2(&zstream, 15);
+	i = inflateInit2(&zstream, 13);
 	if (i != Z_OK) {
 		return 0;
 	}
@@ -268,8 +260,21 @@ bool alpha_check(unsigned char val) {
 * @date 6 Mar 2019
 */
 std::mt19937& GetRandMT() {
-	thread_local std::mt19937 mt(std::random_device().operator()());
-	return mt;
+	class RandoEngine {
+	public:
+		std::random_device r;
+		std::seed_seq seed;
+		std::mt19937 mt;
+
+		RandoEngine() : seed{ r(), r(), r(), r(), r(), r(), r(), r() }, mt(seed) {
+
+		}
+
+		~RandoEngine() = default;
+	};
+
+	thread_local RandoEngine eng;
+	return eng.mt;
 }
 
 /**

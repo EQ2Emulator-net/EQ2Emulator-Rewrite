@@ -182,10 +182,12 @@
     </ClCompile>
     <ClCompile Include="..\..\source\ZoneServer\Packets\EmuPacketHandlers.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Packets\EncodedPackets.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Packets\EQ2ZonePacketHandlers.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Packets\ZoneServerPackets.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Packets\ZoneServerSubstructs.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Players\CharacterSheet.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Players\NPCPathDebug.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Players\SpawnCampDebug.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Spawns\Entity.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Spawns\EntityCommands.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Spawns\Object.cpp" />
@@ -198,6 +200,7 @@
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\Cell.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\Client.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\MasterZoneLookup.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\ZoneServer\SpawnCamp.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\ZoneOperator.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\ZoneServer.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -217,6 +220,7 @@
     <ClInclude Include="..\..\source\common\DatabaseRow.h" />
     <ClInclude Include="..\..\source\common\DBFieldTracker.h" />
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_NotifyCharacterLinkdead_Packet.h" />
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketCharString.h" />
     <ClInclude Include="..\..\source\common\TableUpdateGenerator.h" />
     <ClInclude Include="..\..\source\common\EmuOpcodes.h" />
     <ClInclude Include="..\..\source\common\EmuPacket.h" />
@@ -366,6 +370,7 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DoneLoadingEntityResourcesMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DoneLoadingZoneResourcesMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DoneSendingInitialEntitiesMsg_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_EnterMoveObjectModeMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_EntityVerbsVerbMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_EqCannedEmoteCmd_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_EqDestroyGhostCmd_Packet.h" />
@@ -396,26 +401,33 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_UpdateCharacterSheetMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_UpdateInventoryMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_UpdatePositionMsg.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_UpdateRaidMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_UpdateSpawnCmdMsg.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_UpdateTargetMsg.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_UpdateTitleCmd_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_ZoneInfoMsg_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_AADesc.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_ExamineDescBase.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_ExamineDescItem.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_ExamineDescSpell.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_GroupMember.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_MaintainedEffects.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_PassiveEffects.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_SpawnHeader.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_SpellDesc.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_SpellEffects.h" />
     <ClInclude Include="..\..\source\ZoneServer\Players\CharacterInventory.h" />
     <ClInclude Include="..\..\source\ZoneServer\Players\CharacterSheet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Players\NPCPathDebug.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Players\SpawnCampDebug.h" />
     <ClInclude Include="..\..\source\ZoneServer\Spawns\Entity.h" />
     <ClInclude Include="..\..\source\ZoneServer\Spawns\EntityCommands.h" />
     <ClInclude Include="..\..\source\ZoneServer\Spawns\GroundSpawn.h" />
     <ClInclude Include="..\..\source\ZoneServer\Spawns\Object.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Spawns\PathPointSpawn.h" />
     <ClInclude Include="..\..\source\ZoneServer\Spawns\Sign.h" />
     <ClInclude Include="..\..\source\ZoneServer\Spawns\Spawn.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Spawns\SpawnCampSpawn.h" />
     <ClInclude Include="..\..\source\ZoneServer\Spawns\SpawnGroupList.h" />
     <ClInclude Include="..\..\source\ZoneServer\Spawns\SpawnLocation.h" />
     <ClInclude Include="..\..\source\ZoneServer\Spawns\SpawnStructs.h" />
@@ -425,6 +437,7 @@
     <ClInclude Include="..\..\source\ZoneServer\ZoneServer\Cell.h" />
     <ClInclude Include="..\..\source\ZoneServer\ZoneServer\Client.h" />
     <ClInclude Include="..\..\source\ZoneServer\ZoneServer\MasterZoneLookup.h" />
+    <ClInclude Include="..\..\source\ZoneServer\ZoneServer\SpawnCamp.h" />
     <ClInclude Include="..\..\source\ZoneServer\ZoneServer\ZoneServer.h" />
     <ClInclude Include="..\..\source\ZoneServer\ZoneServer\ZoneOperator.h" />
     <ClInclude Include="stdafx.h" />
@@ -499,6 +512,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>..\..\source\depends\mariadb-10.1.19\include;..\..\source\depends\zlib\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <LibraryPath>..\..\source\depends\mariadb-10.1.19\lib\64;..\..\source\depends\zlib\lib\win64;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -566,7 +581,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

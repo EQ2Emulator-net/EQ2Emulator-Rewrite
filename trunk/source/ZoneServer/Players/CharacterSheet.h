@@ -82,7 +82,7 @@ struct CharacterDetails {
 	CharacterExperience experience;
 	uint32_t flags;
 	uint32_t flags2;
-	uint32_t statusPoints;
+	uint64_t statusPoints;
 	uint32_t currentLanguage;
 	uint32_t houseZoneId;
 	uint32_t bindZone;

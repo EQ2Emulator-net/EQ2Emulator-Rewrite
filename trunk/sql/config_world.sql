@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS `config_world` (
   `character_slots` tinyint(3) unsigned NOT NULL DEFAULT 10,
   `max_adv_level` tinyint(3) unsigned NOT NULL DEFAULT 50,
   `max_ts_level` tinyint(3) unsigned NOT NULL DEFAULT 50,
-  `allowed_races` int(10) unsigned NOT NULL DEFAULT 2097151,
+  `allowed_races` int(10) unsigned NOT NULL DEFAULT 4194303,
   `allowed_classes` int(10) unsigned NOT NULL DEFAULT 134217726,
   `auto_account_creation` tinyint(3) unsigned NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`)

@@ -3,32 +3,7 @@
 #include "../../common/Packets/EQ2Packet.h"
 #include "../../common/Packets/EQ2Packets/OpcodeManager.h"
 #include "../../common/Packets/PacketElements/PacketElements.h"
-
-struct SpawnMorphSliders {
-	int8_t skull[3];
-	int8_t eyes[3];
-	int8_t ears[3];
-	int8_t eyebrow[3];
-	int8_t cheeks[3];
-	int8_t mouth[3];
-	int8_t chin[3];
-	int8_t nose[3];
-	int8_t bodyscale;
-	int8_t bumpscale;
-};
-
-struct SpawnFloatMorphSliders {
-	EQ2ColorFloat skull;
-	EQ2ColorFloat eyes;
-	EQ2ColorFloat ears;
-	EQ2ColorFloat eyebrow;
-	EQ2ColorFloat cheeks;
-	EQ2ColorFloat mouth;
-	EQ2ColorFloat chin;
-	EQ2ColorFloat nose;
-	float bodyscale;
-	float bumpscale;
-};
+#include "../../common/Packets/EQ2Packets/Substruct_NetAppearance.h"
 
 
 class OP_AllCharactersDescReplyMsg_Packet : public EQ2Packet {
@@ -61,7 +36,7 @@ public:
 
 	// Array
 	struct CharacterListEntry : public PacketSubstruct {
-		uint32_t version;
+		uint32_t entryVersion;
 		uint32_t charid;
 		uint32_t server_id;
 		std::string name;
@@ -77,8 +52,25 @@ public:
 		uint32_t last_played;
 		uint32_t unknown3;
 		uint32_t unknown4;
+		uint64_t unknowne11;
+		uint8_t unknowne7;
+		uint8_t unknowne8;
+		uint8_t unknowne9;
+		uint8_t unknowne10;
+		uint8_t unknowne12;
+		std::string unknowne13[3];
 		std::string zonename2;
 		std::string zonedesc;
+		uint8_t unknowne14a;
+		uint8_t unknowne14b;
+		EQ2Color torch_color;
+		uint8_t unknowne16;
+		uint8_t unknowne17;
+		uint8_t unknowne18;
+		uint8_t unknowne19;
+		int32_t unknowne21;
+		uint8_t unknowne22;
+		uint8_t unknowne23;
 		uint32_t unknown5;
 		std::string server_name;
 		uint32_t account_id;
@@ -86,57 +78,9 @@ public:
 		uint32_t unknown7;
 		uint8_t tradeskill_class; // 887
 		uint32_t tradeskill_level; //887
-		uint8_t netAppearanceVersion;
-		uint16_t race_type;
-		EQ2Color skin_color;
-		EQ2Color eye_color;
-		EQ2EquipmentItem equip[25]; // " Type = "EQ2_EquipmentItem" Size = "25" / >
-		uint16_t hair_type;
-		EQ2Color hair_type_color;
-		EQ2Color hair_type_highlight_color;
-		uint16_t hair_face_type;
-		EQ2Color hair_face_color;
-		EQ2Color hair_face_highlight_color;
-		uint16_t wing_type;
-		EQ2Color wing_color1;
-		EQ2Color wing_color2;
-		uint16_t chest_type;
-		EQ2Color shirt_color;
-		EQ2Color unknown_chest_color;
-		uint16_t legs_type;
-		EQ2Color pants_color;
-		EQ2Color unknown_legs_color;
-		union {
-			SpawnMorphSliders sliders;
-			int8_t sliderBytes[26];
-		};
-		EQ2Color hair_color1;
-		EQ2Color hair_color2;
-		uint8_t unknown11[13]; // " Type = "int8" Size = "13" / >
-		uint16_t soga_race_type;
-		EQ2Color soga_skin_color;
-		EQ2Color soga_eye_color;
-		union {
-			SpawnMorphSliders sogaSliders;
-			int8_t sogaSliderBytes[26];
-		};
-		EQ2Color soga_hair_color1;
-		EQ2Color soga_hair_color2;
-		EQ2Color unknown14;
-		uint16_t soga_hair_type;
-		EQ2Color soga_hair_type_color;
-		EQ2Color soga_hair_type_highlight_color;
-		uint16_t soga_hair_face_type;
-		EQ2Color soga_hair_face_color;
-		EQ2Color soga_hair_face_highlight_color;
-		uint8_t unknown15[7]; // " Type = "int8" Size = "7" / >
+		Substruct_NetAppearance appearance;
 
-		uint16_t mountType;
-		EQ2Color mountColor1;
-		EQ2Color mountColor2;
-		uint8_t flags;
-
-		CharacterListEntry(uint32_t p_version = 0) : PacketSubstruct(p_version, true) {
+		CharacterListEntry(uint32_t p_version = 0) : PacketSubstruct(p_version, true), appearance(p_version) {
 			RegisterElements();
 			version = 0;
 			charid = 0;
@@ -164,60 +108,66 @@ public:
 			unknown7 = 0;
 			tradeskill_class = 0; // 887
 			tradeskill_level = 0; //887
-			if (GetVersion() > 283) {
-				netAppearanceVersion = 15;
+
+			//character entry versioned unknowns
+			unknowne7 = 0;
+			unknowne8 = 0;
+			unknowne9 = 0;
+			unknowne10 = 0;
+			unknowne11 = -1ll;
+			unknowne12 = 0;
+			unknowne14a = 0;
+			unknowne14b = 0;
+			unknowne16 = 0;
+			unknowne17 = 0;
+			unknowne18 = 0;
+			unknowne19 = 0;
+			unknowne21 = 0;
+			unknowne22 = 0;
+			unknowne23 = 0;
+		}
+
+		uint32_t GetCharacterEntryVersion() {
+			const uint32_t version = GetVersion();
+			if (version >= 67650) {
+				entryVersion = 23;
+			}
+			else if (version >= 60114) {
+				entryVersion = 18;
+			}
+			else if (version >= 1193) {
+				entryVersion = 13;
+			}
+			else if (version > 283) {
+				entryVersion = 6;
 			}
 			else {
-				netAppearanceVersion = 5;
+				entryVersion = 5;
 			}
-			race_type = 0;
-
-			hair_type = 0;
-			hair_face_type = 0;
-			wing_type = 0;
-			chest_type = 0;
-			legs_type = 0;
-			memset(sliderBytes, 0, 26);
-			memset(sogaSliderBytes, 0, 26);
-			
-			unsigned char tmp[] = { 0xFF, 0xFF, 0xFF, 0x61, 0x00, 0x2C, 0x04, 0xA5, 0x09, 0x02, 0x0F, 0x00, 0x00 };
-			for (uint32_t y = 0; y < sizeof(tmp); y++)
-				unknown11[y] = tmp[y];
-
-			soga_race_type = 0;
-			soga_hair_type = 0;
-			soga_hair_face_type = 0;
-			unknown15[0] = 0;
-			unknown15[1] = 0;
-			unknown15[2] = 0;
-			unknown15[3] = 0;
-			unknown15[4] = 0;
-			unknown15[5] = 0;
-			unknown15[6] = 0;
-			
-			mountType = 0;
-			mountColor1.Blue = 0;
-			mountColor1.Red = 0;
-			mountColor1.Green = 0;
-			mountColor2.Blue = 0;
-			mountColor2.Red = 0;
-			mountColor2.Green = 0;
-			flags = 0;
+			return entryVersion;
 		}
 
 		void RegisterElements() {
-			if (GetVersion() > 283) {
-				RegisterUInt32(version);
+			if (version > 283) {
+				RegisterUInt32(entryVersion);
 			}
+
+			//Just adding these const versions so the compiler can optimize the checks better
+			const uint32_t version = GetVersion();
+			const uint32_t entryVersion = GetCharacterEntryVersion();
+
 			RegisterUInt32(charid);
+			if (entryVersion >= 11) {
+				RegisterUInt64(unknowne11);
+			}
 			RegisterUInt32(server_id);
 			Register16String(name);
-			if (GetVersion() > 283) {
+			if (version > 283) {
 				RegisterUInt8(unknown);
 			}
 			RegisterUInt8(race);
 			RegisterUInt8(_class);
-			if (GetVersion() > 283) {
+			if (version > 283) {
 				RegisterUInt8(gender);
 			}
 			RegisterUInt32(level);
@@ -230,7 +180,7 @@ public:
 			RegisterUInt32(unknown4);
 			Register16String(zonename2);
 			Register16String(zonedesc);
-			if (GetVersion() > 283) {
+			if (version > 283) {
 				RegisterUInt32(unknown5);
 				Register16String(server_name);
 				RegisterUInt32(account_id);
@@ -239,74 +189,31 @@ public:
 				RegisterUInt32(unknown7);
 				RegisterUInt8(tradeskill_class); // 887
 				RegisterUInt32(tradeskill_level); //887
+				if (entryVersion >= 7) RegisterUInt8(unknowne7);
+				if (entryVersion >= 8) RegisterUInt8(unknowne8);
+				if (entryVersion >= 9) RegisterUInt8(unknowne9);
+				if (entryVersion >= 10) RegisterUInt8(unknowne10);
 			}
-			RegisterUInt8(netAppearanceVersion);
-			RegisterUInt16(race_type);
-			RegisterEQ2Color(skin_color);
-			RegisterEQ2Color(eye_color);
-			EQ2EquipmentItem& Equip = equip[0];
-			//NOTE: if we ever send a higher net appearance version we will need to check that when determining
-			//Whether to use the short or int type id
-			RegisterEQ2EquipmentItem(Equip, true)->SetCount(25);
+			
+			RegisterSubstruct(appearance);
 
-			if (GetVersion() <= 283) {
-				RescopeArrayElement(sliderBytes);
-				RegisterInt8(sliderBytes)->SetCount(26);
-
-				RegisterUInt16(mountType);
-				RegisterEQ2Color(mountColor1);
-				RegisterEQ2Color(mountColor2);
-				RegisterUInt16(hair_type);
-				static uint8_t hair_type_byte3 = 0;
-				RegisterUInt8(hair_type_byte3);
-				RegisterEQ2Color(hair_type_color);
-				RegisterEQ2Color(hair_type_highlight_color);
-				RegisterUInt8(flags);
-				return;
+			if (entryVersion >= 12) RegisterUInt8(unknowne12);
+			if (entryVersion >= 13) {
+				RescopeArrayElement(unknowne13);
+				Register16String(unknowne13)->SetCount(3);
 			}
-
-			RegisterUInt16(hair_type);
-			RegisterEQ2Color(hair_type_color);
-			RegisterEQ2Color(hair_type_highlight_color);
-			RegisterUInt16(hair_face_type);
-			RegisterEQ2Color(hair_face_color);
-			RegisterEQ2Color(hair_face_highlight_color);
-			if (GetVersion() > 283) {
-				RegisterUInt16(wing_type);
-				RegisterEQ2Color(wing_color1);
-				RegisterEQ2Color(wing_color2);
+			if (entryVersion >= 14) {
+				RegisterUInt8(unknowne14a);
+				RegisterUInt8(unknowne14b);
 			}
-			RegisterUInt16(chest_type);
-			RegisterEQ2Color(shirt_color);
-			RegisterEQ2Color(unknown_chest_color);
-			RegisterUInt16(legs_type);
-			RegisterEQ2Color(pants_color);
-			RegisterEQ2Color(unknown_legs_color);
-			RescopeArrayElement(sliderBytes);
-			RegisterInt8(sliderBytes)->SetCount(26);
-			RegisterUInt16(mountType);
-			RegisterEQ2Color(mountColor1);
-			RegisterEQ2Color(mountColor2);
-			RegisterEQ2Color(hair_color1);
-			RegisterEQ2Color(hair_color2);
-			uint8_t& Unknown11 = unknown11[0]; // " Type = "int8" Size = "13" / >
-			RegisterUInt8(Unknown11)->SetCount(13);
-			RegisterUInt16(soga_race_type);
-			RegisterEQ2Color(soga_skin_color);
-			RegisterEQ2Color(soga_eye_color);
-			RescopeArrayElement(sogaSliderBytes);
-			RegisterInt8(sogaSliderBytes)->SetCount(26);
-			RegisterEQ2Color(soga_hair_color1);
-			RegisterEQ2Color(soga_hair_color2);
-			RegisterEQ2Color(unknown14);
-			RegisterUInt16(soga_hair_type);
-			RegisterEQ2Color(soga_hair_type_color);
-			RegisterEQ2Color(soga_hair_type_highlight_color);
-			RegisterUInt16(soga_hair_face_type);
-			RegisterEQ2Color(soga_hair_face_color);
-			RegisterEQ2Color(soga_hair_face_highlight_color);
-			uint8_t& Unknown15 = unknown15[0]; // " Type = "int8" Size = "7" / >
-			RegisterUInt8(Unknown15)->SetCount(7);
+			if (entryVersion >= 15) RegisterEQ2Color(torch_color);
+			if (entryVersion >= 16) RegisterUInt8(unknowne16);
+			if (entryVersion >= 17) RegisterUInt8(unknowne17);
+			if (entryVersion >= 18) RegisterUInt8(unknowne18);
+			if (entryVersion >= 19) RegisterUInt8(unknowne19);
+			if (entryVersion >= 21) RegisterInt32(unknowne21);
+			if (entryVersion >= 22) RegisterUInt8(unknowne22);
+			if (entryVersion >= 23) RegisterUInt8(unknowne23);
 		}
 	};
 	std::vector<CharacterListEntry> CharacterList;
@@ -323,7 +230,6 @@ public:
 	uint8_t bolUnknown2;
 	int32_t bolUnknown3;
 	uint8_t bolUnknown4;
-
 
 private:
 	void RegisterElements() {

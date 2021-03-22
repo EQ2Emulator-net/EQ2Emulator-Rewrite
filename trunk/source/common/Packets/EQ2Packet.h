@@ -40,6 +40,12 @@ public:
 		return Packet::Write(buffer);
 	}
 
+	bool Read(const unsigned char* in_buf, uint32_t off, uint32_t bufsize) override {
+		bool ret = Packet::Read(in_buf, off, bufsize);
+		PostRead();
+		return ret;
+	}
+
 	bool TryCombine(EQ2Packet* rhs, uint32_t MaxLength);
 	//This copy function only copies the following bools and buffer data, not elements etc
 	EQ2Packet* CopyRaw();

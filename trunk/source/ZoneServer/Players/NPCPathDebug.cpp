@@ -1,13 +1,15 @@
 #include "stdafx.h"
 
 #include "NPCPathDebug.h"
-#include "../Spawns/Spawn.h"
+#include "../Spawns/PathPointSpawn.h"
 #include "../ZoneServer/Client.h"
 #include "../Controllers/BaseController.h"
 #include "../Controllers/PlayerController.h"
 #include "../AI/NPCMovement.h"
 #include "../ZoneServer/ZoneServer.h"
 #include "../../common/log.h"
+
+#include <sstream>
 
 bool NPCPathDebug::Process() {
 	bool ret = true;
@@ -28,8 +30,7 @@ void NPCPathDebug::Start(std::shared_ptr<Spawn> target) {
 
 	if (oldTarget) {
 		LogDebug(LOG_NPC, 0, "NPCPathDebug: old spawn found, clearing spawns");
-		RemoveLocationsFromClient();
-		ClearLocations();
+		End();
 	}
 
 	m_targetSpawn = target;
@@ -46,10 +47,10 @@ void NPCPathDebug::Start(std::shared_ptr<Spawn> target) {
 
 bool NPCPathDebug::GenerateSpawns() {
 	bool ret = false;
-	if (m_locations->size() > 0) {
+	if (m_locations.size() > 0) {
 		uint32_t index = 0;
-		for (std::shared_ptr<MovementLocationInfo> info : *m_locations) {
-			std::shared_ptr<Spawn> s = CreateLocationSpawn(info, ++index);
+		for (std::shared_ptr<MovementLocationInfo> info : m_locations) {
+			std::shared_ptr<PathPointSpawn> s = CreateLocationSpawn(info, ++index);
 			if (s) {
 				m_locationSpawns.push_back(s);
 				LogDebug(LOG_NPC, 0, "NPCPathDebug: spawn created for location");
@@ -106,7 +107,7 @@ void NPCPathDebug::RemoveLocationsFromClient() {
 }
 
 void NPCPathDebug::ClearLocations() {
-	m_locations = nullptr;
+	m_locations.clear();
 	m_locationSpawns.clear();
 }
 
@@ -136,17 +137,17 @@ void NPCPathDebug::AddPathPoint() {
 	loc->delay = 0.0f;
 	loc->callback = "";
 
-	std::shared_ptr<Spawn> spawn = CreateLocationSpawn(loc, index);
+	std::shared_ptr<PathPointSpawn> spawn = CreateLocationSpawn(loc, index);
 	spawn->SetGridID(player->GetGridID(), false);
 	m_locationSpawns.push_back(spawn);
-	m_locations->push_back(loc);
+	m_locations.push_back(loc);
 	zone->SendSpawnToClient(spawn, client);
 
 	std::string msg = "Added point " + std::to_string(index) + " to " + target->GetName() + "'s path";
 	SendClientMessage(msg);
 }
 
-void NPCPathDebug::RemovePathPoint(std::shared_ptr<Spawn> spawn) {
+void NPCPathDebug::RemovePathPoint(std::shared_ptr<PathPointSpawn> spawn) {
 	std::shared_ptr<Client> client = m_client.lock();
 	if (!client)
 		return;
@@ -155,7 +156,7 @@ void NPCPathDebug::RemovePathPoint(std::shared_ptr<Spawn> spawn) {
 	if (!zone)
 		return;
 
-	uint32_t index = GetIndexForSpawn(spawn);
+	uint32_t index = spawn->GetPointIndex();
 	if (index == 0)
 		return;
 
@@ -163,7 +164,7 @@ void NPCPathDebug::RemovePathPoint(std::shared_ptr<Spawn> spawn) {
 	index--;
 	
 	// Erase the location from the path
-	m_locations->erase(m_locations->begin() + index);
+	m_locations.erase(m_locations.begin() + index);
 
 	// Nuke spawns from client
 	RemoveLocationsFromClient();
@@ -176,12 +177,12 @@ void NPCPathDebug::RemovePathPoint(std::shared_ptr<Spawn> spawn) {
 	SendClientMessage("Path point removed.");
 }
 
-std::shared_ptr<Spawn> NPCPathDebug::CreateLocationSpawn(std::shared_ptr<MovementLocationInfo> location, uint32_t pointIndex) {
+std::shared_ptr<PathPointSpawn> NPCPathDebug::CreateLocationSpawn(std::shared_ptr<MovementLocationInfo> location, uint32_t pointIndex) {
 	std::shared_ptr<Spawn> targetSpawn = m_targetSpawn.lock();
 	if (!targetSpawn)
 		return nullptr;
 
-	std::shared_ptr<Spawn> ret = std::make_shared<Spawn>();
+	std::shared_ptr<PathPointSpawn> ret = std::make_shared<PathPointSpawn>(pointIndex);
 
 	/*
 		Possible model ID's to visualize the path
@@ -215,7 +216,7 @@ std::shared_ptr<Spawn> NPCPathDebug::CreateLocationSpawn(std::shared_ptr<Movemen
 	std::string name = "Point " + std::to_string(pointIndex);
 	ret->SetName(name, false);
 
-	std::string info = "SPD: " + std::to_string(location->speed) + " DLY: " + std::to_string(location->delay) + (location->callback.empty() ? "" : (" CB: " + location->callback));
+	std::string info = "SPD: " + to_string_with_precision(location->speed) + " DLY: " + to_string_with_precision(location->delay) + (location->callback.empty() ? "" : (" CB: " + location->callback));
 	ret->SetGuild(info, false);
 
 	// consider making these default values for spawns
@@ -233,15 +234,89 @@ void NPCPathDebug::SendClientMessage(std::string message, std::string filter) {
 		client->chat.DisplayText(filter.c_str(), message, 0xff, false, "");
 }
 
-uint32_t NPCPathDebug::GetIndexForSpawn(std::shared_ptr<Spawn> spawn) {
-	std::string name = spawn->GetName();
-	size_t pos = name.find("Point ");
-	// check to prevent spawns with point anywhere in their name from trigging this code
-	if (pos > 0) {
-		SendClientMessage("Targeted spawn (" + name + ") is not a path point", "Error Text");
-		return 0;
+void NPCPathDebug::GenerateLua() {
+	if (m_locations.size() == 0) {
+		SendClientMessage("Generate Lua failed, there are no locations in the path", "Error Text");
+		return;
 	}
 
-	uint32_t index = atoul(name.substr(6, name.length() - 6).c_str());
-	return index;
+	std::shared_ptr<Spawn> target = m_targetSpawn.lock();
+	if (!target) {
+		SendClientMessage("Generate Lua failed, unable to get the spawn for this path", "Error Text");
+		return;
+	}
+
+	std::string lua = "Generated Lua for " + target->GetName() + " (" + to_string(target->GetDatabaseID()) + "):\n";
+	for (std::shared_ptr<MovementLocationInfo> loc : m_locations) {
+		lua += "\tMovementLoopAddLocation(NPC, " + to_string_with_precision(loc->x) + ", " + to_string_with_precision(loc->y) + ", " + to_string_with_precision(loc->z) + ", " + to_string_with_precision(loc->speed);
+		if (loc->delay != 0.0f)
+			lua += ", " + to_string_with_precision(loc->delay);
+		if (!loc->callback.empty())
+			lua += ", \"" + loc->callback + "\"";
+
+		lua += ")\n";
+	}
+
+	SendClientMessage(lua);
+}
+
+void NPCPathDebug::SetPathPointSpeed(std::shared_ptr<PathPointSpawn> spawn, float speed) {
+	uint32_t index = spawn->GetPointIndex() - 1; // - 1 to make it zero based
+	if (m_locations.size() <= index) {
+		SendClientMessage("Index is out of bounds", "Error Text");
+		return;
+	}
+
+	std::shared_ptr<MovementLocationInfo> location = m_locations.at(index);
+	location->speed = speed;
+	UpdatePathPointSpawn(spawn, location);
+	SendClientMessage("Set speed to " + to_string_with_precision(speed) + " for point " + to_string(index));
+}
+
+void NPCPathDebug::SetPathPointDelay(std::shared_ptr<PathPointSpawn> spawn, float delay) {
+	uint32_t index = spawn->GetPointIndex() - 1; // - 1 to make it zero based
+	if (m_locations.size() <= index) {
+		SendClientMessage("Index is out of bounds", "Error Text");
+		return;
+	}
+
+	std::shared_ptr<MovementLocationInfo> location = m_locations.at(index);
+	location->delay = delay;
+	UpdatePathPointSpawn(spawn, location);
+	SendClientMessage("Set delay to " + to_string_with_precision(delay) + " for point " + to_string(index));
+}
+
+void NPCPathDebug::SetPathPointCallback(std::shared_ptr<PathPointSpawn> spawn, std::string callback) {
+	uint32_t index = spawn->GetPointIndex() - 1; // - 1 to make it zero based
+	if (m_locations.size() <= index) {
+		SendClientMessage("Index is out of bounds", "Error Text");
+		return;
+	}
+
+	std::shared_ptr<MovementLocationInfo> location = m_locations.at(index);
+	location->callback = callback;
+	UpdatePathPointSpawn(spawn, location);
+	SendClientMessage("Set callback to " + callback + " for point " + to_string(index));
+}
+
+void NPCPathDebug::UpdatePathPointSpawn(std::shared_ptr<PathPointSpawn> spawn, std::shared_ptr<MovementLocationInfo> location) {
+	uint32_t modelID = 12883;
+	if (location->delay > 0 && !location->callback.empty())
+		modelID = 12885;
+	else if (location->delay > 0)
+		modelID = 12886;
+	else if (!location->callback.empty())
+		modelID = 12882;
+
+	spawn->SetModelType(modelID);
+
+	std::string info = "SPD: " + to_string_with_precision(location->speed) + " DLY: " + to_string_with_precision(location->delay) + (location->callback.empty() ? "" : (" CB: " + location->callback));
+	spawn->SetGuild(info);
+}
+
+std::string NPCPathDebug::to_string_with_precision(float a_value, const int n) {
+	std::ostringstream out;
+	out.precision(n);
+	out << std::fixed << a_value;
+	return out.str();
 }

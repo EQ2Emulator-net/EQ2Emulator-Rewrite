@@ -9,6 +9,7 @@
 #include "../Spawns/GroundSpawn.h"
 #include "../Players/CharacterSheet.h"
 #include "../../common/Classes.h"
+#include "../ZoneServer/SpawnCamp.h"
 
 extern ZoneOperator g_zoneOperator;
 extern MasterEntityCommandList g_masterEntityCommandList;
@@ -114,6 +115,7 @@ void ZoneDatabase::ProcessCharactersTableResult(DatabaseResult& result, const st
 	// Set Account Age
 	charSheet.zoneID = result.GetUInt32(28);
 	charSheet.instanceID = result.GetUInt32(29);
+	entity->SetTailType(result.GetUInt32(30), false);
 }
 
 void ZoneDatabase::ProcessCharacterDetailsResult(DatabaseResult& res, const std::shared_ptr<Entity>& entity, CharacterSheet& sheet) {
@@ -216,7 +218,7 @@ bool ZoneDatabase::LoadCharacter(uint32_t char_id, uint32_t account_id, std::sha
 
 	//First we need to set up the query
 	std::ostringstream query;
-	const char* characterSelect = "SELECT `name`, `race`, `class`, `gender`, `deity`, `body_size`, `body_age`, `level`, `tradeskill_class`, `tradeskill_level`, `soga_wing_type`, `soga_chest_type`, `soga_legs_type`, `soga_hair_type`, `soga_facial_hair_type`, `soga_model_type`, `legs_type`, `chest_type`, `wing_type`, `hair_type`, `facial_hair_type`, `model_type`, `x`, `y`, `z`, `heading`, `starting_city`, DATEDIFF(curdate(), `created_date`) as accage, current_zone_id, instance_id FROM characters ";
+	const char* characterSelect = "SELECT `name`, `race`, `class`, `gender`, `deity`, `body_size`, `body_age`, `level`, `tradeskill_class`, `tradeskill_level`, `soga_wing_type`, `soga_chest_type`, `soga_legs_type`, `soga_hair_type`, `soga_facial_hair_type`, `soga_model_type`, `legs_type`, `chest_type`, `wing_type`, `hair_type`, `facial_hair_type`, `model_type`, `x`, `y`, `z`, `heading`, `starting_city`, DATEDIFF(curdate(), `created_date`) as accage, current_zone_id, instance_id, tail_type FROM characters ";
 	//`characters`
 	query << characterSelect << "WHERE id = " << char_id << " AND account_id = " << account_id << " AND deleted = 0;\n";
 	//`char_colors`
@@ -1146,6 +1148,9 @@ void ZoneDatabase::ProcessEntityColors(DatabaseResult& result, std::unordered_ma
 		if (type == "skin_color") {
 			entity->SetSkinColor(c, false);
 		}
+		else if (type == "model_color") {
+			entity->SetModelColor(c, false);
+		}
 		else if (type == "eye_color") {
 			entity->SetEyeColor(c, false);
 		}
@@ -1175,6 +1180,12 @@ void ZoneDatabase::ProcessEntityColors(DatabaseResult& result, std::unordered_ma
 		}
 		else if (type == "wing_color2") {
 			entity->SetWingHighlightColor(c, false);
+		}
+		else if (type == "tail_color1") {
+			entity->SetTailColor(c, false);
+		}
+		else if (type == "tail_color2") {
+			entity->SetTailHighlightColor(c, false);
 		}
 		else if (type == "shirt_color") {
 			entity->SetChestColor(c, false);
@@ -1234,6 +1245,9 @@ void ZoneDatabase::ProcessEntityColors(DatabaseResult& result, std::unordered_ma
 		}
 		else if (type == "soga_skin_color") {
 			entity->SetSogaSkinColor(c, false);
+		}
+		else if (type == "soga_model_color") {
+			entity->SetSogaModelColor(c, false);
 		}
 		else if (type == "soga_eye_color") {
 			entity->SetSogaEyeColor(c, false);
@@ -1342,4 +1356,80 @@ void ZoneDatabase::ProcessNpcAppearanceEquipment(DatabaseResult& result, std::un
 
 		entity->SetAppearanceEquipmentItem(slot, item, false);
 	}
+}
+
+bool ZoneDatabase::LoadSpawnCampsForZone(std::shared_ptr<ZoneServer> z) {
+	DatabaseResult result;
+	bool ret = Select(&result, "SELECT * FROM spawn_camp WHERE zone_id = %u", z->GetID());
+
+	if (!ret)
+		return ret;
+
+	uint32_t count = 0;
+	while (result.Next()) {
+		uint32_t id = result.GetUInt32(0);
+		std::shared_ptr<SpawnCamp> camp = std::make_shared<SpawnCamp>(z, result.GetFloat(3), result.GetFloat(4), result.GetFloat(5), result.GetUInt32(6));
+		camp->SetID(id);
+		camp->SetName(result.GetString(1));
+		camp->SetRadius(result.GetFloat(7));
+		camp->SetNumRadiusEncounter(result.GetUInt16(8));
+		count++;
+
+		z->AddSpawnCamp(camp);
+		LogDebug(LOG_NPC, 5, "---Loading Spawn Camp: '%s' (%u)", camp->GetName().c_str(), id);
+	}
+
+	LogInfo(LOG_NPC, 0, "--Loaded %u Spawn Camp(s).", count);
+	return ret;
+}
+
+uint32_t ZoneDatabase::InsertNewSpawnCamp(std::shared_ptr<SpawnCamp> camp) {
+	uint32_t ret = 0;
+
+	bool result = Query("INSERT INTO spawn_camp (zone_id, x, y, z, grid) VALUES (%u, %f, %f, %f, %u)", camp->GetZone()->GetID(), camp->GetX(), camp->GetY(), camp->GetZ(), camp->GetGridID());
+	if (result) {
+		DatabaseResult dbResult;
+		bool select = Select(&dbResult, "SELECT LAST_INSERT_ID()");
+		if (select && dbResult.Next()) {
+			ret = dbResult.GetUInt32(0);
+		}
+	}
+
+	return ret;
+}
+
+bool ZoneDatabase::SaveSpawnCamp(std::shared_ptr<SpawnCamp> camp) {
+	return Query("UPDATE spawn_camp SET name = '%s', x = %f, y = %f, z = %f, grid = %u, radius = %f, num_radius_encounters = %u WHERE id = %u", camp->GetName().c_str(), camp->GetX(), camp->GetY(), camp->GetZ(), camp->GetGridID(), camp->GetRadius(), camp->GetNumRadiusEncounters(), camp->GetID());
+}
+
+uint32_t ZoneDatabase::GetSpawnLocationCount(uint32_t locationID, std::shared_ptr<Spawn> spawn) {
+	uint32_t ret = 0;
+	DatabaseResult result;
+	bool select = Select(&result, "SELECT count(id) FROM spawn_location_entry WHERE spawn_location_id=%u AND spawn_id=%u", locationID, spawn->GetDatabaseID());
+	if (select && result.Next()) {
+		ret = result.GetUInt32(0);
+	}
+	return ret;
+}
+
+bool ZoneDatabase::RemoveSpawnFromSpawnLocation(std::shared_ptr<Spawn> spawn) {
+	bool success = false;
+	uint32_t count = GetSpawnLocationCount(spawn->GetSpawnLocationID(), spawn);
+
+	success = Query("DELETE FROM spawn_location_placement WHERE spawn_location_id=%u", spawn->GetSpawnLocationID());
+	if (!success) {
+		LogError(LOG_ZONE, 0, "Failed to delete spawn (%u) from location (%u)", spawn->GetDatabaseID(), spawn->GetSpawnLocationID());
+		return false;
+	}
+
+	if (count == 1)
+		Query("DELETE FROM spawn_location_name WHERE id=%u", spawn->GetSpawnLocationID());
+
+	success = Query("DELETE FROM spawn_location_entry WHERE spawn_id = %u AND spawn_location_id = %u", spawn->GetDatabaseID(), spawn->GetSpawnLocationID());
+	if (!success) {
+		LogError(LOG_ZONE, 0, "Failed to delete spawn_location_entry for spawn (%u) and location(%u)", spawn->GetDatabaseID(), spawn->GetSpawnLocationID());
+		return false;
+	}
+	
+	return true;
 }

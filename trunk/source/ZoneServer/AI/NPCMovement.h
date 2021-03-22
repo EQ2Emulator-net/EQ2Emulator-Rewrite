@@ -7,7 +7,7 @@ public:
 
 	void AddLocation(std::shared_ptr<MovementLocationInfo> loc);
 	void RemoveLocations();
-	std::vector<std::shared_ptr<MovementLocationInfo> >* GetLocations() { return &m_locations; }
+	std::vector<std::shared_ptr<MovementLocationInfo> > GetLocations() { return m_locations; }
 
 private:
 

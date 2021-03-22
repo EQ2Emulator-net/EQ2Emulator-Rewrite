@@ -13,7 +13,7 @@
 const uint32_t EntityFlagAlive = 1;
 const uint32_t EntityIsNpc = 1 << 1;
 const uint32_t EntityIsMercenary = 1 << 2;
-const uint32_t EntityFlagStaticObject = 1 << 3;
+const uint32_t EntityFlagIsPet = 1 << 3;
 const uint32_t EntityFlagMerchant = 1 << 4;
 const uint32_t EntityFlagHideIcon = 1 << 9; //hides any special icons for this spawn
 const uint32_t EntityFlagInteractable = 1 << 10; //shows the hand icon
@@ -41,6 +41,13 @@ const uint8_t INFO_VIS_FLAG_HIDE_HOOD = 1 << 1;
 const uint8_t INFO_VIS_FLAG_MOUNTED = 1 << 2;
 const uint8_t INFO_VIS_FLAG_CROUCH = 1 << 3;
 
+//Info interaction flag (part of vis flags really)
+const uint8_t INFO_INTERACTION_FLAG_HIDE_HEAD_COVER = 1 << 1;
+const uint8_t INFO_INTERACTION_FLAG_SHOW_CLOAK = 1 << 2;
+const uint8_t INFO_INTERACTION_FLAG_LOOK_AT_PLAYER = 1 << 3;
+const uint8_t INFO_INTERACTION_FLAG_SHOW_RANGED_WEAPON = 1 << 4;
+const uint8_t INFO_INTERACTION_FLAG_SHOW_BACK_SLOT = 1 << 6;
+
 enum class EConsiderDifficulty : uint8_t {
 	GRAY = 0,
 	GREEN = 1,
@@ -64,7 +71,7 @@ public:
 	~Spawn();
 
 	bool IsMercenary() { return (GetInfoStruct()->entityFlags & EntityIsMercenary) != 0; }
-	bool IsStaticObject() { return (GetInfoStruct()->entityFlags & EntityFlagStaticObject) != 0; }
+	bool IsPet() { return (GetInfoStruct()->entityFlags & EntityFlagIsPet) != 0; }
 	bool IsMerchant() { return (GetInfoStruct()->entityFlags & EntityFlagMerchant) != 0; }
 	bool ShouldShowLevel() { return bShowLevel; }
 	bool IsInteractable() { return (GetInfoStruct()->entityFlags & EntityFlagInteractable) != 0; }
@@ -92,6 +99,8 @@ public:
 	bool IsWidget() { return widgetData != nullptr; }
 	virtual bool IsObject() { return false; }
 	virtual bool IsGroundSpawn() { return false; }
+	virtual bool IsPathPoint() { return false; }
+	virtual bool IsSpawnCampSpawn() { return false; }
 
 	float GetX() const { return m_posStruct.x; }
 	float GetY() const { return m_posStruct.y; }
@@ -278,6 +287,9 @@ public:
 	void SetWingType(uint32_t value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.wing_type_id, value, updateFlags);
 	}
+	void SetTailType(uint32_t value, bool updateFlags = true) {
+		SetInfo(&m_infoStruct.tail_type_id, value, updateFlags);
+	}
 	void SetChestType(uint32_t value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.chest_type_id, value, updateFlags);
 	}
@@ -332,6 +344,12 @@ public:
 	void SetSogaWingColor(EQ2Color value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.soga_wing_color1, value, updateFlags);
 	}
+	void SetTailColor(EQ2Color value, bool updateFlags = true) {
+		SetInfo(&m_infoStruct.tail_color1, value, updateFlags);
+	}
+	void SetTailHighlightColor(EQ2Color value, bool updateFlags = true) {
+		SetInfo(&m_infoStruct.tail_color2, value, updateFlags);
+	}
 	void SetSogaWingHighlightColor(EQ2Color value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.wing_color2, value, updateFlags);
 	}
@@ -362,6 +380,9 @@ public:
 	void SetSkinColor(EQ2Color value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.skin_color, value, updateFlags);
 	}
+	void SetModelColor(EQ2Color value, bool updateFlags = true) {
+		SetInfo(&m_infoStruct.model_color, value, updateFlags);
+	}
 	void SetEyeColor(EQ2Color value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.eye_color, value, updateFlags);
 	}
@@ -370,6 +391,9 @@ public:
 	}
 	void SetSogaSkinColor(EQ2Color value, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.soga_skin_color, value, updateFlags);
+	}
+	void SetSogaModelColor(EQ2Color value, bool updateFlags = true) {
+		SetInfo(&m_infoStruct.soga_model_color, value, updateFlags);
 	}
 	void SetSkullType(int8_t value, uint8_t index, bool updateFlags = true) {
 		SetInfo(&m_infoStruct.sliders.skull[index], value, updateFlags);

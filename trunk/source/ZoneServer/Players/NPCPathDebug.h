@@ -7,6 +7,7 @@
 
 class Client;
 class Spawn;
+class PathPointSpawn;
 
 class NPCPathDebug {
 public:
@@ -22,16 +23,22 @@ public:
 	void RemoveLocationsFromClient();
 	void ClearLocations();
 	void AddPathPoint();
-	void RemovePathPoint(std::shared_ptr<Spawn> spawn);
+	void RemovePathPoint(std::shared_ptr<PathPointSpawn> spawn);
+	void GenerateLua();
+
+	void SetPathPointSpeed(std::shared_ptr<PathPointSpawn> spawn, float speed);
+	void SetPathPointDelay(std::shared_ptr<PathPointSpawn> spawn, float delay);
+	void SetPathPointCallback(std::shared_ptr<PathPointSpawn> spawn, std::string callback);
 
 private:
 
-	std::shared_ptr<Spawn> CreateLocationSpawn(std::shared_ptr<MovementLocationInfo> location, uint32_t pointIndex);
+	std::shared_ptr<PathPointSpawn> CreateLocationSpawn(std::shared_ptr<MovementLocationInfo> location, uint32_t pointIndex);
 	void SendClientMessage(std::string message, std::string filter = "Command Text");
-	uint32_t GetIndexForSpawn(std::shared_ptr<Spawn> spawn);
+	void UpdatePathPointSpawn(std::shared_ptr<PathPointSpawn> spawn, std::shared_ptr<MovementLocationInfo> location);
+	std::string to_string_with_precision(float a_value, const int n = 2);
 
 	std::weak_ptr<Client> m_client;
 	std::weak_ptr<Spawn> m_targetSpawn;
-	std::vector<std::shared_ptr<MovementLocationInfo> >* m_locations;
-	std::vector<std::shared_ptr<Spawn> > m_locationSpawns;
+	std::vector<std::shared_ptr<MovementLocationInfo> > m_locations;
+	std::vector<std::shared_ptr<PathPointSpawn> > m_locationSpawns;
 };

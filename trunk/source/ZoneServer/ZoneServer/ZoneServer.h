@@ -19,6 +19,7 @@ class Object;
 class GroundSpawn;
 class Cell;
 class EmuLuaState;
+class SpawnCamp;
 
 // This will be where every thing happens
 class ZoneServer : public std::enable_shared_from_this<ZoneServer> {
@@ -41,6 +42,7 @@ public:
 	void RemoveSpawnFromClient(std::shared_ptr<Spawn> spawn, std::shared_ptr <Client> client);
 	void RemoveSpawnFromAllClients(std::shared_ptr<Spawn> spawn);
 	void SendDestroyGhost(std::shared_ptr<Client> client, std::shared_ptr<Spawn> spawn);
+	void RemoveSpawn(std::shared_ptr<Spawn> spawn);
 	void RemovePlayer(std::shared_ptr<Entity> player);
 	void RemoveClient(std::shared_ptr<Client> client);
 
@@ -114,6 +116,11 @@ public:
 	};
 
 	ZoneChat chat;
+
+	std::vector<std::shared_ptr<SpawnCamp> >* GetSpawnCamps() { return &m_spawnCamps; }
+	void AddSpawnCamp(std::shared_ptr<SpawnCamp> camp);
+
+	void DeleteSpawnFromLocation(std::shared_ptr<Spawn> spawn, bool remove);
 private:
 
 	std::vector<std::shared_ptr<Entity> > players;
@@ -160,6 +167,8 @@ private:
 	std::map<uint32_t, std::list<uint32_t> > m_spawnLocationGroups;				// placement_location_id, list<group_id>
 	std::map<uint32_t, float> m_spawnGroupChances;								// group_id, chance
 	std::map<uint32_t, std::set<uint32_t> > m_spawnGroupAssociations;			// group_id1, set<group_id2>
+
+	std::vector<std::shared_ptr<SpawnCamp> > m_spawnCamps;
 
 	// following is info from `zones` table in the DB
 	uint32_t id;

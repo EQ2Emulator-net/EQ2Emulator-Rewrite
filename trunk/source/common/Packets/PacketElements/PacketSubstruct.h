@@ -188,7 +188,7 @@ public:
 
 	void PostRead() override {
 		for (int i = 0; i < count; i++) {
-			substructs[i].PostWrite();
+			substructs[i].PostRead();
 		}
 	}
 };

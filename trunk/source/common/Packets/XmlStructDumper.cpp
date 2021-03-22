@@ -74,6 +74,9 @@ const char* XmlStructDumper::GetElementType(PacketElement* e) {
 	else if (dynamic_cast<PacketEQ2EquipmentItem*>(e)) {
 		return "EQ2_EquipmentItem";
 	}
+	else if (dynamic_cast<PacketCharString*>(e)) {
+		return "char";
+	}
 
 	//unknown type?
 	assert(false);
@@ -184,9 +187,11 @@ void XmlStructDumper::ElementToXml(PacketElement* e, xml_document<>& doc, xml_no
 		return;
 	}
 	else {
+		auto charStr = dynamic_cast<PacketCharString*>(e);
+		int32_t count = charStr ? charStr->charCount : e->count;
 		dataNode->append_attribute(doc.allocate_attribute("ElementName", doc.allocate_string(e->name)));
 		dataNode->append_attribute(doc.allocate_attribute("Type", GetElementType(e)));
-		dataNode->append_attribute(doc.allocate_attribute("Size", doc.allocate_string(std::to_string(e->count).c_str())));
+		dataNode->append_attribute(doc.allocate_attribute("Size", doc.allocate_string(std::to_string(count).c_str())));
 		if (auto oe = dynamic_cast<PacketOversizedByte*>(e)) {
 			dataNode->append_attribute(doc.allocate_attribute("OversizedValue", oe->bSigned ? "127" : "255"));
 		}

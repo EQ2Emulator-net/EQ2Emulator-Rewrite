@@ -189,6 +189,9 @@
     <ClCompile Include="..\..\source\common\Packets\PacketElements\PacketSubstruct.cpp">
       <Filter>common\Packets\PacketElements</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\WorldServer\Packets\EQ2WorldPacketHandlers.cpp">
+      <Filter>source\Packets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\common\io.h">
@@ -520,6 +523,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_ItemIDReply_Packet.h">
       <Filter>common\Packets\EmuPackets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\EQ2Packets\Substruct_NetAppearance.h">
+      <Filter>common\Packets\EQ2Packets</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

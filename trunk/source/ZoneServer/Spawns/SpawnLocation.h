@@ -50,6 +50,17 @@ public:
 	}
 
 	void AddEntry(std::shared_ptr<SpawnEntry> entry) { entries.push_back(entry); }
+	void RemoveEntry(uint32_t id) {
+		std::vector<std::shared_ptr<SpawnEntry> >::iterator itr;
+		for (itr = entries.begin(); itr != entries.end(); ) {
+			if ((*itr)->spawn_entry_id == id) {
+				entries.erase(itr);
+				break;
+			}
+			else
+				itr++;
+		}
+	}
 
 	std::vector<std::shared_ptr<SpawnEntry> > entries;
 	uint32_t	placement_id;

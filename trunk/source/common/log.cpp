@@ -79,8 +79,8 @@ namespace LoggingSystem {
 		}
 	}
 
-	static void LogOpenFile(FILE **f, const char *file) {
-		if ((*f = fopen(file, "a")) == NULL) {
+	static void LogOpenFile(FILE **f, const char *file, const char* openMode) {
+		if ((*f = fopen(file, openMode)) == NULL) {
 			fprintf(stderr, "Unable to open log file %s: %s\n", file, appStrError().c_str());
 			return;
 		}
@@ -91,9 +91,9 @@ namespace LoggingSystem {
 			fprintf(*f, "<%s>\n", "<eq2emu>");
 	}
 
-	static void ReOpenFile(FILE **f, const char *file) {
+	static void ReOpenFile(FILE **f, const char *file, const char* openMode = "a") {
 		LogCloseFile(f);
-		LogOpenFile(f, file);
+		LogOpenFile(f, file, openMode);
 	}
 
 	static void ReOpenLogs(struct tm *tm) {
@@ -122,7 +122,7 @@ namespace LoggingSystem {
 					snprintf(file, sizeof(file), "%s/%04d-%02d-%02d_%s_%s_%d.%s", LOG_DIR, tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday, config.prefix, log_types[i].name_lower, pid, config.format == LOG_FORMAT_XML ? "xml" : "log");
 				else
 					snprintf(file, sizeof(file), "%s/%04d-%02d-%02d_%s_%s.%s", LOG_DIR, tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday, config.prefix, log_types[i].name_lower, config.format == LOG_FORMAT_XML ? "xml" : "log");
-				ReOpenFile(&log_files.other[i], file);
+				ReOpenFile(&log_files.other[i], file, i == LOG_TYPE_TRACE ? "w+" : "a");
 			}
 		}
 	}
@@ -230,7 +230,7 @@ namespace LoggingSystem {
 				case LOG_TYPE_WARN:
 					LogSet(category, type, true, 0, LOG_OUTPUT_CONSOLE | LOG_OUTPUT_FILE, LOG_YELLOW_BOLD);
 					break;
-				case LOG_TYPE_DEBUG: // TODO: Once server stabilizes, set this back to false by default
+				case LOG_TYPE_DEBUG:
 					LogSet(category, type, true, 0, LOG_OUTPUT_CONSOLE | LOG_OUTPUT_FILE, LOG_GREEN_BOLD);
 					break;
 				case LOG_TYPE_TRACE:

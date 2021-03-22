@@ -28,11 +28,13 @@ void Character::RemoveZoneStream(uint32_t session) {
 
 void Character::SetOnline() {
 	bOnline = true;
+	bLinkdead = false;
 	//Do any kind of events we want to happen when a player comes online!
 	LogDebug(LOG_WORLD, 0, "Setting character %s as online", basicInfo.characterName.c_str());
 }
 
 void Character::SetOffline() {
+	bPendingZoneConnection = false;
 	bOnline = false;
 	bLinkdead = false;
 	//Offline events here

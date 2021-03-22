@@ -465,6 +465,10 @@ void ItemRewardCrate::LoadTypeSpecificData(DatabaseResult& res, uint32_t i) {
 
 }
 
+void ItemSpellScroll::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
+	//implement
+}
+
 uint32_t ZoneDatabase::ProcessItemRewardVoucherResult(DatabaseResult& result, const std::shared_ptr<ItemRewardVoucher>& item) {
 	uint32_t i = 1;
 	item->items.emplace_back();

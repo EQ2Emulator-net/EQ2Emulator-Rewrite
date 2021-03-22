@@ -43,7 +43,7 @@ public:
 	uint8_t version;
 	std::string race_file;
 	EQ2ColorFloat skin_color;
-	EQ2ColorFloat skin_color2;
+	EQ2ColorFloat model_color;
 	EQ2ColorFloat eye_color;
 	EQ2ColorFloat hair_color1;
 	EQ2ColorFloat hair_color2;
@@ -60,6 +60,7 @@ public:
 	Substruct_CharacterCustomization_Asset hairAsset;
 	Substruct_CharacterCustomization_Asset faceAsset;
 	Substruct_CharacterCustomization_Asset wingAsset;
+	Substruct_CharacterCustomization_Asset tailAsset;
 	Substruct_CharacterCustomization_Asset chestAsset;
 	Substruct_CharacterCustomization_Asset legsAsset;
 
@@ -68,10 +69,10 @@ public:
 		Register16String(race_file);
 		RegisterEQ2ColorFloat(skin_color);
 		if (GetVersion() < 57080) //moved in 57080
-			RegisterEQ2ColorFloat(skin_color2);
+			RegisterEQ2ColorFloat(model_color);
 		RegisterEQ2ColorFloat(eye_color);
 		if (GetVersion() >= 57080) //moved in 57080
-			RegisterEQ2ColorFloat(skin_color2);
+			RegisterEQ2ColorFloat(model_color);
 		RegisterEQ2ColorFloat(hair_color1);
 		RegisterEQ2ColorFloat(hair_color2);
 		if (GetVersion() >= 869)
@@ -87,6 +88,9 @@ public:
 		RegisterSubstruct(faceAsset);
 		if (GetVersion() > 283) {
 			RegisterSubstruct(wingAsset);
+			if (GetVersion() >= 67804) {
+				RegisterSubstruct(tailAsset);
+			}
 		}
 		RegisterSubstruct(chestAsset);
 		RegisterSubstruct(legsAsset);
@@ -99,7 +103,7 @@ public:
 		if (GetVersion() >= 67650) {
 			//They got rid of the 26 byte sliders (customization version 7)
 			for (int i = 0; i < 26; i++) {
-				sliderBytes[i] = sliderFloats[i] * 127.f;
+				sliderBytes[i] = static_cast<int8_t>(sliderFloats[i] * 127.f);
 			}
 		}
 	}

@@ -68,6 +68,7 @@ void EQ2Stream::Process(const unsigned char* data, unsigned int length) {
 
 	if (!ValidateCRC(data, length, Key)) {
 		LogError(LOG_NET, 0, "Packet CRC check failed. Client %s", ToString().c_str());
+		DumpBytes(data, length, "CRCFail");
 		return;
 	}
 
@@ -162,15 +163,11 @@ bool EQ2Stream::CheckSequencedPacket(ProtocolPacket* p) {
 
 void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 	if (NetDebugEnabled()) {
-		LogDebug(LOG_NET, 0, "ProtocolPacket Received, opcode: %u", p->GetOpcode());
+		LogTrace(LOG_NET, 0, "ProtocolPacket Received, opcode: %u", p->GetOpcode());
 	}
 
 	switch (p->GetOpcode()) {
 	case OP_Packet: {
-		if (NetDebugEnabled()) {
-			LogDebug(LOG_PACKET, 0, "OP_Packet_Packet Dump");
-			DumpBytes(p->buffer, p->Size);
-		}
 		if (CheckSequencedPacket(p)) {
 			if (oversize_buffer) {
 				LogError(LOG_PACKET, 0, "Received an in-sequence packet while building a fragmented packet! Tell Foof!");
@@ -179,15 +176,15 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 			if (HandleEmbeddedPacket(p->buffer + 2, p->Size - 2)) {
 				break;
 			}
-			//Make sure the packet is atleast the size of the key + sequence size before using it as a key
-			else if (crypto.getRC4Key() == 0 && p->Size >= 10) {
-				processRSAKey(p);
-			}
 			else if (crypto.isEncrypted()) {
 				EQ2Packet* newpacket = ProcessEncryptedPacket(p);
 				if (newpacket) {
 					InboundQueuePush(newpacket);
 				}
+			}
+			//Make sure the packet is atleast the size of the key + sequence size before using it as a key
+			else if (p->Size >= 10) {
+				processRSAKey(p);
 			}
 		}
 		break;
@@ -207,7 +204,6 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 	case OP_AppCombined: {
 		uint32_t processed = 0;
 		uint32_t subpacket_length = 0;
-		EQ2Packet* newpacket = 0;
 		uint32_t offset = 0;
 		int count = 0;
 
@@ -227,18 +223,17 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 				//DumpBytes(p->buffer, p->Size);
 				return;
 			}
-
+			
 			unsigned char* dataPtr = p->buffer + dataOffset;
-			if (crypto.getRC4Key() == 0 && subpacket_length >= 8) {
-				ProtocolPacket cp(dataPtr, subpacket_length);
-				processRSAKey(&cp);
+			if (!crypto.isEncrypted()) {
+				if (subpacket_length >= 8) {
+					ProtocolPacket cp(dataPtr, subpacket_length);
+					processRSAKey(&cp);
+				}
 			}
 			else if (!HandleEmbeddedPacket(dataPtr, subpacket_length, true)) {
-				if (crypto.isEncrypted()) {
-					newpacket = ProcessEncryptedData(dataPtr, subpacket_length);
-					if (newpacket) {
-						InboundQueuePush(newpacket);
-					}
+				if (EQ2Packet* newpacket = ProcessEncryptedData(dataPtr, subpacket_length)) {
+					InboundQueuePush(newpacket);
 				}
 			}
 			
@@ -344,6 +339,7 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 	}
 	case OP_OutOfSession: {
 		LogError(LOG_NET, 0, "OutOfSession packet");
+		NonSequencedPush(new OP_OutOfSession_Packet);
 		break;
 	}
 	default:
@@ -393,9 +389,6 @@ void EQ2Stream::WritePacket(ProtocolPacket* p) {
 		*reinterpret_cast<uint16_t*>(buffer + size - 2) = htons(static_cast<uint16_t>(CRC16(buffer, size - 2, Key)));
 	}
 
-	if (NetDebugEnabled()) {
-		DumpBytes(buffer, size);
-	}
 	Stream::WritePacket(Sock, buffer, size);
 }
 
@@ -571,9 +564,11 @@ ProtocolPacket* EQ2Stream::SequencedPop() {
 }
 
 void EQ2Stream::NonSequencedPush(ProtocolPacket* p) {
-	p->SetVersion(ClientVersion);
-	WriteLocker lock(nonSeqQueueLock);
-	NonSequencedQueue.push_back(p);
+	if (State == EQStreamState::ESTABLISHED) {
+		p->SetVersion(ClientVersion);
+		WriteLocker lock(nonSeqQueueLock);
+		NonSequencedQueue.push_back(p);
+	}
 }
 
 void EQ2Stream::Write() {
@@ -634,10 +629,6 @@ void EQ2Stream::Write() {
 		ret->Size = combinePacketSize;
 		ret->bBufferSet = true;
 		ret->opcode = OP_Combined;
-		if (NetDebugEnabled()) {
-			LogDebug(LOG_PACKET, 0, "Combined Packet!");
-			DumpBytes(ret->buffer, ret->Size);
-		}
 		numCombinePackets = 0;
 		return ret;
 	};
@@ -821,6 +812,7 @@ void EQ2Stream::AdjustRates(uint32_t average_delta) {
 }
 
 uint16_t EQ2Stream::processRSAKey(ProtocolPacket* p) {
+	DumpBytes(p->buffer, p->Size, "RSA Key");
 	//The key is the last 8 bytes in the packet
 	crypto.setRC4Key(Crypto::RSADecrypt((p->buffer + p->Size) - 8, 8));
 	return 0;
@@ -838,10 +830,6 @@ bool EQ2Stream::HandleEmbeddedPacket(unsigned char* buffer, uint32_t length, boo
 		}
 
 		ProtocolPacket* subp = new OP_AppCombined_Packet(buffer + 2, length - 2);
-		if (NetDebugEnabled()) {
-			LogDebug(LOG_PACKET, 0, "OP_AppCombine_Packet");
-			DumpBytes(subp->buffer, subp->Size);
-		}
 		ProcessPacket(subp);
 		delete subp;
 		return true;
@@ -849,10 +837,6 @@ bool EQ2Stream::HandleEmbeddedPacket(unsigned char* buffer, uint32_t length, boo
 	else if (buffer[1] == 0) {
 		EQ2Packet* newpacket = ProcessEncryptedData(buffer + 1, length - 1);
 		if (newpacket) {
-			if (NetDebugEnabled()) {
-				LogInfo(LOG_PACKET, 0, "Decrypted packet");
-				DumpBytes(newpacket->buffer, newpacket->Size);
-			}
 			InboundQueuePush(newpacket);
 		}
 		return true;
@@ -864,13 +848,11 @@ bool EQ2Stream::HandleEmbeddedPacket(unsigned char* buffer, uint32_t length, boo
 EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size) {
 	uint16_t opcode;
 	if (NetDebugEnabled()) {
-		LogDebug(LOG_PACKET, 0, "Decrypt Before: ");
-		DumpBytes(data, size);
+		DumpBytes(data, size, "Pre decrypt", true);
 	}
 	crypto.RC4Decrypt(data, size);
 	if (NetDebugEnabled()) {
-		LogDebug(LOG_PACKET, 0, "Decrypt After: ");
-		DumpBytes(data, size);
+		DumpBytes(data, size, "Post decrypt", true);
 	}
 	uint32_t offset = 0;
 	if (data[0] == 0xFF && size > 2) {
@@ -882,7 +864,7 @@ EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size) {
 		opcode = data[0];
 	}
 
-	if (ClientVersion == 0 && (opcode == 0 || opcode == 1)) {
+	if (ClientVersion == 0 && opcode <= 1) {
 		ReadVersionPacket(data, size, offset, opcode);
 		return nullptr;
 	}
@@ -890,10 +872,7 @@ EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size) {
 	std::unique_ptr<EQ2Packet> ret(OpcodeManager::GetGlobal()->GetPacketForVersion(ClientVersion, opcode));
 	if (ret) {
 		if (!ret->Read(data, offset, size)) {
-			if (NetDebugEnabled()) {
-				DumpBytes(data + offset, size - offset);
-				LogWarn(LOG_PACKET, 0, "BLAH!!!");
-			}
+			DumpBytes(data + offset, size - offset, "Packet read out of bounds");
 		}
 
 		//Check if there is a sub packet - used for packets that change structs based on the value of an element
@@ -905,16 +884,18 @@ EQ2Packet* EQ2Stream::ProcessEncryptedData(unsigned char* data, uint32_t size) {
 			}
 			ret = std::move(p);
 			if (!ret->Read(data, offset, size)) {
-				if (NetDebugEnabled()) {
-					DumpBytes(data + offset, size - offset);
-					LogWarn(LOG_PACKET, 0, "BLAH!!!");
-				}
+				DumpBytes(data + offset, size - offset, "Packet read out of bounds");
 			}
 		}
 	}
 	else {
-		LogDebug(LOG_PACKET, 0, "Unhandled opcode %u", opcode);
-		DumpBytes(data + offset, size - offset);
+		std::ostringstream ss;
+		ss << "Unhandled opcode " << opcode << " ClientVersion: " << ClientVersion;
+		std::string header = ss.str();
+		DumpBytes(data + offset, size - offset, header.c_str());
+		if (NetDebugEnabled()) {
+			DumpBytes(data + offset, size - offset, header.c_str(), true);
+		}
 	}
 
 	return ret.release();
@@ -958,16 +939,17 @@ void EQ2Stream::InboundQueueClear() {
 }
 
 void EQ2Stream::QueuePacket(EQ2Packet* p, bool bDelete, bool bDump) {
-	p->PreWrite();
 	unsigned char* buf = nullptr;
+	p->PreWrite();
 	p->Write(buf);
+	p->PostWrite();
 	if (p->bOpcodeError) {
 		//The opcode manager will spit out an error about this
 		if (bDelete)
 			delete p;
 	}
 	else {
-		if (NetDebugEnabled() || bDump) {
+		if (bDump) {
 			DumpBytes(buf, p->Size);
 		}
 		p->PacketEncrypted = false;
@@ -1019,6 +1001,8 @@ void EQ2Stream::SendDisconnect(uint16_t reason) {
 
 	NonSequencedPush(disconnect);
 
+	State = EQStreamState::CLOSING;
+
 	Disconnected();
 }
 
@@ -1058,7 +1042,7 @@ void EQ2Stream::ProcessFragmentedData(ProtocolPacket* p) {
 		oversize_offset += p->Size - 2;
 		if (oversize_offset == oversize_length) {
 			if (!HandleEmbeddedPacket(oversize_buffer, oversize_length)) {
-				if (crypto.isEncrypted() && p && p->Size > 2) {
+				if (crypto.isEncrypted()) {
 					if (EQ2Packet* p2 = ProcessEncryptedData(oversize_buffer, oversize_offset)) {
 						InboundQueuePush(p2);
 					}
@@ -1067,6 +1051,10 @@ void EQ2Stream::ProcessFragmentedData(ProtocolPacket* p) {
 			delete[] oversize_buffer;
 			oversize_buffer = nullptr;
 			oversize_offset = 0;
+		}
+		else if (oversize_offset > oversize_length)
+		{
+			LogError(LOG_NET, 0, "WTF!!!");
 		}
 		return;
 	}

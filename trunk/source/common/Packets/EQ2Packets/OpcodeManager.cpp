@@ -43,9 +43,6 @@ bool OpcodeManager::SetOpcodeForPacket(EQ2Packet* packet) {
 		if (range.first <= version && range.second >= version) {
 			for (auto& op : itr.second) {
 				if (op.second == allocator) {
-					if (NetDebugEnabled()) {
-						LogDebug(LOG_PACKET, 0, "Found opcode: %s", allocator->opName);
-					}
 					packet->opcode = op.first;
 					return true;
 				}

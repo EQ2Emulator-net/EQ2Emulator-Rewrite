@@ -3,6 +3,7 @@
 #include "../Items/ItemTypes.h"
 #include "Substruct_ExamineDescItem.h"
 #include "OP_EqExamineInfoCmd.h"
+#include "Substruct_SpellDesc.h"
 
 class ExamineInfoCmd_Item_Packet : public OP_EqExamineInfoCmd_Packet {
 public:
@@ -211,7 +212,7 @@ public:
 	public:
 		Substruct_RecipeBook(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
 			if (p_itemVersion == 0) {
-				itemVersion = GetItemStructVersion(ver);
+				itemVersion = GetDescriptionVersion(ver);
 			}
 			else {
 				itemVersion = p_itemVersion;
@@ -317,7 +318,7 @@ class Substruct_HouseItem : public PacketSubstruct, public ItemHouseData {
 public:
 	Substruct_HouseItem(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver) {
 		if (p_itemVersion == 0) {
-			itemVersion = GetItemStructVersion(ver);
+			itemVersion = GetDescriptionVersion(ver);
 		}
 		else {
 			itemVersion = p_itemVersion;
@@ -389,7 +390,14 @@ public:
 
 	void RegisterElements() {
 		RegisterSubstruct(header);
-		RegisterUInt64(allowedTypes);
+		//No item version check for this change
+		if (GetVersion() < 60114) {
+			RescopeToReference(allowedTypes, uint32_t);
+			RegisterUInt32(allowedTypes);
+		}
+		else {
+			RegisterUInt64(allowedTypes);
+		}
 		RegisterUInt32(unknown1);
 		RegisterUInt16(numSlots);
 		RegisterUInt8(unknown2);
@@ -467,7 +475,7 @@ public:
 	public:
 		Substruct_RewardVoucherItem(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
 			if (p_itemVersion == 0) {
-				itemVersion = GetItemStructVersion(ver);
+				itemVersion = GetDescriptionVersion(ver);
 			}
 			else {
 				itemVersion = p_itemVersion;
@@ -531,7 +539,7 @@ public:
 	public:
 		Substruct_RewardCrateItem(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
 			if (p_itemVersion == 0) {
-				itemVersion = GetItemStructVersion(ver);
+				itemVersion = GetDescriptionVersion(ver);
 			}
 			else {
 				itemVersion = p_itemVersion;
@@ -549,7 +557,14 @@ public:
 			RegisterUInt16(icon);
 			if (itemVersion >= 40) {
 				if (itemVersion >= 42) {
-					RegisterUInt32(stackSize);
+					//No version check yet again
+					if (GetVersion() < 60114) {
+						RescopeToReference(stackSize, uint16_t);
+						RegisterUInt16(stackSize);
+					}
+					else {
+						RegisterUInt32(stackSize);
+					}
 				}
 				else {
 					uint8_t& stackSize = reinterpret_cast<uint8_t&>(this->stackSize);
@@ -563,7 +578,7 @@ public:
 			RegisterUInt32(colorID);
 		}
 	};
-	
+
 private:
 	std::vector<Substruct_RewardCrateItem> itemsArray;
 
@@ -629,6 +644,41 @@ public:
 		Register16String(author);
 		Register16String(title);
 		RegisterSubstruct(houseData);
+		RegisterSubstruct(footer);
+	}
+};
+
+class Substruct_ExamineDescItem_SpellScroll : public Substruct_ExamineDescItem, public ItemSpellScrollData {
+public:
+	Substruct_ExamineDescItem_SpellScroll(uint32_t ver = 0) : Substruct_ExamineDescItem(ver), spell(ver, subVersion) {
+		RegisterElements();
+	}
+
+	Substruct_ExamineDescItem_SpellScroll(const SpellDescInfo& desc, const ItemSpellScrollData& scd, uint32_t ver = 0)
+		: Substruct_ExamineDescItem_SpellScroll(ver) {
+		static_cast<ItemSpellScrollData&>(*this) = scd;
+		static_cast<SpellDescInfo&>(spell) = desc;
+	}
+
+	~Substruct_ExamineDescItem_SpellScroll() = default;
+
+	Substruct_SpellDesc spell;
+
+	void RegisterElements() override {
+		RegisterSubstruct(header);
+		RegisterSubstruct(spell);
+		if (subVersion >= 30) {
+			auto e = RegisterBool(bScribed);
+			auto e2 = RegisterBool(bScribed_better_version);
+			e2->SetIsVariableSet(e);
+			if (subVersion >= 50) {
+				RegisterBool(bRequire_previous_tier);
+				if (subVersion >= 78) {
+					RegisterUInt8(unknown78a);
+					RegisterUInt8(unknown78b);
+				}
+			}
+		}
 		RegisterSubstruct(footer);
 	}
 };

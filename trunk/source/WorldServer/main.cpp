@@ -78,6 +78,11 @@ int main(int argc, char **argv)
 		StructDump.DumpStructsFile("CommonStructs.xml");
 	}
 
+	if (success)
+		database.SetServerStartTime();
+
+	Timer statTimer(30000, true);
+
 	while (success && looping) {
 		Timer::SetCurrentTime();
 
@@ -85,6 +90,9 @@ int main(int argc, char **argv)
 
 		if (success)
 			success = zoneTalk.Process();
+
+		if (statTimer.Check())
+			database.SetServerLastUpdateTime();
 
 		SleepMS(5);
 	}

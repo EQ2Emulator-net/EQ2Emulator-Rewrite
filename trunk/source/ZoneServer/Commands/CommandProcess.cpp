@@ -49,6 +49,8 @@ void CommandProcess::RegisterCommands() {
 	RegisterCommandHandler(340, CommandSetEmoteVoice);
 	RegisterCommandHandler(341, CommandSetCombatVoice);
 	RegisterCommandHandler(523, CommandPath);
+	RegisterCommandHandler(524, CommandSpawnCamp);
+	RegisterCommandHandler(220, CommandSpawnRemove);
 }
 
 void CommandProcess::RegisterCommandHandler(uint32_t handler_id, CommandHandler_t handler) {
@@ -160,6 +162,8 @@ void CommandProcess::CommandSpeed(const std::shared_ptr<Client>& client, Separat
 	packet.airSpeed = speed;
 	packet.swimmingSpeedMultiplier = 0.8f;
 	client->QueuePacket(packet);
+
+	client->chat.DisplayText("MOTD", "Speed set to " + to_string(speed), 0xff, false, "");
 }
 
 void CommandProcess::SendCommandList(const std::shared_ptr<Client>& client) {
@@ -259,6 +263,8 @@ void CommandProcess::CommandFlymode(const std::shared_ptr<Client>& client, Separ
 	p.positionState2 = 32;
 	p.value = sep.GetUInt32(0) != 0;
 	client->QueuePacket(p);
+
+	client->chat.DisplayText("MOTD", "FlyMode set to " + to_string(p.value), 0xff, false, "");
 }
 
 void CommandProcess::CommandSay(const std::shared_ptr<Client>& client, Separator& sep) {
@@ -549,6 +555,8 @@ void CommandProcess::CommandDevMode(const std::shared_ptr<Client>& client, Separ
 	}
 
 	player->IncrementVisUpdateTag();
+
+	client->chat.DisplayText("MOTD", "DevMode set to " + to_string(bEnabled), 0xff, false, "");
 }
 
 void CommandProcess::CommandSetEmoteVoice(const std::shared_ptr<Client>& client, Separator& sep) {

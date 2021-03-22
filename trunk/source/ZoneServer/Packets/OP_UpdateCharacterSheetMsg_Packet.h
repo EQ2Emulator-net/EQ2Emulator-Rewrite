@@ -10,22 +10,407 @@
 #include "Substruct_GroupMember.h"
 #include "../Players/CharacterSheet.h"
 
+struct TsSpellProps {
+	TsSpellProps() {
+		memset(this, 0, sizeof(*this));
+	}
+
+	float durability_mod;
+	float durability_add;
+	float progress_mod;
+	float progress_add;
+	float success_mod;
+	float crit_success_mod;
+	float crit_failure_mod;
+	float rare_harvest_chance;
+	float max_crafting_quantity;
+	float component_refund;
+	float ex_attempts;
+	float refine_quantity_mod;
+	float ex_durability_mod;
+	float ex_durability_add;
+	float ex_crit_success_mod;
+	float ex_crit_failure_mod;
+	float ex_progress_mod;
+	float ex_progress_add;
+	float ex_success_mod;
+};
+
+class Substruct_TsSpellProps : public PacketSubstruct, public TsSpellProps {
+public:
+	Substruct_TsSpellProps(uint32_t ver = 0) : PacketSubstruct(ver) {
+		RegisterElements();
+	}
+
+	~Substruct_TsSpellProps() = default;
+
+	void RegisterElements() override {
+		RegisterFloat(durability_mod);
+		RegisterFloat(durability_add);
+		RegisterFloat(progress_mod);
+		RegisterFloat(progress_add);
+		RegisterFloat(success_mod);
+		RegisterFloat(crit_success_mod);
+		RegisterFloat(crit_failure_mod);
+		RegisterFloat(rare_harvest_chance);
+		RegisterFloat(max_crafting_quantity);
+		RegisterFloat(component_refund);
+		RegisterFloat(ex_attempts);
+		if (GetVersion() >= 60114) {
+			RegisterFloat(refine_quantity_mod);
+		}
+		RegisterFloat(ex_durability_mod);
+		RegisterFloat(ex_durability_add);
+		RegisterFloat(ex_crit_success_mod);
+		RegisterFloat(ex_crit_failure_mod);
+		RegisterFloat(ex_progress_mod);
+		RegisterFloat(ex_progress_add);
+		RegisterFloat(ex_success_mod);
+	}
+};
+
+struct SpellProps {
+	//These are the blue stats on items and also appear in the character sheet, a good way to find the switch in the client is to search for
+	//Blurs Vision ^ they appear in the same order as their id/index for that client
+
+	float hp_regen;
+	float power_regen;
+	float ooc_hp_regen;
+	float ooc_power_regen;
+	float ic_hp_regen_bonus;
+	float ic_power_regen_bonus;
+	float hp_max;
+	float hp_max_sta_bonus;
+	float hp_max_perc_total;
+	float ooc_run_speed;
+	float slow;
+	float speed_mount_ground;
+	float speed_mount_air;
+	float speed_mount_leap;
+	float mount_leap_distance;
+	float glide_efficiency;
+	float ic_run_speed;
+	float haste;
+	float haste_spell;
+	float power_max;
+	float power_max_perc;
+	float all_attributes;
+	float blur_vision;
+	float magic_level_immunity;
+	float hate_gain;
+	float combat_xp_mod;
+	float ts_xp_mod;
+	float aa_xp_mod;
+	float status_earned_mod;
+	float size_mod;
+	float dps;
+	float dps_spell;
+	float stealth;
+	float invis;
+	float see_stealth;
+	float see_invis;
+	float effective_level_mod;
+	float riposte_chance;
+	float parry_chance;
+	float dodge_chance;
+	float ae_autoattack_chance;
+	float ae_autoattack_chance_spell;
+	float flurry_chance;
+	float flurry_chance_spell;
+	float multi_attack_chance;
+	float multi_attack_chance_pvp;
+	float multi_attack_chance_spell;
+	float multi_attack_chance_spell_pvp;
+	float doublecast_chance_spell;
+	float doublecast_chance_ability;
+	float doublecast_chance_spell_pvp;
+	float melee_damage_multiplier;
+	float bountiful_harvest;
+	float block_chance_shield;
+	float hp_regen_bonus;
+	float power_regen_bonus;
+	float crit_chance;
+	float crit_avoidance;
+	float crit_chance_beneficial;
+	float crit_bonus;
+	float crit_bonus_pvp;
+	float hp_unconcious;
+	float ability_reuse_speed;
+	float ability_recovery_speed;
+	float ability_casting_speed;
+	float spell_reuse_speed;
+	float melee_weapon_range;
+	float ranged_weapon_range;
+	float falling_damage_reduction;
+	float riposte_damage;
+	float block_chance_minimum;
+	float movement_weave;
+	float ic_hp_regen;
+	float ic_power_regen;
+	float speed_contest_only;
+	float tracking_avoidance;
+	float speed_stealth_invis;
+	float loot_coin_mod;
+	float mitigation_increase;
+	float ammo_conservation_chance;
+	float strikethrough;
+	float status_bonus;
+	float accuracy;
+	float counter_strike;
+	float shield_bash;
+	float weapon_damage_bonus;
+	float weapon_damage_bonus_spell;
+	float weapon_damage_bonus_melee;
+	float riposte_chance_additional;
+	float crit_mit;
+	float potency;
+	float potency_pvp;
+	float toughness;
+	float lethality;
+	float stamina_bonus;
+	float wis_mit_bonus;
+	float heals_received;
+	float heals_received_pct;
+	float power_received;
+	float crit_mit_pvp;
+	float avoidance_base_bonus;
+	float ic_savagery_regen;
+	float ooc_savagery_regen;
+	float savagery_regen;
+	float savagery_gain_mod;
+	float savagery_level_max;
+	float ic_dissonance_regen;
+	float ooc_dissonance_regen;
+	float dissonance_regen;
+	float dissonance_gain_mod;
+	float ae_autoattack_avoid;
+	float agnostic_damage_bonus;
+	float agnostic_heal_bonus;
+	float tithe_gain;
+	float fervor;
+	float resolve;
+	float combat_mit;
+	float ability_mit;
+	float multi_attack_avoidance;
+	float doublecast_spell_avoidance;
+	float doublecast_ability_avoidance;
+	float dps_mit;
+	float fervor_mit;
+	float flurry_avoidance;
+	float weapon_damage_bonus_mit;
+	float weapon_damage_bonus_melee_mit;
+	float ability_mod_mit;
+	float melee_damage_multiplier_mit;
+	float heals_received_pot_mit;
+	float heals_received_critbonus_mit;
+	float heals_received_fervor_mit;
+	float power_received_fervor_mit;
+	float heals_received_normalized_mit;
+	float flurry_multiplier;
+	float flurry_multiplier_mitigation;
+
+	SpellProps() {
+		memset(this, 0, sizeof(*this));
+	}
+};
+
+class Substruct_SpellProps : public PacketSubstruct, public SpellProps {
+public:
+	Substruct_SpellProps(uint32_t ver = 0) : PacketSubstruct(ver) {
+		RegisterElements();
+	}
+
+	~Substruct_SpellProps() = default;
+
+	void RegisterElements() override {
+		const uint32_t ver = GetVersion();
+
+		RegisterFloat(hp_regen);
+		RegisterFloat(power_regen);
+		RegisterFloat(ooc_hp_regen);
+		RegisterFloat(ooc_power_regen);
+		RegisterFloat(ic_hp_regen_bonus);
+		RegisterFloat(ic_power_regen_bonus);
+		RegisterFloat(hp_max);
+		RegisterFloat(hp_max_sta_bonus);
+		RegisterFloat(hp_max_perc_total);
+		RegisterFloat(ooc_run_speed);
+		RegisterFloat(slow);
+		RegisterFloat(speed_mount_ground);
+		RegisterFloat(speed_mount_air);
+		RegisterFloat(speed_mount_leap);
+		RegisterFloat(mount_leap_distance);
+		RegisterFloat(glide_efficiency);
+		RegisterFloat(ic_run_speed);
+		RegisterFloat(haste);
+		if (ver < 60114) {
+			RegisterFloat(haste_spell);
+		}
+		RegisterFloat(power_max);
+		RegisterFloat(power_max_perc);
+		RegisterFloat(all_attributes);
+		RegisterFloat(blur_vision);
+		RegisterFloat(magic_level_immunity);
+		RegisterFloat(hate_gain);
+		RegisterFloat(combat_xp_mod);
+		RegisterFloat(ts_xp_mod);
+		RegisterFloat(aa_xp_mod);
+		if (ver >= 60114) {
+			RegisterFloat(status_earned_mod);
+		}
+		RegisterFloat(size_mod);
+		RegisterFloat(dps);
+		if (ver < 60114) {
+			RegisterFloat(dps_spell);
+		}
+		RegisterFloat(stealth);
+		RegisterFloat(invis);
+		RegisterFloat(see_stealth);
+		RegisterFloat(see_invis);
+		RegisterFloat(effective_level_mod);
+		RegisterFloat(riposte_chance);
+		RegisterFloat(parry_chance);
+		RegisterFloat(dodge_chance);
+		RegisterFloat(ae_autoattack_chance);
+		if (ver < 60114) {
+			RegisterFloat(ae_autoattack_chance_spell);
+		}
+		RegisterFloat(multi_attack_chance);
+		if (ver < 60114) {
+			RegisterFloat(multi_attack_chance_pvp);
+			RegisterFloat(multi_attack_chance_spell);
+			RegisterFloat(multi_attack_chance_spell_pvp);
+		}
+		RegisterFloat(doublecast_chance_spell);
+		if (ver < 60114) {
+			RegisterFloat(doublecast_chance_spell_pvp);
+		}
+		else if (ver >= 67650) {
+			RegisterFloat(doublecast_chance_ability);
+		}
+		RegisterFloat(flurry_chance);
+		if (ver < 60114) {
+			RegisterFloat(flurry_chance_spell);
+		}
+		RegisterFloat(melee_damage_multiplier);
+		RegisterFloat(bountiful_harvest);
+		RegisterFloat(block_chance_shield);
+		RegisterFloat(hp_regen_bonus);
+		RegisterFloat(power_regen_bonus);
+		RegisterFloat(crit_chance);
+		RegisterFloat(crit_avoidance);
+		RegisterFloat(crit_chance_beneficial);
+		RegisterFloat(crit_bonus);
+		if (ver < 60114) {
+			RegisterFloat(crit_bonus_pvp);
+		}
+		RegisterFloat(potency);
+		if (ver < 60114) {
+			RegisterFloat(potency_pvp);
+		}
+		RegisterFloat(hp_unconcious);
+		RegisterFloat(ability_reuse_speed);
+		RegisterFloat(ability_recovery_speed);
+		RegisterFloat(ability_casting_speed);
+		RegisterFloat(spell_reuse_speed);
+		RegisterFloat(melee_weapon_range);
+		RegisterFloat(ranged_weapon_range);
+		RegisterFloat(falling_damage_reduction);
+		RegisterFloat(riposte_damage);
+		RegisterFloat(block_chance_minimum);
+		RegisterFloat(movement_weave);
+		RegisterFloat(ic_hp_regen);
+		RegisterFloat(ic_power_regen);
+		RegisterFloat(speed_contest_only);
+		RegisterFloat(tracking_avoidance);
+		RegisterFloat(speed_stealth_invis);
+		RegisterFloat(loot_coin_mod);
+		RegisterFloat(mitigation_increase);
+		RegisterFloat(ammo_conservation_chance);
+		RegisterFloat(strikethrough);
+		RegisterFloat(status_bonus);
+		RegisterFloat(accuracy);
+		RegisterFloat(counter_strike);
+		RegisterFloat(shield_bash);
+		if (ver < 67650) {
+			RegisterFloat(weapon_damage_bonus);
+		}
+		if (ver >= 60114) {
+			RegisterFloat(weapon_damage_bonus_spell);
+		}
+		RegisterFloat(weapon_damage_bonus_melee);
+		RegisterFloat(riposte_chance_additional);
+		RegisterFloat(crit_mit);
+		RegisterFloat(toughness);
+		RegisterFloat(lethality);
+		RegisterFloat(stamina_bonus);
+		RegisterFloat(wis_mit_bonus);
+		RegisterFloat(heals_received);
+		RegisterFloat(heals_received_pct);
+		if (ver >= 67650) {
+			RegisterFloat(power_received);
+		}
+		RegisterFloat(crit_mit_pvp);
+		RegisterFloat(avoidance_base_bonus);
+		RegisterFloat(ic_savagery_regen);
+		RegisterFloat(ooc_savagery_regen);
+		RegisterFloat(savagery_regen);
+		RegisterFloat(savagery_gain_mod);
+		RegisterFloat(savagery_level_max);
+		if (ver >= 60114) {
+			RegisterFloat(ic_dissonance_regen);
+			RegisterFloat(ooc_dissonance_regen);
+			RegisterFloat(dissonance_regen);
+			RegisterFloat(dissonance_gain_mod);
+			RegisterFloat(ae_autoattack_avoid);
+			RegisterFloat(agnostic_damage_bonus);
+			RegisterFloat(agnostic_heal_bonus);
+			RegisterFloat(tithe_gain);
+			if (ver >= 67650) {
+				RegisterFloat(fervor);
+				RegisterFloat(resolve);
+				RegisterFloat(combat_mit);
+				RegisterFloat(ability_mit);
+				RegisterFloat(multi_attack_avoidance);
+				RegisterFloat(doublecast_spell_avoidance);
+				RegisterFloat(doublecast_ability_avoidance);
+				RegisterFloat(dps_mit);
+				RegisterFloat(fervor_mit);
+				RegisterFloat(flurry_avoidance);
+				RegisterFloat(weapon_damage_bonus_mit);
+				RegisterFloat(weapon_damage_bonus_melee_mit);
+				RegisterFloat(ability_mod_mit);
+				RegisterFloat(melee_damage_multiplier_mit);
+				RegisterFloat(heals_received_pot_mit);
+				RegisterFloat(heals_received_critbonus_mit);
+				RegisterFloat(heals_received_fervor_mit);
+				if (version >= 67804) {
+					RegisterFloat(power_received_fervor_mit);
+				}
+				RegisterFloat(heals_received_normalized_mit);
+				if (version >= 67804) {
+					RegisterFloat(flurry_multiplier);
+					RegisterFloat(flurry_multiplier_mitigation);
+				}
+			}
+		}
+	}
+};
+
 //This is all the primitive data which can be zeroed
 //Need to make this crap less ridiculous at some point
 struct CharacterSheetMiscData {
 	CharacterSheetMiscData() {
 		memset(this, 0, sizeof(*this));
+		breath = 30.f;
+		bCanLevelPast90 = true;
+		unknownCOEa = 6 ;
 	}
 
 	//Some elements are a different format in the packet from what we use, convert them here
-	char character_name[40];
-	char deity[32];
-	char last_name[20];
-	char house_zone[48];
-	char bind_zone[32];
 	int64_t hp;
-	int64_t baseHp;
 	int64_t maxHp;
+	int64_t maxHpBase;
 	float advExp;
 	float advExpNextLevel;
 	float advExpDebt;
@@ -35,17 +420,10 @@ struct CharacterSheetMiscData {
 	float tsExpDebt;
 	float tsVitality;
 
-
-	uint16_t unknown_1_1_MJ;
-	uint32_t unknown_1_2_MJ;
+	int32_t gmLevel;
 	uint16_t account_age_base;
-	uint16_t account_age_bonus;
+	uint32_t account_flags; //this sets the account age bonus time
 	
-	uint8_t unknown3;
-	
-	uint16_t character_name2_unknown;
-	
-	uint16_t character_name3_unknown;
 	int32_t base_savagery;
 	int32_t savagery_level;
 	int32_t max_savagery_level;
@@ -53,15 +431,16 @@ struct CharacterSheetMiscData {
 	int32_t dissonance;
 	int32_t max_dissonance;
 	int32_t base_dissonance;
-	uint32_t hp_regen;
-	uint32_t power_regen;
-	uint32_t unknown6[2];
-	float unknown7[2];
+	int32_t hp_regen;
+	int32_t power_regen;
+	int32_t savagery_regen_per_sec;
+	int32_t dissipation;
+	float ranged_attack_min_distance;
+	float ranged_attack_max_distance;
 	float stat_bonus_health;
 	float stat_bonus_power;
-	uint32_t bonus_health;
-	uint32_t unknown8;
-	uint32_t bonus_power;
+	int64_t bonus_health;
+	int32_t bonus_power;
 	float stat_bonus_damage;
 	uint16_t mitigation_pct_pve;
 	uint16_t mitigation_pct_pvp;
@@ -69,86 +448,85 @@ struct CharacterSheetMiscData {
 	float toughness_resist_dmg_pvp;
 	uint16_t lethality;
 	float lethality_pct;
-	uint16_t avoidance_pct;
-	uint16_t avoidance_reduction;
-	uint16_t avoidance;
-	uint16_t avoidance_max;
-	uint16_t avoidance_base;
-	uint16_t unknown10a;
-	uint16_t parry;
-	uint16_t unknown11;
-	uint16_t block;
-	uint16_t unknown12;
-	uint16_t uncontested_block;
-	uint16_t unknown13;
-	uint16_t uncontested_riposte;
-	uint16_t uncontested_dodge;
-	uint16_t uncontested_parry;
-	uint16_t unknown14;
+	int16_t avoidance_overall_chance;
+	int16_t avoidance_base;
+	int16_t avoidance_riposte_chance;
+	int16_t avoidance_riposte_chance_base;
+	int16_t avoidance_base_chance;
+	int16_t avoidance_base_chance_base;
+	int16_t avoidance_parry_chance;
+	int16_t avoidance_parry_chance_base;
+	int16_t avoidance_block_chance;
+	int16_t avoidance_block_chance_base;
+	int16_t avoidance_block_uncontested;
+	int16_t avoidance_deflection_uncontested;
+	int16_t avoidance_riposte_uncontested;
+	int16_t avoidance_dodge_uncontested;
+	int16_t avoidance_parry_uncontested;
+	uint16_t physical_absorb_pve;
 	uint16_t elemental_absorb_pve;
 	uint16_t noxious_absorb_pve;
 	uint16_t arcane_absorb_pve;
-	uint16_t unknown15;
+	uint16_t physical_absorb_pvp;
 	uint16_t elemental_absorb_pvp;
 	uint16_t noxious_absorb_pvp;
 	uint16_t arcane_absorb_pvp;
-	uint16_t unknown16;
+	uint16_t physical_dmg_reduction;
 	uint16_t elemental_dmg_reduction;
 	uint16_t noxious_dmg_reduction;
 	uint16_t arcane_dmg_reduction;
-	uint16_t unknown17;
+	uint16_t physical_dmg_reduction_pct;
 	uint16_t elemental_dmg_reduction_pct;
 	uint16_t noxious_dmg_reduction_pct;
 	uint16_t arcane_dmg_reduction_pct;
-	uint16_t unknown18[6];
 	uint16_t server_bonus;
 	uint16_t adventure_vet_bonus;
 	uint16_t tradeskill_vet_bonus;
 	uint16_t dungeon_finder_bonus;
-	uint32_t recruit_friend_bonus;
-	uint16_t unknown19;
+	uint16_t recruit_friend_bonus;
+	uint16_t recruit_friend_count;
+	bool bCanLevelPast90;
 	uint16_t adventure_vitality;
 	uint16_t adventure_vitality_yellow_arrow;
 	uint16_t adventure_vitality_blue_arrow;
 	uint16_t tradeskill_vitality;
 	uint16_t tradeskill_vitality_purple_arrow;
 	uint16_t tradeskill_vitality_blue_arrow;
-	uint16_t mentor_bonus;
-	uint8_t unknown20;
-	uint16_t assigned_aa;
+	float mentor_bonus;
+	uint16_t earned_aa;
 	uint16_t max_aa;
 	uint16_t unassigned_aa;
 	uint16_t aa_green_bar;
 	uint16_t adv_xp_to_aa_xp_slider;
 	uint16_t unknown21;
 	uint16_t aa_blue_bar;
-	uint16_t bonus_achievement_xp;
-	uint8_t unknown22[2];
-	uint8_t unknown23[2];
-	uint32_t items_found;
-	uint32_t named_npcs_killed;
-	uint32_t quests_completed;
-	uint32_t exploration_events;
-	uint32_t completed_collections;
-	uint16_t unknown24[10];
-	uint8_t unknown25;
-	uint16_t total_prestige_points;
-	uint16_t unassigned_prestige_points;
-	uint16_t unknown26;
-	uint16_t unknown27;
-	uint16_t total_tradeskill_points;
-	uint16_t unassigned_tradeskill_points;
-	uint16_t unknown28;
-	uint16_t unknown29;
-	uint16_t total_tradeskill_prestige_points;
-	uint16_t unassigned_tradeskill_prestige_points;
-	uint16_t unknown30;
-	uint16_t unknown31;
-	uint16_t unknown32;
-	uint16_t unknown33;
+	uint16_t aa_bonus_xp;
+	uint16_t aa_next_level;
+	uint32_t aa_items_found;
+	uint32_t aa_named_npcs_killed;
+	uint32_t aa_quests_completed;
+	uint32_t aa_exploration_events;
+	uint32_t aa_completed_collections;
+	uint32_t aa_level_up_events;
+	uint8_t unknown24[16];
+	uint32_t lastPictureSubmitionTime;
+	uint8_t unknown25d;
+	uint16_t prestige_earned_points;
+	uint16_t prestige_max_points;
+	float prestige_xp_current;
+	uint16_t ts_aa_earned_points;
+	uint16_t ts_aa_max_points;
+	float ts_aa_experience_current;
+	uint16_t ts_prestige_earned_points;
+	uint16_t ts_prestige_max_points;
+	float ts_prestige_experience_current;
+	float pet_experience_current;
 	uint32_t unknown34[5];
 	
-	uint8_t unknown35[486];
+	bool passive_unk_bool[128];
+	int32_t passive_last_index;
+
+	uint8_t unknown35[354];
 	uint8_t trauma_count;
 	uint8_t arcane_count;
 	uint8_t noxious_count;
@@ -156,8 +534,8 @@ struct CharacterSheetMiscData {
 	uint8_t curse_count;
 	
 	float breath;
-	uint8_t breathe_underwater;
-	float unknown36;
+	uint32_t breathable_environment_flags;
+	uint8_t unknown36;
 	uint32_t melee_pri_dmg_min;
 	uint32_t melee_pri_dmg_max;
 	float melee_pri_delay;
@@ -181,533 +559,40 @@ struct CharacterSheetMiscData {
 	float base_spell_crit;
 	float base_taunt_crit;
 	float base_heal_crit;
-	float unknown45;
-	float unknown46;
-	float unknown47;
-	float unknown48;
-	float unknown49;
-	float unknown50;
-	float unknown51;
-	float unknown52;
-	float unknown53;
-	float unknown54;
-	float unknown55;
-	float unknown56;
-	float unknown57;
-	float unknown58;
-	float unknown59;
-	float unknown60;
-	float unknown61;
-	float unknown62;
-	float unknown63;
-	float unknown64;
-	float unknown65;
-	float unknown66;
-	float unknown67;
-	float unknown68;
-	float unknown69;
-	float unknown70;
-	float unknown71;
-	float unknown72;
-	float unknown73;
-	float unknown74;
-	float unknown75;
-	float unknown76;
-	float unknown77;
-	float unknown78;
-	float unknown79;
-	float unknown80;
-	float unknown81;
-	float unknown82;
-	float unknown83;
-	float unknown84;
-	float unknown85;
-	float unknown86;
-	float unknown87;
-	float unknown88;
-	float unknown89;
-	float unknown90;
-	float unknown91;
-	float unknown92;
-	float unknown93;
-	float unknown94;
-	float unknown95;
-	float unknown96;
-	float unknown97;
-	float unknown98;
-	float unknown99;
-	float unknown100;
-	float unknown101;
-	float unknown102;
-	float unknown103;
-	float unknown104;
-	float unknown105;
-	float unknown106;
-	float unknown107;
-	float unknown108;
-	float unknown109;
-	float unknown110;
-	float out_of_combat_health_regen;
-	float out_of_combat_power_regen;
-	float in_combat_regen;
-	float deflect;
-	float increase_max_health;
-	float increase_max_health2;
-	float unknown117;
-	float increase_speed;
-	float unknown119;
-	float increase_ground_speed;
-	float increase_air_speed;
-	float unknown122;
-	float unknown123;
-	float unknown124;
-	float in_combat_movement_speed;
-	float haste;
-	float increase_max_power;
-	float increase_max_power2;
-	float unknown128;
-	float drunk;
-	float unknown129;
-	float hate_mod;
-	float adventure_effects_bonus;
-	float tradeskill_effects_bonus;
-	float aa_effects_bonus;
-	float unknown131;
-	float unknown131A;
-	float dps;
-	float unknown132;
-	float unknown133;
-	float unknown134;
-	float base_avoidance;
-	float unknown136;
-	float uncontested_riposte_pve;
-	float uncontested_parry_pve;
-	float unknown139;
-	float spell_multi_attack;
-	float unknown140;
-	float bountiful_harvest;
-	float block_chance;
-	float unknown141;
-	float unknown142;
-	float crit_chance;
-	float unknown143;
-	float unknown144;
-	float crit_bonus;
-	float potency;
-	float unknown145;
-	float reuse_speed;
-	float recovery_speed;
-	float casting_speed;
-	float spell_reuse_speed;
-	float unknown146;
-	float unknown147;
-	float decrease_falling_dmg;
-	float unknown149;
-	float unknown150;
-	float unknown151;
-	float unknown152;
-	float unknown153;
-	float unknown154;
-	float unknown155;
-	float unknown156;
-	float loot_coin;
-	float mitigation_increase;
-	float unknown159;
-	float strikethrough;
-	float unknown160;
-	float accuracy;
-	float unknown161;
-	float unknown162;
-	float wdb;
-	float spell_wdb;
-	float unknown165;
-	float unknown166;
-	float unknown167;
-	float unknown168;
-	float lethality_pve;
-	float unknown170;
-	float unknown171;
-	float unknown172;
-	float unknown173;
-	float pvp_crit_mit;
-	float unknown175;
-	float unknown200;
-	float unknown201;
-	float unknown202;
-	float unknown203;
-	float unknown204;
-	float unknown205;
-	float unknown206;
-	float unknown207;
-	float unknown208;
-	float unknown209;
-	float unknown210;
-	float unknown211;
-	float unknown212;
-	float unknown213;
-	float unknown214;
-	float unknown215;
-	float unknown216;
-	float unknown217;
-	float unknown218;
-	float unknown219;
-	float unknown220;
-	float unknown221;
-	float unknown222;
-	float unknown223;
-	float unknown224;
-	float unknown225;
-	float unknown226;
-	float unknown227;
-	float unknown228;
-	float unknown229;
-	float unknown230;
-	float unknown231;
-	float unknown232;
-	float unknown233;
-	float unknown234;
-	float unknown235;
-	float unknown236;
-	float unknown237;
-	float unknown238;
-	float unknown239;
-	float unknown240;
-	float unknown241;
-	float unknown242;
-	float unknown243;
-	float unknown244;
-	float unknown245;
-	float unknown246;
-	float unknown247;
-	float uncontested_riposte_gear_cap;
-	float uncontested_parry_gear_cap;
-	float uncontested_dodge_gear_cap;
-	float unknown251;
-	float unknown252;
-	float unknown253;
-	float unknown254;
-	float unknown255;
-	float unknown256;
-	float unknown257;
-	float unknown258;
-	float unknown259;
-	float unknown260;
-	float unknown261;
-	float unknown262;
-	float unknown263;
-	float unknown264;
-	float unknown265;
-	float unknown266;
-	float unknown267;
-	float unknown268;
-	float unknown269;
-	float unknown270;
-	float unknown271;
-	float unknown272;
-	float unknown273;
-	float unknown274;
-	float unknown275;
-	float unknown276;
-	float unknown277;
-	float unknown278;
-	float unknown279;
-	float unknown280;
-	float unknown281;
-	float unknown282;
-	float unknown283;
-	float unknown284;
-	float unknown285;
-	float unknown286;
-	float unknown287;
-	float unknown288;
-	float unknown289;
-	float unknown290;
-	float unknown291;
-	float unknown292;
-	float unknown293;
-	float unknown294;
-	float unknown295;
-	float unknown296;
-	float unknown297;
-	float unknown298;
-	float unknown299;
-	float unknown300;
-	float unknown301;
-	float unknown302;
-	float unknown303;
-	float unknown304;
-	float unknown305;
-	float unknown306;
-	float unknown307;
-	float unknown308;
-	float out_of_combat_health_regen_pvp;
-	float out_of_combat_power_regen_pvp;
-	float in_combat_regen_pvp;
-	float deflect_pvp;
-	float increase_max_heath_pvp;
-	float increase_max_health2_pvp;
-	float unknown312;
-	float increase_speed_pvp;
-	float unknown313;
-	float increase_ground_speed_pvp;
-	float increase_air_speed_pvp;
-	float unknown314;
-	float unknown315;
-	float unknown316;
-	float in_combat_movement_speed_pvp;
-	float Haste_pvp;
-	float increase_max_power_pvp;
-	float increase_max_power2_pvp;
-	float unknown321;
-	float unknown322;
-	float unknown323;
-	float hate_mod_pvp;
-	float unknown325;
-	float unknown326;
-	float unknown327;
-	float unknown328;
-	float dps_pvp;
-	float unknown330;
-	float unknown331;
-	float unknown332;
-	float base_avoidance_pvp;
-	float unknown334;
-	float uncontested_riposte_pvp;
-	float uncontested_parry_pvp;
-	float unknown337;
-	float unknown338;
-	float multi_attack_pvp;
-	float spell_multi_attack_pvp;
-	float unknown341;
-	float unknown342;
-	float unknown343;
-	float block_chance_pvp;
-	float unknown345;
-	float unknown346;
-	float crit_chance_pvp;
-	float unknown348;
-	float unknown349;
-	float crit_bonus_pvp;
-	float potency_pvp;
-	float unknown352;
-	float reuse_speed_pvp;
-	float recovery_speed_pvp;
-	float casting_speed_pvp;
-	float unknown356;
-	float unknown357;
-	float unknown358;
-	float decrease_falling_dmg_pvp;
-	float unknown360;
-	float unknown361;
-	float unknown362;
-	float adventure_effects_bonus_2;
-	float tradeskill_effects_bonus_2;
-	float aa_effects_bonus_2;
-	float unknown366;
-	float unknown367;
-	float loot_coin_pvp;
-	float mitigation_increase_pvp;
-	float unknown370;
-	float strikethrough_pvp;
-	float unknown372;
-	float unknown373;
-	float unknown374;
-	float unknown375;
-	float unknown376;
-	float unknown377;
-	float unknown378;
-	float unknown379;
-	float unknown380;
-	float unknown381;
-	float lethality_pvp;
-	float unknown383;
-	float unknown384;
-	float unknown385;
-	float unknown386;
-	float unknown387;
-	float unknown388;
-	float unknown389;
-	float unknown390;
-	float unknown391;
-	float unknown392;
-	float unknown393;
-	float unknown394;
-	float unknown395;
-	float unknown396;
-	float unknown397;
-	float unknown398;
-	float unknown399;
-	float unknown400;
-	float unknown401;
-	float unknown402;
-	float unknown403;
-	float unknown404;
-	float unknown405;
-	float unknown406;
-	float unknown407;
-	float unknown408;
-	float unknown409;
-	float unknown410;
-	float durability_mod;
-	float durability_add;
-	float progress_mod;
-	float progress_add;
-	float success_mod;
-	float crit_success_mod;
-	float unknown417;
-	float rare_harvest_chance;
-	float max_crafting;
-	float component_refund;
-	float unknown421;
-	float refine_quality_mod;
-	float ex_durability_mod;
-	float ex_durability_add;
-	float ex_crit_success_mod;
-	float ex_crit_failure_mod;
-	float ex_progress_mod;
-	float ex_progress_add;
-	float ex_success_mod;
-	float unknown430;
-	float unknown431;
-	float unknown432;
-	float unknown433;
-	float unknown434;
-	float unknown435;
-	float unknown436;
-	float unknown437;
-	float unknown438;
-	float unknown439;
-	float unknown440;
-	float unknown441;
-	uint8_t unknown180;
-	uint8_t unknown524;
-	uint8_t unknown181a;
-	uint8_t unknown181b;
-	float unknown442;
-	float unknown443;
-	float unknown444;
-	float unknown445;
-	uint32_t hate_2;
-	float unknown447;
-	float unknown448;
-	float unknown449;
-	float unknown450;
-	float unknown451;
-	uint32_t hate_mod_2;
-	float unknown453;
-	float unknown454;
-	float unknown455;
-	float unknown456;
-	float unknown457;
-	uint32_t dps_2;
-	float unknown459;
-	float unknown460;
-	float unknown461;
-	float unknown462;
-	float unknown463;
-	float unknown464;
-	float unknown465;
-	float unknown466;
-	uint32_t ae_autoattack_2;
-	float unknown468;
-	uint32_t spell_doublecast_2;
-	uint32_t flurry_2;
-	float unknown471;
-	uint32_t bountiful_harvest_2;
-	uint32_t block_chance_2;
-	float unknown474;
-	float unknown475;
-	uint32_t crit_chance_2;
-	float unknown477;
-	float unknown478;
-	uint32_t crit_bonus_2;
-	float unknown480;
-	float unknown481;
-	uint32_t reuse_speed_2;
-	uint32_t recovery_speed_2;
-	uint32_t casting_speed_2;
-	uint32_t spell_reuse_speed_2;
-	float unknown486;
-	float unknown487;
-	float unknown488;
-	float unknown489;
-	float unknown490;
-	float unknown491;
-	float unknown492;
-	float unknown493;
-	float unknown494;
-	float unknown495;
-	float unknown496;
-	float unknown497;
-	float unknown498;
-	float unknown499;
-	uint32_t strikethrough_2;
-	float unknown501;
-	uint32_t accuracy_2;
-	float unknown503;
-	float unknown504;
-	uint32_t wdb_2;
-	uint32_t spell_wdb_2;
-	float unknown507;
-	float unknown508;
-	float unknown509;
-	float unknown510;
-	float unknown511;
-	float unknown512;
-	float unknown513;
-	float unknown514;
-	uint32_t haste_tt;
-	uint32_t dps_pve_tt;
-	uint32_t dps_pvp_tt;
-	float multi_attack_pve_tt;
-	float multi_attack_pvp_tt;
-	float unknown520;
-	float unknown521;
-	float unknown522;
-	float unknown523;
-	uint8_t unknown550;
-	uint16_t vision;
-	uint8_t unknown551;
-	uint8_t unknown552[24];
 	float adventure_effects_cap;
 	float tradeskill_effects_cap;
 	float aa_effects_cap;
-	uint8_t unknown525[1026];
-	uint16_t unknown182;
-	uint8_t unknown183[456];
-	uint32_t pet_id;
-	char pet_name[32];
-	uint8_t unknown184[9];
-	float pet_health_pct;
-	float pet_power_pct;
-	uint8_t unknown185;
-	uint8_t pet_movement;
-	uint8_t pet_behavior;
-	uint8_t unknown186[8];
-	uint32_t merc_id;
-	char merc_name[32];
-	uint8_t merc_unknown21[9];
-	float merc_health_pct;
-	float merc_power_pct;
-	uint8_t merc_unknown21b;
-	uint8_t merc_movement;
-	uint8_t merc_behavior;
-	uint8_t merc_unknown21c[73];
-	uint32_t group_leader_id;
-	uint8_t merc_unknown21cc[4];
-	float rain;
-	float rain2;
+	uint8_t unknown525a[36];
+	//Known useful spell state values:
+	//1<<1 = charm (prevents things like sitting and changing targets while charmed)
+	//1<<7 = purple (ultravision)
+	//1<<8 = heat (infravision)
+	//1<<9 = piss (sonicvision)
+	//1<<10 = colorblind vision (grey)
+	//1<<11 = green vision
+	//1<<12 = red vision
+	//1<<13 = fish vision
+	//a bunch of others but not sure that anything else actually "does" anything for the client
+	uint64_t spell_state_flags;
+	uint8_t unknown525b[6];
+	float humidity;
+	float wind_direction;
 	uint8_t unknown527[4];
-	uint32_t status_points;
-	uint32_t guild_status;
-	uint8_t unknown526[141];
-	uint8_t unknown187[11];
-	uint8_t unknown188[55];
+	uint64_t guild_status;
+
+	//Not sure if this was added in coe but that is the earliest struct so far i've added with it
+	uint8_t unknownCOEa;
+	uint8_t unknown526[151];
+	uint8_t unknown188[52];
+
+protected:
+	int32_t bonus_health_do_not_set;
 };
 
 class UpdateCharacterSheetMsgData : public CharacterSheetMiscData, public CharacterSheet, public PacketEncodedData {
 public:
-	UpdateCharacterSheetMsgData(uint32_t ver) : PacketEncodedData(ver), CharacterSheet(nullptr), groupSheet(ver) {
+	UpdateCharacterSheetMsgData(uint32_t ver) : PacketEncodedData(ver), CharacterSheet(nullptr), groupSheet(ver),
+		pve_props(version), pvp_props(version), gear_cap_props(version), hard_cap_props(version), ts_props(version), base_props(version) {
 		for (uint8_t i = 0; i < 45; i++)
 			spell_effects[i].ResetVersion(version);
 		for (uint8_t i = 0; i < 45; i++)
@@ -719,7 +604,8 @@ public:
 		RegisterElements();
 	}
 
-	UpdateCharacterSheetMsgData(uint32_t version, const CharacterSheet& sheet) : PacketEncodedData(version), CharacterSheet(sheet), groupSheet(version) {
+	UpdateCharacterSheetMsgData(uint32_t version, const CharacterSheet& sheet) : PacketEncodedData(version), CharacterSheet(sheet),
+		groupSheet(version), pve_props(version), pvp_props(version), gear_cap_props(version), hard_cap_props(version), ts_props(version), base_props(version) {
 		for (uint8_t i = 0; i < 45; i++)
 			spell_effects[i].ResetVersion(version);
 		for (uint8_t i = 0; i < 45; i++)
@@ -731,7 +617,7 @@ public:
 		RegisterElements();
 	}
 
-	void WriteElement(unsigned char* outbuf, uint32_t& offset) override;
+	void PreWrite() override;
 
 	Substruct_SpellEffects spell_effects[45];
 	Substruct_SpellEffects detrimental_spell_effects[45];
@@ -739,867 +625,36 @@ public:
 	Substruct_MaintainedEffects maintained_effects[30];
 	Substruct_GroupSheet groupSheet;
 
+	Substruct_SpellProps pve_props;
+	//I think these are the max values you can get of blue stats from gear if set? i only ever see uncontested riposte/parry/dodge
+	Substruct_SpellProps gear_cap_props;
+	Substruct_SpellProps pvp_props;
+	Substruct_SpellProps hard_cap_props;
+	Substruct_TsSpellProps ts_props;
+	Substruct_SpellProps base_props;
+
 private:
-	void RegisterElements() {
-		static EntityAttributeSheet structDumperHackSheet;
+	double advExp_do_not_set;
+	double advExpNextLevel_do_not_set;
+	double tsExp_do_not_set;
+	double tsExpNextLevel_do_not_set;
 
-		EntityAttributeSheet* attributes = this->attributes ? this->attributes : &structDumperHackSheet;
+	int16_t str_do_not_set;
+	int16_t sta_do_not_set;
+	int16_t agi_do_not_set;
+	int16_t wis_do_not_set;
+	int16_t int_do_not_set;
 
-		char& char_name = character_name[0];
-		RegisterChar(char_name)->SetCount(40);
-		RegisterUInt16(unknown_1_1_MJ);
-		uint8_t& race = *this->race;
-		RegisterUInt8(race);
-		uint8_t& gender = *this->gender;
-		RegisterUInt8(gender);
-		RegisterUInt8(alignment);
-		RegisterUInt32(advArchetype);
-		RegisterUInt32(advBaseClass);
-		RegisterUInt32(advClass);
-		RegisterUInt32(tsArchetype);
-		RegisterUInt32(tsBaseClass);
-		RegisterUInt32(tsClass);
-		uint16_t& level = *advOrigLevel;
-		uint16_t& effective_level = *advLevel;
-		RegisterUInt16(level);
-		RegisterUInt16(effective_level);
-		RegisterUInt16(tsLevel);
-		RegisterUInt32(unknown_1_2_MJ);
-		RegisterUInt16(account_age_base);
-		RegisterUInt16(account_age_bonus);
-		char& Deity = deity[0];
-		RegisterChar(Deity)->SetCount(32);
-		char& Last_name = last_name[0];
-		RegisterChar(Last_name)->SetCount(20);
-		RegisterUInt8(unknown3);
-		char& char_name2 = character_name[0];
-		RegisterChar(char_name2)->SetCount(40);
-		RegisterUInt16(character_name2_unknown);
-		char& char_name3 = character_name[0];
-		RegisterChar(char_name3)->SetCount(40);
-		RegisterUInt16(character_name3_unknown);
-		RegisterInt64(hp);
-		RegisterInt64(maxHp);
-		RegisterInt64(baseHp);
+	int16_t str_base_do_not_set;
+	int16_t sta_base_do_not_set;
+	int16_t agi_base_do_not_set;
+	int16_t wis_base_do_not_set;
+	int16_t int_base_do_not_set;
 
-		int32_t& current_power = attributes->power.currentValue;
-		int32_t& max_power = attributes->power.maxValue;
-		int32_t& base_power = attributes->power.baseValue;
-		RegisterInt32(current_power);
-		RegisterInt32(max_power);
-		RegisterInt32(base_power);
+	void RegisterElements() override;
+	void RegisterElements67650();
 
-		auto& conc_used = reinterpret_cast<uint8_t&>(attributes->concentration.currentValue);
-		auto& conc_max = reinterpret_cast<uint8_t&>(attributes->concentration.maxValue);
-		RegisterUInt8(conc_used);
-		RegisterUInt8(conc_max);
-
-		int32_t& savagery = attributes->savagery.currentValue;
-		int32_t& max_savagery = attributes->savagery.maxValue;
-		int32_t& base_savagery = attributes->savagery.baseValue;
-		RegisterInt32(savagery);
-		RegisterInt32(max_savagery);
-		RegisterInt32(base_savagery);
-		RegisterInt32(savagery_level);
-		RegisterInt32(max_savagery_level);
-		RegisterInt32(base_savagery_level);
-		RegisterInt32(dissonance);
-		RegisterInt32(max_dissonance);
-		RegisterInt32(base_dissonance);
-		
-		RegisterUInt32(hp_regen);
-		RegisterUInt32(power_regen);
-
-		uint32_t& Unknown6 = unknown6[0];
-		RegisterUInt32(Unknown6)->SetCount(2);
-		
-		float& Unknown7 = unknown7[0];
-		RegisterFloat(Unknown7)->SetCount(2);
-		
-		RegisterFloat(stat_bonus_health);
-		RegisterFloat(stat_bonus_power);
-		RegisterUInt32(bonus_health);
-		RegisterUInt32(unknown8);
-		RegisterUInt32(bonus_power);
-		RegisterFloat(stat_bonus_damage);
-		RegisterUInt16(mitigation_pct_pve);
-		RegisterUInt16(mitigation_pct_pvp);
-		RegisterUInt16(toughness);
-		RegisterFloat(toughness_resist_dmg_pvp);
-		RegisterUInt16(lethality);
-		RegisterFloat(lethality_pct);
-		RegisterUInt16(avoidance_pct);
-		RegisterUInt16(avoidance_reduction);
-		RegisterUInt16(avoidance);
-		RegisterUInt16(avoidance_max);
-		RegisterUInt16(avoidance_base);
-		RegisterUInt16(unknown10a);
-		RegisterUInt16(parry);
-		RegisterUInt16(unknown11);
-		RegisterUInt16(block);
-		RegisterUInt16(unknown12);
-		RegisterUInt16(uncontested_block);
-		RegisterUInt16(unknown13);
-		RegisterUInt16(uncontested_riposte);
-		RegisterUInt16(uncontested_dodge);
-		RegisterUInt16(uncontested_parry);
-		int32_t& str = attributes->str.currentValue;
-		int32_t& sta = attributes->sta.currentValue;
-		int32_t& agi = attributes->agi.currentValue;
-		int32_t& wis = attributes->wis.currentValue;
-		int32_t& intel = attributes->intel.currentValue;
-		RegisterInt32(str);
-		RegisterInt32(sta);
-		RegisterInt32(agi);
-		RegisterInt32(wis);
-		RegisterInt32(intel);
-		int32_t& str_base = attributes->str.baseValue;
-		int32_t& sta_base = attributes->sta.baseValue;
-		int32_t& agi_base = attributes->agi.baseValue;
-		int32_t& wis_base = attributes->wis.baseValue;
-		int32_t& intel_base = attributes->intel.baseValue;
-		RegisterInt32(str_base);
-		RegisterInt32(sta_base);
-		RegisterInt32(agi_base);
-		RegisterInt32(wis_base);
-		RegisterInt32(intel_base);
-		int32_t& mitigation_cur = attributes->mitigation.currentValue;
-		RegisterInt32(mitigation_cur);
-
-		int32_t& noxious = attributes->noxious.currentValue;
-		int32_t& elemental = attributes->elemental.currentValue;
-		int32_t& arcane = attributes->arcane.currentValue;
-		RegisterInt32(elemental);
-		RegisterInt32(noxious);
-		RegisterInt32(arcane);
-		int32_t& mitigation_base = attributes->mitigation.baseValue;
-		RegisterInt32(mitigation_base);
-		int32_t& noxious_base = attributes->noxious.baseValue;
-		int32_t& elemental_base = attributes->elemental.baseValue;
-		int32_t& arcane_base = attributes->arcane.baseValue;
-		RegisterInt32(elemental_base);
-		RegisterInt32(noxious_base);
-		RegisterInt32(arcane_base);
-
-		RegisterUInt16(unknown14);
-		RegisterUInt16(elemental_absorb_pve);
-		RegisterUInt16(noxious_absorb_pve);
-		RegisterUInt16(arcane_absorb_pve);
-		RegisterUInt16(unknown15);
-		RegisterUInt16(elemental_absorb_pvp);
-		RegisterUInt16(noxious_absorb_pvp);
-		RegisterUInt16(arcane_absorb_pvp);
-		RegisterUInt16(unknown16);
-		RegisterUInt16(elemental_dmg_reduction);
-		RegisterUInt16(noxious_dmg_reduction);
-		RegisterUInt16(arcane_dmg_reduction);
-		RegisterUInt16(unknown17);
-		RegisterUInt16(elemental_dmg_reduction_pct);
-		RegisterUInt16(noxious_dmg_reduction_pct);
-		RegisterUInt16(arcane_dmg_reduction_pct);
-		
-		RegisterFloat(advExp);
-		RegisterFloat(advExpNextLevel);
-		RegisterFloat(advExpDebt);
-		RegisterFloat(tsExp);
-		RegisterFloat(tsExpNextLevel);
-		RegisterFloat(tsExpDebt);
-
-		if (GetVersion() < 60114) {
-			RescopeArrayElement(unknown18);
-			RegisterUInt16(unknown18)->SetCount(6);
-		}
-		
-		RegisterUInt16(server_bonus);
-		RegisterUInt16(adventure_vet_bonus);
-		RegisterUInt16(tradeskill_vet_bonus);
-		RegisterUInt16(dungeon_finder_bonus);
-		RegisterUInt32(recruit_friend_bonus);
-		RegisterUInt16(unknown19);
-		RegisterUInt16(adventure_vitality);
-		RegisterUInt16(adventure_vitality_yellow_arrow);
-		RegisterUInt16(adventure_vitality_blue_arrow);
-		RegisterUInt16(tradeskill_vitality);
-		RegisterUInt16(tradeskill_vitality_purple_arrow);
-		RegisterUInt16(tradeskill_vitality_blue_arrow);
-		RegisterUInt16(mentor_bonus);
-		RegisterUInt8(unknown20);
-		RegisterUInt16(assigned_aa);
-		RegisterUInt16(max_aa);
-		RegisterUInt16(unassigned_aa);
-		RegisterUInt16(aa_green_bar);
-		RegisterUInt16(adv_xp_to_aa_xp_slider);
-		RegisterUInt16(unknown21);
-		RegisterUInt16(aa_blue_bar);
-		RegisterUInt16(bonus_achievement_xp);
-
-		uint8_t& Unknown22 = unknown22[0];
-		RegisterUInt8(Unknown22)->SetCount(2);
-		
-		uint8_t& Unknown23 = unknown23[0];
-		RegisterUInt8(Unknown23)->SetCount(2);
-		
-		RegisterUInt32(items_found);
-		RegisterUInt32(named_npcs_killed);
-		RegisterUInt32(quests_completed);
-		RegisterUInt32(exploration_events);
-		RegisterUInt32(completed_collections);
-
-		uint16_t& Unknown24 = unknown24[0];
-		RegisterUInt16(Unknown24)->SetCount(10);
-		
-		RegisterUInt8(unknown25);
-		RegisterUInt16(total_prestige_points);
-		RegisterUInt16(unassigned_prestige_points);
-		RegisterUInt16(unknown26);
-		RegisterUInt16(unknown27);
-		RegisterUInt16(total_tradeskill_points);
-		RegisterUInt16(unassigned_tradeskill_points);
-		RegisterUInt16(unknown28);
-		RegisterUInt16(unknown29);
-		RegisterUInt16(total_tradeskill_prestige_points);
-		RegisterUInt16(unassigned_tradeskill_prestige_points);
-		RegisterUInt16(unknown30);
-		RegisterUInt16(unknown31);
-		RegisterUInt16(unknown32);
-		RegisterUInt16(unknown33);
-
-		uint32_t& coins_copper = currency.copper;
-		uint32_t& coins_silver = currency.silver;
-		uint32_t& coins_gold = currency.gold;
-		uint32_t& coins_plat = currency.platinum;
-		RegisterUInt32(coins_copper);
-		RegisterUInt32(coins_silver);
-		RegisterUInt32(coins_gold);
-		RegisterUInt32(coins_plat);
-
-		RescopeArrayElement(unknown34);
-		RegisterUInt32(unknown34)->SetCount(5);
-
-		// Error parsing the struct, unknown is an unknown type(spell_effects);
-		RescopeArrayElement(spell_effects);
-		RegisterSubstruct(spell_effects)->SetCount(45);
-
-		// Error parsing the struct, unknown is an unknown type(detrimental_spell_effects);
-		RescopeArrayElement(detrimental_spell_effects);
-		RegisterSubstruct(detrimental_spell_effects)->SetCount(45);
-
-		// Error parsing the struct, unknown is an unknown type(passive_spell_effects);
-		RescopeArrayElement(passive_spell_effects);
-		RegisterSubstruct(passive_spell_effects)->SetCount(100);
-
-		uint8_t& Unknown35 = unknown35[0];
-		RegisterUInt8(Unknown35)->SetCount(486);
-
-		RegisterUInt8(trauma_count);
-		RegisterUInt8(arcane_count);
-		RegisterUInt8(noxious_count);
-		RegisterUInt8(elemental_count);
-		RegisterUInt8(curse_count);
-
-		// Error parsing the struct, unknown is an unknown type(maintained_effects);
-		RescopeArrayElement(maintained_effects);
-		RegisterSubstruct(maintained_effects)->SetCount(30);
-
-		RegisterFloat(breath);
-		RegisterUInt8(breathe_underwater);
-		RegisterFloat(unknown36);
-		RegisterUInt32(melee_pri_dmg_min);
-		RegisterUInt32(melee_pri_dmg_max);
-		RegisterFloat(melee_pri_delay);
-		RegisterUInt32(melee_sec_dmg_min);
-		RegisterUInt32(melee_sec_dmg_max);
-		RegisterFloat(melee_sec_delay);
-		RegisterUInt32(ranged_dmg_min);
-		RegisterUInt32(ranged_dmg_max);
-		RegisterFloat(ranged_delay);
-		RegisterUInt32(unknown37);
-		RegisterUInt32(unknown38);
-		RegisterUInt32(unknown39);
-		RegisterUInt32(unknown40);
-		RegisterFloat(ability_mod_pve);
-		RegisterFloat(unknown41);
-		RegisterFloat(unknown42);
-		RegisterFloat(unknown43);
-		RegisterFloat(unknown44);
-		RegisterFloat(ability_mod_pvp);
-		RegisterFloat(base_melee_crit);
-		RegisterFloat(base_spell_crit);
-		RegisterFloat(base_taunt_crit);
-		RegisterFloat(base_heal_crit);
-		RegisterUInt32(flags);
-		RegisterUInt32(flags2);
-		RegisterFloat(unknown45);
-		RegisterFloat(unknown46);
-		RegisterFloat(unknown47);
-		RegisterFloat(unknown48);
-		RegisterFloat(unknown49);
-		RegisterFloat(unknown50);
-		RegisterFloat(unknown51);
-		RegisterFloat(unknown52);
-		RegisterFloat(unknown53);
-		RegisterFloat(unknown54);
-		RegisterFloat(unknown55);
-		RegisterFloat(unknown56);
-		RegisterFloat(unknown57);
-		RegisterFloat(unknown58);
-		RegisterFloat(unknown59);
-		RegisterFloat(unknown60);
-		RegisterFloat(unknown61);
-		RegisterFloat(unknown62);
-		RegisterFloat(unknown63);
-		RegisterFloat(unknown64);
-		RegisterFloat(unknown65);
-		RegisterFloat(unknown66);
-		RegisterFloat(unknown67);
-		RegisterFloat(unknown68);
-		RegisterFloat(unknown69);
-		RegisterFloat(unknown70);
-		RegisterFloat(unknown71);
-		RegisterFloat(unknown72);
-		RegisterFloat(unknown73);
-		RegisterFloat(unknown74);
-		RegisterFloat(unknown75);
-		RegisterFloat(unknown76);
-		RegisterFloat(unknown77);
-		RegisterFloat(unknown78);
-		RegisterFloat(unknown79);
-		RegisterFloat(unknown80);
-		RegisterFloat(unknown81);
-		RegisterFloat(unknown82);
-		RegisterFloat(unknown83);
-		RegisterFloat(unknown84);
-		RegisterFloat(unknown85);
-		RegisterFloat(unknown86);
-		RegisterFloat(unknown87);
-		RegisterFloat(unknown88);
-		RegisterFloat(unknown89);
-		RegisterFloat(unknown90);
-		RegisterFloat(unknown91);
-		RegisterFloat(unknown92);
-		RegisterFloat(unknown93);
-		RegisterFloat(unknown94);
-		RegisterFloat(unknown95);
-		RegisterFloat(unknown96);
-		RegisterFloat(unknown97);
-		RegisterFloat(unknown98);
-		RegisterFloat(unknown99);
-		RegisterFloat(unknown100);
-		RegisterFloat(unknown101);
-		RegisterFloat(unknown102);
-		RegisterFloat(unknown103);
-		RegisterFloat(unknown104);
-		RegisterFloat(unknown105);
-		RegisterFloat(unknown106);
-		RegisterFloat(unknown107);
-		RegisterFloat(unknown108);
-		RegisterFloat(unknown109);
-		RegisterFloat(unknown110);
-		RegisterFloat(out_of_combat_health_regen);
-		RegisterFloat(out_of_combat_power_regen);
-		RegisterFloat(in_combat_regen);
-		RegisterFloat(deflect);
-		RegisterFloat(increase_max_health);
-		RegisterFloat(increase_max_health2);
-		RegisterFloat(unknown117);
-		RegisterFloat(increase_speed);
-		RegisterFloat(unknown119);
-		RegisterFloat(increase_ground_speed);
-		RegisterFloat(increase_air_speed);
-		RegisterFloat(unknown122);
-		RegisterFloat(unknown123);
-		RegisterFloat(unknown124);
-		RegisterFloat(in_combat_movement_speed);
-		RegisterFloat(haste);
-		RegisterFloat(increase_max_power);
-		RegisterFloat(increase_max_power2);
-		RegisterFloat(unknown128);
-		RegisterFloat(drunk);
-		RegisterFloat(unknown129);
-		RegisterFloat(hate_mod);
-		RegisterFloat(adventure_effects_bonus);
-		RegisterFloat(tradeskill_effects_bonus);
-		RegisterFloat(aa_effects_bonus);
-		RegisterFloat(unknown131);
-		RegisterFloat(unknown131A);
-		RegisterFloat(dps);
-		RegisterFloat(unknown132);
-		RegisterFloat(unknown133);
-		RegisterFloat(unknown134);
-		RegisterFloat(base_avoidance);
-		RegisterFloat(unknown136);
-		RegisterFloat(uncontested_riposte_pve);
-		RegisterFloat(uncontested_parry_pve);
-		RegisterFloat(unknown139);
-		float& melee_ae = attributes->aeAttackChance.currentValue;
-		RegisterFloat(melee_ae);
-		float& multi_attack = attributes->multiAttackChance.baseValue;
-		RegisterFloat(multi_attack);
-		RegisterFloat(spell_multi_attack);
-		float& flurry = attributes->flurryChance.baseValue;
-		RegisterFloat(flurry);
-		RegisterFloat(unknown140);
-		RegisterFloat(bountiful_harvest);
-		RegisterFloat(block_chance);
-		RegisterFloat(unknown141);
-		RegisterFloat(unknown142);
-		RegisterFloat(crit_chance);
-		RegisterFloat(unknown143);
-		RegisterFloat(unknown144);
-		RegisterFloat(crit_bonus);
-		RegisterFloat(potency);
-		RegisterFloat(unknown145);
-		RegisterFloat(reuse_speed);
-		RegisterFloat(recovery_speed);
-		RegisterFloat(casting_speed);
-		RegisterFloat(spell_reuse_speed);
-		RegisterFloat(unknown146);
-		RegisterFloat(unknown147);
-		RegisterFloat(decrease_falling_dmg);
-		RegisterFloat(unknown149);
-		RegisterFloat(unknown150);
-		RegisterFloat(unknown151);
-		RegisterFloat(unknown152);
-		RegisterFloat(unknown153);
-		RegisterFloat(unknown154);
-		RegisterFloat(unknown155);
-		RegisterFloat(unknown156);
-		RegisterFloat(loot_coin);
-		RegisterFloat(mitigation_increase);
-		RegisterFloat(unknown159);
-		RegisterFloat(strikethrough);
-		RegisterFloat(unknown160);
-		RegisterFloat(accuracy);
-		RegisterFloat(unknown161);
-		RegisterFloat(unknown162);
-		RegisterFloat(wdb);
-		RegisterFloat(spell_wdb);
-		RegisterFloat(unknown165);
-		RegisterFloat(unknown166);
-		RegisterFloat(unknown167);
-		RegisterFloat(unknown168);
-		RegisterFloat(lethality_pve);
-		RegisterFloat(unknown170);
-		RegisterFloat(unknown171);
-		RegisterFloat(unknown172);
-		RegisterFloat(unknown173);
-		RegisterFloat(pvp_crit_mit);
-		RegisterFloat(unknown175);
-		RegisterFloat(unknown200);
-		RegisterFloat(unknown201);
-		RegisterFloat(unknown202);
-		RegisterFloat(unknown203);
-		RegisterFloat(unknown204);
-		RegisterFloat(unknown205);
-		RegisterFloat(unknown206);
-		RegisterFloat(unknown207);
-		RegisterFloat(unknown208);
-		RegisterFloat(unknown209);
-		RegisterFloat(unknown210);
-		RegisterFloat(unknown211);
-		RegisterFloat(unknown212);
-		RegisterFloat(unknown213);
-		RegisterFloat(unknown214);
-		RegisterFloat(unknown215);
-		RegisterFloat(unknown216);
-		RegisterFloat(unknown217);
-		RegisterFloat(unknown218);
-		RegisterFloat(unknown219);
-		RegisterFloat(unknown220);
-		RegisterFloat(unknown221);
-		RegisterFloat(unknown222);
-		RegisterFloat(unknown223);
-		RegisterFloat(unknown224);
-		RegisterFloat(unknown225);
-		RegisterFloat(unknown226);
-		RegisterFloat(unknown227);
-		RegisterFloat(unknown228);
-		RegisterFloat(unknown229);
-		RegisterFloat(unknown230);
-		RegisterFloat(unknown231);
-		RegisterFloat(unknown232);
-		RegisterFloat(unknown233);
-		RegisterFloat(unknown234);
-		RegisterFloat(unknown235);
-		RegisterFloat(unknown236);
-		RegisterFloat(unknown237);
-		RegisterFloat(unknown238);
-		RegisterFloat(unknown239);
-		RegisterFloat(unknown240);
-		RegisterFloat(unknown241);
-		RegisterFloat(unknown242);
-		RegisterFloat(unknown243);
-		RegisterFloat(unknown244);
-		RegisterFloat(unknown245);
-		RegisterFloat(unknown246);
-		RegisterFloat(unknown247);
-		RegisterFloat(uncontested_riposte_gear_cap);
-		RegisterFloat(uncontested_parry_gear_cap);
-		RegisterFloat(uncontested_dodge_gear_cap);
-		RegisterFloat(unknown251);
-		RegisterFloat(unknown252);
-		RegisterFloat(unknown253);
-		RegisterFloat(unknown254);
-		RegisterFloat(unknown255);
-		RegisterFloat(unknown256);
-		RegisterFloat(unknown257);
-		RegisterFloat(unknown258);
-		RegisterFloat(unknown259);
-		RegisterFloat(unknown260);
-		RegisterFloat(unknown261);
-		RegisterFloat(unknown262);
-		RegisterFloat(unknown263);
-		RegisterFloat(unknown264);
-		RegisterFloat(unknown265);
-		RegisterFloat(unknown266);
-		RegisterFloat(unknown267);
-		RegisterFloat(unknown268);
-		RegisterFloat(unknown269);
-		RegisterFloat(unknown270);
-		RegisterFloat(unknown271);
-		RegisterFloat(unknown272);
-		RegisterFloat(unknown273);
-		RegisterFloat(unknown274);
-		RegisterFloat(unknown275);
-		RegisterFloat(unknown276);
-		RegisterFloat(unknown277);
-		RegisterFloat(unknown278);
-		RegisterFloat(unknown279);
-		RegisterFloat(unknown280);
-		RegisterFloat(unknown281);
-		RegisterFloat(unknown282);
-		RegisterFloat(unknown283);
-		RegisterFloat(unknown284);
-		RegisterFloat(unknown285);
-		RegisterFloat(unknown286);
-		RegisterFloat(unknown287);
-		RegisterFloat(unknown288);
-		RegisterFloat(unknown289);
-		RegisterFloat(unknown290);
-		RegisterFloat(unknown291);
-		RegisterFloat(unknown292);
-		RegisterFloat(unknown293);
-		RegisterFloat(unknown294);
-		RegisterFloat(unknown295);
-		RegisterFloat(unknown296);
-		RegisterFloat(unknown297);
-		RegisterFloat(unknown298);
-		RegisterFloat(unknown299);
-		RegisterFloat(unknown300);
-		RegisterFloat(unknown301);
-		RegisterFloat(unknown302);
-		RegisterFloat(unknown303);
-		RegisterFloat(unknown304);
-		RegisterFloat(unknown305);
-		RegisterFloat(unknown306);
-		RegisterFloat(unknown307);
-		RegisterFloat(unknown308);
-		RegisterFloat(out_of_combat_health_regen_pvp);
-		RegisterFloat(out_of_combat_power_regen_pvp);
-		RegisterFloat(in_combat_regen_pvp);
-		RegisterFloat(deflect_pvp);
-		RegisterFloat(increase_max_heath_pvp);
-		RegisterFloat(increase_max_health2_pvp);
-		RegisterFloat(unknown312);
-		RegisterFloat(increase_speed_pvp);
-		RegisterFloat(unknown313);
-		RegisterFloat(increase_ground_speed_pvp);
-		RegisterFloat(increase_air_speed_pvp);
-		RegisterFloat(unknown314);
-		RegisterFloat(unknown315);
-		RegisterFloat(unknown316);
-		RegisterFloat(in_combat_movement_speed_pvp);
-		RegisterFloat(Haste_pvp);
-		RegisterFloat(increase_max_power_pvp);
-		RegisterFloat(increase_max_power2_pvp);
-		RegisterFloat(unknown321);
-		RegisterFloat(unknown322);
-		RegisterFloat(unknown323);
-		RegisterFloat(hate_mod_pvp);
-		RegisterFloat(unknown325);
-		RegisterFloat(unknown326);
-		RegisterFloat(unknown327);
-		RegisterFloat(unknown328);
-		RegisterFloat(dps_pvp);
-		RegisterFloat(unknown330);
-		RegisterFloat(unknown331);
-		RegisterFloat(unknown332);
-		RegisterFloat(base_avoidance_pvp);
-		RegisterFloat(unknown334);
-		RegisterFloat(uncontested_riposte_pvp);
-		RegisterFloat(uncontested_parry_pvp);
-		RegisterFloat(unknown337);
-		RegisterFloat(unknown338);
-		RegisterFloat(multi_attack_pvp);
-		RegisterFloat(spell_multi_attack_pvp);
-		RegisterFloat(unknown341);
-		RegisterFloat(unknown342);
-		RegisterFloat(unknown343);
-		RegisterFloat(block_chance_pvp);
-		RegisterFloat(unknown345);
-		RegisterFloat(unknown346);
-		RegisterFloat(crit_chance_pvp);
-		RegisterFloat(unknown348);
-		RegisterFloat(unknown349);
-		RegisterFloat(crit_bonus_pvp);
-		RegisterFloat(potency_pvp);
-		RegisterFloat(unknown352);
-		RegisterFloat(reuse_speed_pvp);
-		RegisterFloat(recovery_speed_pvp);
-		RegisterFloat(casting_speed_pvp);
-		RegisterFloat(unknown356);
-		RegisterFloat(unknown357);
-		RegisterFloat(unknown358);
-		RegisterFloat(decrease_falling_dmg_pvp);
-		RegisterFloat(unknown360);
-		RegisterFloat(unknown361);
-		RegisterFloat(unknown362);
-		RegisterFloat(adventure_effects_bonus_2);
-		RegisterFloat(tradeskill_effects_bonus_2);
-		RegisterFloat(aa_effects_bonus_2);
-		RegisterFloat(unknown366);
-		RegisterFloat(unknown367);
-		RegisterFloat(loot_coin_pvp);
-		RegisterFloat(mitigation_increase_pvp);
-		RegisterFloat(unknown370);
-		RegisterFloat(strikethrough_pvp);
-		RegisterFloat(unknown372);
-		RegisterFloat(unknown373);
-		RegisterFloat(unknown374);
-		RegisterFloat(unknown375);
-		RegisterFloat(unknown376);
-		RegisterFloat(unknown377);
-		RegisterFloat(unknown378);
-		RegisterFloat(unknown379);
-		RegisterFloat(unknown380);
-		RegisterFloat(unknown381);
-		RegisterFloat(lethality_pvp);
-		RegisterFloat(unknown383);
-		RegisterFloat(unknown384);
-		RegisterFloat(unknown385);
-		RegisterFloat(unknown386);
-		RegisterFloat(unknown387);
-		RegisterFloat(unknown388);
-		RegisterFloat(unknown389);
-		RegisterFloat(unknown390);
-		RegisterFloat(unknown391);
-		RegisterFloat(unknown392);
-		RegisterFloat(unknown393);
-		RegisterFloat(unknown394);
-		RegisterFloat(unknown395);
-		RegisterFloat(unknown396);
-		RegisterFloat(unknown397);
-		RegisterFloat(unknown398);
-		RegisterFloat(unknown399);
-		RegisterFloat(unknown400);
-		RegisterFloat(unknown401);
-		RegisterFloat(unknown402);
-		RegisterFloat(unknown403);
-		RegisterFloat(unknown404);
-		RegisterFloat(unknown405);
-		RegisterFloat(unknown406);
-		RegisterFloat(unknown407);
-		RegisterFloat(unknown408);
-		RegisterFloat(unknown409);
-		RegisterFloat(unknown410);
-		RegisterFloat(durability_mod);
-		RegisterFloat(durability_add);
-		RegisterFloat(progress_mod);
-		RegisterFloat(progress_add);
-		RegisterFloat(success_mod);
-		RegisterFloat(crit_success_mod);
-		RegisterFloat(unknown417);
-		RegisterFloat(rare_harvest_chance);
-		RegisterFloat(max_crafting);
-		RegisterFloat(component_refund);
-		RegisterFloat(unknown421);
-		RegisterFloat(refine_quality_mod);
-		RegisterFloat(ex_durability_mod);
-		RegisterFloat(ex_durability_add);
-		RegisterFloat(ex_crit_success_mod);
-		RegisterFloat(ex_crit_failure_mod);
-		RegisterFloat(ex_progress_mod);
-		RegisterFloat(ex_progress_add);
-		RegisterFloat(ex_success_mod);;
-		RegisterFloat(unknown430);
-		RegisterFloat(unknown431);
-		RegisterFloat(unknown432);
-		RegisterFloat(unknown433);
-		RegisterFloat(unknown434);
-		RegisterFloat(unknown435);
-		RegisterFloat(unknown436);
-		RegisterFloat(unknown437);
-		RegisterFloat(unknown438);
-		RegisterFloat(unknown439);
-		RegisterFloat(unknown440);
-		RegisterFloat(unknown441);
-		RegisterUInt8(unknown180);
-		RegisterUInt8(unknown524);
-		RegisterUInt8(unknown181a);
-		RegisterUInt8(unknown181b);
-		RegisterFloat(unknown442);
-		RegisterFloat(unknown443);
-		RegisterFloat(unknown444);
-		RegisterFloat(unknown445);
-		RegisterUInt32(hate_2);
-		RegisterFloat(unknown447);
-		RegisterFloat(unknown448);
-		RegisterFloat(unknown449);
-		RegisterFloat(unknown450);
-		RegisterFloat(unknown451);
-		RegisterUInt32(hate_mod_2);
-		RegisterFloat(unknown453);
-		RegisterFloat(unknown454);
-		RegisterFloat(unknown455);
-		RegisterFloat(unknown456);
-		RegisterFloat(unknown457);
-		RegisterUInt32(dps_2);
-		RegisterFloat(unknown459);
-		RegisterFloat(unknown460);
-		RegisterFloat(unknown461);
-		RegisterFloat(unknown462);
-		RegisterFloat(unknown463);
-		RegisterFloat(unknown464);
-		RegisterFloat(unknown465);
-		RegisterFloat(unknown466);
-		RegisterUInt32(ae_autoattack_2);
-		RegisterFloat(unknown468);
-		RegisterUInt32(spell_doublecast_2);
-		RegisterUInt32(flurry_2);
-		RegisterFloat(unknown471);
-		RegisterUInt32(bountiful_harvest_2);
-		RegisterUInt32(block_chance_2);
-		RegisterFloat(unknown474);
-		RegisterFloat(unknown475);
-		RegisterUInt32(crit_chance_2);
-		RegisterFloat(unknown477);
-		RegisterFloat(unknown478);
-		RegisterUInt32(crit_bonus_2);
-		RegisterFloat(unknown480);
-		RegisterFloat(unknown481);
-		RegisterUInt32(reuse_speed_2);
-		RegisterUInt32(recovery_speed_2);
-		RegisterUInt32(casting_speed_2);
-		RegisterUInt32(spell_reuse_speed_2);
-		RegisterFloat(unknown486);
-		RegisterFloat(unknown487);
-		RegisterFloat(unknown488);
-		RegisterFloat(unknown489);
-		RegisterFloat(unknown490);
-		RegisterFloat(unknown491);
-		RegisterFloat(unknown492);
-		RegisterFloat(unknown493);
-		RegisterFloat(unknown494);
-		RegisterFloat(unknown495);
-		RegisterFloat(unknown496);
-		RegisterFloat(unknown497);
-		RegisterFloat(unknown498);
-		RegisterFloat(unknown499);
-		RegisterUInt32(strikethrough_2);
-		RegisterFloat(unknown501);
-		RegisterUInt32(accuracy_2);
-		RegisterFloat(unknown503);
-		RegisterFloat(unknown504);
-		RegisterUInt32(wdb_2);
-		RegisterUInt32(spell_wdb_2);
-		RegisterFloat(unknown507);
-		RegisterFloat(unknown508);
-		RegisterFloat(unknown509);
-		RegisterFloat(unknown510);
-		RegisterFloat(unknown511);
-		RegisterFloat(unknown512);
-		RegisterFloat(unknown513);
-		RegisterFloat(unknown514);
-		RegisterUInt32(haste_tt);
-		RegisterUInt32(dps_pve_tt);
-		RegisterUInt32(dps_pvp_tt);
-		RegisterFloat(multi_attack_pve_tt);
-		RegisterFloat(multi_attack_pvp_tt);
-		RegisterFloat(unknown520);
-		RegisterFloat(unknown521);
-		RegisterFloat(unknown522);
-		RegisterFloat(unknown523);
-		RegisterUInt8(unknown550);
-		RegisterUInt16(vision);
-		RegisterUInt8(unknown551);
-
-		uint8_t& Unknown552 = unknown552[0];
-		RegisterUInt8(Unknown552)->SetCount(24);
-
-		RegisterFloat(adventure_effects_cap);
-		RegisterFloat(tradeskill_effects_cap);
-		RegisterFloat(aa_effects_cap);
-
-		uint8_t& Unknown525 = unknown525[0];
-		RegisterUInt8(Unknown525)->SetCount(1026);
-		
-		RegisterSubstruct(groupSheet);
-
-		uint8_t& Unknown183 = unknown183[0];
-		RegisterUInt8(Unknown183)->SetCount(456);
-		
-		RegisterUInt32(pet_id);
-		char& Pet_name = pet_name[0];
-		RegisterChar(Pet_name)->SetCount(32);
-
-		uint8_t& Unknown184 = unknown184[0];
-		RegisterUInt8(Unknown184)->SetCount(9);
-		
-		RegisterFloat(pet_health_pct);
-		RegisterFloat(pet_power_pct);
-		RegisterUInt8(unknown185);
-		RegisterUInt8(pet_movement);
-		RegisterUInt8(pet_behavior);
-
-		uint8_t& Unknown186 = unknown186[0];
-		RegisterUInt8(Unknown186)->SetCount(8);
-		
-		RegisterUInt32(merc_id);
-		char& Merc_name = merc_name[0];
-		RegisterChar(Merc_name)->SetCount(32);
-		
-		uint8_t& merc_Unknown21 = merc_unknown21[0];
-		RegisterUInt8(merc_Unknown21)->SetCount(9);
-		
-		RegisterFloat(merc_health_pct);
-		RegisterFloat(merc_power_pct);
-		RegisterUInt8(merc_unknown21b);
-		RegisterUInt8(merc_movement);
-		RegisterUInt8(merc_behavior);
-
-		uint8_t& merc_Unknown21c = merc_unknown21c[0];
-		RegisterUInt8(merc_Unknown21c)->SetCount(73);
-		
-		RegisterUInt32(group_leader_id);
-
-		uint8_t& merc_Unknown21cc = merc_unknown21cc[0];
-		RegisterUInt8(merc_Unknown21cc)->SetCount(4);
-		
-		RegisterFloat(rain);
-		RegisterFloat(rain2);
-
-		uint8_t& Unknown527 = unknown527[0];
-		RegisterUInt8(Unknown527)->SetCount(4);
-
-		RegisterUInt32(status_points);
-		RegisterUInt32(guild_status);
-		
-		char& House_zone = house_zone[0];
-		RegisterChar(House_zone)->SetCount(48);
-		
-		uint8_t& Unknown526 = unknown526[0];
-		RegisterUInt8(Unknown526)->SetCount(141);
-
-		uint8_t& Unknown187 = unknown187[0];
-		RegisterUInt8(Unknown187)->SetCount(11);
-		
-		char& Bind_zone = bind_zone[0];
-		RegisterChar(Bind_zone)->SetCount(32);
-		
-		uint8_t& Unknown188 = unknown188[0];
-		RegisterUInt8(Unknown188)->SetCount(55);
-	}
-
+	void RegisterAttributeElements();
 };
 
 class OP_UpdateCharacterSheetMsg_Packet : public UpdateCharacterSheetMsgData, public EQ2Packet {
@@ -1620,749 +675,349 @@ public:
 	PacketPackedData packedData;
 };
 
-/*
-<Struct Name="WS_CharacterSheet" ClientVersion="60085" OpcodeName="OP_UpdateCharacterSheetMsg">
-<Data ElementName="character_name" Type="char" Size="40" />
-<Data ElementName="unknown_1_1_MJ" Type="int16" Size="1" />
-<Data ElementName="race" Type="int8" Size="1" />
-<Data ElementName="gender" Type="int8" Size="1" />
-<Data ElementName="exiled" Type="int8" Size="1" />
-<Data ElementName="class1" Type="int32" Size="1" />
-<Data ElementName="class2" Type="int32" Size="1" />
-<Data ElementName="class3" Type="int32" Size="1" />
-<Data ElementName="tradeskill_class1" Type="int32" Size="1" />
-<Data ElementName="tradeskill_class2" Type="int32" Size="1" />
-<Data ElementName="tradeskill_class3" Type="int32" Size="1" />
-<Data ElementName="level" Type="int16" Size="1" />
-<Data ElementName="effective_level" Type="int16" Size="1" />
-<Data ElementName="tradeskill_level" Type="int16" Size="1" />
-<Data ElementName="unknown_1_2_MJ" Type="int32" Size="1" />
-<Data ElementName="account_age_base" Type="int16" Size="1" />
-<Data ElementName="account_age_bonus" Type="int16" Size="1" />
-<Data ElementName="deity" Type="char" Size="32" />
-<Data ElementName="last_name" Type="char" Size="20" />
-<Data ElementName="unknown3" Type="int8" Size="1" />
-<Data ElementName="character_name2" Type="char" Size="40" />
-<Data ElementName="character_name2_unknown" Type="int16" Size="1" />
-<Data ElementName="character_name3" Type="char" Size="40" />
-<Data ElementName="character_name3_unknown" Type="int16" Size="1" />
-<Data ElementName="current_hp" Type="sint64" Size="1" />
-<Data ElementName="max_hp" Type="int64" Size="1" />
-<Data ElementName="base_hp" Type="int32" Size="1" />
-<Data ElementName="base_hp2" Type="int32" Size="1" />
-<Data ElementName="current_power" Type="sint32" Size="1" />
-<Data ElementName="max_power" Type="sint32" Size="1" />
-<Data ElementName="base_power" Type="int32" Size="1" />
-<Data ElementName="conc_used" Type="int8" Size="1" />
-<Data ElementName="conc_max" Type="int8" Size="1" />
-<Data ElementName="savagery" Type="sint32" Size="1" />
-<Data ElementName="max_savagery" Type="sint32" Size="1" />
-<Data ElementName="unknown4b" Type="int32" Size="1" />
-<Data ElementName="savagery_level" Type="int32" Size="1" />
-<Data ElementName="max_savagery_level" Type="int32" Size="1" />
-<Data ElementName="unknown4c" Type="int8" Size="4" />
-<Data ElementName="dissonance" Type="sint32" Size="1" />
-<!-- index 283 -->
-<Data ElementName="max_dissonance" Type="sint32" Size="1" />
-<Data ElementName="unknown5c" Type="int8" Size="4" />
-<Data ElementName="hp_regen" Type="int32" Size="1" />
-<Data ElementName="power_regen" Type="int32" Size="1" />
-<Data ElementName="unknown6" Type="int32" Size="2" />
-<Data ElementName="unknown7" Type="float" Size="2" />
-<Data ElementName="stat_bonus_health" Type="float" Size="1" />
-<Data ElementName="stat_bonus_power" Type="float" Size="1" />
-<Data ElementName="bonus_health" Type="int32" Size="1" />
-<Data ElementName="unknown8" Type="int32" Size="1" />
-<Data ElementName="bonus_power" Type="int32" Size="1" />
-<Data ElementName="stat_bonus_damage" Type="float" Size="1" />
-<Data ElementName="mitigation_pct_pve" Type="int16" Size="1" />
-<Data ElementName="mitigation_pct_pvp" Type="int16" Size="1" />
-<Data ElementName="toughness" Type="int16" Size="1" />
-<Data ElementName="toughness_resist_dmg_pvp" Type="float" Size="1" />
-<Data ElementName="lethality" Type="int16" Size="1" />
-<Data ElementName="lethality_pct" Type="float" Size="1" />
-<Data ElementName="avoidance_pct" Type="int16" Size="1" />
-<Data ElementName="avoidance_reduction" Type="int16" Size="1" />
-<Data ElementName="avoidance" Type="int16" Size="1" />
-<Data ElementName="unknown10" Type="int16" Size="1" />
-<Data ElementName="avoidance_base" Type="int16" Size="1" />
-<Data ElementName="unknown10a" Type="int16" Size="1" />
-<Data ElementName="parry" Type="int16" Size="1" />
-<Data ElementName="unknown11" Type="int16" Size="1" />
-<Data ElementName="block" Type="int16" Size="1" />
-<Data ElementName="unknown12" Type="int16" Size="1" />
-<Data ElementName="uncontested_block" Type="int16" Size="1" />
-<Data ElementName="unknown13" Type="int16" Size="1" />
-<Data ElementName="uncontested_riposte" Type="int16" Size="1" />
-<Data ElementName="uncontested_dodge" Type="int16" Size="1" />
-<Data ElementName="uncontested_parry" Type="int16" Size="1" />
-<Data ElementName="str" Type="int32" Size="1" />
-<Data ElementName="sta" Type="int32" Size="1" />
-<Data ElementName="agi" Type="int32" Size="1" />
-<Data ElementName="wis" Type="int32" Size="1" />
-<Data ElementName="int" Type="int32" Size="1" />
-<Data ElementName="str_base" Type="int32" Size="1" />
-<Data ElementName="sta_base" Type="int32" Size="1" />
-<Data ElementName="agi_base" Type="int32" Size="1" />
-<Data ElementName="wis_base" Type="int32" Size="1" />
-<Data ElementName="int_base" Type="int32" Size="1" />
-<Data ElementName="mitigation_cur" Type="int32" Size="1" />
-<Data ElementName="elemental" Type="int32" Size="1" />
-<Data ElementName="noxious" Type="int32" Size="1" />
-<Data ElementName="arcane" Type="int32" Size="1" />
-<Data ElementName="mitigation_base" Type="int32" Size="1" />
-<Data ElementName="elemental_base" Type="int32" Size="1" />
-<Data ElementName="noxious_base" Type="int32" Size="1" />
-<Data ElementName="arcane_base" Type="int32" Size="1" />
-<Data ElementName="unknown14" Type="int16" Size="1" />
-<Data ElementName="elemental_absorb_pve" Type="int16" Size="1" />
-<Data ElementName="noxious_absorb_pve" Type="int16" Size="1" />
-<Data ElementName="arcane_absorb_pve" Type="int16" Size="1" />
-<Data ElementName="unknown15" Type="int16" Size="1" />
-<Data ElementName="elemental_absorb_pvp" Type="int16" Size="1" />
-<Data ElementName="noxious_absorb_pvp" Type="int16" Size="1" />
-<Data ElementName="arcane_absorb_pvp" Type="int16" Size="1" />
-<Data ElementName="unknown16" Type="int16" Size="1" />
-<Data ElementName="elemental_dmg_reduction" Type="int16" Size="1" />
-<Data ElementName="noxious_dmg_reduction" Type="int16" Size="1" />
-<Data ElementName="arcane_dmg_reduction" Type="int16" Size="1" />
-<Data ElementName="unknown17" Type="int16" Size="1" />
-<Data ElementName="elemental_dmg_reduction_pct" Type="int16" Size="1" />
-<Data ElementName="noxious_dmg_reduction_pct" Type="int16" Size="1" />
-<Data ElementName="arcane_dmg_reduction_pct" Type="int16" Size="1" />
-<Data ElementName="current_adv_xp" Type="float" Size="1" />
-<Data ElementName="needed_adv_xp" Type="float" Size="1" />
-<Data ElementName="debt_adv_xp" Type="float" Size="1" />
-<Data ElementName="current_trade_xp" Type="float" Size="1" />
-<Data ElementName="needed_trade_xp" Type="float" Size="1" />
-<Data ElementName="debt_trade_xp" Type="float" Size="1" />
-<Data ElementName="unknown18" Type="int16" Size="6" />
-<Data ElementName="server_bonus" Type="int16" Size="1" />
-<Data ElementName="adventure_vet_bonus" Type="int16" Size="1" />
-<Data ElementName="tradeskill_vet_bonus" Type="int16" Size="1" />
-<Data ElementName="dungeon_finder_bonus" Type="int16" Size="1" />
-<Data ElementName="recruit_friend_bonus" Type="int32" Size="1" />
-<Data ElementName="unknown19" Type="int16" Size="1" />
-<Data ElementName="adventure_vitality" Type="int16" Size="1" />
-<Data ElementName="adventure_vitality_yellow_arrow" Type="int16" Size="1" />
-<Data ElementName="adventure_vitality_blue_arrow" Type="int16" Size="1" />
-<Data ElementName="tradeskill_vitality" Type="int16" Size="1" />
-<Data ElementName="tradeskill_vitality_purple_arrow" Type="int16" Size="1" />
-<Data ElementName="tradeskill_vitality_blue_arrow" Type="int16" Size="1" />
-<Data ElementName="mentor_bonus" Type="int16" Size="1" />
-<Data ElementName="unknown20" Type="int8" Size="1" />
-<Data ElementName="assigned_aa" Type="int16" Size="1" />
-<Data ElementName="max_aa" Type="int16" Size="1" />
-<Data ElementName="unassigned_aa" Type="int16" Size="1" />
-<Data ElementName="aa_green_bar" Type="int16" Size="1" />
-<Data ElementName="adv_xp_to_aa_xp_slider" Type="int16" Size="1" />
-<Data ElementName="unknown21" Type="int16" Size="1" />
-<Data ElementName="aa_blue_bar" Type="int16" Size="1" />
-<Data ElementName="bonus_achievement_xp" Type="int16" Size="1" />
-<Data ElementName="unknown22" Type="int8" Size="2" />
-<Data ElementName="unknown23" Type="int8" Size="2" />
-<Data ElementName="items_found" Type="int32" Size="1" />
-<Data ElementName="named_npcs_killed" Type="int32" Size="1" />
-<Data ElementName="quests_completed" Type="int32" Size="1" />
-<Data ElementName="exploration_events" Type="int32" Size="1" />
-<Data ElementName="completed_collections" Type="int32" Size="1" />
-<Data ElementName="unknown24" Type="int16" Size="10" />
-<Data ElementName="unknown25" Type="int8" Size="1" />
-<Data ElementName="total_prestige_points" Type="int16" Size="1" />
-<Data ElementName="unassigned_prestige_points" Type="int16" Size="1" />
-<Data ElementName="unknown26" Type="int16" Size="1" />
-<Data ElementName="unknown27" Type="int16" Size="1" />
-<Data ElementName="total_tradeskill_points" Type="int16" Size="1" />
-<Data ElementName="unassigned_tradeskill_points" Type="int16" Size="1" />
-<Data ElementName="unknown28" Type="int16" Size="1" />
-<Data ElementName="unknown29" Type="int16" Size="1" />
-<Data ElementName="total_tradeskill_prestige_points" Type="int16" Size="1" />
-<Data ElementName="unassigned_tradeskill_prestige_points" Type="int16" Size="1" />
-<Data ElementName="unknown30" Type="int16" Size="1" />
-<Data ElementName="unknown31" Type="int16" Size="1" />
-<Data ElementName="unknown32" Type="int16" Size="1" />
-<Data ElementName="unknown33" Type="int16" Size="1" />
-<Data ElementName="coins_copper" Type="int32" Size="1" />
-<Data ElementName="coins_silver" Type="int32" Size="1" />
-<Data ElementName="coins_gold" Type="int32" Size="1" />
-<Data ElementName="coins_plat" Type="int32" Size="1" />
-<Data ElementName="unknown34" Type="int32" Size="5" />
-<Data ElementName="spell_effects" Substruct="Substruct_SpellEffects" Size="45" />
-<Data ElementName="detrimental_spell_effects" Substruct="Substruct_SpellEffects" Size="45" />
-<Data ElementName="passive_spell_effects" Substruct="Substruct_PassiveEffects" Size="100" />
-<Data ElementName="unknown35" Type="int8" Size="486" />
-<Data ElementName="trauma_count" Type="int8" Size="1" />
-<Data ElementName="arcane_count" Type="int8" Size="1" />
-<Data ElementName="noxious_count" Type="int8" Size="1" />
-<Data ElementName="elemental_count" Type="int8" Size="1" />
-<Data ElementName="curse_count" Type="int8" Size="1" />
-<Data ElementName="maintained_effects" Substruct="Substruct_MaintainedEffects" Size="30" />
-<Data ElementName="breath" Type="float" Size="1" />
-<Data ElementName="breathe_underwater" Type="int8" Size="1" />
-<Data ElementName="unknown36" Type="float" Size="1" />
-<Data ElementName="melee_pri_dmg_min" Type="int32" Size="1" />
-<Data ElementName="melee_pri_dmg_max" Type="int32" Size="1" />
-<Data ElementName="melee_pri_delay" Type="float" Size="1" />
-<Data ElementName="melee_sec_dmg_min" Type="int32" Size="1" />
-<Data ElementName="melee_sec_dmg_max" Type="int32" Size="1" />
-<Data ElementName="melee_sec_delay" Type="float" Size="1" />
-<Data ElementName="ranged_dmg_min" Type="int32" Size="1" />
-<Data ElementName="ranged_dmg_max" Type="int32" Size="1" />
-<Data ElementName="ranged_delay" Type="float" Size="1" />
-<Data ElementName="unknown37" Type="int32" Size="1" />
-<Data ElementName="unknown38" Type="int32" Size="1" />
-<Data ElementName="unknown39" Type="int32" Size="1" />
-<Data ElementName="unknown40" Type="int32" Size="1" />
-<Data ElementName="ability_mod_pve" Type="float" Size="1" />
-<Data ElementName="unknown41" Type="float" Size="1" />
-<Data ElementName="unknown42" Type="float" Size="1" />
-<Data ElementName="unknown43" Type="float" Size="1" />
-<Data ElementName="unknown44" Type="float" Size="1" />
-<Data ElementName="ability_mod_pvp" Type="float" Size="1" />
-<Data ElementName="base_melee_crit" Type="float" Size="1" />
-<Data ElementName="base_spell_crit" Type="float" Size="1" />
-<Data ElementName="base_taunt_crit" Type="float" Size="1" />
-<Data ElementName="base_heal_crit" Type="float" Size="1" />
-<!--<Data ElementName="unknown44a" Type="int16" Size="1" />
--->
-<!-- 58588 - Required to make it in the game -->
-<Data ElementName="flags" Type="int32" Size="1" />
-<Data ElementName="flags2" Type="int32" Size="1" />
-<Data ElementName="unknown45" Type="float" Size="1" />
-<Data ElementName="unknown46" Type="float" Size="1" />
-<Data ElementName="unknown47" Type="float" Size="1" />
-<Data ElementName="unknown48" Type="float" Size="1" />
-<Data ElementName="unknown49" Type="float" Size="1" />
-<Data ElementName="unknown50" Type="float" Size="1" />
-<Data ElementName="unknown51" Type="float" Size="1" />
-<Data ElementName="unknown52" Type="float" Size="1" />
-<Data ElementName="unknown53" Type="float" Size="1" />
-<Data ElementName="unknown54" Type="float" Size="1" />
-<Data ElementName="unknown55" Type="float" Size="1" />
-<Data ElementName="unknown56" Type="float" Size="1" />
-<Data ElementName="unknown57" Type="float" Size="1" />
-<Data ElementName="unknown58" Type="float" Size="1" />
-<Data ElementName="unknown59" Type="float" Size="1" />
-<Data ElementName="unknown60" Type="float" Size="1" />
-<Data ElementName="unknown61" Type="float" Size="1" />
-<Data ElementName="unknown62" Type="float" Size="1" />
-<Data ElementName="unknown63" Type="float" Size="1" />
-<Data ElementName="unknown64" Type="float" Size="1" />
-<Data ElementName="unknown65" Type="float" Size="1" />
-<Data ElementName="unknown66" Type="float" Size="1" />
-<Data ElementName="unknown67" Type="float" Size="1" />
-<Data ElementName="unknown68" Type="float" Size="1" />
-<Data ElementName="unknown69" Type="float" Size="1" />
-<Data ElementName="unknown70" Type="float" Size="1" />
-<Data ElementName="unknown71" Type="float" Size="1" />
-<Data ElementName="unknown72" Type="float" Size="1" />
-<Data ElementName="unknown73" Type="float" Size="1" />
-<Data ElementName="unknown74" Type="float" Size="1" />
-<Data ElementName="unknown75" Type="float" Size="1" />
-<Data ElementName="unknown76" Type="float" Size="1" />
-<Data ElementName="unknown77" Type="float" Size="1" />
-<Data ElementName="unknown78" Type="float" Size="1" />
-<Data ElementName="unknown79" Type="float" Size="1" />
-<Data ElementName="unknown80" Type="float" Size="1" />
-<Data ElementName="unknown81" Type="float" Size="1" />
-<Data ElementName="unknown82" Type="float" Size="1" />
-<Data ElementName="unknown83" Type="float" Size="1" />
-<Data ElementName="unknown84" Type="float" Size="1" />
-<Data ElementName="unknown85" Type="float" Size="1" />
-<Data ElementName="unknown86" Type="float" Size="1" />
-<Data ElementName="unknown87" Type="float" Size="1" />
-<Data ElementName="unknown88" Type="float" Size="1" />
-<Data ElementName="unknown89" Type="float" Size="1" />
-<Data ElementName="unknown90" Type="float" Size="1" />
-<Data ElementName="unknown91" Type="float" Size="1" />
-<Data ElementName="unknown92" Type="float" Size="1" />
-<Data ElementName="unknown93" Type="float" Size="1" />
-<Data ElementName="unknown94" Type="float" Size="1" />
-<Data ElementName="unknown95" Type="float" Size="1" />
-<Data ElementName="unknown96" Type="float" Size="1" />
-<Data ElementName="unknown97" Type="float" Size="1" />
-<Data ElementName="unknown98" Type="float" Size="1" />
-<Data ElementName="unknown99" Type="float" Size="1" />
-<Data ElementName="unknown100" Type="float" Size="1" />
-<Data ElementName="unknown101" Type="float" Size="1" />
-<Data ElementName="unknown102" Type="float" Size="1" />
-<Data ElementName="unknown103" Type="float" Size="1" />
-<Data ElementName="unknown104" Type="float" Size="1" />
-<Data ElementName="unknown105" Type="float" Size="1" />
-<Data ElementName="unknown106" Type="float" Size="1" />
-<Data ElementName="unknown107" Type="float" Size="1" />
-<Data ElementName="unknown108" Type="float" Size="1" />
-<Data ElementName="unknown109" Type="float" Size="1" />
-<Data ElementName="unknown110" Type="float" Size="1" />
-<Data ElementName="out_of_combat_health_regen" Type="float" Size="1" />
-<Data ElementName="out_of_combat_power_regen" Type="float" Size="1" />
-<Data ElementName="in_combat_regen" Type="float" Size="1" />
-<Data ElementName="deflect" Type="float" Size="1" />
-<Data ElementName="increase_max_health" Type="float" Size="1" />
-<Data ElementName="increase_max_health2" Type="float" Size="1" />
-<!-- used when bonus is applied to both health & power -->
-<Data ElementName="unknown117" Type="float" Size="1" />
-<Data ElementName="increase_speed" Type="float" Size="1" />
-<Data ElementName="unknown119" Type="float" Size="1" />
-<Data ElementName="increase_ground_speed" Type="float" Size="1" />
-<Data ElementName="increase_air_speed" Type="float" Size="1" />
-<Data ElementName="unknown122" Type="float" Size="1" />
-<!-- see coldain pegasus buff this has a value of 8 which involves skill buff -->
-<Data ElementName="unknown123" Type="float" Size="1" />
-<!-- see coldain pegasus buff this has a value of 3 which involves skill buff -->
-<Data ElementName="unknown124" Type="float" Size="1" />
-<!-- see coldain pegasus buff this has a value of 3 which involves skill buff -->
-<Data ElementName="in_combat_movement_speed" Type="float" Size="1" />
-<Data ElementName="haste" Type="float" Size="1" />
-<Data ElementName="increase_max_power" Type="float" Size="1" />
-<Data ElementName="increase_max_power2" Type="float" Size="1" />
-<!-- used when bonus is applied to both health & power -->
-<Data ElementName="unknown128" Type="float" Size="1" />
-<Data ElementName="drunk" Type="float" Size="1" />
-<Data ElementName="unknown129" Type="float" Size="1" />
-<Data ElementName="hate_mod" Type="float" Size="1" />
-<Data ElementName="adventure_effects_bonus" Type="float" Size="1" />
-<Data ElementName="tradeskill_effects_bonus" Type="float" Size="1" />
-<Data ElementName="aa_effects_bonus" Type="float" Size="1" />
-<Data ElementName="unknown131" Type="float" Size="1" />
-<Data ElementName="dps" Type="float" Size="1" />
-<Data ElementName="unknown132" Type="float" Size="1" />
-<Data ElementName="unknown133" Type="float" Size="1" />
-<Data ElementName="unknown134" Type="float" Size="1" />
-<Data ElementName="base_avoidance" Type="float" Size="1" />
-<Data ElementName="unknown136" Type="float" Size="1" />
-<Data ElementName="uncontested_riposte_pve" Type="float" Size="1" />
-<Data ElementName="uncontested_parry_pve" Type="float" Size="1" />
-<Data ElementName="unknown139" Type="float" Size="1" />
-<Data ElementName="melee_ae" Type="float" Size="1" />
-<Data ElementName="multi_attack" Type="float" Size="1" />
-<Data ElementName="spell_multi_attack" Type="float" Size="1" />
-<!-- spell_doublecast -->
-<Data ElementName="flurry" Type="float" Size="1" />
-<Data ElementName="unknown140" Type="float" Size="1" />
-<Data ElementName="bountiful_harvest" Type="float" Size="1" />
-<Data ElementName="block_chance" Type="float" Size="1" />
-<Data ElementName="unknown141" Type="float" Size="1" />
-<Data ElementName="unknown142" Type="float" Size="1" />
-<Data ElementName="crit_chance" Type="float" Size="1" />
-<Data ElementName="unknown143" Type="float" Size="1" />
-<Data ElementName="unknown144" Type="float" Size="1" />
-<Data ElementName="crit_bonus" Type="float" Size="1" />
-<Data ElementName="potency" Type="float" Size="1" />
-<Data ElementName="unknown145" Type="float" Size="1" />
-<Data ElementName="reuse_speed" Type="float" Size="1" />
-<Data ElementName="recovery_speed" Type="float" Size="1" />
-<Data ElementName="casting_speed" Type="float" Size="1" />
-<Data ElementName="spell_reuse_speed" Type="float" Size="1" />
-<Data ElementName="unknown146" Type="float" Size="1" />
-<Data ElementName="unknown147" Type="float" Size="1" />
-<Data ElementName="decrease_falling_dmg" Type="float" Size="1" />
-<Data ElementName="unknown149" Type="float" Size="1" />
-<Data ElementName="unknown150" Type="float" Size="1" />
-<Data ElementName="unknown151" Type="float" Size="1" />
-<Data ElementName="unknown152" Type="float" Size="1" />
-<Data ElementName="unknown153" Type="float" Size="1" />
-<Data ElementName="unknown154" Type="float" Size="1" />
-<Data ElementName="unknown155" Type="float" Size="1" />
-<Data ElementName="unknown156" Type="float" Size="1" />
-<Data ElementName="loot_coin" Type="float" Size="1" />
-<Data ElementName="mitigation_increase" Type="float" Size="1" />
-<Data ElementName="unknown159" Type="float" Size="1" />
-<Data ElementName="strikethrough" Type="float" Size="1" />
-<Data ElementName="unknown160" Type="float" Size="1" />
-<Data ElementName="accuracy" Type="float" Size="1" />
-<Data ElementName="unknown161" Type="float" Size="1" />
-<Data ElementName="unknown162" Type="float" Size="1" />
-<Data ElementName="unknown163" Type="float" Size="1" />
-<Data ElementName="unknown164" Type="float" Size="1" />
-<Data ElementName="unknown165" Type="float" Size="1" />
-<Data ElementName="unknown166" Type="float" Size="1" />
-<Data ElementName="unknown167" Type="float" Size="1" />
-<Data ElementName="unknown168" Type="float" Size="1" />
-<Data ElementName="lethality_pve" Type="float" Size="1" />
-<Data ElementName="unknown170" Type="float" Size="1" />
-<Data ElementName="unknown171" Type="float" Size="1" />
-<Data ElementName="unknown172" Type="float" Size="1" />
-<Data ElementName="unknown173" Type="float" Size="1" />
-<Data ElementName="pvp_crit_mit" Type="float" Size="1" />
-<Data ElementName="unknown174" Type="float" Size="1" />
-<Data ElementName="unknown175" Type="float" Size="1" />
-<Data ElementName="unknown200" Type="float" Size="1" />
-<Data ElementName="unknown201" Type="float" Size="1" />
-<Data ElementName="unknown202" Type="float" Size="1" />
-<Data ElementName="unknown203" Type="float" Size="1" />
-<Data ElementName="unknown204" Type="float" Size="1" />
-<Data ElementName="unknown205" Type="float" Size="1" />
-<Data ElementName="unknown206" Type="float" Size="1" />
-<Data ElementName="unknown207" Type="float" Size="1" />
-<Data ElementName="unknown208" Type="float" Size="1" />
-<Data ElementName="unknown209" Type="float" Size="1" />
-<Data ElementName="unknown210" Type="float" Size="1" />
-<Data ElementName="unknown211" Type="float" Size="1" />
-<Data ElementName="unknown212" Type="float" Size="1" />
-<Data ElementName="unknown213" Type="float" Size="1" />
-<Data ElementName="unknown214" Type="float" Size="1" />
-<Data ElementName="unknown215" Type="float" Size="1" />
-<Data ElementName="unknown216" Type="float" Size="1" />
-<Data ElementName="unknown217" Type="float" Size="1" />
-<Data ElementName="unknown218" Type="float" Size="1" />
-<Data ElementName="unknown219" Type="float" Size="1" />
-<Data ElementName="unknown220" Type="float" Size="1" />
-<Data ElementName="unknown221" Type="float" Size="1" />
-<Data ElementName="unknown222" Type="float" Size="1" />
-<Data ElementName="unknown223" Type="float" Size="1" />
-<Data ElementName="unknown224" Type="float" Size="1" />
-<Data ElementName="unknown225" Type="float" Size="1" />
-<Data ElementName="unknown226" Type="float" Size="1" />
-<Data ElementName="unknown227" Type="float" Size="1" />
-<Data ElementName="unknown228" Type="float" Size="1" />
-<Data ElementName="unknown229" Type="float" Size="1" />
-<Data ElementName="unknown230" Type="float" Size="1" />
-<Data ElementName="unknown231" Type="float" Size="1" />
-<Data ElementName="unknown232" Type="float" Size="1" />
-<Data ElementName="unknown233" Type="float" Size="1" />
-<Data ElementName="unknown234" Type="float" Size="1" />
-<Data ElementName="unknown235" Type="float" Size="1" />
-<Data ElementName="unknown236" Type="float" Size="1" />
-<Data ElementName="unknown237" Type="float" Size="1" />
-<Data ElementName="unknown238" Type="float" Size="1" />
-<Data ElementName="unknown239" Type="float" Size="1" />
-<Data ElementName="unknown240" Type="float" Size="1" />
-<Data ElementName="unknown241" Type="float" Size="1" />
-<Data ElementName="unknown242" Type="float" Size="1" />
-<Data ElementName="uncontested_riposte_gear_cap" Type="float" Size="1" />
-<Data ElementName="uncontested_dodge_gear_cap" Type="float" Size="1" />
-<Data ElementName="uncontested_parry_gear_cap" Type="float" Size="1" />
-<Data ElementName="unknown246" Type="float" Size="1" />
-<Data ElementName="unknown247" Type="float" Size="1" />
-<Data ElementName="unknown248" Type="float" Size="1" />
-<Data ElementName="unknown249" Type="float" Size="1" />
-<Data ElementName="unknown250" Type="float" Size="1" />
-<Data ElementName="unknown251" Type="float" Size="1" />
-<Data ElementName="unknown252" Type="float" Size="1" />
-<Data ElementName="unknown253" Type="float" Size="1" />
-<Data ElementName="unknown254" Type="float" Size="1" />
-<Data ElementName="unknown255" Type="float" Size="1" />
-<Data ElementName="unknown256" Type="float" Size="1" />
-<Data ElementName="unknown257" Type="float" Size="1" />
-<Data ElementName="unknown258" Type="float" Size="1" />
-<Data ElementName="unknown259" Type="float" Size="1" />
-<Data ElementName="unknown260" Type="float" Size="1" />
-<Data ElementName="unknown261" Type="float" Size="1" />
-<Data ElementName="unknown262" Type="float" Size="1" />
-<Data ElementName="unknown263" Type="float" Size="1" />
-<Data ElementName="unknown264" Type="float" Size="1" />
-<Data ElementName="unknown265" Type="float" Size="1" />
-<Data ElementName="unknown266" Type="float" Size="1" />
-<Data ElementName="unknown267" Type="float" Size="1" />
-<Data ElementName="unknown268" Type="float" Size="1" />
-<Data ElementName="unknown269" Type="float" Size="1" />
-<Data ElementName="unknown270" Type="float" Size="1" />
-<Data ElementName="unknown271" Type="float" Size="1" />
-<Data ElementName="unknown272" Type="float" Size="1" />
-<Data ElementName="unknown273" Type="float" Size="1" />
-<Data ElementName="unknown274" Type="float" Size="1" />
-<Data ElementName="unknown275" Type="float" Size="1" />
-<Data ElementName="unknown276" Type="float" Size="1" />
-<Data ElementName="unknown277" Type="float" Size="1" />
-<Data ElementName="unknown278" Type="float" Size="1" />
-<Data ElementName="unknown279" Type="float" Size="1" />
-<Data ElementName="unknown280" Type="float" Size="1" />
-<Data ElementName="unknown281" Type="float" Size="1" />
-<Data ElementName="unknown282" Type="float" Size="1" />
-<Data ElementName="unknown283" Type="float" Size="1" />
-<Data ElementName="unknown284" Type="float" Size="1" />
-<Data ElementName="unknown285" Type="float" Size="1" />
-<Data ElementName="unknown286" Type="float" Size="1" />
-<Data ElementName="unknown287" Type="float" Size="1" />
-<Data ElementName="unknown288" Type="float" Size="1" />
-<Data ElementName="unknown289" Type="float" Size="1" />
-<Data ElementName="unknown290" Type="float" Size="1" />
-<Data ElementName="unknown291" Type="float" Size="1" />
-<Data ElementName="unknown292" Type="float" Size="1" />
-<Data ElementName="unknown293" Type="float" Size="1" />
-<Data ElementName="unknown294" Type="float" Size="1" />
-<Data ElementName="unknown295" Type="float" Size="1" />
-<Data ElementName="unknown296" Type="float" Size="1" />
-<Data ElementName="unknown297" Type="float" Size="1" />
-<Data ElementName="unknown298" Type="float" Size="1" />
-<Data ElementName="unknown299" Type="float" Size="1" />
-<Data ElementName="unknown300" Type="float" Size="1" />
-<Data ElementName="unknown301" Type="float" Size="1" />
-<Data ElementName="unknown302" Type="float" Size="1" />
-<Data ElementName="unknown303" Type="float" Size="1" />
-<Data ElementName="unknown304" Type="float" Size="1" />
-<Data ElementName="unknown305" Type="float" Size="1" />
-<Data ElementName="unknown306" Type="float" Size="1" />
-<Data ElementName="unknown307" Type="float" Size="1" />
-<Data ElementName="unknown308" Type="float" Size="1" />
-<Data ElementName="out_of_combat_health_regen_pvp" Type="float" Size="1" />
-<Data ElementName="out_of_combat_power_regen_pvp" Type="float" Size="1" />
-<Data ElementName="in_combat_regen_pvp" Type="float" Size="1" />
-<Data ElementName="deflect_pvp" Type="float" Size="1" />
-<Data ElementName="increase_max_heath_pvp" Type="float" Size="1" />
-<Data ElementName="increase_max_health2_pvp" Type="float" Size="1" />
-<!-- used when bonus is applied to both health & power -->
-<Data ElementName="unknown312" Type="float" Size="1" />
-<Data ElementName="increase_speed_pvp" Type="float" Size="1" />
-<Data ElementName="unknown313" Type="float" Size="1" />
-<Data ElementName="increase_ground_speed_pvp" Type="float" Size="1" />
-<Data ElementName="increase_air_speed_pvp" Type="float" Size="1" />
-<Data ElementName="unknown314" Type="float" Size="1" />
-<!-- see coldain pegasus buff this has a value of 8 which involves skill buff -->
-<Data ElementName="unknown315" Type="float" Size="1" />
-<!-- see coldain pegasus buff this has a value of 3 which involves skill buff -->
-<Data ElementName="unknown316" Type="float" Size="1" />
-<!-- see coldain pegasus buff this has a value of 3 which involves skill buff -->
-<Data ElementName="in_combat_movement_speed_pvp" Type="float" Size="1" />
-<Data ElementName="Haste_pvp" Type="float" Size="1" />
-<Data ElementName="increase_max_power_pvp" Type="float" Size="1" />
-<Data ElementName="increase_max_power2_pvp" Type="float" Size="1" />
-<!-- used when bonus is applied to both health & power -->
-<Data ElementName="unknown321" Type="float" Size="1" />
-<Data ElementName="unknown322" Type="float" Size="1" />
-<Data ElementName="unknown323" Type="float" Size="1" />
-<Data ElementName="hate_mod_pvp" Type="float" Size="1" />
-<Data ElementName="unknown325" Type="float" Size="1" />
-<Data ElementName="unknown326" Type="float" Size="1" />
-<Data ElementName="unknown327" Type="float" Size="1" />
-<Data ElementName="unknown328" Type="float" Size="1" />
-<Data ElementName="dps_pvp" Type="float" Size="1" />
-<Data ElementName="unknown330" Type="float" Size="1" />
-<Data ElementName="unknown331" Type="float" Size="1" />
-<Data ElementName="unknown332" Type="float" Size="1" />
-<Data ElementName="base_avoidance_pvp" Type="float" Size="1" />
-<Data ElementName="unknown334" Type="float" Size="1" />
-<Data ElementName="uncontested_riposte_pvp" Type="float" Size="1" />
-<Data ElementName="uncontested_parry_pvp" Type="float" Size="1" />
-<Data ElementName="unknown337" Type="float" Size="1" />
-<Data ElementName="unknown338" Type="float" Size="1" />
-<Data ElementName="multi_attack_pvp" Type="float" Size="1" />
-<Data ElementName="spell_multi_attack_pvp" Type="float" Size="1" />
-<!-- spell_doublecast -->
-<Data ElementName="unknown341" Type="float" Size="1" />
-<Data ElementName="unknown342" Type="float" Size="1" />
-<Data ElementName="unknown343" Type="float" Size="1" />
-<Data ElementName="block_chance_pvp" Type="float" Size="1" />
-<Data ElementName="unknown345" Type="float" Size="1" />
-<Data ElementName="unknown346" Type="float" Size="1" />
-<Data ElementName="crit_chance_pvp" Type="float" Size="1" />
-<Data ElementName="unknown348" Type="float" Size="1" />
-<Data ElementName="unknown349" Type="float" Size="1" />
-<Data ElementName="crit_bonus_pvp" Type="float" Size="1" />
-<Data ElementName="potency_pvp" Type="float" Size="1" />
-<Data ElementName="unknown352" Type="float" Size="1" />
-<Data ElementName="reuse_speed_pvp" Type="float" Size="1" />
-<Data ElementName="recovery_speed_pvp" Type="float" Size="1" />
-<Data ElementName="casting_speed_pvp" Type="float" Size="1" />
-<Data ElementName="unknown356" Type="float" Size="1" />
-<Data ElementName="unknown357" Type="float" Size="1" />
-<Data ElementName="unknown358" Type="float" Size="1" />
-<Data ElementName="decrease_falling_dmg_pvp" Type="float" Size="1" />
-<Data ElementName="unknown360" Type="float" Size="1" />
-<Data ElementName="unknown361" Type="float" Size="1" />
-<Data ElementName="unknown362" Type="float" Size="1" />
-<Data ElementName="unknown363" Type="float" Size="1" />
-<Data ElementName="unknown364" Type="float" Size="1" />
-<Data ElementName="unknown365" Type="float" Size="1" />
-<Data ElementName="unknown366" Type="float" Size="1" />
-<Data ElementName="unknown367" Type="float" Size="1" />
-<Data ElementName="loot_coin_pvp" Type="float" Size="1" />
-<Data ElementName="mitigation_increase_pvp" Type="float" Size="1" />
-<Data ElementName="unknown370" Type="float" Size="1" />
-<Data ElementName="strikethrough_pvp" Type="float" Size="1" />
-<Data ElementName="unknown372" Type="float" Size="1" />
-<Data ElementName="unknown373" Type="float" Size="1" />
-<Data ElementName="unknown374" Type="float" Size="1" />
-<Data ElementName="unknown375" Type="float" Size="1" />
-<Data ElementName="unknown376" Type="float" Size="1" />
-<Data ElementName="unknown377" Type="float" Size="1" />
-<Data ElementName="unknown378" Type="float" Size="1" />
-<Data ElementName="unknown379" Type="float" Size="1" />
-<Data ElementName="unknown380" Type="float" Size="1" />
-<Data ElementName="unknown381" Type="float" Size="1" />
-<Data ElementName="lethality_pvp" Type="float" Size="1" />
-<Data ElementName="unknown383" Type="float" Size="1" />
-<Data ElementName="unknown384" Type="float" Size="1" />
-<Data ElementName="unknown385" Type="float" Size="1" />
-<Data ElementName="unknown386" Type="float" Size="1" />
-<Data ElementName="unknown387" Type="float" Size="1" />
-<Data ElementName="unknown388" Type="float" Size="1" />
-<Data ElementName="unknown389" Type="float" Size="1" />
-<Data ElementName="unknown390" Type="float" Size="1" />
-<Data ElementName="unknown391" Type="float" Size="1" />
-<Data ElementName="unknown392" Type="float" Size="1" />
-<Data ElementName="unknown393" Type="float" Size="1" />
-<Data ElementName="unknown394" Type="float" Size="1" />
-<Data ElementName="unknown395" Type="float" Size="1" />
-<Data ElementName="unknown396" Type="float" Size="1" />
-<Data ElementName="unknown397" Type="float" Size="1" />
-<Data ElementName="unknown398" Type="float" Size="1" />
-<Data ElementName="durability_mod" Type="float" Size="1" />
-<Data ElementName="durability_add" Type="float" Size="1" />
-<Data ElementName="progress_mod" Type="float" Size="1" />
-<Data ElementName="progress_add" Type="float" Size="1" />
-<Data ElementName="success_mod" Type="float" Size="1" />
-<Data ElementName="crit_success_mod" Type="float" Size="1" />
-<Data ElementName="unknown177" Type="float" Size="1" />
-<Data ElementName="rare_harvest_chance" Type="float" Size="1" />
-<Data ElementName="max_crafting" Type="float" Size="1" />
-<Data ElementName="component_refund" Type="float" Size="1" />
-<Data ElementName="unknown178" Type="float" Size="1" />
-<Data ElementName="ex_durability_mod" Type="float" Size="1" />
-<Data ElementName="ex_durability_add" Type="float" Size="1" />
-<Data ElementName="ex_crit_success_mod" Type="float" Size="1" />
-<Data ElementName="ex_crit_failure_mod" Type="float" Size="1" />
-<Data ElementName="ex_progress_mod" Type="float" Size="1" />
-<Data ElementName="ex_progress_add" Type="float" Size="1" />
-<Data ElementName="ex_success_mod" Type="float" Size="1" />
-<Data ElementName="unknown417" Type="float" Size="1" />
-<Data ElementName="unknown418" Type="float" Size="1" />
-<Data ElementName="unknown419" Type="float" Size="1" />
-<Data ElementName="unknown420" Type="float" Size="1" />
-<Data ElementName="unknown421" Type="float" Size="1" />
-<Data ElementName="unknown422" Type="float" Size="1" />
-<Data ElementName="unknown423" Type="float" Size="1" />
-<Data ElementName="unknown424" Type="float" Size="1" />
-<Data ElementName="unknown425" Type="float" Size="1" />
-<Data ElementName="unknown426" Type="float" Size="1" />
-<Data ElementName="unknown427" Type="float" Size="1" />
-<Data ElementName="unknown428" Type="float" Size="1" />
-<Data ElementName="unknown429" Type="float" Size="1" />
-<Data ElementName="unknown430" Type="float" Size="1" />
-<Data ElementName="unknown431" Type="float" Size="1" />
-<Data ElementName="unknown432" Type="float" Size="1" />
-<Data ElementName="unknown433" Type="float" Size="1" />
-<Data ElementName="unknown434" Type="float" Size="1" />
-<Data ElementName="unknown435" Type="float" Size="1" />
-<Data ElementName="unknown436" Type="float" Size="1" />
-<Data ElementName="unknown437" Type="float" Size="1" />
-<Data ElementName="unknown438" Type="float" Size="1" />
-<Data ElementName="unknown439" Type="float" Size="1" />
-<Data ElementName="unknown440" Type="float" Size="1" />
-<Data ElementName="unknown441" Type="float" Size="1" />
-<Data ElementName="unknown180" Type="int8" Size="1" />
-<Data ElementName="unknown524" Type="int8" Size="1" />
-<Data ElementName="unknown181a" Type="int8" Size="1" />
-<Data ElementName="unknown181b" Type="int8" Size="1" />
-<Data ElementName="unknown442" Type="float" Size="1" />
-<Data ElementName="unknown443" Type="float" Size="1" />
-<Data ElementName="unknown444" Type="float" Size="1" />
-<Data ElementName="unknown445" Type="float" Size="1" />
-<Data ElementName="unknown446" Type="float" Size="1" />
-<Data ElementName="unknown447" Type="float" Size="1" />
-<Data ElementName="unknown448" Type="float" Size="1" />
-<Data ElementName="unknown449" Type="float" Size="1" />
-<Data ElementName="unknown450" Type="float" Size="1" />
-<Data ElementName="unknown451" Type="float" Size="1" />
-<Data ElementName="unknown452" Type="float" Size="1" />
-<Data ElementName="unknown453" Type="float" Size="1" />
-<Data ElementName="unknown454" Type="float" Size="1" />
-<Data ElementName="unknown455" Type="float" Size="1" />
-<Data ElementName="unknown456" Type="float" Size="1" />
-<Data ElementName="unknown457" Type="float" Size="1" />
-<Data ElementName="unknown458" Type="float" Size="1" />
-<Data ElementName="unknown459" Type="float" Size="1" />
-<Data ElementName="unknown460" Type="float" Size="1" />
-<Data ElementName="unknown461" Type="float" Size="1" />
-<Data ElementName="unknown462" Type="float" Size="1" />
-<Data ElementName="unknown463" Type="float" Size="1" />
-<Data ElementName="unknown464" Type="float" Size="1" />
-<Data ElementName="unknown465" Type="float" Size="1" />
-<Data ElementName="unknown466" Type="float" Size="1" />
-<Data ElementName="unknown467" Type="float" Size="1" />
-<Data ElementName="unknown468" Type="float" Size="1" />
-<Data ElementName="unknown469" Type="float" Size="1" />
-<Data ElementName="unknown470" Type="float" Size="1" />
-<Data ElementName="unknown471" Type="float" Size="1" />
-<Data ElementName="unknown472" Type="float" Size="1" />
-<Data ElementName="unknown473" Type="float" Size="1" />
-<Data ElementName="unknown474" Type="float" Size="1" />
-<Data ElementName="unknown475" Type="float" Size="1" />
-<Data ElementName="unknown476" Type="float" Size="1" />
-<Data ElementName="unknown477" Type="float" Size="1" />
-<Data ElementName="unknown478" Type="float" Size="1" />
-<Data ElementName="unknown479" Type="float" Size="1" />
-<Data ElementName="unknown480" Type="float" Size="1" />
-<Data ElementName="unknown481" Type="float" Size="1" />
-<Data ElementName="unknown482" Type="float" Size="1" />
-<Data ElementName="unknown483" Type="float" Size="1" />
-<Data ElementName="unknown484" Type="float" Size="1" />
-<Data ElementName="unknown485" Type="float" Size="1" />
-<Data ElementName="unknown486" Type="float" Size="1" />
-<Data ElementName="unknown487" Type="float" Size="1" />
-<Data ElementName="unknown488" Type="float" Size="1" />
-<Data ElementName="unknown489" Type="float" Size="1" />
-<Data ElementName="unknown490" Type="float" Size="1" />
-<Data ElementName="unknown491" Type="float" Size="1" />
-<Data ElementName="unknown492" Type="float" Size="1" />
-<Data ElementName="unknown493" Type="float" Size="1" />
-<Data ElementName="unknown494" Type="float" Size="1" />
-<Data ElementName="unknown495" Type="float" Size="1" />
-<Data ElementName="unknown496" Type="float" Size="1" />
-<Data ElementName="unknown497" Type="float" Size="1" />
-<Data ElementName="unknown498" Type="float" Size="1" />
-<Data ElementName="unknown499" Type="float" Size="1" />
-<Data ElementName="unknown500" Type="float" Size="1" />
-<Data ElementName="unknown501" Type="float" Size="1" />
-<Data ElementName="unknown502" Type="float" Size="1" />
-<Data ElementName="unknown503" Type="float" Size="1" />
-<Data ElementName="unknown504" Type="float" Size="1" />
-<Data ElementName="unknown505" Type="float" Size="1" />
-<Data ElementName="unknown506" Type="float" Size="1" />
-<Data ElementName="unknown507" Type="float" Size="1" />
-<Data ElementName="unknown508" Type="float" Size="1" />
-<Data ElementName="unknown509" Type="float" Size="1" />
-<Data ElementName="unknown510" Type="float" Size="1" />
-<Data ElementName="unknown511" Type="float" Size="1" />
-<Data ElementName="unknown512" Type="float" Size="1" />
-<Data ElementName="unknown513" Type="float" Size="1" />
-<Data ElementName="unknown514" Type="float" Size="1" />
-<Data ElementName="haste_tt" Type="int32" Size="1" />
-<Data ElementName="dps_pve_tt" Type="int32" Size="1" />
-<Data ElementName="dps_pvp_tt" Type="int32" Size="1" />
-<Data ElementName="multi_attack_pve_tt" Type="float" Size="1" />
-<Data ElementName="multi_attack_pvp_tt" Type="float" Size="1" />
-<Data ElementName="unknown520" Type="float" Size="1" />
-<Data ElementName="unknown521" Type="float" Size="1" />
-<Data ElementName="unknown522" Type="float" Size="1" />
-<Data ElementName="unknown523" Type="float" Size="1" />
-<Data ElementName="unknown550" Type="int8" Size="1" />
-<Data ElementName="vision" Type="int16" Size="1" />
-<Data ElementName="unknown551" Type="int8" Size="1" />
-<Data ElementName="unknown525" Type="int8" Size="1062" />
-<Data ElementName="group_members" Substruct="Substruct_GroupMember" Size="5" />
-<Data ElementName="unknown182" Type="int16" Size="1" />
-<Data ElementName="unknown183" Type="int8" Size="462" />
-<Data ElementName="pet_id" Type="int32" Size="1" />
-<Data ElementName="pet_name" Type="char" Size="32" />
-<Data ElementName="unknown184" Type="int8" Size="9" />
-<Data ElementName="pet_health_pct" Type="float" Size="1" />
-<Data ElementName="pet_power_pct" Type="float" Size="1" />
-<Data ElementName="unknown185" Type="int8" Size="1" />
-<Data ElementName="pet_movement" Type="int8" Size="1" />
-<Data ElementName="pet_behavior" Type="int8" Size="1" />
-<Data ElementName="unknown186" Type="int8" Size="8" />
-<Data ElementName="merc_id" Type="int32" Size="1" />
-<Data ElementName="merc_name" Type="char" Size="32" />
-<Data ElementName="merc_unknown21" Type="int8" Size="9" />
-<Data ElementName="merc_health_pct" Type="float" Size="1" />
-<Data ElementName="merc_power_pct" Type="float" Size="1" />
-<Data ElementName="merc_unknown21b" Type="int8" Size="1" />
-<Data ElementName="merc_movement" Type="int8" Size="1" />
-<Data ElementName="merc_behavior" Type="int8" Size="1" />
-<Data ElementName="merc_unknown21c" Type="int8" Size="73" />
-<Data ElementName="group_leader_id" Type="int32" Size="1" />
-<Data ElementName="merc_unknown21cc" Type="int8" Size="4" />
-<Data ElementName="rain" Type="float" Size="1" />
-<Data ElementName="rain2" Type="float" Size="1" />
-<Data ElementName="unknown527" Type="int8" Size="9" />
-<Data ElementName="house_zone" Type="char" Size="48" />
-<Data ElementName="unknown526" Type="int8" Size="132" />
-<Data ElementName="status_points" Type="int32" Size="1" />
-<Data ElementName="guild_status" Type="int32" Size="1" />
-<Data ElementName="unknown187" Type="int8" Size="11" />
-<Data ElementName="bind_zone" Type="char" Size="32" />
-<Data ElementName="unknown188" Type="int8" Size="52" />
-</Struct>
-*/
+//Below is a work in progress reference from aom
+
+//struct ClientCharacterSheet {
+//	/*0x0000*/ char name[42];
+//	/*0x002a*/ unsigned char race;
+//	/*0x002b*/ unsigned char gender;
+//	/*0x002c*/ unsigned char alignment;
+//	/*0x002d*/ unsigned int advArchetype;
+//	/*0x0031*/ unsigned int advBaseClass;
+//	/*0x0035*/ unsigned int advClass;
+//	/*0x0039*/ unsigned int tsArchetype;
+//	/*0x003d*/ unsigned int tsBaseClass;
+//	/*0x0041*/ unsigned int tsClass;
+//	/*0x0045*/ short level;
+//	/*0x0047*/ short effective_level;
+//	/*0x0049*/ short ts_level;
+//	/*0x004b*/ int gm_level; //0-15
+//	/*0x004f*/ unsigned short account_age_base;
+//	/*0x0051*/ unsigned short account_age_bonus;
+//	/*0x0053*/ char deity[32];
+//	/*0x0073*/ char lastName[21];
+//	/*0x0088*/ char twitter_prepend[42];
+//	/*0x00b2*/ char fb_prepend[42];
+//	/*0x00dc*/ __int64 hp;
+//	/*0x00e4*/ __int64 maxHp;
+//	/*0x00ec*/ int baseMaxHp;
+//	/*0x00f0*/ int unconciousHp;
+//	/*0x00f4*/ int power;
+//	/*0x00f8*/ int power_max;
+//	/*0x00fc*/ int power_base;
+//	/*0x0100*/ unsigned char concentration_used;
+//	/*0x0101*/ unsigned char concentration_max;
+//	/*0x0102*/ int savagery;
+//	/*0x0106*/ int savagery_max;
+//	/*0x010a*/ int savagery_base;
+//	/*0x010e*/ int savagery_level;
+//	/*0x0112*/ int savagery_level_max;
+//	/*0x0116*/ int savagery_level_base;
+//	/*0x011a*/ int dissonance;
+//	/*0x011e*/ int dissonance_max;
+//	/*0x0122*/ int dissonance_base;
+//	/*0x0126*/ int health_regen_per_tick;
+//	/*0x012a*/ int power_regen_per_tick;
+//	/*0x012e*/ unsigned char unknown12e[0x132 - 0x12e];
+//	/*0x0132*/ int dissipation;
+//	/*0x0136*/ unsigned char unknown136[0x13e - 0x136];
+//	/*0x013e*/ float hp_per_sta;
+//	/*0x0142*/ float power_per_primary_stat;
+//	/*0x0146*/ __int64 hp_bonus;
+//	/*0x014e*/ int power_bonus;
+//	/*0x0152*/ float stat_bonus_damage;
+//	/*0x0156*/ short absorb_pve;
+//	/*0x0158*/ short absorb_pvp;
+//	/*0x015a*/ short toughness;
+//	/*0x015c*/ float toughness_percent;
+//	/*0x0160*/ short lethality;
+//	/*0x0162*/ float lethality_percent;
+//	/*0x0166*/ short avoidance_chance;
+//	/*0x0168*/ short avoidance_base;
+//	/*0x016a*/ short avoidance_unknown; //riposte or parry maybe
+//	/*0x016c*/ unsigned char unknown16c[0x16e - 0x16c];
+//	/*0x016e*/ short avoidance_base_chance;
+//	/*0x0170*/ short avoidance_base_chance_cap; //guess
+//	/*0x0172*/ short avoidance_block_chance;
+//	/*0x0174*/ short avoidance_parry_chance_cap;
+//	/*0x0176*/ short block;
+//	/*0x0178*/ short block_base;
+//	/*0x017a*/ short block_uncontested;
+//	/*0x017c*/ short block_bonus_or_max; //guess
+//	/*0x017e*/ short riposte_uncontested;
+//	/*0x0180*/ short dodge_uncontested;
+//	/*0x0182*/ short parry_uncontested;
+//	/*0x0184*/ int str;
+//	/*0x0188*/ int sta;
+//	/*0x018c*/ int agi;
+//	/*0x0190*/ int wis;
+//	/*0x0194*/ int intel;
+//	/*0x0198*/ int str_base;
+//	/*0x019c*/ int sta_base;
+//	/*0x01a0*/ int agi_base;
+//	/*0x01a4*/ int wis_base;
+//	/*0x01a8*/ int intel_base;
+//	/*0x01ac*/ int mitigation;
+//	/*0x01b0*/ int elemental;
+//	/*0x01b4*/ int noxious;
+//	/*0x01b8*/ int arcane;
+//	/*0x01bc*/ int mitigation_base;
+//	/*0x01c0*/ int elemental_base;
+//	/*0x01c4*/ int noxious_base;
+//	/*0x01c8*/ int arcane_base;
+//	/*0x01cc*/ short physical_absorb_pve;
+//	/*0x01ce*/ short elemental_absorb_pve;
+//	/*0x01d0*/ short noxious_absorb_pve;
+//	/*0x01d2*/ short arcane_absorb_pve;
+//	/*0x01d4*/ short physical_absorb_pvp;
+//	/*0x01d6*/ short elemental_absorb_pvp;
+//	/*0x01d8*/ short noxious_absorb_pvp;
+//	/*0x01da*/ short arcane_absorb_pvp;
+//	/*0x01dc*/ short physical_damage_reduction;
+//	/*0x01de*/ short elemental_damage_reduction;
+//	/*0x01e0*/ short noxious_damage_reduction;
+//	/*0x01e2*/ short arcane_damage_reduction;
+//	/*0x01e4*/ short physical_damage_reduction_pct;
+//	/*0x01e6*/ short elemental_damage_reduction_pct;
+//	/*0x01e8*/ short noxious_damage_reduction_pct;
+//	/*0x01ea*/ short arcane_damage_reduction_ct;
+//	/*0x01ec*/ float adv_experience_current;
+//	/*0x01f0*/ float adv_experience_next_level;
+//	/*0x01f4*/ float adv_experience_debt;
+//	/*0x01f8*/ float ts_experience_current;
+//	/*0x01fc*/ float ts_experience_next_level;
+//	/*0x0200*/ float ts_experience_debt;
+//	/*0x0204*/ short adv_experience_server_bonus;
+//	/*0x0206*/ short adv_experience_vet_bonus;
+//	/*0x0208*/ short ts_experience_vet_bonus;
+//	/*0x020a*/ short df_experience_bonus;
+//	/*0x020c*/ short recruit_a_friend_count;
+//	/*0x020e*/ short recruit_a_friend_bonus;
+//	/*0x0210*/ bool bCanLevelPast90; //if false a tooltip appears about needing velious + 280 aa to level past 90 on the xp bar
+//	/*0x0211*/ short vitality;
+//	/*0x0213*/ short vitality_up_arrow;
+//	/*0x0215*/ short vitality_down_arrow;
+//	/*0x0217*/ short ts_vitality;
+//	/*0x0219*/ short ts_vitality_up_arrow;
+//	/*0x021b*/ short ts_vitality_down_arrow;
+//	/*0x021d*/ float mentor_xp_mod;
+//	/*0x0221*/ short aa_points;
+//	/*0x0223*/ short aa_max_points;
+//	/*0x0225*/ short aa_available_points;
+//	/*0x0227*/ short aa_experience_current;
+//	/*0x0229*/ short aa_conversion;
+//	/*0x022b*/ unsigned char unknown22b[0x22d - 0x22b];
+//	/*0x022d*/ short aa_experience_next_level;
+//	/*0x022f*/ short aa_experience_bonus;
+//	/*0x0231*/ int aa_level_up_count;
+//	/*0x0235*/ int aa_item_count;
+//	/*0x0239*/ int aa_named_kill_count;
+//	/*0x023d*/ int aa_quest_count;
+//	/*0x0241*/ int aa_exploration_count;
+//	/*0x0245*/ int aa_collection_count;
+//	/*0x0249*/ unsigned char unknown249[0x25e - 0x249];
+//	/*0x025e*/ short prestige_points;
+//	/*0x0260*/ short prestige_max_points;
+//	/*0x0262*/ float prestige_experience_current;
+//	/*0x0266*/ short ts_aa_points;
+//	/*0x0268*/ short ts_aa_max_points;
+//	/*0x026a*/ float ts_aa_experience_current;
+//	/*0x026e*/ short ts_prestige_points;
+//	/*0x0270*/ short ts_prestige_max_points;
+//	/*0x0272*/ float ts_prestige_experience_current;
+//	/*0x0276*/ float pet_experience_current;
+//	/*0x027a*/ int coins_copper;
+//	/*0x027e*/ int coins_silver;
+//	/*0x0282*/ int coins_gold;
+//	/*0x0286*/ int coins_platinum;
+//	/*0x028a*/ unsigned char unknown28a[0x29e - 0x28a];
+//	/*0x029e*/ CharacterSheetSpellEffect spellEffects[45];
+//	/*0x0979*/ CharacterSheetSpellEffect detrimentalEffects[45];
+//	/*0x1054*/ CharacterSheetSpellEffect passiveEffects[100];
+//	/*0x1f90*/ bool bPassiveEffectUnknown[128]; //maybe to hide or show it?
+//	/*0x2010*/ int passiveCount;
+//	/*0x2014*/ unsigned char unknown2014[0x2176 - 0x2014];
+//	/*0x2176*/ char traumaCount;
+//	/*0x2177*/ char arcaneCount;
+//	/*0x2178*/ char noxiousCount;
+//	/*0x2179*/ char elementalCount;
+//	/*0x217a*/ char curseCount;
+//	/*0x217b*/ CharacterSheetMaintainedEffect maintainedEffects[30];
+//	/*0x2c61*/ float breath;
+//	/*0x2c65*/ unsigned int breathableEnvironmentFlags;
+//	/*0x2c69*/ unsigned char unknown2c69;
+//	//2c69 may be a bitflag for the following bools?
+//	//Data           :   this+0x9BE, Member, Type: float, fBreath
+//	//Data           :   this+0x9C2, Member, Type: unsigned int, u32BreathableEnvironments
+//	//Data           :   this+0x9C6, Member, Type: bool, bAutoAttackOn
+//	//Data           :   this+0x9C7, Member, Type: bool, bCanCast
+//	//Data           :   this+0x9C8, Member, Type: bool, bPreZoning
+//	//Data           :   this+0x9C9, Member, Type: bool, bMaxLevel
+//	//Data           :   this+0x9CA, Member, Type: bool, bMaxTSLevel
+//	//Data           :   this+0x9CB, Member, Type: bool, bInFeigningDeathSpellState
+//	/*0x2c6a*/ int primary_damage_low;
+//	/*0x2c6e*/ int primary_damage_high;
+//	/*0x2c72*/ float primary_delay;
+//	/*0x2c76*/ int secondary_damage_low;
+//	/*0x2c7a*/ int secondary_damage_high;
+//	/*0x2c7e*/ float secondary_delay;
+//	/*0x2c82*/ int ranged_damage_low;
+//	/*0x2c86*/ int ranged_damage_high;
+//	/*0x2c8a*/ float ranged_delay;
+//	/*0x2c8e*/ unsigned char unknown2c8e[0x2c9e - 0x2c8e];
+//	/*0x2c9e*/ float ability_mod;
+//	/*0x2ca2*/ unsigned char unknown2ca2[0x2cb2 - 0x2ca2];
+//	/*0x2cb2*/ float ability_mod_pvp;
+//	/*0x2cb6*/ float base_melee_crit_multiplier;
+//	/*0x2cba*/ float base_spell_crit_multiplier;
+//	/*0x2cbe*/ float base_taunt_crit_multiplier;
+//	/*0x2cc2*/ float base_heal_crit_multiplier;
+//	/*0x2cc6*/ unsigned int character_flags1; //1 = combat adv xp, 0x10 = auto attack, 0x20 = ranged auto attack, 0x40 = quest xp, 0x400 = fd (to send the ClientFeignCancelled packet when standing), 0x1000 = anonymous, 0x2000 = RP, 0x4000 = AFK, 0x8000 = LFG, 0x10000 = LFW, 0x20000 = hide hood, 0x40000 = hide helm, 0x80000 = hide illus, 0x100000 = duel invites, 0x200000 = trade invites, 0x400000 = group invites, 0x800000 = raid invites, 0x1000000 = guild invites, 0x8000000 = defense skills not maxed for level, 0x10000000 = guild heraldry, 0x20000000 = hide cloak, 0x80000000 = is_hated
+//	/*0x2cca*/ unsigned int character_flags2; //1 = not all armor slots filled cause lower reduction, 8 = LON invites, 0x10 = show ranged, 0x20 = voice invites, 0x40 = character bonus xp, 0x100 = hide achievements, 0x400 = house edit mode, 0x800 = facebook enabled, 0x1000 = twitter enabled, 0x2000 = census enabled, 0x4000 = census alts enabled, 0x20000 = khrono enabled, 0x400000 = spell filtering
+//	/*0x2cce*/ char afk_message[0x100];
+//	/*0x2dce*/ unsigned char unknown2dce[0x2dea - 0x2dce];
+//	/*0x2dea*/ float stamina_bonus_hp;
+//	/*0x2dee*/ unsigned char unknown2dee[0x2e12 - 0x2dee];
+//	/*0x2e12*/ float haste;
+//	/*0x2e16*/ unsigned char unknown2e16[0x2e22 - 0x2e16];
+//	/*0x2e22*/ float drunkeness;
+//	/*0x2e26*/ unsigned char unknown2e26[0x2e2a - 0x2e26];
+//	/*0x2e2a*/ float hate_mod;
+//	/*0x2e2e*/ float combat_experience_mod;
+//	/*0x2e32*/ float ts_experience_mod;
+//	/*0x2e36*/ float aa_experience_mod;
+//	/*0x2e3a*/ unsigned char unknown2e3a[0x2e42 - 0x2e3a];
+//	/*0x2e42*/ float dps;
+//	/*0x2e46*/ unsigned char unknown2e46[0x2e66 - 0x2e46];
+//	/*0x2e66*/ float ae_auto_attack_chance;
+//	/*0x2e6a*/ float multi_attack;
+//	/*0x2e6e*/ float spell_doublecast;
+//	/*0x2e72*/ float flurry_chance;
+//	/*0x2e76*/ unsigned char unknown2e76[0x2e7a - 0x2e76];
+//	/*0x2e7a*/ float bountiful_harvest;
+//	/*0x2e7e*/ float block_chance_mod;
+//	/*0x2e82*/ unsigned char unknown2e82[0x2e8a - 0x2e82];
+//	/*0x2e8a*/ float crit_chance;
+//	/*0x2e8e*/ unsigned char unknown2e8e[0x2e96 - 0x2e8e];
+//	/*0x2e96*/ float crit_bonus;
+//	/*0x2e9a*/ float potency;
+//	/*0x2e9e*/ unsigned char unknown2e9e[0x2ea2 - 0x2e9e];
+//	/*0x2ea2*/ float ability_reuse_speed;
+//	/*0x2ea6*/ float ability_recovery_speed;
+//	/*0x2eaa*/ float ability_casting_speed;
+//	/*0x2eae*/ float spell_reuse_speed;
+//	/*0x2eb2*/ unsigned char unknown2eb2[0x2ec6 - 0x2eb2];
+//	/*0x2ec6*/ float player_movement_unknown;
+//	/*0x2eca*/ unsigned char unknown2eca[0x2eea - 0x2eca];
+//	/*0x2eea*/ float strikethrough_pve;
+//	/*0x2eee*/ unsigned char unknown2eee[0x2ef2 - 0x2eee];
+//	/*0x2ef2*/ float accuracy;
+//	/*0x2ef6*/ unsigned char unknown2ef6[0x2efe - 0x2ef6];
+//	/*0x2efe*/ float weapon_damage_bonus;
+//	/*0x2f02*/ float spell_weapon_damage_bonus;
+//	/*0x2f06*/ unsigned char unknown2f06[0x2f1a - 0x2f06];
+//	/*0x2f1a*/ float toughness_crit_dmg_reduction;
+//	/*0x2f1e*/ unsigned char unknown2f1e[0x2f2a - 0x2f1e];
+//	/*0x2f2a*/ float pvp_crit_mit;
+//	/*0x2f2e*/ unsigned char unknown2f2e[0x2ff2 - 0x2f2e];
+//	/*0x2ff2*/ float riposte_uncontested_gear_cap;
+//	/*0x2ff6*/ float parry_uncontested_gear_cap;
+//	/*0x2ffa*/ float dodge_uncontested_gear_cap;
+//	/*0x2ffe*/ unsigned char unknown2ffe[0x3196 - 0x2ffe];
+//	/*0x3196*/ float ae_auto_attack_chance_pve;
+//	/*0x319a*/ unsigned char unknown319a[0x31a2 - 0x319a];
+//	/*0x31a2*/ float flurry_chance_pvp;
+//	/*0x31a6*/ unsigned char unknown31a6[0x31c6 - 0x31a6];
+//	/*0x31c6*/ float crit_bonus_pvp;
+//	/*0x31ca*/ float potency_pvp;
+//	/*0x31ce*/ unsigned char unknown31ce[0x321a - 0x31ce];
+//	/*0x321a*/ float strikethrough_pvp;
+//	/*0x321e*/ unsigned char unknown321e[0x3222 - 0x321e];
+//	/*0x3222*/ float accuracy_pvp;
+//	/*0x3226*/ unsigned char unknown3226[0x322e - 0x3226];
+//	/*0x322e*/ float weapon_damage_bonus_pvp;
+//	/*0x3232*/ float spell_weapon_damage_bonus_pvp;
+//	/*0x3236*/ unsigned char unknown3236[0x3296 - 0x3236];
+//	/*0x3296*/ float durability_mod;
+//	/*0x329a*/ float durability_add;
+//	/*0x329e*/ float progress_mod;
+//	/*0x32a2*/ float progress_add;
+//	/*0x32a6*/ float success_mod;
+//	/*0x32aa*/ float crit_success_mod;
+//	/*0x32ae*/ float crit_failure_mod;
+//	/*0x32b2*/ float rare_harvest_chance;
+//	/*0x32b6*/ float max_crafting_quantity;
+//	/*0x32ba*/ float build_components_returned;
+//	/*0x32be*/ float experimentation_attempts;
+//	/*0x32c2*/ float refine_quantity_mod;
+//	/*0x32c6*/ float experiment_durability_mod;
+//	/*0x32ca*/ float experiment_durability_add;
+//	/*0x32ce*/ float experiment_crit_success_mod;
+//	/*0x32d2*/ float experiment_crit_failure_mod;
+//	/*0x32d6*/ float experiment_progress_mod;
+//	/*0x32da*/ float experiment_progress_add;
+//	/*0x32de*/ float experiment_success_mod;
+//	/*0x32e2*/ unsigned char unknown32e2[0x3326 - 0x32e2];
+//	/*0x3326*/ float haste_cap;
+//	/*0x332a*/ unsigned char unknown332a[0x333e - 0x332a];
+//	/*0x333e*/ float hate_mod_cap;
+//	/*0x3342*/ unsigned char unknown3342[0x3356 - 0x3342];
+//	/*0x3356*/ float dps_cap;
+//	/*0x335a*/ unsigned char unknown335a[0x337a - 0x335a];
+//	/*0x337a*/ float ae_auto_attack_chance_cap;
+//	/*0x337e*/ unsigned char unknown337e[0x3382 - 0x337e];
+//	/*0x3382*/ float spell_doublecast_cap;
+//	/*0x3386*/ float flurry_cap;
+//	/*0x339a*/ unsigned char unknown339a[0x339e - 0x339a];
+//	/*0x338e*/ float bountiful_harvest_cap;
+//	/*0x3392*/ float block_chance_cap;
+//	/*0x3396*/ unsigned char unknown3396[0x339e - 0x3396];
+//	/*0x339e*/ float crit_chance_cap;
+//	/*0x33a2*/ unsigned char unknown33a2[0x33aa - 0x33a2];
+//	/*0x33aa*/ float crit_bonus_cap;
+//	/*0x33ae*/ unsigned char unknown33ae[0x33b6 - 0x33ae];
+//	/*0x33b6*/ float ability_reuse_speed_cap;
+//	/*0x33ba*/ float ability_recovery_speed_cap;
+//	/*0x33be*/ float ability_casting_speed_cap;
+//	/*0x33c2*/ float spell_reuse_speed_cap;
+//	/*0x33c6*/ unsigned char unknown33c6[0x33fe - 0x33c6];
+//	/*0x33fe*/ float strikethrough_cap;
+//	/*0x3402*/ float weapon_damage_bonus_cap;
+//	/*0x3406*/ float accuracy_cap;
+//	/*0x340a*/ unsigned char unknown340a[0x3416 - 0x340a];
+//	/*0x3416*/ float spell_weapon_damage_bonus_cap;
+//	/*0x341a*/ unsigned char unknown341a[0x343e - 0x341a];
+//	/*0x343e*/ float pvp_crit_mit_cap;
+//	/*0x3442*/ unsigned char unknown3442[0x347e - 0x3442];
+//	/*0x347e*/ float ts_experience_mod_cap;
+//	/*0x3482*/ float aa_experience_mod_cap;
+//	/*0x3486*/ float casting_speed_overcap_spell_dblcast;
+//	/*0x348a*/ float combat_experience_mod_cap;
+//	/*0x348e*/ float attack_speed_overcap_flurry_chance;
+//	/*0x3492*/ unsigned char unknown3492[0x3496 - 0x3492];
+//	/*0x3496*/ int haste_effective; //i think this is the effective value after applying the stat + caps
+//	/*0x349a*/ float dps_damage_modifier;
+//	/*0x349e*/ float flurry_chance_cap;
+//	/*0x34a2*/ float multi_attack_extra_atk_count;
+//	/*0x34a6*/ float multi_attack_extra_atk_chance;
+//	/*0x34aa*/ unsigned __int64 spell_states;
+//	/*0x34b2*/ unsigned char unknown34b2[0x34b8 - 0x34b2];
+//	/*0x34b8*/ ClientGroupSheet group_sheet;
+//	/*0x3e3c*/ float humidity;
+//	/*0x3e40*/ float wind_direction;
+//	/*0x3e44*/ unsigned int currentStatus;
+//	/*0x3e48*/ unsigned int guildStatus;
+//	/*0x3e4c*/ unsigned char unknown3e4c;
+//	/*0x3e4d*/ char house_location[48];
+//	/*0x3e7d*/ unsigned char unknown3e7d[0x3f0f - 0x3e7d];
+//	/*0x3f0f*/ char num_unlocked_bags; //if -1 all are enabled, otherwise valid values are 1 through 6
+//	/*0x3f10*/ unsigned char unknown3f10[0x3f14 - 0x3f10];
+//	/*0x3f14*/ char bind_zone[32];
+//	/*0x3f34*/ unsigned char unknown3f34[0x3f51 - 0x3f34];
+//	/*0x3f51*/ unsigned short lon_booster_count;
+//	/*0x3f53*/ short brokerCredits;
+//	/*0x3f55*/ unsigned char unknown3f55[0x3f61 - 0x3f55];
+//	/*0x3f61*/ float fUnknown3f61;
+//	/*0x3f65*/ unsigned char unknown3f65[0x3f68 - 0x3f65];
+//	/*0x3f68*/
+//};

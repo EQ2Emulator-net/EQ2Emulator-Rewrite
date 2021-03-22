@@ -414,6 +414,15 @@
     <ClCompile Include="..\..\source\ZoneServer\Players\NPCPathDebug.cpp">
       <Filter>source\Players</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Packets\EQ2ZonePacketHandlers.cpp">
+      <Filter>source\Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\ZoneServer\SpawnCamp.cpp">
+      <Filter>source\ZoneServer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Players\SpawnCampDebug.cpp">
+      <Filter>source\Players</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h">
@@ -1084,6 +1093,34 @@
     </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_FlythroughEndMsg_Packet.h">
       <Filter>source\Packets\Client-&gt;Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_SpellDesc.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_ExamineDescSpell.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Spawns\PathPointSpawn.h">
+      <Filter>source\Spawns</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_EnterMoveObjectModeMsg_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketCharString.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_UpdateRaidMsg_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\ZoneServer\SpawnCamp.h">
+      <Filter>source\ZoneServer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Players\SpawnCampDebug.h">
+      <Filter>source\Players</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Spawns\SpawnCampSpawn.h">
+      <Filter>source\Spawns</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_AADesc.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

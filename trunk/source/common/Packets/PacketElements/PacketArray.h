@@ -108,6 +108,9 @@ public:
 
 	void PreWrite() override {
 		for (auto& itr : *element) {
+			if (itr.GetVersion() != version) {
+				itr.ResetVersion(version);
+			}
 			itr.PreWrite();
 		}
 	}
