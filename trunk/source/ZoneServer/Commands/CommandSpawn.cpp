@@ -448,30 +448,3 @@ void CommandProcess::CommandSpawnCamp(const std::shared_ptr<Client>& client, Sep
 		}
 	}
 }
-
-void CommandProcess::CommandSpawnRemove(const std::shared_ptr<Client>& client, Separator& sep) {
-	std::shared_ptr<PlayerController> controller = client->GetController();
-	if (!controller) {
-		LogDebug(LOG_NPC, 0, "CommandSpawnRemove: unable to get player controller");
-		return;
-	}
-
-	std::shared_ptr<Spawn> target = controller->GetTarget();
-	if (!target) {
-		client->chat.DisplayText("Error Text", "You must have a target to use `/spawn remove`");
-		return;
-	}
-
-	if (target->IsPlayer()) {
-		client->chat.DisplayText("Error Text", "Target can not be a player");
-		return;
-	}
-
-	if (target->GetSpawnLocationID() == 0) {
-		client->chat.DisplayText("Error Text", "The target does not have a location id (no location for the spawn in the DB yet)");
-		return;
-	}
-
-	bool remove = sep.IsNumber(0) && sep.GetUInt32(0) == 1;
-	client->GetZone()->DeleteSpawnFromLocation(target, remove);
-}

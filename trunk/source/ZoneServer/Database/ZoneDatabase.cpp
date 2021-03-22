@@ -1401,35 +1401,3 @@ uint32_t ZoneDatabase::InsertNewSpawnCamp(std::shared_ptr<SpawnCamp> camp) {
 bool ZoneDatabase::SaveSpawnCamp(std::shared_ptr<SpawnCamp> camp) {
 	return Query("UPDATE spawn_camp SET name = '%s', x = %f, y = %f, z = %f, grid = %u, radius = %f, num_radius_encounters = %u WHERE id = %u", camp->GetName().c_str(), camp->GetX(), camp->GetY(), camp->GetZ(), camp->GetGridID(), camp->GetRadius(), camp->GetNumRadiusEncounters(), camp->GetID());
 }
-
-uint32_t ZoneDatabase::GetSpawnLocationCount(uint32_t locationID, std::shared_ptr<Spawn> spawn) {
-	uint32_t ret = 0;
-	DatabaseResult result;
-	bool select = Select(&result, "SELECT count(id) FROM spawn_location_entry WHERE spawn_location_id=%u AND spawn_id=%u", locationID, spawn->GetDatabaseID());
-	if (select && result.Next()) {
-		ret = result.GetUInt32(0);
-	}
-	return ret;
-}
-
-bool ZoneDatabase::RemoveSpawnFromSpawnLocation(std::shared_ptr<Spawn> spawn) {
-	bool success = false;
-	uint32_t count = GetSpawnLocationCount(spawn->GetSpawnLocationID(), spawn);
-
-	success = Query("DELETE FROM spawn_location_placement WHERE spawn_location_id=%u", spawn->GetSpawnLocationID());
-	if (!success) {
-		LogError(LOG_ZONE, 0, "Failed to delete spawn (%u) from location (%u)", spawn->GetDatabaseID(), spawn->GetSpawnLocationID());
-		return false;
-	}
-
-	if (count == 1)
-		Query("DELETE FROM spawn_location_name WHERE id=%u", spawn->GetSpawnLocationID());
-
-	success = Query("DELETE FROM spawn_location_entry WHERE spawn_id = %u AND spawn_location_id = %u", spawn->GetDatabaseID(), spawn->GetSpawnLocationID());
-	if (!success) {
-		LogError(LOG_ZONE, 0, "Failed to delete spawn_location_entry for spawn (%u) and location(%u)", spawn->GetDatabaseID(), spawn->GetSpawnLocationID());
-		return false;
-	}
-	
-	return true;
-}

@@ -3,6 +3,7 @@
 #include "../common/log.h"
 #include "ParserDatabase.h"
 #include "../common/ConfigReader.h"
+#include "../ZoneServer/Packets/OP_EqExamineInfoCmd.h"
 
 ParserDatabase database;
 
@@ -23,6 +24,11 @@ int main() {
 
 	PacketLog test("BoL_Questline_DeepChelsithSolo.log");
 	test.TransformPackets();
+
+	OP_EqExamineInfoCmd_Packet p(test.logVersion);
+	p.FindOpcode();
+
+	std::cout << p.GetSubOpcode();
 
 	logging = false;
 	logging_thread.join();

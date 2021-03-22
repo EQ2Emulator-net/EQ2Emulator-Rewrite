@@ -119,8 +119,6 @@ public:
 
 	std::vector<std::shared_ptr<SpawnCamp> >* GetSpawnCamps() { return &m_spawnCamps; }
 	void AddSpawnCamp(std::shared_ptr<SpawnCamp> camp);
-
-	void DeleteSpawnFromLocation(std::shared_ptr<Spawn> spawn, bool remove);
 private:
 
 	std::vector<std::shared_ptr<Entity> > players;
