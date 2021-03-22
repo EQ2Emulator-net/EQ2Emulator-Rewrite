@@ -66,4 +66,5 @@ private:
 	static void CommandSpawn(const std::shared_ptr<Client>& client, Separator& sep);
 	static void CommandPath(const std::shared_ptr<Client>& client, Separator& sep);
 	static void CommandSpawnCamp(const std::shared_ptr<Client>& client, Separator& sep);
+	static void CommandSpawnRemove(const std::shared_ptr<Client>& client, Separator& sep);
 };

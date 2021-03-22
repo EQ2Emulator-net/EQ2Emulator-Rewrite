@@ -11,9 +11,6 @@ extern WorldDatabase database;
 #elif defined EQ2_ZONE
 #include "../ZoneServer/Database/ZoneDatabase.h"
 extern ZoneDatabase database;
-#elif defined EQ2_PARSER
-#include "../PacketParser/ParserDatabase.h"
-extern ParserDatabase database;
 #endif
 
 class DBFieldTrackerBase {
