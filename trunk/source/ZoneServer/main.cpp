@@ -16,6 +16,7 @@
 #include "ZoneServer/MasterZoneLookup.h"
 #include "Lua/LuaGlobals.h"
 #include "Items/MasterItemList.h"
+#include "Parser/ParserZone.h"
 
 ZoneDatabase database;
 Classes classes;
@@ -28,11 +29,17 @@ MasterZoneLookup g_masterZoneLookup;
 LuaGlobals g_luaGlobals;
 MasterItemList g_masterItemList;
 
-int main() {
+int main(int argc, char** argv) {
 	bool looping = true;
 	bool success = true;
 
 	srand(static_cast<unsigned int>(time(nullptr)));
+
+	if (argc > 1 && strcmp(argv[1], "-parse") == 0) {
+		//Transfer control to the parser
+		ParserZone(argc, argv);
+		return 0;
+	}
 
 	LoggingSystem::LogStart();
 	LoggingSystem::LogSetPrefix("EQ2Emu-ZoneServer");
