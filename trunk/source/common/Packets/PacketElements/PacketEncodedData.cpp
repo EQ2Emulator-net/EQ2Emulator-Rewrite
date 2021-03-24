@@ -2,6 +2,7 @@
 
 #include "PacketEncodedData.h"
 #include "../../../ZoneServer/Spawns/SpawnStructs.h"
+#include "../../EmuAssert.h"
 
 void PacketEncodedData::EncodeData() {
 	if (b_write_buf_initialized) {
@@ -9,7 +10,7 @@ void PacketEncodedData::EncodeData() {
 	}
 
 	//If you fail this assert, make sure you are setting the buffer with SetEncodedBuffer()
-	assert(encodingBuf);
+	EmuAssert(encodingBuf);
 	GetSize();
 	buf.resize(element_size);
 	uint32_t tmp = 0;
@@ -60,7 +61,7 @@ uint32_t PacketEncodedData::GetSize() {
 void PacketEncodedData::WriteElement(unsigned char* outbuf, uint32_t& offset) {
 	EncodeData();
 
-	assert(b_write_buf_initialized);
+	EmuAssert(b_write_buf_initialized);
 	b_write_buf_initialized = false;
 
 	memcpy(outbuf + offset, buf.data(), buf.size());

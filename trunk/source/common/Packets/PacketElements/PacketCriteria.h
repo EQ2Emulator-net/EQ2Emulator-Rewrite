@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdint.h>
-#include <cassert>
+#include "../../../common/EmuAssert.h"
 
 class PacketElement;
 
@@ -32,7 +32,7 @@ public:
 	
 	//This will tell the other element to call our equality check with its value
 	virtual bool CheckVariableEquality(PacketVariableEquality*) {
-		assert(false);
+		EmuAssert(false);
 		return true;
 	}
 

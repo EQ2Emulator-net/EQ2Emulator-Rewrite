@@ -1161,5 +1161,8 @@
     <ClInclude Include="..\..\source\common\Parser\Parser.h">
       <Filter>common\Parser</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\common\EmuAssert.h">
+      <Filter>common</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

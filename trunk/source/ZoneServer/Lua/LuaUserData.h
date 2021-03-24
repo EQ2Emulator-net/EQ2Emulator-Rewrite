@@ -1,11 +1,11 @@
 #pragma once
 
 #include <type_traits>
-#include <cassert>
 #include <map>
 #include <string>
 #include <memory>
 #include <vector>
+#include "../../common/EmuAssert.h"
 
 //This is a simple wrapper to enable garbage collection and adding of other functions to Lua types bound to c++ objects
 
@@ -19,7 +19,7 @@
 
 //Ensure the Lua stack is large enough to push another element onto
 #ifdef EQ2_DEBUG
-#define Emu_CheckLuaStack(l, n) assert(lua_checkstack((l), (n)))
+#define Emu_CheckLuaStack(l, n) EmuAssert(lua_checkstack((l), (n)))
 #else
 #define Emu_CheckLuaStack(l, n) (lua_checkstack((l), (n)))
 #endif

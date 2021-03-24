@@ -9,6 +9,7 @@
 #include "../../depends/rapid-xml/rapidxml.hpp"
 #include <set>
 #include <typeinfo>
+#include "../EmuAssert.h"
 
 class SubstructAllocatorBase {
 protected:
@@ -59,7 +60,7 @@ public:
 	void RegisterAllocator(const char* name, SubstructAllocatorBase* allocator, const std::type_info& t, const char* outfile, const uint32_t* versions, int32_t num_versions) {
 		//Took the assert out for if the same type is registered twice...
 		//but you must use a new type if writing the packet for FindOpcode
-		assert(allocators.count(name) == 0);
+		EmuAssert(allocators.count(name) == 0);
 
 		allocators.emplace(name, allocator);
 		outfiles[outfile].push_back(name);

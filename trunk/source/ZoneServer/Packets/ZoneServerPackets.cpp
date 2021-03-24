@@ -81,7 +81,7 @@ RegisterZoneStruct("OP_EqCannedEmoteCmd", OP_EqCannedEmoteCmd_Packet, 1, 57080);
 RegisterZoneStruct("OP_DialogCloseMsg", OP_DialogCloseMsg_Packet, 1);
 RegisterZoneStruct("OP_EqHearPlayFlavorCmd", OP_HearPlayFlavorCmd_Packet, 1);
 RegisterZoneStruct("OP_MapFogDataInitMsg", OP_MapFogDataInitMsg_Packet, 1188);
-RegisterZoneStruct("OP_EqExamineInfoCmd", OP_EqExamineInfoCmd_Packet, 1, 1188);
+RegisterZoneStruct("OP_EqExamineInfoCmd", OP_EqExamineInfoCmd_Packet, 1, 1193);
 RegisterZoneStruct("OP_UpdateInventoryMsg", OP_UpdateInventoryMsg_Packet, 1, 893, 1193, 1208, 57048, 57107, 67650);
 RegisterZoneStruct("OP_PlayFlythroughCmd", OP_PlayFlythroughCmd_Packet, 1);
 RegisterZoneStruct("OP_UpdateRaidMsg", OP_UpdateRaidMsg_Packet, 1);

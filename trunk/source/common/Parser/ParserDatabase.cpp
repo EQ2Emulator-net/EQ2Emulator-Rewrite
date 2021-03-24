@@ -2,6 +2,7 @@
 
 #include "ParserDatabase.h"
 #include "../log.h"
+#include "../EmuAssert.h"
 
 ParserDatabase::ParserDatabase() {
 
@@ -19,10 +20,11 @@ bool ParserDatabase::Start() {
 std::unordered_map<std::string, uint16_t> ParserDatabase::LoadOpcodesForVersion(uint32_t ver) {
 	DatabaseResult res;
 	
-	assert(Select(&res, "SELECT `name`, `opcode` FROM `opcodes` WHERE `version_range1` <= %u AND `version_range2` >= %u;", ver, ver));
+	Select(&res, "SELECT `name`, `opcode` FROM `opcodes` WHERE `version_range1` <= %u AND `version_range2` >= %u;", ver, ver);
 
 	std::unordered_map<std::string, uint16_t> ret;
 	ret.reserve(res.GetNumRows());
+	EmuAssert(res.GetNumRows());
 
 	while (res.Next()) {
 		ret[res.GetString(0)] = res.GetUInt16(1);

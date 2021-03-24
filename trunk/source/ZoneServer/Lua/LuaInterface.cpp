@@ -4,6 +4,7 @@
 #include "LuaGlobals.h"
 #include "../../common/log.h"
 #include "LuaFunctions.h"
+#include "../../common/EmuAssert.h"
 
 extern LuaGlobals g_luaGlobals;
 
@@ -119,7 +120,7 @@ static int emu_lua_panic(lua_State* state) {
 	LogError(LOG_LUA, 0, "Lua is panicking! error: %s", err);
 
 	//Break the program so we can find the cause of the panic
-	assert(false);
+	EmuAssert(false);
 	return 0;
 }
 

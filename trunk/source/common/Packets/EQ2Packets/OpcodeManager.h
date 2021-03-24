@@ -3,11 +3,11 @@
 #include <type_traits>
 #include <string>
 #include <map>
-#include <cassert>
 #include <utility>
 #include "../EQ2Packet.h"
 #include <typeindex>
 #include <vector>
+#include "../../../common/EmuAssert.h"
 
 class EQ2PacketAllocatorBase {
 protected:
@@ -78,7 +78,7 @@ public:
 		memcpy(vec.data(), versions, num_versions * sizeof(uint32_t));
 		//Took the assert out for if the same type is registered twice...
 		//but you must use a new type if writing the packet for FindOpcode
-		assert(allocators.count(struct_name) == 0/* && type_map.count(t) == 0*/);
+		EmuAssert(allocators.count(struct_name) == 0/* && type_map.count(t) == 0*/);
 
 		allocators[name] = allocator;
 		type_map[t] = allocator;

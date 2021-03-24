@@ -384,7 +384,7 @@ void ItemBag::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
 	bagUnknown1 = 0;
 	bagUnknown2 = 0;
 	bagUnknown3 = 0;
-	memset(bagUnknown4, 0, sizeof(bagUnknown4));
+	bagUnknown4 = 0;
 	numEmptySlots = numSlots;
 	numItems = 0;
 }

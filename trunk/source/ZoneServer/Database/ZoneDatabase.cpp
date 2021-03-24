@@ -1136,7 +1136,7 @@ void ZoneDatabase::ProcessEntityColors(DatabaseResult& result, std::unordered_ma
 			entity = outEntities[id];
 		}
 
-		assert(entity);
+		EmuAssert(entity);
 
 		CStringCmpNoCopy type = result.GetString(1);
 
@@ -1342,7 +1342,7 @@ void ZoneDatabase::ProcessNpcAppearanceEquipment(DatabaseResult& result, std::un
 			lastID = id;
 		}
 
-		assert(entity);
+		EmuAssert(entity);
 
 		uint8_t slot = result.GetUInt8(1);
 

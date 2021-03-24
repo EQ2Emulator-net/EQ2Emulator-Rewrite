@@ -5,7 +5,9 @@
 #include "../Packets/OP_ClientCmdMsg_Packet.h"
 
 void PacketLog::SortClientCommands() {
-	uint16_t opcode = opcodeLookup["OP_ClientCmdMsg"];
+	auto itr = opcodeLookup.find("OP_ClientCmdMsg");
+	EmuAssert(itr != opcodeLookup.end());
+	uint16_t opcode = itr->second;
 
 	std::map<uint16_t, std::vector<std::pair<uint32_t, std::string> > > mySort;
 
@@ -14,7 +16,7 @@ void PacketLog::SortClientCommands() {
 	auto f = packets.find(opcode);
 	if (f != packets.end()) {
 		for (auto& itr : f->second) {
-			assert(p.Read(reinterpret_cast<const unsigned char*>(itr.second.c_str()), 0, static_cast<uint32_t>(itr.second.size())));
+			p.Read(reinterpret_cast<const unsigned char*>(itr.second.c_str()), 0, static_cast<uint32_t>(itr.second.size()));
 			uint16_t op = p.GetSubOpcode();
 			mySort[op].emplace_back(std::move(itr));
 		}

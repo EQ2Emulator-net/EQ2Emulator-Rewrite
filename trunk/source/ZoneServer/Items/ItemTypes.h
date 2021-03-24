@@ -62,7 +62,7 @@ struct ItemBagData {
 	uint8_t bagUnknown3;
 	std::string customName;
 	std::vector<std::string> itemNames;
-	uint8_t bagUnknown4[4];
+	uint32_t bagUnknown4;
 };
 
 struct RecipeBookItem {

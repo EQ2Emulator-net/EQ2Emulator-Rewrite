@@ -3,6 +3,7 @@
 #include "PacketElements.h"
 #include "../../log.h"
 #include <type_traits>
+#include "../../EmuAssert.h"
 
 //You may choose to either inherit from this class or simply use PacketPackedData::LinkSubstruct in the desired order of your packed data
 class PacketPackedData : public PacketSubstruct {
@@ -68,7 +69,7 @@ public:
 	}
 
 	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
-		assert(bBufInitialized);
+		EmuAssert(bBufInitialized);
 		if (buf.empty()) {
 			return;
 		}

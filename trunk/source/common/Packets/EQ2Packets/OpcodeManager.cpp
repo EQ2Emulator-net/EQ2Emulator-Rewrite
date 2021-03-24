@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "OpcodeManager.h"
+#include "../../../common/EmuAssert.h"
 
 OpcodeManager* OpcodeManager::GetGlobal() {
 	static OpcodeManager Manager;
@@ -34,7 +35,7 @@ EQ2Packet* OpcodeManager::GetPacketForVersion(uint32_t version, uint16_t opcode)
 
 bool OpcodeManager::SetOpcodeForPacket(EQ2Packet* packet) {
 	auto itr = type_map.find(typeid(*packet));
-	assert(("Please register this packet class with an opcode.", itr != type_map.end()));
+	EmuAssert(("Please register this packet class with an opcode.", itr != type_map.end()));
 
 	EQ2PacketAllocatorBase* allocator = itr->second;
 	uint32_t version = packet->GetVersion();

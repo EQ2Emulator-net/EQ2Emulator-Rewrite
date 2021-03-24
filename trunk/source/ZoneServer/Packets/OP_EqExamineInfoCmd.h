@@ -41,9 +41,10 @@ private:
 	void RegisterElements(bool bStructDump) {
 		RegisterBool(bShowName);
 		RescopeArrayElement(unknown);
-		RegisterUInt8(unknown)->SetCount(GetVersion() >= 1188 ? 3 : 2);
+		RegisterUInt8(unknown)->SetCount(3);
 		RegisterBool(bShowPopup);
-		RegisterUInt8(unknown1);
+		if (GetVersion() >= 1193)
+			RegisterUInt8(unknown1);
 
 		if (bStructDump) {
 			baseSubstruct.emplace(GetVersion(), true);

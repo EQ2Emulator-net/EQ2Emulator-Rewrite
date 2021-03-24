@@ -261,6 +261,7 @@
     <ClInclude Include="..\..\source\common\database.h" />
     <ClInclude Include="..\..\source\common\DatabaseRow.h" />
     <ClInclude Include="..\..\source\common\DBFieldTracker.h" />
+    <ClInclude Include="..\..\source\common\EmuAssert.h" />
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_NotifyCharacterLinkdead_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketCharString.h" />
     <ClInclude Include="..\..\source\common\Parser\PacketLog.h" />
