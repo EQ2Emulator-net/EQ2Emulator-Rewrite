@@ -4,6 +4,7 @@
 #include <string>
 #include <cassert>
 #include "PacketElements/PacketCriteria.h"
+#include "../EmuAssert.h"
 
 class PacketElement : public PacketVariableEquality {
 	friend class XmlStructDumper;
@@ -81,7 +82,7 @@ public:
 	}
 
 	virtual bool VariableIsSet() {
-		assert(("Trying to check if a variable is set for an unhandled type!", false));
+		EmuAssert(("Trying to check if a variable is set for an unhandled type!", false));
 		return true;
 	}
 

@@ -18,6 +18,7 @@
 #include "Packets/EmuPackets/Emu_CharacterLinkdeadTimeout_Packet.h"
 #include "Packets/EmuPackets/Emu_ItemIDRequest_Packet.h"
 #include "Packets/EmuPackets/Emu_ItemIDReply_Packet.h"
+#include "EmuAssert.h"
 
 class EmuPacketAllocatorBase {
 public:
@@ -58,7 +59,7 @@ namespace EmuOpcode {
 	void RegisterOpcode(EmuOpcode_t op, EmuPacketAllocatorBase* a) {
 		auto& ptr = emu_opcodes[op];
 
-		assert(("Emu opcode registered twice! Fix!", !ptr));
+		EmuAssert(("Emu opcode registered twice! Fix!", !ptr));
 
 		ptr.reset(a);
 	}

@@ -3,6 +3,7 @@
 #include "EmuPacket.h"
 #include "Packets/PacketElements/PacketElements.h"
 #include <zlib.h>
+#include "EmuAssert.h"
 
 EmuPacket::EmuPacket(EmuOpcode_t op)
 	:opcode(op), bCompressed(false) {
@@ -53,7 +54,7 @@ uint32_t EmuPacket::Write(unsigned char*& retBuffer) {
 		//Data length is the total packet size - opcode - bCompressed - uncompressed_size
 		uLong dataLen = size - 6;
 		
-		assert(compress(tmp, &destLen, buffer + 6, dataLen) == Z_OK);
+		EmuAssert(compress(tmp, &destLen, buffer + 6, dataLen) == Z_OK);
 
 		memcpy(buffer + 6, tmp, destLen);
 
@@ -100,7 +101,7 @@ bool EmuPacket::Read(const unsigned char* in_buf, uint32_t bufsize) {
 			destLen = sizeof(decompressBuf);
 		}
 
-		assert(uncompress(tmpBuf, &destLen, in_buf + 6, bufsize - 6) == Z_OK);
+		EmuAssert(uncompress(tmpBuf, &destLen, in_buf + 6, bufsize - 6) == Z_OK);
 
 		bufsize = uncompressedSize;
 	}

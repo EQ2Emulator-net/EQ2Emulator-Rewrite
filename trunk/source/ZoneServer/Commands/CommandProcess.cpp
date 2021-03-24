@@ -54,7 +54,7 @@ void CommandProcess::RegisterCommands() {
 }
 
 void CommandProcess::RegisterCommandHandler(uint32_t handler_id, CommandHandler_t handler) {
-	assert(handlers.count(handler_id) == 0);
+	EmuAssert(handlers.count(handler_id) == 0);
 	handlers[handler_id] = handler;
 }
 
@@ -99,7 +99,7 @@ void CommandProcess::AddCommand(uint32_t handler_id, const std::string& cmd, uin
 	else {
 		auto itr = commandsParentLookup.find(parent_id);
 		//If this assertion fails it means a child command was loaded before its parent
-		assert(itr != commandsParentLookup.end());
+		EmuAssert(itr != commandsParentLookup.end());
 
 		//Store this command in its direct parent's sub command list
 		itr->second->subCommands[cmd] = command;

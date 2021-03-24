@@ -10,6 +10,7 @@
 #include "../../ZoneServer/Packets/OP_ClientCmdMsg_Packet.h"
 #include "../../ZoneServer/Packets/OP_UpdateCharacterSheetMsg_Packet.h"
 #endif
+#include "../EmuAssert.h"
 
 using namespace rapidxml;
 
@@ -79,7 +80,7 @@ const char* XmlStructDumper::GetElementType(PacketElement* e) {
 	}
 
 	//unknown type?
-	assert(false);
+	EmuAssert(false);
 	return "";
 }
 
@@ -90,10 +91,10 @@ std::deque<xml_node<>*> XmlStructDumper::SubstructToXml(xml_document<>& doc, con
 	{
 		SubstructManager* subman = SubstructManager::GetGlobal();
 		auto itr = subman->allocators.find(name);
-		assert(itr != subman->allocators.end());
+		EmuAssert(itr != subman->allocators.end());
 		sa = itr->second.get();
 		versions = subman->struct_versions[name];
-		assert(!versions.empty());
+		EmuAssert(!versions.empty());
 	}
 
 	std::deque<xml_node<>*> ret;
@@ -107,7 +108,7 @@ std::deque<xml_node<>*> XmlStructDumper::SubstructToXml(xml_document<>& doc, con
 
 		ps->CheckElementsInitialized();
 
-		assert(!ps->bInline);
+		EmuAssert(!ps->bInline);
 		
 		for (auto& e : ps->elements) {
 			ElementToXml(e, doc, *structNode);
@@ -271,10 +272,10 @@ std::deque<xml_node<>*> XmlStructDumper::PacketStructToXml(xml_document<>& doc, 
 		std::string opName = name;
 		opName.replace(0, 3, "OP_");
 		auto itr = opman->allocators.find(opName);
-		assert(itr != opman->allocators.end());
+		EmuAssert(itr != opman->allocators.end());
 		pa = itr->second;
 		versions = opman->struct_versions[name];
-		assert(!versions.empty());
+		EmuAssert(!versions.empty());
 	}
 
 	std::deque<xml_node<>*> ret;

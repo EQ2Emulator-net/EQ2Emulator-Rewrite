@@ -4,6 +4,7 @@
 
 #include <type_traits>
 #include <sstream>
+#include "EmuAssert.h"
 
 #ifdef EQ2_WORLD
 #include "../WorldServer/Database/WorldDatabase.h"
@@ -29,7 +30,7 @@ protected:
 
 template<typename T>
 struct InvalidManip {
-	int Transform(const T& v) { assert(false); return 0; }
+	int Transform(const T& v) { EmuAssert(false); return 0; }
 };
 
 template<typename T, typename Manip = InvalidManip<T> >

@@ -1,9 +1,9 @@
 #include "stdafx.h"
 
-#include <cassert>
 #include "log.h"
 #include "Rules.h"
 #include "CommonDatabase.h"
+#include "EmuAssert.h"
 
 Rule::Rule() {
 	category = ERuleCategory::R_CategoryInvalid;
@@ -34,7 +34,7 @@ RuleSet::RuleSet(RuleSet* in_rule_set) {
 	auto in_rules = in_rule_set->GetRules();
 	Rule* rule;
 
-	assert(in_rule_set);
+	EmuAssert(in_rule_set);
 
 	m_rules.SetName("RuleSet::rules");
 	id = in_rule_set->GetID();
@@ -60,7 +60,7 @@ void RuleSet::CopyRulesInto(RuleSet* in_rule_set) {
 	auto in_rules = in_rule_set->GetRules();
 	Rule* rule;
 
-	assert(in_rule_set);
+	EmuAssert(in_rule_set);
 
 	ClearRules();
 	m_rules.WriteLock();
@@ -77,7 +77,7 @@ void RuleSet::AddRule(Rule* rule) {
 	ERuleCategory category;
 	ERuleType type;
 
-	assert(rule);
+	EmuAssert(rule);
 
 	category = rule->GetCategory();
 	type = rule->GetType();
@@ -251,7 +251,7 @@ RuleManager::~RuleManager() {
 }
 
 void RuleManager::LoadCodedDefaultsIntoRuleSet(RuleSet* rule_set) {
-	assert(rule_set);
+	EmuAssert(rule_set);
 
 	for (auto& itr : rules) {
 		for (auto& itr2 : itr.second)
@@ -328,8 +328,8 @@ Rule* RuleManager::GetZoneRule(uint32_t chunk_id, ERuleCategory category, ERuleT
 	Rule* ret = 0;
 
 	/* we never want to return null so MAKE SURE the rule exists. if this assertion fails then the server admin must fix the problem */
-	assert(rules.count(category) > 0);
-	assert(rules[category].count(type) > 0);
+	EmuAssert(rules.count(category) > 0);
+	EmuAssert(rules[category].count(type) > 0);
 
 	/* first try to get the zone rule */
 	m_chunk_rule_sets.ReadLock();

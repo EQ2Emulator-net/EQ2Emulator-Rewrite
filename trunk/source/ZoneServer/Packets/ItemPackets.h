@@ -19,7 +19,7 @@ public:
 	Substruct_ExamineDescItem* itemDesc;
 
 	void RegisterElements() {
-		assert(itemDesc);
+		EmuAssert(itemDesc);
 		Substruct_ExamineDescItem& itemDesc = *this->itemDesc;
 		RegisterSubstruct(itemDesc);
 	}
@@ -192,6 +192,8 @@ public:
 		std::string itemName;
 	};
 
+	uint8_t itemVersion;
+
 	std::vector<Substruct_ItemName> itemNames;
 
 	void PreWrite() override {
@@ -204,6 +206,7 @@ public:
 	}
 
 	void RegisterElements() {
+		itemVersion = GetDescriptionVersion(GetVersion());
 		RegisterSubstruct(header);
 		RegisterUInt8(numSlots);
 		RegisterUInt8(numEmptySlots);
@@ -211,11 +214,14 @@ public:
 		Register8String(customName);
 		auto e = RegisterOversizedByte(numItems);
 		e->SetMyArray(RegisterArray(itemNames, Substruct_ItemName));
-		RegisterUInt8(bagUnknown1);
-		RegisterUInt8(bagUnknown2);
-		RegisterUInt8(bagUnknown3);
-		RescopeArrayElement(bagUnknown4);
-		RegisterUInt8(bagUnknown4)->SetCount(4);
+		if (itemVersion >= 22)
+			RegisterUInt8(bagUnknown1);
+		if (itemVersion >= 45)
+			RegisterUInt8(bagUnknown2);
+		if (itemVersion >= 81)
+			RegisterUInt8(bagUnknown3);
+		if (itemVersion >= 69)
+			RegisterUInt32(bagUnknown4);
 		RegisterSubstruct(footer);
 	}
 };
@@ -332,12 +338,6 @@ public:
 class Substruct_HouseItem : public PacketSubstruct, public ItemHouseData {
 public:
 	Substruct_HouseItem(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver) {
-		if (p_itemVersion == 0) {
-			itemVersion = GetDescriptionVersion(ver);
-		}
-		else {
-			itemVersion = p_itemVersion;
-		}
 		RegisterElements();
 	}
 
@@ -346,6 +346,7 @@ public:
 	~Substruct_HouseItem() = default;
 
 	void RegisterElements() {
+		itemVersion = GetDescriptionVersion(GetVersion());
 		RegisterInt32(rentStatusReduction);
 		RegisterFloat(rentCoinReduction);
 		if (itemVersion < 38) {
@@ -630,7 +631,7 @@ public:
 
 class Substruct_ExamineDescItem_Book : public Substruct_ExamineDescItem, public ItemBookData {
 public:
-	Substruct_ExamineDescItem_Book(uint32_t ver = 0) : Substruct_ExamineDescItem(ver) {
+	Substruct_ExamineDescItem_Book(uint32_t ver = 0) : Substruct_ExamineDescItem(ver), houseData(ver) {
 		RegisterElements();
 	}
 

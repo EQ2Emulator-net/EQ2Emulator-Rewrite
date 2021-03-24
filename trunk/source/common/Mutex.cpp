@@ -7,6 +7,7 @@
 #endif
 
 #include "Mutex.h"
+#include "EmuAssert.h"
 
 #define MUTEX_TIMEOUT_SECONDS 10
 
@@ -32,7 +33,7 @@ Mutex::Mutex() {
 Mutex::~Mutex() {
 #ifdef EQ2_DEBUG
 	static const thread::id defaultThreadId = thread::id();
-	assert(num_readlocks == 0 && lockingThread == defaultThreadId);
+	EmuAssert(num_readlocks == 0 && lockingThread == defaultThreadId);
 #endif
 }
 
@@ -62,7 +63,7 @@ void Mutex::ReadLock() {
 
 void Mutex::ReadUnlock() {
 #ifdef EQ2_DEBUG
-	assert(num_readlocks.fetch_sub(1) > 0);
+	EmuAssert(num_readlocks.fetch_sub(1) > 0);
 #endif
 
 #ifdef MUTEX_DEBUG
@@ -99,7 +100,7 @@ void Mutex::WriteLock() {
 */
 void Mutex::WriteUnlock() {
 #ifdef EQ2_DEBUG
-	assert(lockingThread == this_thread::get_id());
+	EmuAssert(lockingThread == this_thread::get_id());
 	lockingThread = thread::id();
 #endif
 

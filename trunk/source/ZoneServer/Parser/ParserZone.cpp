@@ -28,6 +28,7 @@ void ParserZone::ProcessLogs() {
 void ParserZone::ProcessItems(PacketLog& log) {
 	auto packets = log.FindPackets<OP_EqExamineInfoCmd_Packet, ExamineInfoCmd_Item_Packet>();
 
+	LogDebug(LOG_PARSER, 0, "Item count for log %s : %llu", log.filename.c_str(), packets.size());
 	for (auto& itr : packets) {
 	}
 }

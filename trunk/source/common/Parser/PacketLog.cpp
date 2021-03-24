@@ -225,11 +225,19 @@ uint32_t PacketLog::ReadLoginRequest(const unsigned char* data, uint32_t size) {
 		//Set the offset 1 byte past the opcode
 		if (data[1] == 9) offset = 5;
 		//Opcode 0 so to check for the "extra" 0 hope that the first element is set in the packet normally
-		else if (data[1] == 0) offset = 2;
+		//else if (data[1] == 0) offset = 2;
 	}
 
-	uint32_t pver = OP_LoginRequestMsg_Packet::DetermineStructVersion(data, offset, size);
-	OP_LoginRequestMsg_Packet p(pver);
-	p.Read(data, offset, size);
-	return static_cast<uint32_t>(p.Version);
+	uint32_t version;
+
+	for (;;) {
+		uint32_t pver = OP_LoginRequestMsg_Packet::DetermineStructVersion(data, size, offset);
+		OP_LoginRequestMsg_Packet p(pver);
+		if (!p.Read(data, offset, size) && offset == 1) offset = 2;
+		else {
+			version = static_cast<uint32_t>(p.Version);
+			break;
+		}
+	}
+	return version;
 }

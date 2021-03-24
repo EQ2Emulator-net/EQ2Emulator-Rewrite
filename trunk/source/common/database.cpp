@@ -7,6 +7,7 @@
 #include <sstream>
 #include "database.h"
 #include "log.h"
+#include "EmuAssert.h"
 
 using namespace std;
 
@@ -478,7 +479,7 @@ bool Database::QueriesFromFile(const char* file) {
 DatabaseTransaction::DatabaseTransaction(Database& in_db)
 	:db(in_db) {
 	//Not allowing someone to try and open 2 transactions on the same thread at once, fix if it hits this
-	assert(currentTransaction == nullptr);
+	EmuAssert(currentTransaction == nullptr);
 	conn = db.GetPooledConnection();
 	currentTransaction = this;
 
@@ -486,7 +487,7 @@ DatabaseTransaction::DatabaseTransaction(Database& in_db)
 }
 
 DatabaseTransaction::~DatabaseTransaction() {
-	assert(currentTransaction == this);
+	EmuAssert(currentTransaction == this);
 	Rollback();
 	mysql_autocommit(conn->mysql_con, 1);
 	currentTransaction = nullptr;
