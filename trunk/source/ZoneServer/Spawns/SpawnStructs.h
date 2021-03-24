@@ -417,22 +417,14 @@ public:
 		}
 	}
 
-	void PreWrite() override {
-		PacketSubstruct::PreWrite();
-		if (version < 57080) {
-			for (int i = 0; i < 24; i++) {
-				equipment_types_int16[i] = static_cast<uint16_t>(equipment_types[i]);
-			}
-			for (int i = 0; i < 8; i++) {
-				spell_visuals_do_not_set[i] = static_cast<uint16_t>(spell_visuals[i]);
-			}
-		}
-
-		hp_percent ^= 100;
-	}
+	void PreWrite() override;
 
 	void PostWrite() override {
 		hp_percent ^= 100;
+		
+		if (version < 1188) {
+			entityFlags = entity_flags_pre_write;
+		}
 	}
 
 	void RegisterElements();
@@ -440,6 +432,7 @@ public:
 private:
 	//Legacy clients
 	uint16_t spell_visuals_do_not_set[8];
+	uint32_t entity_flags_pre_write;
 };
 
 struct SpawnTitleStruct {

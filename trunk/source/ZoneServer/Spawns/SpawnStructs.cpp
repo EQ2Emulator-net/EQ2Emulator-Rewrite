@@ -781,3 +781,30 @@ SpawnInfoStruct::SpawnInfoStruct() {
 	hp_percent = 100;
 	heatLevel = 0xff;//temp until we can set it properly
 }
+
+void Substruct_SpawnInfo::PreWrite() {
+	PacketSubstruct::PreWrite();
+	if (version < 57080) {
+		for (int i = 0; i < 24; i++) {
+			equipment_types_int16[i] = static_cast<uint16_t>(equipment_types[i]);
+		}
+		for (int i = 0; i < 8; i++) {
+			spell_visuals_do_not_set[i] = static_cast<uint16_t>(spell_visuals[i]);
+		}
+
+		if (version < 1188) {
+			//Some entity flags moved over one when they added mercs, shift those flags back one
+			entity_flags_pre_write = entityFlags;
+			//Save the alive and npc flag because those didn't move
+			uint32_t tmp = entityFlags & (EntityFlagAlive | EntityIsNpc);
+			//Drop alive, npc and mercenary
+			entityFlags &= ~(EntityFlagAlive | EntityIsNpc | EntityIsMercenary);
+			//Shift remaining
+			entityFlags >>= 1;
+			//Add back alive/npc
+			entityFlags |= tmp;
+		}
+	}
+
+	hp_percent ^= 100;
+}

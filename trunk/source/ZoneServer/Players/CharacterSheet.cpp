@@ -887,17 +887,9 @@ void UpdateCharacterSheetMsgData::RegisterElements67650() {
 	RegisterSubstruct(ts_props);
 	RegisterSubstruct(base_props);
 
-	if (version >= 67804) {
-		//They added some stuff here
-		static uint8_t g_unknown382d[0x385d - 0x382d];
-		uint8_t& unknown382d = g_unknown382d[0];
-		RegisterUInt8(unknown382d)->SetCount(sizeof(g_unknown382d));
-	}
-	else {
-		static uint8_t g_unknown37cd[0x37fd - 0x37cd];
-		uint8_t& unknown37cd = g_unknown37cd[0];
-		RegisterUInt8(unknown37cd)->SetCount(sizeof(g_unknown37cd));
-	}
+	static uint8_t g_unknown37cd[0x37fd - 0x37cd];
+	uint8_t& unknown37cd = g_unknown37cd[0];
+	RegisterUInt8(unknown37cd)->SetCount(sizeof(g_unknown37cd));
 
 	RegisterUInt64(spell_state_flags);
 

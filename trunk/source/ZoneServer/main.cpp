@@ -16,6 +16,7 @@
 #include "ZoneServer/MasterZoneLookup.h"
 #include "Lua/LuaGlobals.h"
 #include "Items/MasterItemList.h"
+#include "Parser/ParserZone.h"
 
 ZoneDatabase database;
 Classes classes;
@@ -28,20 +29,14 @@ MasterZoneLookup g_masterZoneLookup;
 LuaGlobals g_luaGlobals;
 MasterItemList g_masterItemList;
 
-int main() {
+int main(int argc, char** argv) {
 	bool looping = true;
 	bool success = true;
 
 	srand(static_cast<unsigned int>(time(nullptr)));
 
-	LoggingSystem::LogStart();
-	LoggingSystem::LogSetPrefix("EQ2Emu-ZoneServer");
-	bool logging = true;
-	std::thread logging_thread(&LoggingSystem::LogWritingThread, &logging);
-
-	std::vector<std::thread> loadingThreads;
 	WorldTalk talk;
-	
+
 	{
 		ConfigReader cr(&g_zoneOperator, &database, &talk);
 		success = cr.ReadConfig("zone-config.xml");
@@ -54,6 +49,19 @@ int main() {
 		LogDebug(LOG_DATABASE, 0, "Loading opcodes...");
 		success = database.LoadOpcodes();
 	}
+
+	if (argc > 1 && strcmp(argv[1], "--parse") == 0) {
+		//Transfer control to the parser
+		ParserZone(argc, argv);
+		return 0;
+	}
+
+	LoggingSystem::LogStart();
+	LoggingSystem::LogSetPrefix("EQ2Emu-ZoneServer");
+	bool logging = true;
+	std::thread logging_thread(&LoggingSystem::LogWritingThread, &logging);
+
+	std::vector<std::thread> loadingThreads;
 
 	if (success) {
 		LogDebug(LOG_DATABASE, 0, "Loading rules...");

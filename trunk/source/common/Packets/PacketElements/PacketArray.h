@@ -17,6 +17,7 @@ public:
 	virtual std::unique_ptr<PacketSubstruct> GetArraySubstruct() = 0;
 	virtual void PreWrite() = 0;
 	virtual void PostWrite() = 0;
+	virtual void PreRead() = 0;
 	virtual void PostRead() = 0;
 	const char* arraySizeName;
 };
@@ -124,6 +125,12 @@ public:
 	void PostRead() override {
 		for (auto& itr : *element) {
 			itr.PostRead();
+		}
+	}
+
+	void PreRead() override {
+		for (auto& itr : *element) {
+			itr.PreRead();
 		}
 	}
 

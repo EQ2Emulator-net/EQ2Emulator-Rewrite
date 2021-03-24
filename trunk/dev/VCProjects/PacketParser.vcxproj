@@ -85,8 +85,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)..\bin\</OutDir>
-    <IncludePath>C:\Users\Chris\Documents\EmuStuff\EQ2Emu\EQ2Emulator-Rewrite\source\depends\mariadb-10.1.19\include;C:\Users\Chris\Documents\EmuStuff\EQ2Emu\EQ2Emulator-Rewrite\source\depends\zlib\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Chris\Documents\EmuStuff\EQ2Emu\EQ2Emulator-Rewrite\source\depends\mariadb-10.1.19\lib\64;C:\Users\Chris\Documents\EmuStuff\EQ2Emu\EQ2Emulator-Rewrite\source\depends\zlib\lib\win64;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\..\source\depends\mariadb-10.1.19\include;..\..\source\depends\zlib\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\source\depends\mariadb-10.1.19\lib\64;..\..\source\depends\zlib\lib\win64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

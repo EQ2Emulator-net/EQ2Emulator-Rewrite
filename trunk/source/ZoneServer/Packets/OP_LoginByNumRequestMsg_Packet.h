@@ -46,9 +46,7 @@ public:
 		return ret;
 	}
 
-#ifndef EQ2_PARSER
 	void HandlePacket(std::shared_ptr<Client> client);
-#endif
 
 	uint32_t account_id;
 	uint32_t access_code;

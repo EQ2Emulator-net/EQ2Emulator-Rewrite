@@ -23,6 +23,7 @@ public:
 	virtual void HandlePacket(std::shared_ptr<Client> client);
 
 	virtual void PreWrite();
+	virtual void PreRead();
 	virtual void PostWrite();
 	virtual void PostRead();
 
@@ -41,6 +42,7 @@ public:
 	}
 
 	bool Read(const unsigned char* in_buf, uint32_t off, uint32_t bufsize) override {
+		PreRead();
 		bool ret = Packet::Read(in_buf, off, bufsize);
 		PostRead();
 		return ret;

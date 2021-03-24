@@ -323,3 +323,8 @@ bool GetFileAsString(std::string& out, const char* file_name) {
 	out = std::move(bufstream.str());
 	return true;
 }
+
+bool StringEndsWith(const std::string& s, const std::string& ending) {
+	if (ending.size() > s.size()) return false;
+	return std::equal(ending.rbegin(), ending.rend(), s.rbegin());
+}

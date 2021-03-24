@@ -107,7 +107,7 @@ public:
 	std::string GPUName;
 	std::string CPUName;
 
-#ifndef EQ2_PARSER
+#ifdef EQ2_WORLD
 	void HandlePacket(std::shared_ptr<Client> client);
 #endif
 

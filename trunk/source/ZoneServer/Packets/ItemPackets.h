@@ -7,11 +7,14 @@
 
 class ExamineInfoCmd_Item_Packet : public OP_EqExamineInfoCmd_Packet {
 public:
-	ExamineInfoCmd_Item_Packet(uint32_t ver, Substruct_ExamineDescItem* item) : OP_EqExamineInfoCmd_Packet(ver, false), itemDesc(item) {
+	ExamineInfoCmd_Item_Packet(uint32_t ver, Substruct_ExamineDescItem* item, bool p_bDeleteDesc = false) : 
+		OP_EqExamineInfoCmd_Packet(ver, false), itemDesc(item), bDeleteDesc(p_bDeleteDesc) {
 		RegisterElements();
 	}
 
-	~ExamineInfoCmd_Item_Packet() = default;
+	~ExamineInfoCmd_Item_Packet() {
+		if (bDeleteDesc) delete itemDesc;
+	}
 
 	Substruct_ExamineDescItem* itemDesc;
 
@@ -19,6 +22,23 @@ public:
 		assert(itemDesc);
 		Substruct_ExamineDescItem& itemDesc = *this->itemDesc;
 		RegisterSubstruct(itemDesc);
+	}
+
+	EQ2Packet* GetSubPacket() override;
+private:
+	bool bDeleteDesc;
+};
+
+class Substruct_ExamineDescItem_HeaderOnly : public Substruct_ExamineDescItem {
+public:
+	Substruct_ExamineDescItem_HeaderOnly(uint32_t ver = 0) : Substruct_ExamineDescItem(ver) {
+		RegisterElements();
+	}
+
+	~Substruct_ExamineDescItem_HeaderOnly() = default;
+
+	void RegisterElements() {
+		RegisterSubstruct(header);
 	}
 };
 
@@ -211,12 +231,6 @@ public:
 	class Substruct_RecipeBook : public PacketSubstruct, public RecipeBookItem {
 	public:
 		Substruct_RecipeBook(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
-			if (p_itemVersion == 0) {
-				itemVersion = GetDescriptionVersion(ver);
-			}
-			else {
-				itemVersion = p_itemVersion;
-			}
 			RegisterElements();
 		}
 
@@ -225,6 +239,7 @@ public:
 		uint8_t itemVersion;
 
 		void RegisterElements() override {
+			itemVersion = GetDescriptionVersion(GetVersion());
 			if (itemVersion >= 57) {
 				RegisterUInt32(recipeID);
 				RegisterUInt16(icon);
@@ -474,12 +489,6 @@ public:
 	class Substruct_RewardVoucherItem : public PacketSubstruct, public RewardVoucherItem {
 	public:
 		Substruct_RewardVoucherItem(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
-			if (p_itemVersion == 0) {
-				itemVersion = GetDescriptionVersion(ver);
-			}
-			else {
-				itemVersion = p_itemVersion;
-			}
 			RegisterElements();
 		}
 
@@ -488,6 +497,7 @@ public:
 		uint8_t itemVersion;
 
 		void RegisterElements() override {
+			itemVersion = GetDescriptionVersion(GetVersion());
 			RegisterUInt32(itemID);
 			RegisterUInt32(crc);
 			RegisterUInt16(icon);
@@ -538,12 +548,6 @@ public:
 	class Substruct_RewardCrateItem : public PacketSubstruct, public RewardCrateItem {
 	public:
 		Substruct_RewardCrateItem(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
-			if (p_itemVersion == 0) {
-				itemVersion = GetDescriptionVersion(ver);
-			}
-			else {
-				itemVersion = p_itemVersion;
-			}
 			RegisterElements();
 		}
 
@@ -552,6 +556,7 @@ public:
 		uint8_t itemVersion;
 
 		void RegisterElements() override {
+			itemVersion = GetDescriptionVersion(GetVersion());
 			RegisterUInt32(itemID);
 			RegisterUInt32(crc);
 			RegisterUInt16(icon);

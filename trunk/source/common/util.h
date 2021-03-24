@@ -63,3 +63,5 @@ void CombineHash(uint32_t& seed, const T& v) {
 	static const std::hash<T> hasher;
 	seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
 }
+
+bool StringEndsWith(const std::string& s, const std::string& ending);

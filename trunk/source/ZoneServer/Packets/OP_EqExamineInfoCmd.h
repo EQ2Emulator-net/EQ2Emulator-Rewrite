@@ -33,6 +33,8 @@ public:
 		}
 	}
 
+	EQ2Packet* GetSubPacket() override;
+
 private:
 	std::optional<Substruct_ExamineDescBase> baseSubstruct;
 

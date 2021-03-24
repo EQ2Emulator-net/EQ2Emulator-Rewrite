@@ -88,6 +88,7 @@ public:
 	inline uint32_t GetVersion() { return version; }
 
 	virtual void PreWrite();
+	virtual void PreRead();
 	virtual void PostWrite();
 	virtual void PostRead();
 
@@ -127,6 +128,7 @@ protected:
 
 public:
 	virtual PacketSubstruct* GetSubstructs() = 0;
+	virtual void PreRead() = 0;
 	virtual void PreWrite() = 0;
 	virtual void PostWrite() = 0;
 	virtual void PostRead() = 0;
@@ -189,6 +191,12 @@ public:
 	void PostRead() override {
 		for (int i = 0; i < count; i++) {
 			substructs[i].PostRead();
+		}
+	}
+
+	void PreRead() override {
+		for (int i = 0; i < count; i++) {
+			substructs[i].PreRead();
 		}
 	}
 };
