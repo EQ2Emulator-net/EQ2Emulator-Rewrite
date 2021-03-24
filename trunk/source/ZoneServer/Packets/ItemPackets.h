@@ -231,12 +231,6 @@ public:
 	class Substruct_RecipeBook : public PacketSubstruct, public RecipeBookItem {
 	public:
 		Substruct_RecipeBook(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
-			if (p_itemVersion == 0) {
-				itemVersion = GetDescriptionVersion(ver);
-			}
-			else {
-				itemVersion = p_itemVersion;
-			}
 			RegisterElements();
 		}
 
@@ -245,6 +239,7 @@ public:
 		uint8_t itemVersion;
 
 		void RegisterElements() override {
+			itemVersion = GetDescriptionVersion(GetVersion());
 			if (itemVersion >= 57) {
 				RegisterUInt32(recipeID);
 				RegisterUInt16(icon);
@@ -494,12 +489,6 @@ public:
 	class Substruct_RewardVoucherItem : public PacketSubstruct, public RewardVoucherItem {
 	public:
 		Substruct_RewardVoucherItem(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
-			if (p_itemVersion == 0) {
-				itemVersion = GetDescriptionVersion(ver);
-			}
-			else {
-				itemVersion = p_itemVersion;
-			}
 			RegisterElements();
 		}
 
@@ -508,6 +497,7 @@ public:
 		uint8_t itemVersion;
 
 		void RegisterElements() override {
+			itemVersion = GetDescriptionVersion(GetVersion());
 			RegisterUInt32(itemID);
 			RegisterUInt32(crc);
 			RegisterUInt16(icon);
@@ -558,12 +548,6 @@ public:
 	class Substruct_RewardCrateItem : public PacketSubstruct, public RewardCrateItem {
 	public:
 		Substruct_RewardCrateItem(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
-			if (p_itemVersion == 0) {
-				itemVersion = GetDescriptionVersion(ver);
-			}
-			else {
-				itemVersion = p_itemVersion;
-			}
 			RegisterElements();
 		}
 
@@ -572,6 +556,7 @@ public:
 		uint8_t itemVersion;
 
 		void RegisterElements() override {
+			itemVersion = GetDescriptionVersion(GetVersion());
 			RegisterUInt32(itemID);
 			RegisterUInt32(crc);
 			RegisterUInt16(icon);
