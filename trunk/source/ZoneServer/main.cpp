@@ -35,20 +35,8 @@ int main(int argc, char** argv) {
 
 	srand(static_cast<unsigned int>(time(nullptr)));
 
-	if (argc > 1 && strcmp(argv[1], "-parse") == 0) {
-		//Transfer control to the parser
-		ParserZone(argc, argv);
-		return 0;
-	}
-
-	LoggingSystem::LogStart();
-	LoggingSystem::LogSetPrefix("EQ2Emu-ZoneServer");
-	bool logging = true;
-	std::thread logging_thread(&LoggingSystem::LogWritingThread, &logging);
-
-	std::vector<std::thread> loadingThreads;
 	WorldTalk talk;
-	
+
 	{
 		ConfigReader cr(&g_zoneOperator, &database, &talk);
 		success = cr.ReadConfig("zone-config.xml");
@@ -61,6 +49,19 @@ int main(int argc, char** argv) {
 		LogDebug(LOG_DATABASE, 0, "Loading opcodes...");
 		success = database.LoadOpcodes();
 	}
+
+	if (argc > 1 && strcmp(argv[1], "--parse") == 0) {
+		//Transfer control to the parser
+		ParserZone(argc, argv);
+		return 0;
+	}
+
+	LoggingSystem::LogStart();
+	LoggingSystem::LogSetPrefix("EQ2Emu-ZoneServer");
+	bool logging = true;
+	std::thread logging_thread(&LoggingSystem::LogWritingThread, &logging);
+
+	std::vector<std::thread> loadingThreads;
 
 	if (success) {
 		LogDebug(LOG_DATABASE, 0, "Loading rules...");

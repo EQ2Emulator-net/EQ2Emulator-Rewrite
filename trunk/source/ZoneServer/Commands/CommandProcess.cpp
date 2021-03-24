@@ -213,7 +213,7 @@ void CommandProcess::CommandTest(const std::shared_ptr<Client>& client, Separato
 		return;
 	}
 
-	auto itemDesc = item->GetPacketData(client);
+	auto itemDesc = item->GetPacketData(client->GetVersion());
 
 	ExamineInfoCmd_Item_Packet p(client->GetVersion(), itemDesc.get());
 	p.bShowPopup = true;

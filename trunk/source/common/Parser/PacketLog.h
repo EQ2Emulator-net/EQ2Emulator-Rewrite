@@ -5,11 +5,63 @@
 #include <unordered_map>
 #include <vector>
 #include <sstream>
+#include <type_traits>
+#include <memory>
+
+#ifdef EQ2_ZONE
+#include "../../ZoneServer/Packets/OP_ClientCmdMsg_Packet.h"
+#endif
 
 class PacketLog {
 public:
 	PacketLog(const std::string& file);
 	~PacketLog() = default;
+
+	template<typename T, typename SubT = T>
+	std::vector<std::unique_ptr<SubT> > FindPackets() {
+		uint16_t op;
+		static_assert(std::is_base_of_v<EQ2Packet, T>);
+		{
+			T p(logVersion);
+			p.FindOpcode();
+#ifdef EQ2_ZONE
+			if (std::is_base_of_v<OP_ClientCmdMsg_Packet, T>) 
+				op = reinterpret_cast<OP_ClientCmdMsg_Packet&>(p).GetSubOpcode();
+			else
+#endif
+				op = p.GetOpcode();
+		}
+
+		std::vector<std::unique_ptr<SubT>> ret;
+
+		for (auto& itr : packets[op]) {
+			const std::string& data = itr.second;
+			std::unique_ptr<EQ2Packet> p(new T(logVersion));
+			auto bytes = reinterpret_cast<const unsigned char*>(data.c_str());
+			if (!p->Read(bytes, 0, static_cast<uint32_t>(data.size()))) {
+				DumpBytes(bytes, static_cast<uint32_t>(data.size()), "Packet read out of bounds");
+			}
+			else {
+				//Check for sub packets (specialized item packets for example)
+				while (EQ2Packet* tmp = p->GetSubPacket()) {
+					if (!tmp->Read(bytes, 0, static_cast<uint32_t>(data.size()))) {
+						DumpBytes(bytes, static_cast<uint32_t>(data.size()), "Packet read out of bounds");
+						p.reset();
+						break;
+					}
+					p.reset(tmp);
+				}
+
+				SubT* subp = dynamic_cast<SubT*>(p.get());
+				if (subp) {
+					p.release();
+					ret.emplace_back(subp);
+				}
+			}
+		}
+
+		return ret;
+	}
 
 	bool TransformPackets();
 

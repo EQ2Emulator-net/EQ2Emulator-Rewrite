@@ -7,4 +7,6 @@ public:
 	ParserZone(int arg, char** argv);
 
 	void ProcessLogs();
+
+	void ProcessItems(PacketLog& log);
 };

@@ -19,7 +19,7 @@ Parser::Parser(int argc, char** argv) : database(*ParserDatabase::GetGlobal()) {
 		if (StringEndsWith(arg, ".log")) {
 			log_names.emplace_back(std::move(arg));
 		}
-		else if (arg.front() == '-') {
+		else if (arg.front() == '-' && arg[1] != '-') {
 			options.emplace_back(std::move(arg));
 		}
 	}

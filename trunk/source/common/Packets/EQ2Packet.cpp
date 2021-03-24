@@ -190,3 +190,14 @@ void EQ2Packet::PostRead() {
 		}
 	}
 }
+
+void EQ2Packet::PreRead() {
+	for (auto& e : elements) {
+		if (auto substr = dynamic_cast<PacketSubstructParentBase*>(e)) {
+			substr->PreRead();
+		}
+		if (auto arr = dynamic_cast<PacketArrayBase*>(e)) {
+			arr->PreRead();
+		}
+	}
+}

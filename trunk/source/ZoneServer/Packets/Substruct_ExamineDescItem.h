@@ -8,12 +8,6 @@ private:
 	int16_t sValue_do_not_set;
 public:
 	Substruct_ItemStatMod(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
-		if (p_itemVersion == 0) {
-			itemVersion = GetDescriptionVersion(ver);
-		}
-		else {
-			itemVersion = p_itemVersion;
-		}
 		RegisterElements();
 	}
 
@@ -27,6 +21,7 @@ public:
 	uint8_t itemVersion;
 
 	void RegisterElements() {
+		itemVersion = GetDescriptionVersion(GetVersion());
 		auto e = RegisterUInt8(statType);
 		RegisterOversizedByte(statSubtype);
 		//This is really if (statType & ~0xF) == 6 or 8, but our DB stats only go up to 7 so no issue
@@ -75,19 +70,13 @@ public:
 class Substruct_ItemStringMod : public PacketSubstruct, public ItemStringMod {
 public:
 	Substruct_ItemStringMod(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
-		if (p_itemVersion == 0) {
-			itemVersion = GetDescriptionVersion(ver);
-		}
-		else {
-			itemVersion = p_itemVersion;
-		}
 		RegisterElements();
 	}
 
 	uint8_t itemVersion;
 
 	void RegisterElements() {
-		uint8_t itemVersion = GetDescriptionVersion(GetVersion());
+		itemVersion = GetDescriptionVersion(GetVersion());
 		Register8String(stringVal);
 		if (itemVersion >= 7) {
 			auto e = RegisterUInt8(unknown1);
@@ -261,18 +250,13 @@ public:
 class Substruct_ItemTierLineEntry : public PacketSubstruct, public ItemTierLineEntry {
 public:
 	Substruct_ItemTierLineEntry(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
-		if (p_itemVersion == 0) {
-			itemVersion = GetDescriptionVersion(ver);
-		}
-		else {
-			itemVersion = p_itemVersion;
-		}
 		RegisterElements();
 	}
 
 	uint8_t itemVersion;
 
 	void RegisterElements() {
+		itemVersion = GetDescriptionVersion(GetVersion());
 		Register16String(addon);
 		RegisterInt32(unknown1);
 		RegisterUInt8(unknown2);
@@ -315,12 +299,6 @@ public:
 class Substruct_ItemSetBonus : public PacketSubstruct, public ItemSetBonus {
 public:
 	Substruct_ItemSetBonus(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
-		if (p_itemVersion == 0) {
-			itemVersion = GetDescriptionVersion(ver);
-		}
-		else {
-			itemVersion = p_itemVersion;
-		}
 		RegisterElements();
 	}
 
@@ -343,6 +321,7 @@ public:
 	std::vector<Substruct_ItemSetBonusEffect> effectArray;
 
 	void RegisterElements() {
+		itemVersion = GetDescriptionVersion(GetVersion());
 		RegisterUInt8(itemsNeeded);
 		auto e = RegisterUInt8(statCount);
 		e->SetMyArray(RegisterArray(statArray, Substruct_ItemStatMod));
@@ -354,18 +333,13 @@ public:
 class Substruct_ItemSetItem : public PacketSubstruct, public ItemSetItem {
 public:
 	Substruct_ItemSetItem(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
-		if (p_itemVersion == 0) {
-			itemVersion = GetDescriptionVersion(ver);
-		}
-		else {
-			itemVersion = p_itemVersion;
-		}
 		RegisterElements();
 	}
 
 	uint8_t itemVersion;
 
 	void RegisterElements() {
+		itemVersion = GetDescriptionVersion(GetVersion());
 		RegisterUInt8(unknown1);
 		if (itemVersion >= 16) {
 			RegisterUInt8(unknown2);
@@ -377,12 +351,6 @@ public:
 class Substruct_ItemSetDetails : public PacketSubstruct, public ItemSetDetails {
 public:
 	Substruct_ItemSetDetails(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
-		if (p_itemVersion == 0) {
-			itemVersion = GetDescriptionVersion(ver);
-		}
-		else {
-			itemVersion = p_itemVersion;
-		}
 		RegisterElements();
 	}
 
@@ -405,6 +373,7 @@ public:
 	std::vector<Substruct_ItemSetItem> setItemArray;
 
 	void RegisterElements() {
+		itemVersion = GetDescriptionVersion(GetVersion());
 		auto e = RegisterUInt8(setBonusCount);
 		e->SetMyArray(RegisterArray(setBonusArray, Substruct_ItemSetBonus));
 		e = RegisterUInt8(setItemsCount);
@@ -417,12 +386,6 @@ public:
 class Substruct_ItemAdornmentLevel : public PacketSubstruct, public ItemAdornmentLevel {
 public:
 	Substruct_ItemAdornmentLevel(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
-		if (p_itemVersion == 0) {
-			itemVersion = GetDescriptionVersion(ver);
-		}
-		else {
-			itemVersion = p_itemVersion;
-		}
 		RegisterElements();
 	}
 
@@ -439,6 +402,7 @@ public:
 	std::vector<Substruct_ItemStatMod> statArray;
 
 	void RegisterElements() {
+		itemVersion = GetDescriptionVersion(GetVersion());
 		auto e = RegisterUInt32(statCount);
 		e->SetMyArray(RegisterArray(statArray, Substruct_ItemStatMod));
 	}
@@ -447,12 +411,6 @@ public:
 class Substruct_ItemAdornmentDetails : public PacketSubstruct, public ItemAdornmentDetails {
 public:
 	Substruct_ItemAdornmentDetails(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
-		if (p_itemVersion == 0) {
-			itemVersion = GetDescriptionVersion(ver);
-		}
-		else {
-			itemVersion = p_itemVersion;
-		}
 		RegisterElements();
 	}
 
@@ -469,6 +427,7 @@ public:
 	std::vector<Substruct_ItemAdornmentLevel> levelArray;
 
 	void RegisterElements() {
+		itemVersion = GetDescriptionVersion(GetVersion());
 		RegisterUInt8(unknown1);
 		RegisterUInt8(unknown2);
 		if (itemVersion >= 65) {
@@ -486,18 +445,13 @@ public:
 class Substruct_ItemAdornmentSlotDetails : public PacketSubstruct, public ItemAdornmentSlotDetails {
 public:
 	Substruct_ItemAdornmentSlotDetails(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
-		if (p_itemVersion == 0) {
-			itemVersion = GetDescriptionVersion(ver);
-		}
-		else {
-			itemVersion = p_itemVersion;
-		}
 		RegisterElements();
 	}
 
 	uint8_t itemVersion;
 
 	void RegisterElements() {
+		itemVersion = GetDescriptionVersion(GetVersion());
 		RegisterUInt8(slot);
 		if (itemVersion >= 54) {
 			RegisterUInt8(unknown1);
@@ -514,13 +468,8 @@ public:
 
 class Substruct_ItemDescFooter : public PacketSubstruct, public ItemDescFooterData {
 public:
-	Substruct_ItemDescFooter(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver) {
-		if (p_itemVersion == 0) {
-			itemVersion = GetDescriptionVersion(ver);
-		}
-		else {
-			itemVersion = p_itemVersion;
-		}
+	Substruct_ItemDescFooter(uint32_t ver = 0, uint8_t p_itemVersion = 0) 
+		: PacketSubstruct(ver), itemSetDetails(ver) {
 		RegisterElements();
 	}
 
@@ -584,6 +533,7 @@ public:
 	Substruct_ItemSetDetails itemSetDetails;
 
 	void RegisterElements() {
+		itemVersion = GetDescriptionVersion(GetVersion());
 		{
 			//This is an i var set ExamineInfoCmd unknown[1] but not sure when that is ever set
 			auto e = RegisterUInt8(numEffects);

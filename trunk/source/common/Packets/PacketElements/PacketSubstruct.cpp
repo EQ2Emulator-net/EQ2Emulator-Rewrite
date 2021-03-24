@@ -36,3 +36,14 @@ void PacketSubstruct::PostRead() {
 		}
 	}
 }
+
+void PacketSubstruct::PreRead() {
+	for (auto& e : elements) {
+		if (auto substr = dynamic_cast<PacketSubstructParentBase*>(e)) {
+			substr->PreRead();
+		}
+		if (auto arr = dynamic_cast<PacketArrayBase*>(e)) {
+			arr->PreRead();
+		}
+	}
+}

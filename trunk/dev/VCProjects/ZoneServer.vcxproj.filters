@@ -70,6 +70,12 @@
     <Filter Include="source\AI">
       <UniqueIdentifier>{58a60d54-8bd4-4cd9-b6c6-4c78a86db813}</UniqueIdentifier>
     </Filter>
+    <Filter Include="common\Parser">
+      <UniqueIdentifier>{c86d36a2-f062-4e15-b108-b50d36ef9c24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Parser">
+      <UniqueIdentifier>{0be84d3d-84cb-4338-bcdc-850d71a8f5a5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\ZoneServer\main.cpp">
@@ -422,6 +428,27 @@
     </ClCompile>
     <ClCompile Include="..\..\source\ZoneServer\Players\SpawnCampDebug.cpp">
       <Filter>source\Players</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Parser\PacketLog.cpp">
+      <Filter>common\Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Parser\ParserDatabase.cpp">
+      <Filter>common\Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Parser\PacketLog_Zone.cpp">
+      <Filter>source\Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Parser\ParserZone.cpp">
+      <Filter>source\Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Parser\Parser.cpp">
+      <Filter>common\Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Packets\OP_EqExamineInfoCmd.cpp">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Packets\ItemPackets.cpp">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1121,6 +1148,18 @@
     </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_AADesc.h">
       <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Parser\PacketLog.h">
+      <Filter>common\Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Parser\ParserDatabase.h">
+      <Filter>common\Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Parser\ParserZone.h">
+      <Filter>source\Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Parser\Parser.h">
+      <Filter>common\Parser</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
