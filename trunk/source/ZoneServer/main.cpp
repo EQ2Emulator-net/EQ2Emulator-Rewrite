@@ -37,8 +37,6 @@ int main(int argc, char** argv) {
 
 	WorldTalk talk;
 
-	std::cin.get();
-
 	{
 		ConfigReader cr(&g_zoneOperator, &database, &talk);
 		success = cr.ReadConfig("zone-config.xml");
