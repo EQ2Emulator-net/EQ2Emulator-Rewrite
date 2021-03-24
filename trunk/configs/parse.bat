@@ -1,0 +1,1 @@
+ZoneServer.exe --parse -items LOGFILE_REGEX(ItemLinks/.*\.log)
