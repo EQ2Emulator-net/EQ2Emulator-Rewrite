@@ -8,157 +8,157 @@
 extern MasterItemList g_masterItemList;
 
 //Packet functions
-std::unique_ptr<Substruct_ExamineDescItem> Item::GetPacketData(uint32_t version) const {
-	auto ret = GetItemTypeData(version);
+std::unique_ptr<Substruct_ExamineDescItem> Item::GetPacketData(uint32_t version, bool bPvp) const {
+	auto ret = GetItemTypeData(version, bPvp);
 	static_cast<ItemDescBaseData&>(ret->header) = static_cast<const ItemDescBaseData&>(*this);
 	static_cast<ItemDescFooterData&>(ret->footer) = static_cast<const ItemDescFooterData&>(*this);
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemGeneric::GetItemTypeData(uint32_t version) const {
-	auto ret = std::make_unique<Substruct_ExamineDescItem_Generic>(version);
+std::unique_ptr<Substruct_ExamineDescItem> ItemGeneric::GetItemTypeData(uint32_t version, bool bPvp) const {
+	auto ret = std::make_unique<Substruct_ExamineDescItem_Generic>(version, bPvp);
 
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemMeleeWeapon::GetItemTypeData(uint32_t version) const {
-	auto ret = std::make_unique<Substruct_ExamineDescItem_MeleeWeapon>(version);
+std::unique_ptr<Substruct_ExamineDescItem> ItemMeleeWeapon::GetItemTypeData(uint32_t version, bool bPvp) const {
+	auto ret = std::make_unique<Substruct_ExamineDescItem_MeleeWeapon>(version, bPvp);
 
 	static_cast<ItemMeleeWeaponData&>(*ret) = static_cast<const ItemMeleeWeaponData&>(*this);
 
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemRangedWeapon::GetItemTypeData(uint32_t version) const {
-	auto ret = std::make_unique<Substruct_ExamineDescItem_RangedWeapon>(version);
+std::unique_ptr<Substruct_ExamineDescItem> ItemRangedWeapon::GetItemTypeData(uint32_t version, bool bPvp) const {
+	auto ret = std::make_unique<Substruct_ExamineDescItem_RangedWeapon>(version, bPvp);
 
 	static_cast<ItemRangedWeaponData&>(*ret) = static_cast<const ItemRangedWeaponData&>(*this);
 
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemArmor::GetItemTypeData(uint32_t version) const {
-	auto ret = std::make_unique<Substruct_ExamineDescItem_Armor>(version);
+std::unique_ptr<Substruct_ExamineDescItem> ItemArmor::GetItemTypeData(uint32_t version, bool bPvp) const {
+	auto ret = std::make_unique<Substruct_ExamineDescItem_Armor>(version, bPvp);
 
 	static_cast<ItemArmorData&>(*ret) = static_cast<const ItemArmorData&>(*this);
 
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemShield::GetItemTypeData(uint32_t version) const {
-	auto ret = std::make_unique<Substruct_ExamineDescItem_Shield>(version);
+std::unique_ptr<Substruct_ExamineDescItem> ItemShield::GetItemTypeData(uint32_t version, bool bPvp) const {
+	auto ret = std::make_unique<Substruct_ExamineDescItem_Shield>(version, bPvp);
 
 	static_cast<ItemShieldData&>(*ret) = static_cast<const ItemShieldData&>(*this);
 
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemBag::GetItemTypeData(uint32_t version) const {
-	auto ret = std::make_unique<Substruct_ExamineDescItem_Bag>(version);
+std::unique_ptr<Substruct_ExamineDescItem> ItemBag::GetItemTypeData(uint32_t version, bool bPvp) const {
+	auto ret = std::make_unique<Substruct_ExamineDescItem_Bag>(version, bPvp);
 
 	static_cast<ItemBagData&>(*ret) = static_cast<const ItemBagData&>(*this);
 
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemRecipeBook::GetItemTypeData(uint32_t version) const {
-	auto ret = std::make_unique<Substruct_ExamineDescItem_RecipeBook>(version);
+std::unique_ptr<Substruct_ExamineDescItem> ItemRecipeBook::GetItemTypeData(uint32_t version, bool bPvp) const {
+	auto ret = std::make_unique<Substruct_ExamineDescItem_RecipeBook>(version, bPvp);
 
 	static_cast<ItemRecipeBookData&>(*ret) = static_cast<const ItemRecipeBookData&>(*this);
 
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemProvision::GetItemTypeData(uint32_t version) const {
-	auto ret = std::make_unique<Substruct_ExamineDescItem_Provision>(version);
+std::unique_ptr<Substruct_ExamineDescItem> ItemProvision::GetItemTypeData(uint32_t version, bool bPvp) const {
+	auto ret = std::make_unique<Substruct_ExamineDescItem_Provision>(version, bPvp);
 
 	static_cast<ItemProvisionData&>(*ret) = static_cast<const ItemProvisionData&>(*this);
 
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemBauble::GetItemTypeData(uint32_t version) const {
-	auto ret = std::make_unique<Substruct_ExamineDescItem_Bauble>(version);
+std::unique_ptr<Substruct_ExamineDescItem> ItemBauble::GetItemTypeData(uint32_t version, bool bPvp) const {
+	auto ret = std::make_unique<Substruct_ExamineDescItem_Bauble>(version, bPvp);
 
 	static_cast<ItemBaubleData&>(*ret) = static_cast<const ItemBaubleData&>(*this);
 
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemHouse::GetItemTypeData(uint32_t version) const {
-	auto ret = std::make_unique<Substruct_ExamineDescItem_House>(version);
+std::unique_ptr<Substruct_ExamineDescItem> ItemHouse::GetItemTypeData(uint32_t version, bool bPvp) const {
+	auto ret = std::make_unique<Substruct_ExamineDescItem_House>(version, bPvp);
 
 	static_cast<ItemHouseData&>(ret->houseData) = static_cast<const ItemHouseData&>(*this);
 
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemAmmo::GetItemTypeData(uint32_t version) const {
-	auto ret = std::make_unique<Substruct_ExamineDescItem_Ammo>(version);
+std::unique_ptr<Substruct_ExamineDescItem> ItemAmmo::GetItemTypeData(uint32_t version, bool bPvp) const {
+	auto ret = std::make_unique<Substruct_ExamineDescItem_Ammo>(version, bPvp);
 
 	static_cast<ItemAmmoData&>(*ret) = static_cast<const ItemAmmoData&>(*this);
 
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemAdornment::GetItemTypeData(uint32_t version) const {
-	auto ret = std::make_unique<Substruct_ExamineDescItem_Adornment>(version);
+std::unique_ptr<Substruct_ExamineDescItem> ItemAdornment::GetItemTypeData(uint32_t version, bool bPvp) const {
+	auto ret = std::make_unique<Substruct_ExamineDescItem_Adornment>(version, bPvp);
 
 	static_cast<ItemAdornmentData&>(*ret) = static_cast<const ItemAdornmentData&>(*this);
 
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemAchievementProfile::GetItemTypeData(uint32_t version) const {
-	auto ret = std::make_unique<Substruct_ExamineDescItem_AchievementProfile>(version);
+std::unique_ptr<Substruct_ExamineDescItem> ItemAchievementProfile::GetItemTypeData(uint32_t version, bool bPvp) const {
+	auto ret = std::make_unique<Substruct_ExamineDescItem_AchievementProfile>(version, bPvp);
 
 	static_cast<ItemAchievementProfileData&>(*ret) = static_cast<const ItemAchievementProfileData&>(*this);
 
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemRewardVoucher::GetItemTypeData(uint32_t version) const {
-	auto ret = std::make_unique<Substruct_ExamineDescItem_RewardVoucher>(version);
+std::unique_ptr<Substruct_ExamineDescItem> ItemRewardVoucher::GetItemTypeData(uint32_t version, bool bPvp) const {
+	auto ret = std::make_unique<Substruct_ExamineDescItem_RewardVoucher>(version, bPvp);
 
 	static_cast<ItemRewardVoucherData&>(*ret) = static_cast<const ItemRewardVoucherData&>(*this);
 
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemRewardCrate::GetItemTypeData(uint32_t version) const {
-	auto ret = std::make_unique<Substruct_ExamineDescItem_RewardCrate>(version);
+std::unique_ptr<Substruct_ExamineDescItem> ItemRewardCrate::GetItemTypeData(uint32_t version, bool bPvp) const {
+	auto ret = std::make_unique<Substruct_ExamineDescItem_RewardCrate>(version, bPvp);
 
 	static_cast<ItemRewardCrateData&>(*ret) = static_cast<const ItemRewardCrateData&>(*this);
 
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemBook::GetItemTypeData(uint32_t version) const {
-	auto ret = std::make_unique<Substruct_ExamineDescItem_Book>(version);
+std::unique_ptr<Substruct_ExamineDescItem> ItemBook::GetItemTypeData(uint32_t version, bool bPvp) const {
+	auto ret = std::make_unique<Substruct_ExamineDescItem_Book>(version, bPvp);
 
 	static_cast<ItemBookData&>(*ret) = static_cast<const ItemBookData&>(*this);
 
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemReforgingDecoration::GetItemTypeData(uint32_t version) const {
-	auto ret = std::make_unique<Substruct_ExamineDescItem_ReforgingDecoration>(version);
+std::unique_ptr<Substruct_ExamineDescItem> ItemReforgingDecoration::GetItemTypeData(uint32_t version, bool bPvp) const {
+	auto ret = std::make_unique<Substruct_ExamineDescItem_ReforgingDecoration>(version, bPvp);
 
 	static_cast<ItemReforgingDecorationData&>(*ret) = static_cast<const ItemReforgingDecorationData&>(*this);
 
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemHouseContainer::GetItemTypeData(uint32_t version) const {
-	auto ret = std::make_unique<Substruct_ExamineDescItem_HouseContainer>(version);
+std::unique_ptr<Substruct_ExamineDescItem> ItemHouseContainer::GetItemTypeData(uint32_t version, bool bPvp) const {
+	auto ret = std::make_unique<Substruct_ExamineDescItem_HouseContainer>(version, bPvp);
 
 	static_cast<ItemHouseContainerData&>(*ret) = static_cast<const ItemHouseContainerData&>(*this);
 
 	return ret;
 }
 
-std::unique_ptr<Substruct_ExamineDescItem> ItemSpellScroll::GetItemTypeData(uint32_t version) const {
-	auto ret = std::make_unique<Substruct_ExamineDescItem_SpellScroll>(version);
+std::unique_ptr<Substruct_ExamineDescItem> ItemSpellScroll::GetItemTypeData(uint32_t version, bool bPvp) const {
+	auto ret = std::make_unique<Substruct_ExamineDescItem_SpellScroll>(version, bPvp);
 
 	static_cast<ItemSpellScrollData&>(*ret) = static_cast<const ItemSpellScrollData&>(*this);
 

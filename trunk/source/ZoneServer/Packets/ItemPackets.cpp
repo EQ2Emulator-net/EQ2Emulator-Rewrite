@@ -7,8 +7,14 @@ EQ2Packet* ExamineInfoCmd_Item_Packet::GetSubPacket() {
 	if (typeid(*itemDesc) == typeid(Substruct_ExamineDescItem_HeaderOnly)) {
 		auto item = Item::CreateItemWithType(static_cast<EItemType>(itemDesc->header.itemType));
 		std::unique_ptr<Substruct_ExamineDescItem> new_desc = item->GetPacketData(GetVersion());
+		Substruct_ExamineDescItem* pvp = nullptr;
 
-		ret = new ExamineInfoCmd_Item_Packet(GetVersion(), new_desc.release(), true);
+		if (itemDesc->examineTypeOverride & 0x80) {
+			//This item has a pvp desc
+			pvp = item->GetPacketData(GetVersion(), true).release();
+		}
+
+		ret = new ExamineInfoCmd_Item_Packet(GetVersion(), new_desc.release(), true, pvp);	
 	}
 	return ret;
 }

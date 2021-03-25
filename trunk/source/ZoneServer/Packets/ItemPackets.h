@@ -7,21 +7,30 @@
 
 class ExamineInfoCmd_Item_Packet : public OP_EqExamineInfoCmd_Packet {
 public:
-	ExamineInfoCmd_Item_Packet(uint32_t ver, Substruct_ExamineDescItem* item, bool p_bDeleteDesc = false) : 
-		OP_EqExamineInfoCmd_Packet(ver, false), itemDesc(item), bDeleteDesc(p_bDeleteDesc) {
+	ExamineInfoCmd_Item_Packet(uint32_t ver, Substruct_ExamineDescItem* item, bool p_bDeleteDesc = false,
+		Substruct_ExamineDescItem* pvp = nullptr) :
+		OP_EqExamineInfoCmd_Packet(ver, false), itemDesc(item), bDeleteDesc(p_bDeleteDesc), pvpDesc(pvp) {
 		RegisterElements();
 	}
 
 	~ExamineInfoCmd_Item_Packet() {
-		if (bDeleteDesc) delete itemDesc;
+		if (bDeleteDesc) {
+			delete itemDesc;
+			if (pvpDesc) delete pvpDesc;
+		}
 	}
 
-	Substruct_ExamineDescItem* itemDesc;
+	Substruct_ExamineDescItem* const itemDesc;
+	Substruct_ExamineDescItem* const pvpDesc;
 
 	void RegisterElements() {
 		EmuAssert(itemDesc);
 		Substruct_ExamineDescItem& itemDesc = *this->itemDesc;
 		RegisterSubstruct(itemDesc);
+		if (pvpDesc) {
+			Substruct_ExamineDescItem& pvpDesc = *this->pvpDesc;
+			RegisterSubstruct(pvpDesc);
+		}
 	}
 
 	EQ2Packet* GetSubPacket() override;
@@ -44,7 +53,7 @@ public:
 
 class Substruct_ExamineDescItem_Generic : public Substruct_ExamineDescItem {
 public:
-	Substruct_ExamineDescItem_Generic(uint32_t ver = 0) : Substruct_ExamineDescItem(ver) {
+	Substruct_ExamineDescItem_Generic(uint32_t ver = 0, bool bPvp = false) : Substruct_ExamineDescItem(ver, bPvp) {
 		RegisterElements();
 	}
 
@@ -58,7 +67,7 @@ public:
 
 class Substruct_ExamineDescItem_MeleeWeapon : public Substruct_ExamineDescItem, public ItemMeleeWeaponData {
 public:
-	Substruct_ExamineDescItem_MeleeWeapon(uint32_t ver = 0) : Substruct_ExamineDescItem(ver) {
+	Substruct_ExamineDescItem_MeleeWeapon(uint32_t ver = 0, bool bPvp = false) : Substruct_ExamineDescItem(ver, bPvp) {
 		RegisterElements();
 	}
 
@@ -85,7 +94,7 @@ public:
 
 class Substruct_ExamineDescItem_RangedWeapon : public Substruct_ExamineDescItem, public ItemRangedWeaponData {
 public:
-	Substruct_ExamineDescItem_RangedWeapon(uint32_t ver = 0) : Substruct_ExamineDescItem(ver) {
+	Substruct_ExamineDescItem_RangedWeapon(uint32_t ver = 0, bool bPvp = false) : Substruct_ExamineDescItem(ver, bPvp) {
 		RegisterElements();
 	}
 
@@ -113,7 +122,7 @@ public:
 
 class Substruct_ExamineDescItem_Armor : public Substruct_ExamineDescItem, public ItemArmorData {
 public:
-	Substruct_ExamineDescItem_Armor(uint32_t ver = 0) : Substruct_ExamineDescItem(ver) {
+	Substruct_ExamineDescItem_Armor(uint32_t ver = 0, bool bPvp = false) : Substruct_ExamineDescItem(ver, bPvp) {
 		RegisterElements();
 	}
 
@@ -152,7 +161,7 @@ public:
 
 class Substruct_ExamineDescItem_Shield : public Substruct_ExamineDescItem, public ItemShieldData {
 public:
-	Substruct_ExamineDescItem_Shield(uint32_t ver = 0) : Substruct_ExamineDescItem(ver) {
+	Substruct_ExamineDescItem_Shield(uint32_t ver = 0, bool bPvp = false) : Substruct_ExamineDescItem(ver, bPvp) {
 		RegisterElements();
 	}
 
@@ -171,7 +180,7 @@ public:
 
 class Substruct_ExamineDescItem_Bag : public Substruct_ExamineDescItem, public ItemBagData {
 public:
-	Substruct_ExamineDescItem_Bag(uint32_t ver = 0) : Substruct_ExamineDescItem(ver) {
+	Substruct_ExamineDescItem_Bag(uint32_t ver = 0, bool bPvp = false) : Substruct_ExamineDescItem(ver, bPvp) {
 		RegisterElements();
 	}
 
@@ -228,7 +237,7 @@ public:
 
 class Substruct_ExamineDescItem_RecipeBook : public Substruct_ExamineDescItem, public ItemRecipeBookData {
 public:
-	Substruct_ExamineDescItem_RecipeBook(uint32_t ver = 0) : Substruct_ExamineDescItem(ver) {
+	Substruct_ExamineDescItem_RecipeBook(uint32_t ver = 0, bool bPvp = false) : Substruct_ExamineDescItem(ver, bPvp) {
 		RegisterElements();
 	}
 
@@ -282,7 +291,7 @@ public:
 
 class Substruct_ExamineDescItem_Provision : public Substruct_ExamineDescItem, public ItemProvisionData {
 public:
-	Substruct_ExamineDescItem_Provision(uint32_t ver = 0) : Substruct_ExamineDescItem(ver) {
+	Substruct_ExamineDescItem_Provision(uint32_t ver = 0, bool bPvp = false) : Substruct_ExamineDescItem(ver, bPvp) {
 		RegisterElements();
 	}
 
@@ -299,7 +308,7 @@ public:
 
 class Substruct_ExamineDescItem_Bauble : public Substruct_ExamineDescItem, public ItemBaubleData {
 public:
-	Substruct_ExamineDescItem_Bauble(uint32_t ver = 0) : Substruct_ExamineDescItem(ver) {
+	Substruct_ExamineDescItem_Bauble(uint32_t ver = 0, bool bPvp = false) : Substruct_ExamineDescItem(ver, bPvp) {
 		RegisterElements();
 	}
 
@@ -361,7 +370,7 @@ public:
 
 class Substruct_ExamineDescItem_House : public Substruct_ExamineDescItem {
 public:
-	Substruct_ExamineDescItem_House(uint32_t ver = 0) : Substruct_ExamineDescItem(ver), houseData(ver, header.itemVersion) {
+	Substruct_ExamineDescItem_House(uint32_t ver = 0, bool bPvp = false) : Substruct_ExamineDescItem(ver, bPvp), houseData(ver, header.itemVersion) {
 		RegisterElements();
 	}
 
@@ -378,7 +387,7 @@ public:
 
 class Substruct_ExamineDescItem_Ammo : public Substruct_ExamineDescItem, public ItemAmmoData {
 public:
-	Substruct_ExamineDescItem_Ammo(uint32_t ver = 0) : Substruct_ExamineDescItem(ver) {
+	Substruct_ExamineDescItem_Ammo(uint32_t ver = 0, bool bPvp = false) : Substruct_ExamineDescItem(ver, bPvp) {
 		RegisterElements();
 	}
 
@@ -398,7 +407,7 @@ public:
 
 class Substruct_ExamineDescItem_HouseContainer : public Substruct_ExamineDescItem, public ItemHouseContainerData {
 public:
-	Substruct_ExamineDescItem_HouseContainer(uint32_t ver = 0) : Substruct_ExamineDescItem(ver) {
+	Substruct_ExamineDescItem_HouseContainer(uint32_t ver = 0, bool bPvp = false) : Substruct_ExamineDescItem(ver, bPvp) {
 		RegisterElements();
 	}
 
@@ -425,7 +434,7 @@ public:
 
 class Substruct_ExamineDescItem_Adornment : public Substruct_ExamineDescItem, public ItemAdornmentData {
 public:
-	Substruct_ExamineDescItem_Adornment(uint32_t ver = 0) : Substruct_ExamineDescItem(ver) {
+	Substruct_ExamineDescItem_Adornment(uint32_t ver = 0, bool bPvp = false) : Substruct_ExamineDescItem(ver, bPvp) {
 		RegisterElements();
 	}
 
@@ -461,7 +470,7 @@ public:
 
 class Substruct_ExamineDescItem_AchievementProfile : public Substruct_ExamineDescItem, public ItemAchievementProfileData {
 public:
-	Substruct_ExamineDescItem_AchievementProfile(uint32_t ver = 0) : Substruct_ExamineDescItem(ver) {
+	Substruct_ExamineDescItem_AchievementProfile(uint32_t ver = 0, bool bPvp = false) : Substruct_ExamineDescItem(ver, bPvp) {
 		RegisterElements();
 	}
 
@@ -481,7 +490,7 @@ public:
 
 class Substruct_ExamineDescItem_RewardVoucher : public Substruct_ExamineDescItem, public ItemRewardVoucherData {
 public:
-	Substruct_ExamineDescItem_RewardVoucher(uint32_t ver = 0) : Substruct_ExamineDescItem(ver) {
+	Substruct_ExamineDescItem_RewardVoucher(uint32_t ver = 0, bool bPvp = false) : Substruct_ExamineDescItem(ver, bPvp) {
 		RegisterElements();
 	}
 
@@ -538,7 +547,7 @@ public:
 
 class Substruct_ExamineDescItem_RewardCrate : public Substruct_ExamineDescItem, public ItemRewardCrateData {
 public:
-	Substruct_ExamineDescItem_RewardCrate(uint32_t ver = 0) : Substruct_ExamineDescItem(ver) {
+	Substruct_ExamineDescItem_RewardCrate(uint32_t ver = 0, bool bPvp = false) : Substruct_ExamineDescItem(ver, bPvp) {
 		unknown1 = 0;
 		unknown2 = 0;
 		RegisterElements();
@@ -616,7 +625,7 @@ public:
 
 class Substruct_ExamineDescItem_ReforgingDecoration : public Substruct_ExamineDescItem, public ItemReforgingDecorationData {
 public:
-	Substruct_ExamineDescItem_ReforgingDecoration(uint32_t ver = 0) : Substruct_ExamineDescItem(ver) {
+	Substruct_ExamineDescItem_ReforgingDecoration(uint32_t ver = 0, bool bPvp = false) : Substruct_ExamineDescItem(ver, bPvp) {
 		RegisterElements();
 	}
 
@@ -631,7 +640,7 @@ public:
 
 class Substruct_ExamineDescItem_Book : public Substruct_ExamineDescItem, public ItemBookData {
 public:
-	Substruct_ExamineDescItem_Book(uint32_t ver = 0) : Substruct_ExamineDescItem(ver), houseData(ver) {
+	Substruct_ExamineDescItem_Book(uint32_t ver = 0, bool bPvp = false) : Substruct_ExamineDescItem(ver), houseData(ver, bPvp) {
 		RegisterElements();
 	}
 
@@ -656,7 +665,7 @@ public:
 
 class Substruct_ExamineDescItem_SpellScroll : public Substruct_ExamineDescItem, public ItemSpellScrollData {
 public:
-	Substruct_ExamineDescItem_SpellScroll(uint32_t ver = 0) : Substruct_ExamineDescItem(ver), spell(ver, subVersion) {
+	Substruct_ExamineDescItem_SpellScroll(uint32_t ver = 0, bool bPvp = false) : Substruct_ExamineDescItem(ver, bPvp), spell(ver, subVersion) {
 		RegisterElements();
 	}
 

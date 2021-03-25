@@ -29,6 +29,9 @@ Parser::Parser(int argc, char** argv) : database(*ParserDatabase::GetGlobal()) {
 
 			for (auto& itr : rdi("./")) {
 				std::string fpath = itr.path().string();
+				//Strip the ./ from the path
+				fpath = fpath.substr(2);
+				//Change \ characters to / for consistency between OS's
 				std::replace(fpath.begin(), fpath.end(), '\\', '/');
 				if (std::regex_search(fpath, m, file_regex)) {
 					log_names.emplace_back(fpath);

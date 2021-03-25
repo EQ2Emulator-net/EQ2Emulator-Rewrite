@@ -368,6 +368,18 @@ public:
 		PacketSubstruct::PreWrite();
 	}
 
+	void PostRead() override {
+		setBonuses.resize(setBonusArray.size());
+		for (size_t i = 0; i < setBonusArray.size(); i++) {
+			setBonuses[i] = static_cast<ItemSetBonus&>(setBonusArray[i]);
+		}
+		setItems.resize(setItemArray.size());
+		for (size_t i = 0; i < setItemArray.size(); i++) {
+			setItems[i] = static_cast<ItemSetItem&>(setItemArray[i]);
+		}
+		PacketSubstruct::PreWrite();
+	}
+
 	uint8_t itemVersion;
 	std::vector<Substruct_ItemSetBonus> setBonusArray;
 	std::vector<Substruct_ItemSetItem> setItemArray;
@@ -588,7 +600,7 @@ public:
 			e->SetMyArray(RegisterArray(footerAdornmentArray, Substruct_ItemAdornmentDetails));
 		}
 		if (itemVersion >= 35) {
-			auto e1 = RegisterUInt8(unknown1);
+			auto e1 = RegisterUInt8(collectable_unk);
 			auto e2 = RegisterBool(bCollectable);
 			auto e3 = RegisterBool(bCollectionNeeded);
 			e3->AddIfAnyVariableSet(e1);
@@ -696,10 +708,7 @@ public:
 
 class Substruct_ExamineDescItem : public Substruct_ExamineDescBase {
 protected:
-	enum class EIsPvpDesc {
-		ETRUE
-	};
-	Substruct_ExamineDescItem(uint32_t ver, EIsPvpDesc) : Substruct_ExamineDescBase(ver, false, false),
+	Substruct_ExamineDescItem(uint32_t ver, bool bPvpDesc) : Substruct_ExamineDescBase(ver, false, !bPvpDesc),
 		header(ver), footer(ver, header.itemVersion), pvp(nullptr) {
 		SetItemStructVersion();
 	}
