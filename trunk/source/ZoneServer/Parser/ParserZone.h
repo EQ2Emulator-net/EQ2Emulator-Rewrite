@@ -10,3 +10,8 @@ public:
 
 	void ProcessItems(PacketLog& log);
 };
+
+class LogItemsParser {
+public:
+	LogItemsParser(PacketLog& log, class ParserDatabase& db);
+};

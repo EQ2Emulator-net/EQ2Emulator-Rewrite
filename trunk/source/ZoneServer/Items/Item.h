@@ -273,11 +273,11 @@ protected:
 	Item();
 	Item(const Item& rhs);
 
-	virtual std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version) const = 0;
+	virtual std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version, bool bPvp = false) const = 0;
 
 public:
 	virtual ~Item() = default;
-	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(uint32_t version) const;
+	std::unique_ptr<Substruct_ExamineDescItem> GetPacketData(uint32_t version, bool bPvp = false) const;
 	virtual std::shared_ptr<Item> Copy() const = 0;
 	virtual void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) = 0;
 
@@ -327,7 +327,7 @@ public:
 	ItemGeneric() = default;
 	~ItemGeneric() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version, bool bPvp = false) const override;
 
 	std::shared_ptr<Item> Copy() const override;
 	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
@@ -338,7 +338,7 @@ public:
 	ItemMeleeWeapon() = default;
 	~ItemMeleeWeapon() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version, bool bPvp = false) const override;
 	std::shared_ptr<Item> Copy() const override;
 	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
@@ -348,7 +348,7 @@ public:
 	ItemRangedWeapon() = default;
 	~ItemRangedWeapon() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version, bool bPvp = false) const override;
 	std::shared_ptr<Item> Copy() const override;
 	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
@@ -358,7 +358,7 @@ public:
 	ItemArmor() = default;
 	~ItemArmor() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version, bool bPvp = false) const override;
 	std::shared_ptr<Item> Copy() const override;
 	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
@@ -368,7 +368,7 @@ public:
 	ItemShield() = default;
 	~ItemShield() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version, bool bPvp = false) const override;
 	std::shared_ptr<Item> Copy() const override;
 	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
@@ -378,7 +378,7 @@ public:
 	ItemBag() = default;
 	~ItemBag() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version, bool bPvp = false) const override;
 	std::shared_ptr<Item> Copy() const override;
 	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
@@ -388,7 +388,7 @@ public:
 	ItemRecipeBook() = default;
 	~ItemRecipeBook() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version, bool bPvp = false) const override;
 	std::shared_ptr<Item> Copy() const override;
 	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
@@ -398,7 +398,7 @@ public:
 	ItemProvision() = default;
 	~ItemProvision() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version, bool bPvp = false) const override;
 	std::shared_ptr<Item> Copy() const override;
 	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
@@ -408,7 +408,7 @@ public:
 	ItemBauble() = default;
 	~ItemBauble() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version, bool bPvp = false) const override;
 	std::shared_ptr<Item> Copy() const override;
 	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
@@ -418,7 +418,7 @@ public:
 	ItemHouse() = default;
 	~ItemHouse() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version, bool bPvp = false) const override;
 	std::shared_ptr<Item> Copy() const override;
 	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
@@ -428,7 +428,7 @@ public:
 	ItemAmmo() = default;
 	~ItemAmmo() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version, bool bPvp = false) const override;
 	std::shared_ptr<Item> Copy() const override;
 	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
@@ -438,7 +438,7 @@ public:
 	ItemAdornment() = default;
 	~ItemAdornment() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version, bool bPvp = false) const override;
 	std::shared_ptr<Item> Copy() const override;
 	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
@@ -448,7 +448,7 @@ public:
 	ItemAchievementProfile() = default;
 	~ItemAchievementProfile() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version, bool bPvp = false) const override;
 	std::shared_ptr<Item> Copy() const override;
 	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
@@ -458,7 +458,7 @@ public:
 	ItemRewardVoucher() = default;
 	~ItemRewardVoucher() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version, bool bPvp = false) const override;
 	std::shared_ptr<Item> Copy() const override;
 	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
@@ -468,7 +468,7 @@ public:
 	ItemRewardCrate() = default;
 	~ItemRewardCrate() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version, bool bPvp = false) const override;
 	std::shared_ptr<Item> Copy() const override;
 	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
@@ -478,7 +478,7 @@ public:
 	ItemBook() = default;
 	~ItemBook() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version, bool bPvp = false) const override;
 	std::shared_ptr<Item> Copy() const override;
 	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
@@ -488,7 +488,7 @@ public:
 	ItemReforgingDecoration() = default;
 	~ItemReforgingDecoration() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version, bool bPvp = false) const override;
 	std::shared_ptr<Item> Copy() const override;
 	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
@@ -498,7 +498,7 @@ public:
 	ItemHouseContainer() = default;
 	~ItemHouseContainer() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version, bool bPvp = false) const override;
 	std::shared_ptr<Item> Copy() const override;
 	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };
@@ -508,7 +508,7 @@ public:
 	ItemSpellScroll() = default;
 	~ItemSpellScroll() = default;
 
-	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version) const override;
+	std::unique_ptr<Substruct_ExamineDescItem> GetItemTypeData(uint32_t version, bool bPvp = false) const override;
 	std::shared_ptr<Item> Copy() const override;
 	void LoadTypeSpecificData(DatabaseResult& res, uint32_t startIndex) override;
 };

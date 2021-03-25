@@ -696,10 +696,7 @@ public:
 
 class Substruct_ExamineDescItem : public Substruct_ExamineDescBase {
 protected:
-	enum class EIsPvpDesc {
-		ETRUE
-	};
-	Substruct_ExamineDescItem(uint32_t ver, EIsPvpDesc) : Substruct_ExamineDescBase(ver, false, false),
+	Substruct_ExamineDescItem(uint32_t ver, bool bPvpDesc) : Substruct_ExamineDescBase(ver, false, !bPvpDesc),
 		header(ver), footer(ver, header.itemVersion), pvp(nullptr) {
 		SetItemStructVersion();
 	}
