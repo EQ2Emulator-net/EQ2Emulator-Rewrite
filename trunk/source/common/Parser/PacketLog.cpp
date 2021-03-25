@@ -5,7 +5,7 @@
 #include "../../ZoneServer/Packets/OP_LoginByNumRequestMsg_Packet.h"
 #include "../../WorldServer/Packets/OP_LoginRequestMsg_Packet.h"
 
-PacketLog::PacketLog(const std::string& file) : filename(file), logVersion(0) {
+PacketLog::PacketLog(const std::string& file) : filename(file), logVersion(0), log_id(0) {
 
 }
 

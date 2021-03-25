@@ -67,6 +67,7 @@ public:
 
 	std::string filename;
 	uint32_t logVersion;
+	uint32_t log_id;
 	//<opcode, vector<pair<lineNumber, data> > >
 	std::unordered_map<uint16_t, std::vector<std::pair<uint32_t, std::string> > > packets;
 	std::unordered_map<std::string, uint16_t> opcodeLookup;

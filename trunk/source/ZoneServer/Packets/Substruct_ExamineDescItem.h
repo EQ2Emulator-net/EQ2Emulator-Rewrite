@@ -368,6 +368,19 @@ public:
 		PacketSubstruct::PreWrite();
 	}
 
+	void PostRead() override {
+		setBonuses.resize(setBonusArray.size());
+		for (size_t i = 0; i < setBonusArray.size(); i++) {
+			setBonuses[i] = static_cast<ItemSetBonus&>(setBonusArray[i]);
+		}
+		setItemArray.clear();
+		for (auto& itr : setItems) {
+			setItemArray.emplace_back(GetVersion(), itemVersion);
+			static_cast<ItemSetItem&>(setItemArray.back()) = itr;
+		}
+		PacketSubstruct::PreWrite();
+	}
+
 	uint8_t itemVersion;
 	std::vector<Substruct_ItemSetBonus> setBonusArray;
 	std::vector<Substruct_ItemSetItem> setItemArray;
