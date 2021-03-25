@@ -62,6 +62,13 @@ uint32_t ParserDatabase::CreateItemSet(std::string name) {
 	return static_cast<uint32_t>(res.last_insert_id);
 }
 
+uint32_t ParserDatabase::CreateItemSetBonus(uint32_t set_id, uint32_t index, uint32_t items_needed) {
+	QueryResult res = QueryWithFetchedResult(QUERY_RESULT_FLAG_LAST_INSERT_ID,
+		"INSERT INTO item_itemset_bonus (set_id, index) VALUES (%u,%u);", set_id, index);
+
+	return static_cast<uint32_t>(res.last_insert_id);
+}
+
 std::unordered_map<std::string, uint32_t> ParserDatabase::LoadExistingItemSets() {
 	DatabaseResult res;
 

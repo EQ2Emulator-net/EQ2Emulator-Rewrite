@@ -373,10 +373,9 @@ public:
 		for (size_t i = 0; i < setBonusArray.size(); i++) {
 			setBonuses[i] = static_cast<ItemSetBonus&>(setBonusArray[i]);
 		}
-		setItemArray.clear();
-		for (auto& itr : setItems) {
-			setItemArray.emplace_back(GetVersion(), itemVersion);
-			static_cast<ItemSetItem&>(setItemArray.back()) = itr;
+		setItems.resize(setItemArray.size());
+		for (size_t i = 0; i < setItemArray.size(); i++) {
+			setItems[i] = static_cast<ItemSetItem&>(setItemArray[i]);
 		}
 		PacketSubstruct::PreWrite();
 	}
@@ -601,7 +600,7 @@ public:
 			e->SetMyArray(RegisterArray(footerAdornmentArray, Substruct_ItemAdornmentDetails));
 		}
 		if (itemVersion >= 35) {
-			auto e1 = RegisterUInt8(unknown1);
+			auto e1 = RegisterUInt8(collectable_unk);
 			auto e2 = RegisterBool(bCollectable);
 			auto e3 = RegisterBool(bCollectionNeeded);
 			e3->AddIfAnyVariableSet(e1);

@@ -147,11 +147,124 @@ void LogItemsParser::ProcessItemDesc(PacketLog& log, Substruct_ExamineDescItem* 
 
 	row.RegisterField("slots", h.slotBitmask);
 
+	uint32_t set_id = 0;
 
 	//Handle item sets
-	if (parsed_item_sets.count(f.setName) == 0) {
-		parsed_item_sets[f.setName] = database.CreateItemSet(f.setName);
+	{
+		auto itr = parsed_item_sets.find(f.setName);
+		if (itr != parsed_item_sets.end()) set_id = itr->second;
+	}
 
+	row.RegisterField("set_id", set_id);
 
+	if (set_id == 0) {
+		set_id = database.CreateItemSet(f.setName);
+		parsed_item_sets[f.setName] = set_id;
+		//Set bonuses
+		{
+			uint32_t setBonusIndex = 0;
+			for (auto& itr : f.itemSetDetails.setBonusArray) {
+				uint32_t setBonusId = database.CreateItemSetBonus(set_id, setBonusIndex, itr.itemsNeeded);
+
+				//This will hold inserts for set bonus effects and stats
+				std::ostringstream queries;
+
+				//Bonus effects
+				uint32_t effectIndex = 0;
+				for (auto& sbe : itr.effectArray) {
+					DatabaseRow r;
+					r.m_tableName = "item_itemset_bonus_effects";
+
+					r.RegisterField("set_bonus_id", setBonusId);
+					r.RegisterField("indent", sbe.tabIndex);
+					r.RegisterField("description", sbe.effectText);
+					r.RegisterField("percentage", sbe.percentage);
+					r.RegisterField("effect_order", effectIndex);
+
+					r.GenerateSingleInsert(queries);
+
+					effectIndex++;
+				}
+
+				//Bonus stats
+				uint32_t statIndex = 0;
+				for (auto& stat : itr.statArray) {
+					DatabaseRow r;
+					r.m_tableName = "item_itemset_bonus_stats";
+
+					r.RegisterField("set_bonus_id", setBonusId);
+					r.RegisterField("type", stat.statType);
+					r.RegisterField("subtype", stat.statSubtype);
+					if (stat.statType != 6) {
+						r.RegisterField("iValue", stat.iValue);
+					}
+					else {
+						r.RegisterField("fValue", stat.fValue);
+					}
+					r.RegisterField("sValue", stat.stringVal);
+					r.RegisterField("level", stat.statLevel);
+
+					r.GenerateSingleInsert(queries);
+
+					statIndex++;
+				}
+
+				//Now insert our entries for this bonus
+				std::string insertions = queries.str();
+				if (!insertions.empty()) {
+					database.Query(insertions.c_str());
+				}
+
+				setBonusIndex++;
+			}
+		}
+		
+		//Set item list
+		{
+			std::ostringstream queries;
+			uint32_t setItemIndex = 0;
+			for (auto& itr : f.setDetails.setItems) {
+				DatabaseRow r;
+				r.m_tableName = "item_itemset_items";
+
+				r.RegisterField("set_id", set_id);
+				r.RegisterField("item_name", itr.itemName);
+				r.RegisterField("unk1", itr.unknown1);
+				r.RegisterField("unk2", itr.unknown2);
+				r.RegisterField("index", setItemIndex);
+				r.GenerateSingleInsert(queries);
+				setItemIndex++;
+			}
+
+			//Now insert our entries for these set items
+			std::string insertions = queries.str();
+			if (!insertions.empty()) {
+				database.Query(insertions.c_str());
+			}
+		}
+
+		row.RegisterField("stack_count", f.stackSize);
+		row.RegisterField("collectable_unk", f.collectable_unk);
+		row.RegisterField("collectable", f.bCollectable);
+		row.RegisterField("adornment_slot1", f.adornSlots[0]);
+		row.RegisterField("adornment_slot2", f.adornSlots[1]);
+		row.RegisterField("adornment_slot3", f.adornSlots[2]);
+		row.RegisterField("adornment_slot4", f.adornSlots[3]);
+		row.RegisterField("adornment_slot5", f.adornSlots[4]);
+		row.RegisterField("adornment_slot6", f.adornSlots[5]);
+		row.RegisterField("offers_quest_name", f.offersQuest);
+		row.RegisterField("required_by_quest_name", f.requiredByQuest);
+		row.RegisterField("display_charges", f.bHasCharges);
+		row.RegisterField("max_charges", f.chargesMax);
+		row.RegisterField("recommended_level", f.recommendedLevel);
+		row.RegisterField("required_level", f.requiredLevel);
+		row.RegisterField("class_bitmask", f.requiredClasses);
+		row.RegisterField("soe_item_id", h.itemID);
+		row.RegisterField("soe_item_crc", h.itemCRC);
+		row.RegisterField("footer_unk_61", f.unknown61);
+		row.RegisterField("footer_unk_27", f.unknown27);
+		row.RegisterField("footer_unk_32", f.unknown32);
+		row.RegisterField("footer_unk_7", f.footer_unknown_7);
+		row.RegisterField("footer_unk_26_flags", f.unknown26Flags);
 	}
 }
