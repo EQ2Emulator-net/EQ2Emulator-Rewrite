@@ -261,10 +261,21 @@ void LogItemsParser::ProcessItemDesc(PacketLog& log, Substruct_ExamineDescItem* 
 		row.RegisterField("class_bitmask", f.requiredClasses);
 		row.RegisterField("soe_item_id", h.itemID);
 		row.RegisterField("soe_item_crc", h.itemCRC);
+		//Header and footer unknowns
 		row.RegisterField("footer_unk_61", f.unknown61);
 		row.RegisterField("footer_unk_27", f.unknown27);
 		row.RegisterField("footer_unk_32", f.unknown32);
 		row.RegisterField("footer_unk_7", f.footer_unknown_7);
 		row.RegisterField("footer_unk_26_flags", f.unknown26Flags);
+		row.RegisterField("header_oversized1", h.unknownOversized1);
+		row.RegisterField("header_oversized2", h.unknownOVersized2);
+		std::string bytes5(reinterpret_cast<const char*>(h.unknownBytes5), 5);
+		row.RegisterField("header_bytes5", bytes5);
+		std::string bytes10(reinterpret_cast<const char*>(h.unknownBytes10), 10);
+		row.RegisterField("header_bytes10", bytes10);
+		row.RegisterField("header_unk19", h.unknown19);
+		row.RegisterField("header_ftr_type_unk", h.footerTypeUnknown);
+
+		//TODO: Item stat/string mod/unknown arrays from the header
 	}
 }
