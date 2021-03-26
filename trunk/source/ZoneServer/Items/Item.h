@@ -63,7 +63,7 @@ struct ItemDescBaseData {
 	uint8_t tier;
 	uint64_t flags;
 	int16_t unknownOversized1;
-	int16_t unknownOVersized2;
+	int16_t unknownOversized2;
 	uint8_t unknownBytes5[5];
 	uint8_t unknownBytes10[10];
 	uint8_t statModCount;
@@ -195,9 +195,9 @@ struct ItemDescFooterData {
 	bool bHasCharges;
 	uint16_t chargesMax;
 	uint16_t chargesRemaining;
-	uint64_t unknown26Flags;
-	uint8_t unknown27;
-	uint8_t unknown32;
+	uint64_t sell_status_amount;
+	bool bHarvestedMaterial;
+	bool bTransmutedMaterial;
 	uint8_t adornSlotDetailsCount;
 	bool bLockedFlag;
 	uint8_t unknown61;
