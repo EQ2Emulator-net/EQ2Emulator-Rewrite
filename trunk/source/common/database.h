@@ -56,7 +56,6 @@ public:
 
 	std::string Escape(const char* str, size_t len);
 	std::string Escape(const char* str);
-	std::string Escape(const char* str, bool with_percent);
 	std::string Escape(const std::string& str);
 
 	// For PatchServer

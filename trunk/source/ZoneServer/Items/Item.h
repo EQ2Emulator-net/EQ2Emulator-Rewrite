@@ -28,6 +28,7 @@ struct ItemStatMod {
 };
 
 struct ItemStringMod {
+	ItemStringMod() : unknown2(0) {}
 	std::string stringVal;
 	std::string statDescription;
 	uint8_t unknown1;
@@ -56,8 +57,8 @@ struct ItemDescBaseData {
 
 	int32_t uniqueID;
 	uint64_t brokerID;
-	int32_t itemID;
-	int32_t itemCRC;
+	uint32_t itemID;
+	uint32_t itemCRC;
 	uint16_t icon;
 	uint8_t tier;
 	uint64_t flags;

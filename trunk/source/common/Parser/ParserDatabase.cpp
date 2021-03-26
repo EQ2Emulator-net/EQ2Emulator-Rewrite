@@ -33,16 +33,16 @@ std::unordered_map<std::string, uint16_t> ParserDatabase::LoadOpcodesForVersion(
 	return ret;
 }
 
-std::unordered_set<int32_t> ParserDatabase::LoadExistingItems() {
+std::unordered_set<uint32_t> ParserDatabase::LoadExistingItems() {
 	DatabaseResult res;
 
-	Select(&res, "SELECT DISTINCT `soe_item_crc` FROM `items`;");
+	Select(&res, "SELECT DISTINCT `soe_item_crc_unsigned` FROM `items`;");
 
-	std::unordered_set<int32_t> ret;
+	std::unordered_set<uint32_t> ret;
 	ret.reserve(res.GetNumRows());
 
 	while (res.Next()) {
-		ret.insert(res.GetInt32(0));
+		ret.insert(res.GetUInt32(0));
 	}
 
 	return ret;
@@ -50,21 +50,21 @@ std::unordered_set<int32_t> ParserDatabase::LoadExistingItems() {
 
 uint32_t ParserDatabase::CreateLogEntry(std::string name, uint32_t ver) {
 	QueryResult res = QueryWithFetchedResult(QUERY_RESULT_FLAG_LAST_INSERT_ID,
-		"INSERT INTO parsed_logs (name, version) VALUES ('%s',%u);", Escape(name).c_str(), ver);
+		"INSERT INTO parsed_logs (`name`, `dataVersion`) VALUES ('%s',%u);", Escape(name).c_str(), ver);
 
 	return static_cast<uint32_t>(res.last_insert_id);
 }
 
 uint32_t ParserDatabase::CreateItemSet(std::string name) {
 	QueryResult res = QueryWithFetchedResult(QUERY_RESULT_FLAG_LAST_INSERT_ID,
-		"INSERT INTO item_itemsets (set_name) VALUES ('%s');", Escape(name).c_str());
+		"INSERT INTO item_itemsets (`set_name`) VALUES ('%s');", Escape(name).c_str());
 
 	return static_cast<uint32_t>(res.last_insert_id);
 }
 
 uint32_t ParserDatabase::CreateItemSetBonus(uint32_t set_id, uint32_t index, uint32_t items_needed) {
 	QueryResult res = QueryWithFetchedResult(QUERY_RESULT_FLAG_LAST_INSERT_ID,
-		"INSERT INTO item_itemset_bonus (set_id, index) VALUES (%u,%u);", set_id, index);
+		"INSERT INTO item_itemset_bonus (`set_id`, `index`, `num_items_needed`) VALUES (%u,%u,%u);", set_id, index, items_needed);
 
 	return static_cast<uint32_t>(res.last_insert_id);
 }
@@ -82,4 +82,14 @@ std::unordered_map<std::string, uint32_t> ParserDatabase::LoadExistingItemSets()
 	}
 
 	return ret;
+}
+
+uint32_t ParserDatabase::LoadNextItemID() {
+	DatabaseResult res;
+
+	Select(&res, "SELECT IF(COUNT(id) = 0, 1, MAX(id)+1) as id FROM `items`;");
+
+	assert(res.Next());
+
+	return res.GetUInt32(0);
 }

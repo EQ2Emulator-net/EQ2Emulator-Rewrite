@@ -14,12 +14,16 @@ extern WorldDatabase database;
 extern ZoneDatabase database;
 #endif
 
+struct SQLNull {
+	bool operator!=(const SQLNull&) const { return false; }
+};
+
 class DBFieldTrackerBase {
 public:
 	virtual ~DBFieldTrackerBase(){};
 
 	virtual bool CheckAndAdd(std::ostream& ss, bool bFirst) = 0;
-	virtual std::ostream& AddWithoutCheck(std::ostream& ss, bool bFirst) = 0;
+	virtual std::ostream& AddWithoutCheck(std::ostream& ss, bool bUseOrigValue = false, bool bIncludeField = true) = 0;
 	virtual std::string ValueToString() = 0;
 
 	const char* field;
@@ -66,47 +70,52 @@ public:
 		return bAdd;
 	}
 
-	std::ostream& AddWithoutCheck(std::ostream& ss, bool bFirst) override {
-		AddToQuery(ss, !bFirst);
+	std::ostream& AddWithoutCheck(std::ostream& ss, bool bUseOrigValue = false, bool bIncludeField = true) override {
+		AddToQuery(ss, false, bUseOrigValue, bIncludeField);
 		return ss;
 	}
 
 	std::optional<Manip> manip;
 
 	template<typename X>
-	std::enable_if_t<bIsString<X> && !bHasManip<X, Manip>> PushValue(std::ostream& ss) {
-		ss << '\'' << database.Escape(currentVal) << '\'';
+	std::enable_if_t<bIsString<X> && !bHasManip<X, Manip>> PushValue(std::ostream& ss, const X& v) {
+		ss << '\'' << database.Escape(v) << '\'';
 	}
 
 	template<typename X>
-	std::enable_if_t<bHasManip<X, Manip>> PushValue(std::ostream& ss) {
-		ss << manip->Transform(currentVal);
+	std::enable_if_t<bHasManip<X, Manip>> PushValue(std::ostream& ss, const X& v) {
+		ss << manip->Transform(v);
 	}
 
 	template<typename X>
-	std::enable_if_t<std::is_floating_point_v<X> && !bHasManip<X, Manip>> PushValue(std::ostream& ss) {
-		ss << currentVal;
+	std::enable_if_t<std::is_floating_point_v<X> && !bHasManip<X, Manip>> PushValue(std::ostream& ss, const X& v) {
+		ss << v;
 	}
 
 	template<typename X>
-	std::enable_if_t<std::is_integral_v<X>&& std::is_unsigned_v<X> && !bHasManip<X, Manip>> PushValue(std::ostream& ss) {
-		ss << static_cast<uint64_t>(currentVal);
+	std::enable_if_t<std::is_integral_v<X>&& std::is_unsigned_v<X> && !bHasManip<X, Manip>> PushValue(std::ostream& ss, const X& v) {
+		ss << static_cast<uint64_t>(v);
 	}
 
 	template<typename X>
-	std::enable_if_t<std::is_integral_v<X>&& std::is_signed_v<X> && !bHasManip<X, Manip>> PushValue(std::ostream& ss) {
-		ss << static_cast<int64_t>(currentVal);
+	std::enable_if_t<std::is_integral_v<X>&& std::is_signed_v<X> && !bHasManip<X, Manip>> PushValue(std::ostream& ss, const X& v) {
+		ss << static_cast<int64_t>(v);
 	}
 
-	void AddToQuery(std::ostream& ss, bool bAddComma) {
+	template<typename X>
+	std::enable_if_t<std::is_same_v<X, SQLNull> && !bHasManip<X, Manip>> PushValue(std::ostream& ss, const X& v) {
+		ss << "NULL";
+	}
+
+	void AddToQuery(std::ostream& ss, bool bAddComma, bool bUseOrigValue = false, bool bIncludeField = true) {
 		if (bAddComma) ss << ", ";
-		ss << field << '=';
-		PushValue<T>(ss);
+		if (bIncludeField) ss << field << '=';
+		PushValue<T>(ss, bUseOrigValue ? this->lastVal : this->currentVal);
 	}
 
 	std::string ValueToString() override {
 		std::ostringstream ss;
-		PushValue<T>(ss);
+		PushValue<T>(ss, currentVal);
 		return ss.str();
 	}
 };
