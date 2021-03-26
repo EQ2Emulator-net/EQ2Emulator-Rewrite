@@ -646,7 +646,7 @@ public:
 			}
 		}
 		if (itemVersion >= 27) {
-			RegisterUInt8(unknown27);
+			RegisterBool(bHarvestedMaterial);
 		}
 		if (itemVersion >= 32) {
 			RegisterBool(bTransmutedMaterial);
