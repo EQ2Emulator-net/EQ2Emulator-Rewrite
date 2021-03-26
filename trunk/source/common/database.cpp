@@ -271,7 +271,16 @@ string Database::Escape(const char* str, size_t len) {
 		return "";
 	}
 
-	return string(buf, size);
+	string esc(buf, size);
+
+	size_t pos = esc.find('%');
+	if (pos != string::npos) {
+		do {
+			esc.insert(pos, 1, '%');
+		} while (pos + 2 < esc.size() && (pos = esc.find('%', pos + 2)) != string::npos);
+	}
+
+	return esc;
 }
 
 string Database::Escape(const char* str) {
@@ -279,33 +288,6 @@ string Database::Escape(const char* str) {
 		return string();
 	}
 	return Escape(str, strlen(str));
-}
-
-string Database::Escape(const char* str, bool with_percent) {
-	static char empty_string[] = "";
-	if (str == NULL)
-		return empty_string;
-
-	stringstream ss;
-	string temp = str;				// in case it's ok, pass this to Escape
-	size_t pos = temp.find_first_of('%');	// find at least 1 % symbol
-
-	if (pos > 0) {
-		for (size_t i = 0; i < strlen(str); i++) {
-			if (str[i] == '%') {
-				ss << '%' << str[i];
-			}
-			else {
-				ss << str[i];
-			}
-		}
-
-		if (ss.str().length() > 0) {
-			temp = ss.str();
-		}
-	}
-
-	return Escape(temp.c_str(), temp.length());
 }
 
 string Database::Escape(const std::string& str) {

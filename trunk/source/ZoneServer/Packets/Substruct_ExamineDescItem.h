@@ -185,10 +185,10 @@ public:
 		auto e = RegisterInt32(uniqueID);
 		RegisterUInt64(brokerID)->SetIfVariableNotEquals(-1, e);
 		if (itemVersion >= 20) {
-			RegisterInt32(itemID);
+			RegisterUInt32(itemID);
 		}
 		if (itemVersion >= 52) {
-			RegisterInt32(itemCRC);
+			RegisterUInt32(itemCRC);
 		}
 		RegisterUInt16(icon);
 		RegisterUInt8(tier);
@@ -377,7 +377,7 @@ public:
 		for (size_t i = 0; i < setItemArray.size(); i++) {
 			setItems[i] = static_cast<ItemSetItem&>(setItemArray[i]);
 		}
-		PacketSubstruct::PreWrite();
+		PacketSubstruct::PostRead();
 	}
 
 	uint8_t itemVersion;

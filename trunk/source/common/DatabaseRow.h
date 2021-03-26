@@ -62,16 +62,16 @@ public:
 		return out;
 	}
 
-	std::ostream& GenerateValuesList(std::ostream& out) {
+	std::ostream& GenerateValuesList(std::ostream& out, bool bUseOrigValue = false, bool bIncludeField = true) {
 		bool bFirst = true;
 		for (auto& itr : fields) {
 			if (bFirst) {
-				out << "(`";
+				out << "(";
 			}
 			else {
-				out << ",`";
+				out << ",";
 			}
-			itr->AddWithoutCheck(out, bFirst) << '`';
+			itr->AddWithoutCheck(out, bUseOrigValue, bIncludeField);
 			bFirst = false;
 		}
 
@@ -79,13 +79,13 @@ public:
 		return out;
 	}
 
-	void GenerateSingleInsert(std::ostream& out) {
+	void GenerateSingleInsert(std::ostream& out, bool bUseOrigValue = false) {
 		if (fields.empty()) {
 			return;
 		}
 
 		out << "INSERT INTO " << m_tableName << ' ';
 		GenerateFieldList(out) << " VALUES ";
-		GenerateValuesList(out) << ';';
+		GenerateValuesList(out, bUseOrigValue, false) << ';';
 	}
 };
