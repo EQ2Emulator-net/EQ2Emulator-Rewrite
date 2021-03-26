@@ -370,9 +370,11 @@ void LogItemsParser::ProcessItemDesc(PacketLog& log, Substruct_ExamineDescItem* 
 			r.RegisterField("subtype", stat.statSubtype);
 			if (stat.statType != 6) {
 				r.RegisterField("iValue", stat.iValue);
+				r.RegisterField("fValue", SQLNull());
 			}
 			else {
 				r.RegisterField("fValue", stat.fValue);
+				r.RegisterField("iValue", SQLNull());
 			}
 			r.RegisterField("sValue", stat.stringVal);
 			r.RegisterField("level", stat.statLevel);
@@ -435,18 +437,21 @@ void LogItemsParser::ProcessItemDesc(PacketLog& log, Substruct_ExamineDescItem* 
 	row.RegisterField("soe_item_crc", reinterpret_cast<int32_t&>(h.itemID));
 	row.RegisterField("soe_item_id_unsigned", h.itemCRC);
 	row.RegisterField("soe_item_crc_unsigned", h.itemID);
+	row.RegisterField("sell_status_amount", f.sell_status_amount);
+	row.RegisterField("transmuted_material", f.bTransmutedMaterial);
+	row.RegisterField("harvest", f.bHarvestedMaterial);
 	//Header and footer unknowns
+	//Of the below unknowns only header_ftr_type_unk and header_unk19 are sent in our parse
+	row.RegisterField("header_ftr_type_unk", h.footerTypeUnknown);
+	row.RegisterField("header_unk19", h.unknown19);
+
 	row.RegisterField("footer_unk_61", f.unknown61);
-	row.RegisterField("footer_unk_27", f.unknown27);
-	row.RegisterField("footer_unk_32", f.unknown32);
 	row.RegisterField("footer_unk_7", f.footer_unknown_7);
-	row.RegisterField("footer_unk_26_flags", f.unknown26Flags);
 	row.RegisterField("header_oversized1", h.unknownOversized1);
-	row.RegisterField("header_oversized2", h.unknownOVersized2);
+	row.RegisterField("header_oversized2", h.unknownOversized2);
 	row.RegisterField("header_bytes5", std::string(reinterpret_cast<const char*>(h.unknownBytes5), 5));
 	row.RegisterField("header_bytes10", std::string(reinterpret_cast<const char*>(h.unknownBytes10), 10));
-	row.RegisterField("header_unk19", h.unknown19);
-	row.RegisterField("header_ftr_type_unk", h.footerTypeUnknown);
+	
 
 	uint64_t adv_classes = 0;
 	uint64_t ts_classes = 0;

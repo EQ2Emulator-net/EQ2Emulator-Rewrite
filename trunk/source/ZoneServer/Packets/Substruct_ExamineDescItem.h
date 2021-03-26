@@ -18,6 +18,13 @@ public:
 		PacketSubstruct::PreWrite();
 	}
 
+	void PostRead() override {
+		if (version < 60024 && statType != 6) {
+			iValue = sValue_do_not_set;
+		}
+		PacketSubstruct::PostRead();
+	}
+		 
 	uint8_t itemVersion;
 
 	void RegisterElements() {
@@ -200,7 +207,7 @@ public:
 			RegisterUInt32(flags);
 		}
 		RegisterOversizedByte(unknownOversized1);
-		RegisterOversizedByte(unknownOVersized2);
+		RegisterOversizedByte(unknownOversized2);
 		RescopeArrayElement(unknownBytes5);
 		RegisterUInt8(unknownBytes5)->SetCount(5);
 		RescopeArrayElement(unknownBytes10);
@@ -631,18 +638,18 @@ public:
 		if (itemVersion >= 26) {
 			if (GetVersion() < 60114) {
 				//They changed this from a 2 byte to 8 byte without a version check
-				RescopeToReference(unknown26Flags, uint16_t);
-				RegisterUInt16(unknown26Flags);
+				RescopeToReference(sell_status_amount, uint16_t);
+				RegisterUInt16(sell_status_amount);
 			}
 			else {
-				RegisterUInt64(unknown26Flags);
+				RegisterUInt64(sell_status_amount);
 			}
 		}
 		if (itemVersion >= 27) {
-			RegisterUInt8(unknown27);
+			RegisterBool(bHarvestedMaterial);
 		}
 		if (itemVersion >= 32) {
-			RegisterUInt8(unknown32);
+			RegisterBool(bTransmutedMaterial);
 		}
 		if (itemVersion >= 47) {
 			auto e = RegisterUInt8(adornSlotDetailsCount);
