@@ -382,7 +382,7 @@ void ItemBag::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
 	numSlots = result.GetUInt8(i++);
 	weightReduction = result.GetUInt8(i++);
 	bagUnknown1 = 0;
-	bagUnknown2 = 0;
+	bBackpack = false;
 	bagUnknown3 = 0;
 	bagUnknown4 = 0;
 	numEmptySlots = numSlots;
