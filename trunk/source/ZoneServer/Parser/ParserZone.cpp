@@ -34,7 +34,7 @@ void ParserZone::ProcessItems(PacketLog& log) {
 	LogItemsParser processor(log, database);
 }
 
-LogItemsParser::LogItemsParser(PacketLog& log, ParserDatabase& db) : database(db) {
+LogItemsParser::LogItemsParser(PacketLog& plog, ParserDatabase& db) : database(db), log(plog) {
 	auto packets = log.FindPackets<OP_EqExamineInfoCmd_Packet, ExamineInfoCmd_Item_Packet>();
 
 	if (!packets.empty()) {
@@ -47,8 +47,8 @@ LogItemsParser::LogItemsParser(PacketLog& log, ParserDatabase& db) : database(db
 		int32_t id = itr->itemDesc->header.itemID;
 		//If we haven't parsed this item yet, do so now
 		if (parsed_soe_items.insert(id).second) {
-			ProcessItemDesc(log, itr->itemDesc, false);
-			if (itr->pvpDesc) ProcessItemDesc(log, itr->pvpDesc, true);
+			ProcessItemDesc(itr->itemDesc, false);
+			if (itr->pvpDesc) ProcessItemDesc(itr->pvpDesc, true);
 		}
 	}
 	ProcessQueuedInserts();
@@ -56,9 +56,18 @@ LogItemsParser::LogItemsParser(PacketLog& log, ParserDatabase& db) : database(db
 }
 
 void LogItemsParser::ProcessQueuedInserts() {
-	auto DoInsertsForTable = [this](const char* table, std::string& fields, std::vector<std::string>& vals, int maxPerQuery) {
+	auto DoInsertsForTable = [this](const char* table, int maxPerQuery) {
 		bool bFirst = true;
 		int i = 0;
+		
+		auto itr = queued_inserts.find(table);
+
+		if (itr == queued_inserts.end()) {
+			return;
+		}
+
+		const std::string& fields = itr->second.first;
+		const std::vector<std::string>& vals = itr->second.second;
 
 		auto ResetQuery = [&bFirst, &i, table](std::ostringstream& ss, const std::string& fields) {
 			i = 0;
@@ -87,13 +96,48 @@ void LogItemsParser::ProcessQueuedInserts() {
 				database.Query(ss.str().c_str());
 			}
 		}
+
+		queued_inserts.erase(itr);
 	};
 
-	DoInsertsForTable("items", item_fields, item_inserts, 250);
-	DoInsertsForTable("item_effects", item_effect_fields, item_effects, 250);
-	DoInsertsForTable("item_mod_stats", item_mod_stat_fields, item_mod_stat, 250);
-	DoInsertsForTable("item_mod_strings", item_mod_string_fields, item_mod_strings, 250);
-	DoInsertsForTable("item_itemset_items", item_itemset_items_fields, item_itemset_items, 250);
+	DoInsertsForTable("items", 250);
+	DoInsertsForTable("item_effects", 250);
+	DoInsertsForTable("item_mod_stats", 250);
+	DoInsertsForTable("item_mod_strings", 250);
+	DoInsertsForTable("item_itemset_items", 250);
+	DoInsertsForTable("item_details_armor", 250);
+	DoInsertsForTable("item_details_weapon", 250);
+	DoInsertsForTable("item_details_range", 250);
+	DoInsertsForTable("item_details_shield", 250);
+	DoInsertsForTable("item_details_bag", 250);
+	DoInsertsForTable("item_details_skill", 250);
+	DoInsertsForTable("item_details_recipe", 250);
+	DoInsertsForTable("item_details_recipe_items", 250);
+	DoInsertsForTable("item_details_food", 250);
+	DoInsertsForTable("item_details_bauble", 250);
+	DoInsertsForTable("item_details_house", 250);
+	DoInsertsForTable("item_details_thrown", 250);
+	DoInsertsForTable("item_details_house_container", 250);
+	DoInsertsForTable("item_details_adornments", 250);
+	DoInsertsForTable("item_details_achievement_profile", 250);
+	DoInsertsForTable("item_details_reward_voucher", 250);
+	DoInsertsForTable("item_details_reward_crate", 250);
+	DoInsertsForTable("item_details_reward_crate_item", 250);
+	DoInsertsForTable("item_details_book", 250);
+	DoInsertsForTable("item_details_decorations", 250);
+}
+
+void LogItemsParser::QueueRowInsert(DatabaseRow& row) {
+	auto& ins = queued_inserts[row.m_tableName];
+	if (ins.first.empty()) {
+		std::ostringstream ss;
+		row.GenerateFieldList(ss);
+		ins.first = ss.str();
+	}
+
+	std::ostringstream ss;
+	row.GenerateValuesList(ss, true, false);
+	ins.second.emplace_back(ss.str());
 }
 
 void LogItemsParser::LoadExistingData() {
@@ -136,8 +180,10 @@ std::string LogItemsParser::GetItemTypeAsString(uint8_t type) {
 	}
 }
 
-void LogItemsParser::ProcessItemDesc(PacketLog& log, Substruct_ExamineDescItem* item, bool bPvp) {
+void LogItemsParser::ProcessItemDesc(Substruct_ExamineDescItem* item, bool bPvp) {
 	item_id = next_id++;
+
+	ProcessTypeSpecificData(item);
 
 	DatabaseRow row;
 	auto& h = item->header;
@@ -278,8 +324,8 @@ void LogItemsParser::ProcessItemDesc(PacketLog& log, Substruct_ExamineDescItem* 
 						r.RegisterField("fValue", SQLNull());
 					}
 					else {
-						r.RegisterField("fValue", stat.fValue);
 						r.RegisterField("iValue", SQLNull());
+						r.RegisterField("fValue", stat.fValue);
 					}
 					r.RegisterField("sValue", stat.stringVal);
 					r.RegisterField("level", stat.statLevel);
@@ -312,15 +358,7 @@ void LogItemsParser::ProcessItemDesc(PacketLog& log, Substruct_ExamineDescItem* 
 				r.RegisterField("unk1", itr.unknown1);
 				r.RegisterField("unk2", itr.unknown2);
 				r.RegisterField("index", setItemIndex);
-				if (item_itemset_items_fields.empty()) {
-					std::ostringstream ss;
-					r.GenerateFieldList(ss);
-					item_itemset_items_fields = ss.str();
-				}
-				
-				std::ostringstream ss;
-				r.GenerateValuesList(ss, true, false);
-				item_itemset_items.emplace_back(ss.str());
+				QueueRowInsert(r);
 				setItemIndex++;
 			}
 		}
@@ -345,15 +383,7 @@ void LogItemsParser::ProcessItemDesc(PacketLog& log, Substruct_ExamineDescItem* 
 			r.RegisterField("percentage", e.percentage);
 			r.RegisterField("bullet", e.tabIndex);
 			r.RegisterField("index", effectIndex);
-
-			std::ostringstream ss;
-			if (item_effect_fields.empty()) {
-				r.GenerateFieldList(ss);
-				item_effect_fields = ss.str();
-				ss.str("");
-			}
-			r.GenerateValuesList(ss, true, false);
-			item_effects.emplace_back(ss.str());
+			QueueRowInsert(r);
 			effectIndex++;
 		}
 	}
@@ -373,21 +403,13 @@ void LogItemsParser::ProcessItemDesc(PacketLog& log, Substruct_ExamineDescItem* 
 				r.RegisterField("fValue", SQLNull());
 			}
 			else {
-				r.RegisterField("fValue", stat.fValue);
 				r.RegisterField("iValue", SQLNull());
+				r.RegisterField("fValue", stat.fValue);
 			}
 			r.RegisterField("sValue", stat.stringVal);
 			r.RegisterField("level", stat.statLevel);
 			r.RegisterField("stats_order", statIndex);
-
-			std::ostringstream ss;
-			if (item_mod_stat_fields.empty()) {
-				r.GenerateFieldList(ss);
-				item_mod_stat_fields = ss.str();
-				ss.str("");
-			}
-			r.GenerateValuesList(ss, true, false);
-			item_mod_stat.emplace_back(ss.str());
+			QueueRowInsert(r);
 			statIndex++;
 		}
 	}
@@ -405,15 +427,7 @@ void LogItemsParser::ProcessItemDesc(PacketLog& log, Substruct_ExamineDescItem* 
 			r.RegisterField("unk1", mod.unknown1);
 			r.RegisterField("unk2", mod.unknown2);
 			r.RegisterField("index", modIndex);
-
-			std::ostringstream ss;
-			if (item_mod_string_fields.empty()) {
-				r.GenerateFieldList(ss);
-				item_mod_string_fields = ss.str();
-				ss.str("");
-			}
-			r.GenerateValuesList(ss, true, false);
-			item_mod_strings.emplace_back(ss.str());
+			QueueRowInsert(r);
 			modIndex++;
 		}
 	}
@@ -471,14 +485,301 @@ void LogItemsParser::ProcessItemDesc(PacketLog& log, Substruct_ExamineDescItem* 
 	row.RegisterField("tradeskill_default_level", ts_level);
 	row.RegisterField("tradeskill_classes", ts_classes);
 	row.RegisterField("adventure_classes", adv_classes);
+	QueueRowInsert(row);
+}
 
-	std::ostringstream values;
-	row.GenerateValuesList(values, true, false);
-	item_inserts.emplace_back(values.str());
+void LogItemsParser::ProcessTypeSpecificData(Substruct_ExamineDescItem* item) {
+	if (auto a = dynamic_cast<Substruct_ExamineDescItem_Armor*>(item)) ProcessItemArmor(a);
+	else if (auto w = dynamic_cast<Substruct_ExamineDescItem_MeleeWeapon*>(item)) ProcessItemMeleeWeapon(w);
+	else if (auto w = dynamic_cast<Substruct_ExamineDescItem_RangedWeapon*>(item)) ProcessItemRangedWeapon(w);
+	else if (auto s = dynamic_cast<Substruct_ExamineDescItem_Shield*>(item)) ProcessItemShield(s);
+	else if (auto b = dynamic_cast<Substruct_ExamineDescItem_Bag*>(item)) ProcessItemBag(b);
+	else if (auto s = dynamic_cast<Substruct_ExamineDescItem_SpellScroll*>(item)) ProcessItemSpellScroll(s);
+	else if (auto r = dynamic_cast<Substruct_ExamineDescItem_RecipeBook*>(item)) ProcessItemRecipeBook(r);
+	else if (auto p = dynamic_cast<Substruct_ExamineDescItem_Provision*>(item)) ProcessItemProvision(p);
+	else if (auto b = dynamic_cast<Substruct_ExamineDescItem_Bauble*>(item)) ProcessItemBauble(b);
+	else if (auto h = dynamic_cast<Substruct_ExamineDescItem_House*>(item)) ProcessItemHouse(h);
+	else if (auto a = dynamic_cast<Substruct_ExamineDescItem_Ammo*>(item)) ProcessItemAmmo(a);
+	else if (auto h = dynamic_cast<Substruct_ExamineDescItem_HouseContainer*>(item)) ProcessItemHouseContainer(h);
+	else if (auto a = dynamic_cast<Substruct_ExamineDescItem_Adornment*>(item)) ProcessItemAdornment(a);
+	else if (auto a = dynamic_cast<Substruct_ExamineDescItem_AchievementProfile*>(item)) ProcessItemAchievementProfile(a);
+	else if (auto r = dynamic_cast<Substruct_ExamineDescItem_RewardVoucher*>(item)) ProcessItemRewardVoucher(r);
+	else if (auto r = dynamic_cast<Substruct_ExamineDescItem_RewardCrate*>(item)) ProcessItemRewardCrate(r);
+	else if (auto b = dynamic_cast<Substruct_ExamineDescItem_Book*>(item)) ProcessItemBook(b);
+	else if (auto r = dynamic_cast<Substruct_ExamineDescItem_ReforgingDecoration*>(item)) ProcessItemReforgingDecoration(r);
+}
 
-	if (item_fields.empty()) {
-		std::ostringstream ss;
-		row.GenerateFieldList(ss);
-		item_fields = ss.str();
+void LogItemsParser::ProcessItemArmor(Substruct_ExamineDescItem_Armor* a) {
+	DatabaseRow row;
+	row.m_tableName = "item_details_armor";
+
+	row.RegisterField("item_id", item_id);
+	row.RegisterField("mitigation_low", a->mitigationLow);
+	row.RegisterField("mitigation_high", a->mitigationHigh);
+	row.RegisterField("absorb", a->absorb);
+	row.RegisterField("unknown", a->skillID_NEEDS_VERIFY);
+	row.RegisterField("item_score", a->itemScore);
+	QueueRowInsert(row);
+}
+
+void LogItemsParser::ProcessItemMeleeWeapon(Substruct_ExamineDescItem_MeleeWeapon* w) {
+	DatabaseRow row;
+	row.m_tableName = "item_details_weapon";
+
+	row.RegisterField("item_id", item_id);
+	row.RegisterField("wield_style", w->wieldType);
+	row.RegisterField("damage_type", w->damageType);
+	row.RegisterField("dmg_low", w->minDmg);
+	row.RegisterField("dmg_high", w->maxDmg);
+	row.RegisterField("dmg_mastery_low", w->masteryMinDmg);
+	row.RegisterField("dmg_mastery_high", w->masteryMaxDmg);
+	row.RegisterField("dmg_base_low", w->baseMinDamage);
+	row.RegisterField("dmg_base_high", w->baseMaxDamage);
+	row.RegisterField("delay", w->delay);
+	row.RegisterField("damage_rating", w->damageRating);
+	row.RegisterField("item_score", w->itemScore);
+	QueueRowInsert(row);
+}
+
+void LogItemsParser::ProcessItemRangedWeapon(Substruct_ExamineDescItem_RangedWeapon* w) {
+	DatabaseRow row;
+	row.m_tableName = "item_details_range";
+
+	row.RegisterField("item_id", item_id);
+	row.RegisterField("damage_type", w->damageType);
+	row.RegisterField("dmg_low", w->minDmg);
+	row.RegisterField("dmg_high", w->maxDmg);
+	row.RegisterField("dmg_mastery_low", w->masteryMinDmg);
+	row.RegisterField("dmg_mastery_high", w->masteryMaxDmg);
+	row.RegisterField("dmg_base_low", w->baseMinDamage);
+	row.RegisterField("dmg_base_high", w->baseMaxDamage);
+	row.RegisterField("delay", w->delay);
+	row.RegisterField("damage_rating", w->damageRating);
+	row.RegisterField("item_score", w->itemScore);
+	row.RegisterField("range_low", w->minRange);
+	row.RegisterField("range_high", w->maxRange);
+	QueueRowInsert(row);
+}
+
+void LogItemsParser::ProcessItemShield(Substruct_ExamineDescItem_Shield* s) {
+	DatabaseRow row;
+	row.m_tableName = "item_details_shield";
+
+	row.RegisterField("item_id", item_id);
+	row.RegisterField("mitigation_low", s->mitigationLow);
+	row.RegisterField("mitigation_high", s->mitigationHigh);
+	row.RegisterField("item_score", s->itemScore);
+	QueueRowInsert(row);
+}
+
+void LogItemsParser::ProcessItemBag(Substruct_ExamineDescItem_Bag* b) {
+	DatabaseRow row;
+	row.m_tableName = "item_details_bag";
+
+	row.RegisterField("item_id", item_id);
+	row.RegisterField("num_slots", b->numSlots);
+	row.RegisterField("weight_reduction", b->weightReduction);
+	row.RegisterField("unknown12", b->bagUnknown1);
+	row.RegisterField("backpack", b->bBackpack);
+	row.RegisterField("unknown81", b->bagUnknown3);
+	row.RegisterField("unknown69", b->bagUnknown4);
+	QueueRowInsert(row);
+}
+
+void LogItemsParser::ProcessItemSpellScroll(Substruct_ExamineDescItem_SpellScroll* s) {
+	DatabaseRow row;
+	row.m_tableName = "item_details_skill";
+
+	row.RegisterField("item_id", item_id);
+	row.RegisterField("spell_tier", s->spell.tier);
+	row.RegisterField("soe_spell_crc", s->spell.id);
+	QueueRowInsert(row);
+}
+
+void LogItemsParser::ProcessItemRecipeBook(Substruct_ExamineDescItem_RecipeBook* r) {
+	//Recipe Book Details
+	{
+		DatabaseRow row;
+		row.m_tableName = "item_details_recipe";
+
+		row.RegisterField("item_id", item_id);
+		row.RegisterField("max_uses", r->numUses);
+		QueueRowInsert(row);
 	}
+
+	//Recipe Items
+	for (auto& itr : r->recipeArray) {
+		DatabaseRow row;
+		row.m_tableName = "item_details_recipe_items";
+
+		row.RegisterField("item_id", item_id);
+		row.RegisterField("name", itr.recipeName);
+		row.RegisterField("icon", itr.icon);
+		row.RegisterField("soe_recipe_crc", itr.recipeID);
+		QueueRowInsert(row);
+	}
+}
+
+void LogItemsParser::ProcessItemProvision(Substruct_ExamineDescItem_Provision* p) {
+	DatabaseRow row;
+	row.m_tableName = "item_details_food";
+
+	row.RegisterField("item_id", item_id);
+	row.RegisterField("type", p->provisionType);
+	row.RegisterField("level", p->provisionLevel);
+	row.RegisterField("duration", p->duration);
+	row.RegisterField("satiation", p->header.tier);
+	QueueRowInsert(row);
+}
+
+void LogItemsParser::ProcessItemBauble(Substruct_ExamineDescItem_Bauble* p) {
+	DatabaseRow row;
+	row.m_tableName = "item_details_bauble";
+
+	row.RegisterField("item_id", item_id);
+	row.RegisterField("cast", p->castTime);
+	row.RegisterField("recovery", p->recovery);
+	row.RegisterField("duration", p->duration);
+	row.RegisterField("recast", p->recast);
+	row.RegisterField("display_slot_optional", p->bDisplaySlotOptional);
+	row.RegisterField("display_cast_time", p->bDisplayCastTime);
+	row.RegisterField("display_bauble_type", p->bDisplayBaubleType);
+	row.RegisterField("effect_radius", p->effectRadius);
+	row.RegisterField("max_aoe_targets", p->maxAoeTargets);
+	row.RegisterField("display_until_cancelled", p->bDisplayUntilCancelled);
+	row.RegisterField("item_score", p->itemScore);
+	QueueRowInsert(row);
+}
+
+void LogItemsParser::ProcessHouseData(Substruct_HouseItem* h) {
+	DatabaseRow row;
+	row.m_tableName = "item_details_house";
+
+	row.RegisterField("item_id", item_id);
+	row.RegisterField("status_rent_reduction", h->rentStatusReduction);
+	row.RegisterField("coin_rent_reduction", h->rentCoinReduction);
+	row.RegisterField("house_only", h->houseType);
+	row.RegisterField("unk1", h->unknown1);
+	QueueRowInsert(row);
+}
+
+void LogItemsParser::ProcessItemHouse(Substruct_ExamineDescItem_House* h) {
+	ProcessHouseData(&h->houseData);
+}
+
+void LogItemsParser::ProcessItemAmmo(Substruct_ExamineDescItem_Ammo* a) {
+	DatabaseRow row;
+	row.m_tableName = "item_details_thrown";
+
+	row.RegisterField("item_id", item_id);
+	row.RegisterField("range_bonus", a->range);
+	row.RegisterField("damage_bonus", a->damageModifier);
+	row.RegisterField("hit_bonus", a->hitBonus);
+	row.RegisterField("damage_type", a->damageType);
+	QueueRowInsert(row);
+}
+
+void LogItemsParser::ProcessItemHouseContainer(Substruct_ExamineDescItem_HouseContainer* h) {
+	DatabaseRow row;
+	row.m_tableName = "item_details_house_container";
+
+	row.RegisterField("item_id", item_id);
+	row.RegisterField("num_slots", h->numSlots);
+	row.RegisterField("allowed_types", h->allowedTypes);
+	row.RegisterField("unknown12", h->unknown1);
+	row.RegisterField("unknown13", h->unknown2);
+	row.RegisterField("broker_commission", h->brokerCommission);
+	row.RegisterField("fence_commission", h->fenceCommission);
+	QueueRowInsert(row);
+}
+
+void LogItemsParser::ProcessItemAdornment(Substruct_ExamineDescItem_Adornment* a) {
+	DatabaseRow row;
+	row.m_tableName = "item_details_adornments";
+
+	row.RegisterField("item_id", item_id);
+	row.RegisterField("duration", a->duration);
+	row.RegisterField("item_types", a->itemTypes);
+	row.RegisterField("slot_type", a->slotColor);
+	row.RegisterField("description", a->description);
+	row.RegisterField("description2", a->description2);
+	row.RegisterField("unk1", a->unknown);
+	row.RegisterField("unk2", a->unknown2);
+	QueueRowInsert(row);
+}
+
+void LogItemsParser::ProcessItemAchievementProfile(Substruct_ExamineDescItem_AchievementProfile* a) {
+	DatabaseRow row;
+	row.m_tableName = "item_details_achievement_profile";
+
+	row.RegisterField("item_id", item_id);
+	row.RegisterField("status_reduction", a->rentStatusReduction);
+	row.RegisterField("coin_reduction", a->rentCoinReduction);
+	row.RegisterField("house_type", a->houseType);
+	row.RegisterField("unk_string", a->unknownString);
+	row.RegisterField("unk1", a->unknown);
+	QueueRowInsert(row);
+}
+
+void LogItemsParser::ProcessItemRewardVoucher(Substruct_ExamineDescItem_RewardVoucher* r) {
+	for (auto& itr : r->itemsArray) {
+		DatabaseRow row;
+		row.m_tableName = "item_details_reward_voucher";
+
+		row.RegisterField("voucher_item_id", item_id);
+		row.RegisterField("soe_item_id", itr.itemID);
+		row.RegisterField("soe_item_crc", itr.crc);
+		row.RegisterField("icon", itr.icon);
+		row.RegisterField("name", itr.itemName);
+		QueueRowInsert(row);
+	}
+}
+
+void LogItemsParser::ProcessItemRewardCrate(Substruct_ExamineDescItem_RewardCrate* r) {
+	{
+		DatabaseRow row;
+		row.m_tableName = "item_details_reward_crate";
+
+		row.RegisterField("item_id", item_id);
+		row.RegisterField("unk1", r->unknown1);
+		row.RegisterField("unk2", r->unknown2);
+		QueueRowInsert(row);
+	}
+
+	for (auto& itr : r->itemsArray) {
+		DatabaseRow row;
+		row.m_tableName = "item_details_reward_crate_item";
+
+		row.RegisterField("crate_item_id", item_id);
+		row.RegisterField("soe_item_id", itr.itemID);
+		row.RegisterField("soe_item_crc", itr.crc);
+		row.RegisterField("icon", itr.icon);
+		row.RegisterField("stack_size", itr.stackSize);
+		row.RegisterField("name_color", itr.colorID);
+		row.RegisterField("name", itr.itemName);
+		row.RegisterField("language_type", itr.language);
+		QueueRowInsert(row);
+	}
+}
+
+void LogItemsParser::ProcessItemBook(Substruct_ExamineDescItem_Book* r) {
+	ProcessHouseData(&r->houseData);
+
+	DatabaseRow row;
+	row.m_tableName = "item_details_book";
+
+	row.RegisterField("item_id", item_id);
+	row.RegisterField("language", r->language);
+	row.RegisterField("author", r->author);
+	row.RegisterField("title", r->title);
+	QueueRowInsert(row);
+}
+
+void LogItemsParser::ProcessItemReforgingDecoration(Substruct_ExamineDescItem_ReforgingDecoration* r) {
+	DatabaseRow row;
+	row.m_tableName = "item_details_decorations";
+
+	row.RegisterField("item_id", item_id);
+	row.RegisterField("decoration_name", r->decoName);
+	QueueRowInsert(row);
 }

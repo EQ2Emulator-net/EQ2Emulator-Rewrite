@@ -58,7 +58,7 @@ struct ItemBagData {
 	uint8_t numEmptySlots;
 	uint8_t weightReduction;
 	uint8_t bagUnknown1;
-	uint8_t bagUnknown2;
+	bool bBackpack;
 	uint8_t bagUnknown3;
 	std::string customName;
 	std::vector<std::string> itemNames;

@@ -136,6 +136,14 @@ public:
 		PacketSubstruct::PreWrite();
 	}
 
+	void PostRead() override {
+		if (subVersion < 90) {
+			mitigationLow = sMitigationLow;
+			mitigationHigh = sMitigationHigh;
+		}
+		PacketSubstruct::PostRead();
+	}
+
 	void RegisterElements() {
 		RegisterSubstruct(header);
 		if (subVersion < 90) {
@@ -226,7 +234,7 @@ public:
 		if (itemVersion >= 22)
 			RegisterUInt8(bagUnknown1);
 		if (itemVersion >= 45)
-			RegisterUInt8(bagUnknown2);
+			RegisterBool(bBackpack);
 		if (itemVersion >= 81)
 			RegisterUInt8(bagUnknown3);
 		if (itemVersion >= 69)
@@ -408,6 +416,7 @@ public:
 class Substruct_ExamineDescItem_HouseContainer : public Substruct_ExamineDescItem, public ItemHouseContainerData {
 public:
 	Substruct_ExamineDescItem_HouseContainer(uint32_t ver = 0, bool bPvp = false) : Substruct_ExamineDescItem(ver, bPvp) {
+		allowedTypes = 0;
 		RegisterElements();
 	}
 
@@ -436,6 +445,7 @@ class Substruct_ExamineDescItem_Adornment : public Substruct_ExamineDescItem, pu
 public:
 	Substruct_ExamineDescItem_Adornment(uint32_t ver = 0, bool bPvp = false) : Substruct_ExamineDescItem(ver, bPvp) {
 		RegisterElements();
+		itemTypes = 0;
 	}
 
 	~Substruct_ExamineDescItem_Adornment() = default;
@@ -481,9 +491,9 @@ public:
 		//Guessed these
 		RegisterUInt32(rentStatusReduction);
 		RegisterFloat(rentCoinReduction);
-		RegisterUInt8(houseType);
-		Register16String(unknownString);
 		RegisterUInt8(unknown);
+		Register16String(unknownString);
+		RegisterUInt8(houseType);
 		RegisterSubstruct(footer);
 	}
 };
@@ -518,7 +528,6 @@ public:
 		}
 	};
 
-private:
 	std::vector<Substruct_RewardVoucherItem> itemsArray;
 
 public:
@@ -559,6 +568,8 @@ public:
 	public:
 		Substruct_RewardCrateItem(uint32_t ver = 0, uint8_t p_itemVersion = 0) : PacketSubstruct(ver, true) {
 			RegisterElements();
+			language = 0;
+			stackSize = 0;
 		}
 
 		~Substruct_RewardCrateItem() = default;
@@ -594,7 +605,6 @@ public:
 		}
 	};
 
-private:
 	std::vector<Substruct_RewardCrateItem> itemsArray;
 
 public:
