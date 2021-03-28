@@ -37,105 +37,6 @@ void ParserZone::ProcessItems(PacketLog& log) {
 	LogItemsParser processor(log, database);
 }
 
-uint32_t LogItemsParser::ProcessItemSetData(Substruct_ExamineDescItem* i, bool bPvp) {
-	auto& f = i->footer;
-
-	ItemSetKey key;
-	key.bPvpDesc = bPvp;
-	key.set_name = f.setName;
-	key.item_level = f.recommendedLevel;
-	key.id = 0;
-
-	{
-		//Check 
-		auto itr = std::find(parsed_item_sets.begin(), parsed_item_sets.end(), key);
-		if (itr != parsed_item_sets.end()) {
-			return itr->id;
-		}
-	}
-
-	key.id = database.CreateItemSet(f.setName, key.bPvpDesc, key.item_level);
-	parsed_item_sets.push_back(key);
-	//Set bonuses
-	{
-		uint32_t setBonusIndex = 0;
-		for (auto& itr : f.itemSetDetails.setBonusArray) {
-			uint32_t setBonusId = database.CreateItemSetBonus(key.id, setBonusIndex, itr.itemsNeeded);
-
-			//This will hold inserts for set bonus effects and stats
-			std::ostringstream queries;
-
-			//Bonus effects
-			uint32_t effectIndex = 0;
-			for (auto& sbe : itr.effectArray) {
-				DatabaseRow r;
-				r.m_tableName = "item_itemset_bonus_effects";
-
-				r.RegisterField("set_bonus_id", setBonusId);
-				r.RegisterField("indent", sbe.tabIndex);
-				r.RegisterField("description", sbe.effectText);
-				r.RegisterField("percentage", sbe.percentage);
-				r.RegisterField("effect_order", effectIndex);
-
-				r.GenerateSingleInsert(queries);
-
-				effectIndex++;
-			}
-
-			//Bonus stats
-			uint32_t statIndex = 0;
-			for (auto& stat : itr.statArray) {
-				DatabaseRow r;
-				r.m_tableName = "item_itemset_bonus_stats";
-
-				r.RegisterField("set_bonus_id", setBonusId);
-				r.RegisterField("type", stat.statType);
-				r.RegisterField("subtype", stat.statSubtype);
-				if (stat.statType != 6) {
-					r.RegisterField("iValue", stat.iValue);
-					r.RegisterField("fValue", SQLNull());
-				}
-				else {
-					r.RegisterField("iValue", SQLNull());
-					r.RegisterField("fValue", stat.fValue);
-				}
-				r.RegisterField("sValue", stat.stringVal);
-				r.RegisterField("level", stat.statLevel);
-				r.RegisterField("stats_order", statIndex);
-
-				r.GenerateSingleInsert(queries);
-
-				statIndex++;
-			}
-
-			//Now insert our entries for this bonus
-			std::string insertions = queries.str();
-			if (!insertions.empty()) {
-				database.Query(insertions.c_str());
-			}
-
-			setBonusIndex++;
-		}
-	}
-
-	//Set item list
-	{
-		uint32_t setItemIndex = 0;
-		for (auto& itr : f.itemSetDetails.setItems) {
-			DatabaseRow r;
-			r.m_tableName = "item_itemset_items";
-
-			r.RegisterField("set_id", key.id);
-			r.RegisterField("item_name", itr.itemName);
-			r.RegisterField("index", setItemIndex);
-			QueueRowInsert(r);
-			setItemIndex++;
-		}
-	}
-
-	return key.id;
-}
-
 LogItemsParser::LogItemsParser(PacketLog& plog, ParserDatabase& db) : database(db), log(plog) {
 	auto packets = log.FindPackets<OP_EqExamineInfoCmd_Packet, ExamineInfoCmd_Item_Packet>();
 
@@ -279,6 +180,105 @@ std::string LogItemsParser::GetItemTypeAsString(uint8_t type) {
 		throw "Invalid item type!!!";
 		return "";
 	}
+}
+
+uint32_t LogItemsParser::ProcessItemSetData(Substruct_ExamineDescItem* i, bool bPvp) {
+	auto& f = i->footer;
+
+	ItemSetKey key;
+	key.bPvpDesc = bPvp;
+	key.set_name = f.setName;
+	key.item_level = f.recommendedLevel;
+	key.id = 0;
+
+	{
+		//Check 
+		auto itr = std::find(parsed_item_sets.begin(), parsed_item_sets.end(), key);
+		if (itr != parsed_item_sets.end()) {
+			return itr->id;
+		}
+	}
+
+	key.id = database.CreateItemSet(f.setName, key.bPvpDesc, key.item_level);
+	parsed_item_sets.push_back(key);
+	//Set bonuses
+	{
+		uint32_t setBonusIndex = 0;
+		for (auto& itr : f.itemSetDetails.setBonusArray) {
+			uint32_t setBonusId = database.CreateItemSetBonus(key.id, setBonusIndex, itr.itemsNeeded);
+
+			//This will hold inserts for set bonus effects and stats
+			std::ostringstream queries;
+
+			//Bonus effects
+			uint32_t effectIndex = 0;
+			for (auto& sbe : itr.effectArray) {
+				DatabaseRow r;
+				r.m_tableName = "item_itemset_bonus_effects";
+
+				r.RegisterField("set_bonus_id", setBonusId);
+				r.RegisterField("indent", sbe.tabIndex);
+				r.RegisterField("description", sbe.effectText);
+				r.RegisterField("percentage", sbe.percentage);
+				r.RegisterField("effect_order", effectIndex);
+
+				r.GenerateSingleInsert(queries);
+
+				effectIndex++;
+			}
+
+			//Bonus stats
+			uint32_t statIndex = 0;
+			for (auto& stat : itr.statArray) {
+				DatabaseRow r;
+				r.m_tableName = "item_itemset_bonus_stats";
+
+				r.RegisterField("set_bonus_id", setBonusId);
+				r.RegisterField("type", stat.statType);
+				r.RegisterField("subtype", stat.statSubtype);
+				if (stat.statType != 6) {
+					r.RegisterField("iValue", stat.iValue);
+					r.RegisterField("fValue", SQLNull());
+				}
+				else {
+					r.RegisterField("iValue", SQLNull());
+					r.RegisterField("fValue", stat.fValue);
+				}
+				r.RegisterField("sValue", stat.stringVal);
+				r.RegisterField("level", stat.statLevel);
+				r.RegisterField("stats_order", statIndex);
+
+				r.GenerateSingleInsert(queries);
+
+				statIndex++;
+			}
+
+			//Now insert our entries for this bonus
+			std::string insertions = queries.str();
+			if (!insertions.empty()) {
+				database.Query(insertions.c_str());
+			}
+
+			setBonusIndex++;
+		}
+	}
+
+	//Set item list
+	{
+		uint32_t setItemIndex = 0;
+		for (auto& itr : f.itemSetDetails.setItems) {
+			DatabaseRow r;
+			r.m_tableName = "item_itemset_items";
+
+			r.RegisterField("set_id", key.id);
+			r.RegisterField("item_name", itr.itemName);
+			r.RegisterField("index", setItemIndex);
+			QueueRowInsert(r);
+			setItemIndex++;
+		}
+	}
+
+	return key.id;
 }
 
 void LogItemsParser::ProcessItemDesc(Substruct_ExamineDescItem* item, bool bPvp) {
