@@ -107,7 +107,7 @@ CREATE TABLE IF NOT EXISTS `items` (
   `header_unk19` int(10) unsigned NOT NULL DEFAULT '0',
   `header_ftr_type_unk` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `Pvp_Id_UIDX` (`bPvpDesc`,`soe_item_crc`) USING BTREE,
+  UNIQUE KEY `Pvp_Id_UIDX` (`bPvpDesc`,`soe_item_id`) USING BTREE,
   KEY `ItemTypeIDX` (`item_type`),
   KEY `ItemNameIDX` (`name`),
   KEY `FK_items_item_itemsets` (`set_id`),
@@ -169,25 +169,6 @@ CREATE TABLE IF NOT EXISTS `item_details_armor` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `NewIndex` (`item_id`),
   CONSTRAINT `FK_item_details_armor` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
-
--- Data exporting was unselected.
-
--- Dumping structure for table eq2parser.item_details_armorset
-DROP TABLE IF EXISTS `item_details_armorset`;
-CREATE TABLE IF NOT EXISTS `item_details_armorset` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `item_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `soe_id` int(11) NOT NULL DEFAULT '0',
-  `armorset_item_id` int(10) NOT NULL DEFAULT '0',
-  `item_crc` int(10) NOT NULL DEFAULT '0',
-  `item_name` varchar(255) COLLATE latin1_general_ci NOT NULL DEFAULT 'N/A',
-  `item_icon` smallint(5) unsigned NOT NULL DEFAULT '0',
-  `unknown_piece` int(10) unsigned NOT NULL DEFAULT '0',
-  `language_type` tinyint(3) unsigned NOT NULL DEFAULT '1',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `ArmorSetIDX` (`item_id`,`soe_id`),
-  CONSTRAINT `FK_item_details_armorset` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- Data exporting was unselected.
@@ -336,7 +317,7 @@ CREATE TABLE IF NOT EXISTS `item_details_reward_crate` (
   `unk2` tinyint(3) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `FK_item_details_reward_crate_items` (`item_id`),
-  CONSTRAINT `FK_item_details_reward_crate_items` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`)
+  CONSTRAINT `FK_item_details_reward_crate_items` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- Data exporting was unselected.
@@ -516,9 +497,12 @@ DROP TABLE IF EXISTS `item_itemsets`;
 CREATE TABLE IF NOT EXISTS `item_itemsets` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `set_name` varchar(255) COLLATE latin1_general_ci NOT NULL,
+  `bPvpDesc` tinyint(4) NOT NULL,
+  `itemLevel` smallint(6) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `SetNameIDX` (`set_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=393 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+  UNIQUE KEY `UK_ItemSet_IDX` (`bPvpDesc`,`set_name`,`itemLevel`) USING BTREE,
+  KEY `SetNameIDX` (`set_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- Data exporting was unselected.
 
@@ -532,7 +516,7 @@ CREATE TABLE IF NOT EXISTS `item_itemset_bonus` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_setid_index` (`set_id`,`index`),
   CONSTRAINT `FK__item_itemsets` FOREIGN KEY (`set_id`) REFERENCES `item_itemsets` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1029 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- Data exporting was unselected.
 
@@ -548,7 +532,7 @@ CREATE TABLE IF NOT EXISTS `item_itemset_bonus_effects` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_setbonusid_effectorder` (`set_bonus_id`,`effect_order`),
   CONSTRAINT `FK_item_itemset_bonus_effects_item_itemset_bonus` FOREIGN KEY (`set_bonus_id`) REFERENCES `item_itemset_bonus` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1641 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- Data exporting was unselected.
 
@@ -567,7 +551,7 @@ CREATE TABLE IF NOT EXISTS `item_itemset_bonus_stats` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_setbonusid_statsorder` (`set_bonus_id`,`stats_order`),
   CONSTRAINT `FK_item_itemset_bonus_stats_item_itemset_bonus` FOREIGN KEY (`set_bonus_id`) REFERENCES `item_itemset_bonus` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=854 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- Data exporting was unselected.
 
@@ -578,12 +562,10 @@ CREATE TABLE IF NOT EXISTS `item_itemset_items` (
   `set_id` int(10) unsigned NOT NULL,
   `item_name` text COLLATE latin1_general_ci NOT NULL,
   `index` int(10) unsigned NOT NULL,
-  `unk1` tinyint(3) unsigned NOT NULL,
-  `unk2` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_item_itemset_items_item_itemsets` (`set_id`),
   CONSTRAINT `FK_item_itemset_items_item_itemsets` FOREIGN KEY (`set_id`) REFERENCES `item_itemsets` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2402 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- Data exporting was unselected.
 
@@ -602,7 +584,7 @@ CREATE TABLE IF NOT EXISTS `item_mod_stats` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_setbonusid_statsorder` (`item_id`,`stats_order`) USING BTREE,
   CONSTRAINT `FK_item_mod_stats_items` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=664481 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- Data exporting was unselected.
 
@@ -620,7 +602,7 @@ CREATE TABLE IF NOT EXISTS `item_mod_strings` (
   UNIQUE KEY `UK_itemid_index` (`index`,`item_id`) USING BTREE,
   KEY `FK_item_mod_strings_items` (`item_id`),
   CONSTRAINT `FK_item_mod_strings_items` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=32355 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- Data exporting was unselected.
 
@@ -631,7 +613,7 @@ CREATE TABLE IF NOT EXISTS `parsed_logs` (
   `name` text COLLATE latin1_general_ci NOT NULL,
   `dataVersion` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- Data exporting was unselected.
 
@@ -648,6 +630,19 @@ CREATE TABLE IF NOT EXISTS `item_details_achievement_profile` (
   PRIMARY KEY (`id`),
   KEY `FK_item_details_achievement_profile_items` (`item_id`),
   CONSTRAINT `FK_item_details_achievement_profile_items` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+
+-- Dumping structure for table eq2parser.item_pvp_link
+DROP TABLE IF EXISTS `item_pvp_link`;
+CREATE TABLE IF NOT EXISTS `item_pvp_link` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `base_item` int(10) unsigned NOT NULL,
+  `pvp_item` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_baseitem` (`base_item`),
+  UNIQUE KEY `UK_pvpitem` (`pvp_item`),
+  CONSTRAINT `FK__items` FOREIGN KEY (`base_item`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK__items_2` FOREIGN KEY (`pvp_item`) REFERENCES `items` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 -- Data exporting was unselected.

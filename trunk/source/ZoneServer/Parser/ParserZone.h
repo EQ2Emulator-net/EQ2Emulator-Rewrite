@@ -1,7 +1,11 @@
 #pragma once
 
 #include "../../common/Parser/Parser.h"
+#include <unordered_map>
 #include <unordered_set>
+#include <map>
+#include <vector>
+#include <string>
 
 class ParserZone : public Parser {
 public:
@@ -10,6 +14,16 @@ public:
 	void ProcessLogs();
 
 	void ProcessItems(PacketLog& log);
+};
+
+struct ItemSetKey {
+	std::string set_name;
+	uint32_t id;
+	bool bPvpDesc;
+	int16_t item_level;
+	bool operator==(const ItemSetKey& rhs) {
+		return set_name == rhs.set_name && bPvpDesc == rhs.bPvpDesc && item_level == rhs.item_level;
+	}
 };
 
 class LogItemsParser {
@@ -44,11 +58,12 @@ private:
 	void ProcessItemReforgingDecoration(class Substruct_ExamineDescItem_ReforgingDecoration* r);
 
 	void ProcessHouseData(class Substruct_HouseItem* h);
+	uint32_t ProcessItemSetData(class Substruct_ExamineDescItem* item, bool bPvp);
 
 	class ParserDatabase& database;
 	PacketLog& log;
-	std::unordered_set<uint32_t> parsed_soe_items;
-	std::unordered_map<std::string, uint32_t> parsed_item_sets;
+	 std::unordered_set<uint32_t> parsed_soe_items;
+	std::vector<ItemSetKey> parsed_item_sets;
 	uint32_t next_id;
 	uint32_t item_id;
 
