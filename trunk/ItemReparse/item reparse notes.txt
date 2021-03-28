@@ -1,0 +1,19 @@
+Reparse notes:
+
+****These are mostly compatibility changes and not everything new that was added! This required a ton of voodoo and I may have missed some things I had to change here***
+
+split item_stats into 2 tables (stats/strings) since they are from 2 different arrays in the packet (item_mod_stats and item_mod_strings)
+items.recommended_level is SOE's "item_level"
+renamed the damage fields in item_details_weapon and item_details_range to be more descriptive
+item_details_recipe - removed unknown13 and 14 because I don't know where they came from, not in packet
+item_details_food - satiation is not in the packet, old parser just set this as the item's tier...is it even needed?
+item_details_thrown - removed unknown14, another unknown not in the packet
+renamed item.flags_32768 item.CURSED_flags_32768 (it is cursed in game, just so it is seen to be fixed for old code)
+removed item.adornment_description, item.quest_unknown
+
+books - all books are also house items and have an entry in item_details_house as well as item_details_book
+item_details_itemset - renaming to item_details_reward_crate because it is too similar to the other types of item set tables, 
+	and need to make a second table for these anyway
+item_details_marketplace/pattern - several item types use the same struct, making one table named item_details_reward_voucher
+	NOTE: this type could really use 2 tables like item_details_reward_crate because some flags were added in a recent live client,
+	but not relevant for coe parsed data
