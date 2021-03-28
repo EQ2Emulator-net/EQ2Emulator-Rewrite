@@ -3,6 +3,7 @@
 #include "ParserDatabase.h"
 #include "../log.h"
 #include "../EmuAssert.h"
+#include "../../ZoneServer/Parser/ParserZone.h"
 
 ParserDatabase::ParserDatabase() {
 
@@ -36,7 +37,7 @@ std::unordered_map<std::string, uint16_t> ParserDatabase::LoadOpcodesForVersion(
 std::unordered_set<uint32_t> ParserDatabase::LoadExistingItems() {
 	DatabaseResult res;
 
-	Select(&res, "SELECT DISTINCT `soe_item_crc_unsigned` FROM `items`;");
+	Select(&res, "SELECT DISTINCT `soe_item_id_unsigned` FROM `items`;");
 
 	std::unordered_set<uint32_t> ret;
 	ret.reserve(res.GetNumRows());
@@ -55,9 +56,9 @@ uint32_t ParserDatabase::CreateLogEntry(std::string name, uint32_t ver) {
 	return static_cast<uint32_t>(res.last_insert_id);
 }
 
-uint32_t ParserDatabase::CreateItemSet(std::string name) {
+uint32_t ParserDatabase::CreateItemSet(std::string name, bool bPvp, int16_t level) {
 	QueryResult res = QueryWithFetchedResult(QUERY_RESULT_FLAG_LAST_INSERT_ID,
-		"INSERT INTO item_itemsets (`set_name`) VALUES ('%s');", Escape(name).c_str());
+		"INSERT INTO item_itemsets (`set_name`,`bPvpDesc`,`itemLevel`) VALUES ('%s',%u,%i);", Escape(name).c_str(), bPvp ? 1 : 0, level);
 
 	return static_cast<uint32_t>(res.last_insert_id);
 }
@@ -69,16 +70,21 @@ uint32_t ParserDatabase::CreateItemSetBonus(uint32_t set_id, uint32_t index, uin
 	return static_cast<uint32_t>(res.last_insert_id);
 }
 
-std::unordered_map<std::string, uint32_t> ParserDatabase::LoadExistingItemSets() {
+std::vector<ItemSetKey> ParserDatabase::LoadExistingItemSets() {
 	DatabaseResult res;
 
-	Select(&res, "SELECT id, set_name FROM `item_itemsets`;");
+	Select(&res, "SELECT id, set_name, bPvpDesc, itemLevel FROM `item_itemsets`;");
 
-	std::unordered_map<std::string, uint32_t> ret;
+	std::vector<ItemSetKey> ret;
 	ret.reserve(res.GetNumRows());
 
 	while (res.Next()) {
-		ret[res.GetString(1)] = res.GetUInt32(0);
+		ItemSetKey key;
+		key.id = res.GetUInt32(0);
+		key.set_name = res.GetString(1);
+		key.bPvpDesc = res.GetBool(2);
+		key.item_level = res.GetInt16(3);
+		ret.emplace_back(std::move(key));
 	}
 
 	return ret;
@@ -87,7 +93,8 @@ std::unordered_map<std::string, uint32_t> ParserDatabase::LoadExistingItemSets()
 uint32_t ParserDatabase::LoadNextItemID() {
 	DatabaseResult res;
 
-	Select(&res, "SELECT IF(COUNT(id) = 0, 1, MAX(id)+1) as id FROM `items`;");
+	//Starting raw item ids at 20mil
+	Select(&res, "SELECT IF(COUNT(id) = 0, 20000000, MAX(id)+1) as id FROM `items`;");
 
 	assert(res.Next());
 
