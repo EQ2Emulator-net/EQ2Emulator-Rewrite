@@ -46,8 +46,11 @@ public:
 		return ret;
 	}
 
+#ifdef EQ2_ZONE
 	void HandlePacket(std::shared_ptr<Client> client);
-
+#else
+	void HandlePacket(std::shared_ptr<Client> client){}
+#endif
 	uint32_t account_id;
 	uint32_t access_code;
 	uint32_t unknown;
