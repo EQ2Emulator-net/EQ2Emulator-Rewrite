@@ -19,8 +19,8 @@ public:
 	uint32_t petId;
 	int64_t hpCurrent;
 	int64_t hpMax;
-	int32_t powerCurrent;
-	int32_t powerMax;
+	int64_t powerCurrent;
+	int64_t powerMax;
 	int16_t effectiveLevel;
 	int16_t level;
 	uint8_t instance;
@@ -68,8 +68,16 @@ public:
 			RegisterInt32(hpCurrent);
 			RegisterInt32(hpMax);
 		}
-		RegisterInt32(powerCurrent);
-		RegisterInt32(powerMax);
+		if (GetVersion() < 69195) {
+			int32_t& powerCurrent = this->power_do_not_set;
+			int32_t& powerMax = this->power_max_do_not_set;
+			RegisterInt32(powerCurrent);
+			RegisterInt32(powerMax);
+		}
+		else {
+			RegisterInt64(powerCurrent);
+			RegisterInt64(powerMax);
+		}
 		RegisterInt16(effectiveLevel);
 		RegisterInt16(level);
 		RegisterCharString(name, 40);
@@ -95,6 +103,10 @@ public:
 		if (GetVersion() >= 57048) {
 			hp_do_not_set = static_cast<int32_t>(hpCurrent);
 			hp_max_do_not_set = static_cast<int32_t>(hpMax);
+			if (GetVersion() >= 69195) {
+				power_do_not_set = static_cast<int32_t>(powerCurrent);
+				power_max_do_not_set = static_cast<int32_t>(powerMax);
+			}
 		}
 	}
 
@@ -108,6 +120,8 @@ public:
 private:
 	int32_t hp_do_not_set;
 	int32_t hp_max_do_not_set;
+	int32_t power_do_not_set;
+	int32_t power_max_do_not_set;
 };
 
 struct GroupMemberAppearanceData {

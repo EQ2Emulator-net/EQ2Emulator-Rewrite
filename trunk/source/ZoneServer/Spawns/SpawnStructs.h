@@ -5,6 +5,7 @@
 #include "../../common/Packets/PacketElements/PacketEQ2Color.h"
 #include "../../common/Packets/PacketElements/PacketElements.h"
 #include "../../common/Packets/PacketElements/PacketEncodedData.h"
+#include "../../common/Packets/EQ2Packets/Substruct_NetAppearance.h"
 
 //Position state bitflags
 const uint32_t POS_STATE_FLYMODE = 1;
@@ -232,20 +233,6 @@ public:
 	uint16_t	unknown;
 };
 
-//26 bytes
-struct SpawnMorphSliders {
-	int8_t skull[3];
-	int8_t eyes[3];
-	int8_t ears[3];
-	int8_t eyebrow[3];
-	int8_t cheeks[3];
-	int8_t mouth[3];
-	int8_t chin[3];
-	int8_t nose[3];
-	uint8_t bodyscale;
-	uint8_t bumpscale;
-};
-
 ///<summary>Packet struct containing the spawns general information</summary>
 struct SpawnInfoStruct {
 	uint32_t						model_type;
@@ -272,7 +259,13 @@ struct SpawnInfoStruct {
 	uint8_t 						unknown17[4];
 	uint8_t							visual_flag;
 	uint8_t							interaction_flag;
-	uint8_t							unknown60055[18];
+	uint8_t							flag3;
+	uint8_t                         flag4;
+	//BG Color, Emblem, Emblem Color, Edge, Edge Color, pattern/color (unknown order)
+	uint8_t                         heraldry[7];
+	uint8_t                         align_byte;
+	uint8_t                         soga_heraldry[7];
+	uint8_t                         align_byte2;
 	uint32_t						action_state;
 	uint32_t						visual_state;
 	uint32_t						mood_state;
@@ -328,7 +321,6 @@ struct SpawnInfoStruct {
 	uint8_t                         unknown20[4];
 	uint32_t                        unknown20a[3];
 	uint8_t                         unknown13b;
-	uint8_t                         unknown14a[14];
 	uint8_t                         body_age;
 	float                           size_mod; // if set from 1.0 to -1.0 you shrink so small you can't see yourself
 	uint32_t                        unknown67633;

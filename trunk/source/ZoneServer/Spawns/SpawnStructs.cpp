@@ -505,8 +505,14 @@ void Substruct_SpawnInfo::RegisterElements() {
 		RegisterUInt8(unknown17)->SetCount(4);
 		RegisterUInt8(visual_flag);
 		RegisterUInt8(interaction_flag);
-		RescopeArrayElement(unknown60055);
-		RegisterUInt8(unknown60055)->SetCount(18);
+		RegisterUInt8(flag3);
+		RegisterUInt8(flag4);
+		RescopeArrayElement(heraldry);
+		RegisterUInt8(heraldry)->SetCount(7);
+		RegisterUInt8(align_byte);
+		RescopeArrayElement(soga_heraldry);
+		RegisterUInt8(soga_heraldry)->SetCount(7);
+		RegisterUInt8(align_byte2);
 	}
 
 	int32_t colorCount = (version > 283 ? 24 : 21);
@@ -586,6 +592,19 @@ void Substruct_SpawnInfo::RegisterElements() {
 		RegisterEQ2Color(mount_saddle_color);
 	}
 	else {
+		if (version < 60055) {
+			RescopeArrayElement(heraldry);
+			RegisterUInt8(heraldry)->SetCount(7);
+			RescopeArrayElement(soga_heraldry);
+			RegisterUInt8(soga_heraldry)->SetCount(7);
+			if (version < 57080) {
+				RescopeToReference(mount_type, uint16_t);
+				RegisterUInt16(mount_type);
+			}
+			else {
+				RegisterUInt32(mount_type);
+			}
+		}
 		RegisterEQ2Color(mount_color);
 		RegisterEQ2Color(mount_saddle_color);
 	}
@@ -605,17 +624,6 @@ void Substruct_SpawnInfo::RegisterElements() {
 		}
 	}
 	if (version < 60055) {
-		if (version >= 1188) {
-			if (version < 57080) {
-				RescopeToReference(mount_type, uint16_t);
-				RegisterUInt16(mount_type);
-			}
-			else {
-				RegisterUInt32(mount_type);
-			}
-			RescopeArrayElement(unknown14a);
-			RegisterUInt8(unknown14a)->SetCount(14);
-		}
 		if (version < 57080) {
 			uint16_t& combat_voice = reinterpret_cast<uint16_t&>(this->combat_voice);
 			RegisterUInt16(combat_voice);

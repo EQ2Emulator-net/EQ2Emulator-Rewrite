@@ -43,8 +43,8 @@ public:
 		soga_race_type = 0;
 		info_vis_flags = 0;
 
-		memset(unknown15, 0, sizeof(unknown15));
-		memset(unknown18, 0, sizeof(unknown18));
+		memset(heraldry, 0, sizeof(heraldry));
+		memset(soga_heraldry, 0, sizeof(soga_heraldry));
 	}
 
 	~Substruct_NetAppearance() = default;
@@ -89,8 +89,8 @@ public:
 	EQ2Color soga_hair_scatter;
 	EQ2EquipmentItem soga_hair;
 	EQ2EquipmentItem soga_hair_face;
-	uint8_t unknown15[7]; // " Type = "int8" Size = "7" / >
-	uint8_t unknown18[7]; //maybe soga version of unknown15?
+	uint8_t heraldry[7]; // " Type = "int8" Size = "7" / >
+	uint8_t soga_heraldry[7]; //maybe soga version of unknown15?
 	EQ2EquipmentItem mount;
 	EQ2Color mountColor1;
 	EQ2Color mountColor2;
@@ -210,12 +210,12 @@ public:
 		RegisterEQ2Color(soga_hair_scatter);
 		RegisterEQ2EquipmentItem(soga_hair, appVersion < 21);
 		RegisterEQ2EquipmentItem(soga_hair_face, appVersion < 21);
-		uint8_t& Unknown15 = unknown15[0]; // " Type = "int8" Size = "7" / >
-		RegisterUInt8(Unknown15)->SetCount(7);
+		uint8_t& heraldry = this->heraldry[0];
+		RegisterUInt8(heraldry)->SetCount(7);
 
 		if (appVersion >= 18) {
-			RescopeArrayElement(unknown18);
-			RegisterUInt8(unknown18)->SetCount(7);
+			RescopeArrayElement(soga_heraldry);
+			RegisterUInt8(soga_heraldry)->SetCount(7);
 		}
 	}
 };

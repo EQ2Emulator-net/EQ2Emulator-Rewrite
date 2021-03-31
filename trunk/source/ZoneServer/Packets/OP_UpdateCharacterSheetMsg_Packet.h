@@ -411,6 +411,11 @@ struct CharacterSheetMiscData {
 	int64_t hp;
 	int64_t maxHp;
 	int64_t maxHpBase;
+	int64_t current_power;
+	int64_t max_power;
+	int64_t base_power;
+	int64_t hp_regen;
+	int64_t power_regen;
 	float advExp;
 	float advExpNextLevel;
 	float advExpDebt;
@@ -431,8 +436,6 @@ struct CharacterSheetMiscData {
 	int32_t dissonance;
 	int32_t max_dissonance;
 	int32_t base_dissonance;
-	int32_t hp_regen;
-	int32_t power_regen;
 	int32_t savagery_regen_per_sec;
 	int32_t dissipation;
 	float ranged_attack_min_distance;
@@ -440,7 +443,7 @@ struct CharacterSheetMiscData {
 	float stat_bonus_health;
 	float stat_bonus_power;
 	int64_t bonus_health;
-	int32_t bonus_power;
+	int64_t bonus_power;
 	float stat_bonus_damage;
 	uint16_t mitigation_pct_pve;
 	uint16_t mitigation_pct_pvp;
@@ -587,6 +590,9 @@ struct CharacterSheetMiscData {
 
 protected:
 	int32_t bonus_health_do_not_set;
+	int32_t bonus_power_do_not_set;
+	int32_t hp_regen_do_not_set;
+	int32_t power_regen_do_not_set;
 };
 
 class UpdateCharacterSheetMsgData : public CharacterSheetMiscData, public CharacterSheet, public PacketEncodedData {
