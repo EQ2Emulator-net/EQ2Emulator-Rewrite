@@ -266,7 +266,8 @@ enum class EItemType : uint8_t {
 	EINFUSER_1 = 24,
 	EINFUSER_2 = 25,
 	EEXPERIENCE_VIAL = 26,
-	EOVERSEER = 27
+	EOVERSEER = 27,
+	ECOUPON = 28
 };
 
 class Item : public ItemDescBaseData, public ItemDescFooterData, public std::enable_shared_from_this<Item> {

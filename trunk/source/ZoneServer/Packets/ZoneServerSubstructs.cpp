@@ -79,7 +79,7 @@ RegisterZoneSubstruct(Substruct_FlythroughDesc_Movement_Strings, 1);
 RegisterZoneSubstruct(Substruct_FlythroughDesc_Movement, 1);
 RegisterZoneSubstruct(Substruct_FlythroughDesc_Scene, 1);
 RegisterZoneSubstruct(Substruct_FlythroughDesc, 1);
-RegisterZoneSubstruct(Substruct_SpellDesc, 1208, 60114, 67650);
+RegisterZoneSubstruct(Substruct_SpellDesc, 1208, 60114, 67650, 69195);
 RegisterZoneSubstruct(Substruct_ExamineDescItem_SpellScroll, 1208, 60114, 67650);
 RegisterZoneSubstruct(Substruct_ExamineDescSpell, 1208, 60114, 67650);
 RegisterZoneSubstruct(Substruct_AADesc, 1193);

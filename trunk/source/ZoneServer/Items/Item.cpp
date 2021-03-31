@@ -364,6 +364,7 @@ std::shared_ptr<Item> Item::CreateItemWithType(EItemType type) {
 	case EItemType::EOVERSEER:
 	case EItemType::EREWARD_VOUCHER:
 	case EItemType::EREWARD_CRATE_2:
+	case EItemType::ECOUPON:
 		return std::make_shared<ItemRewardVoucher>();
 	case EItemType::EREWARD_CRATE:
 		return std::make_shared<ItemRewardCrate>();
