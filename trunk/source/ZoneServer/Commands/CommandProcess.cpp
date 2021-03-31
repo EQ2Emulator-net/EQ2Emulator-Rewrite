@@ -205,7 +205,24 @@ void CommandProcess::CommandTest(const std::shared_ptr<Client>& client, Separato
 		return;
 	}
 
-	uint32_t id = sep.GetUInt32(0);
+	auto player = client->GetController()->GetControlled();
+	union {
+		const SpawnInfoStruct* cs;
+		SpawnInfoStruct* s;
+	};
+	cs = player->GetInfoStruct();
+
+	//BG Color, Emblem, Emblem Color, Edge, Edge Color, pattern/color (unknown order)
+	//s->heraldry[0] = 7; //bg color
+	//s->heraldry[1] = sep.GetInt(0); //emblem
+	//s->heraldry[2] = 14; //emblem color
+	//s->heraldry[3] = 7; //edge
+	//s->heraldry[4] = 10; //edge color
+	//s->heraldry[5] = 1; //pattern
+	//s->heraldry[6] = 0; //pattern color
+	//player->SetInfo(&s->equipment_types[19], 6469);
+
+	/*uint32_t id = sep.GetUInt32(0);
 
 	auto item = g_masterItemList.GetReferenceItem(id);
 
@@ -217,7 +234,7 @@ void CommandProcess::CommandTest(const std::shared_ptr<Client>& client, Separato
 
 	ExamineInfoCmd_Item_Packet p(client->GetVersion(), itemDesc.get());
 	p.bShowPopup = true;
-	client->QueuePacket(p, true);
+	client->QueuePacket(p, true);*/
 }
 
 void CommandProcess::CommandZone(const std::shared_ptr<Client>& client, Separator& sep) {

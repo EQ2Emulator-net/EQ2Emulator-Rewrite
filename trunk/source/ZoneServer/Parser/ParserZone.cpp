@@ -12,6 +12,7 @@
 #include "../../common/Separator.h"
 
 #include <set>
+#include <thread>
 
 ParserZone::ParserZone(int argc, char** argv) : Parser(argc, argv) {
 	bool logging = true;

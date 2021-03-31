@@ -7,6 +7,7 @@
 #include <sstream>
 #include <type_traits>
 #include <memory>
+#include "../util.h"
 
 #ifdef EQ2_ZONE
 #include "../../ZoneServer/Packets/OP_ClientCmdMsg_Packet.h"
@@ -20,7 +21,7 @@ public:
 	template<typename T, typename SubT = T>
 	std::vector<std::pair<uint32_t, std::unique_ptr<SubT> > > FindPackets() {
 		uint16_t op;
-		static_assert(std::is_base_of_v<EQ2Packet, T>);
+		static_assert(std::is_base_of_v<class EQ2Packet, T>);
 		{
 			T p(logVersion);
 			p.FindOpcode();
