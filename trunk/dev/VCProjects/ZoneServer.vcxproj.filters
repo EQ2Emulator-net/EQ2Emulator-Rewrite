@@ -450,6 +450,9 @@
     <ClCompile Include="..\..\source\ZoneServer\Packets\ItemPackets.cpp">
       <Filter>source\Packets\Server-&gt;Client</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Packets\OP_DressingRoom_Packet.cpp">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h">
@@ -1163,6 +1166,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\common\EmuAssert.h">
       <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DressingRoom_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -16,6 +16,13 @@ void UpdateCharacterSheetMsgData::PreWrite() {
 	maxHp = attributes->hp.maxValue;
 	maxHpBase = attributes->hp.baseValue;
 	bonus_health_do_not_set = static_cast<int32_t>(bonus_health);
+	bonus_power_do_not_set = static_cast<int32_t>(bonus_power);
+	current_power = attributes->power.currentValue;
+	max_power = attributes->power.maxValue;
+	base_power = attributes->power.baseValue;
+
+	hp_regen_do_not_set = static_cast<int32_t>(hp_regen);
+	power_regen_do_not_set = static_cast<int32_t>(power_regen);
 
 	str_do_not_set = static_cast<int16_t>(attributes->str.currentValue);
 	sta_do_not_set = static_cast<int16_t>(attributes->sta.currentValue);
@@ -301,6 +308,8 @@ void UpdateCharacterSheetMsgData::RegisterElements() {
 		RegisterInt32(base_dissonance);
 	}
 
+	int32_t& hp_regen = this->hp_regen_do_not_set;
+	int32_t& power_regen = this->power_regen_do_not_set;
 	RegisterInt32(hp_regen);
 	RegisterInt32(power_regen);
 	RegisterInt32(savagery_regen_per_sec);
@@ -322,6 +331,7 @@ void UpdateCharacterSheetMsgData::RegisterElements() {
 		RegisterInt64(bonus_health);
 	}
 
+	int32_t& bonus_power = this->bonus_power_do_not_set;
 	RegisterInt32(bonus_power);
 	RegisterFloat(stat_bonus_damage);
 	RegisterUInt16(mitigation_pct_pve);
@@ -621,12 +631,19 @@ void UpdateCharacterSheetMsgData::RegisterElements67650() {
 	RegisterInt64(maxHp);
 	RegisterInt64(maxHpBase);
 
-	int32_t& current_power = attributes->power.currentValue;
-	int32_t& max_power = attributes->power.maxValue;
-	int32_t& base_power = attributes->power.baseValue;
-	RegisterInt32(current_power);
-	RegisterInt32(max_power);
-	RegisterInt32(base_power);
+	if (version < 69195) {
+		int32_t& current_power = attributes->power.currentValue;
+		int32_t& max_power = attributes->power.maxValue;
+		int32_t& base_power = attributes->power.baseValue;
+		RegisterInt32(current_power);
+		RegisterInt32(max_power);
+		RegisterInt32(base_power);
+	}
+	else {
+		RegisterInt64(current_power);
+		RegisterInt64(max_power);
+		RegisterInt64(base_power);
+	}
 
 	auto& conc_used = reinterpret_cast<uint8_t&>(attributes->concentration.currentValue);
 	auto& conc_max = reinterpret_cast<uint8_t&>(attributes->concentration.maxValue);
@@ -648,8 +665,16 @@ void UpdateCharacterSheetMsgData::RegisterElements67650() {
 	RegisterInt32(max_dissonance);
 	RegisterInt32(base_dissonance);
 
-	RegisterInt32(hp_regen);
-	RegisterInt32(power_regen);
+	if (version < 69195) {
+		int32_t& hp_regen = this->hp_regen_do_not_set;
+		int32_t& power_regen = this->power_regen_do_not_set;
+		RegisterInt32(hp_regen);
+		RegisterInt32(power_regen);
+	}
+	else {
+		RegisterInt64(hp_regen);
+		RegisterInt64(power_regen);
+	}
 	RegisterInt32(savagery_regen_per_sec);
 	RegisterInt32(dissipation);
 
@@ -658,7 +683,13 @@ void UpdateCharacterSheetMsgData::RegisterElements67650() {
 	RegisterFloat(stat_bonus_health);
 	RegisterFloat(stat_bonus_power);
 	RegisterInt64(bonus_health);
-	RegisterInt32(bonus_power);
+	if (version < 69195) {
+		int32_t& bonus_power = this->bonus_power_do_not_set;
+		RegisterInt32(bonus_power);
+	}
+	else {
+		RegisterInt64(bonus_power);
+	}
 	RegisterFloat(stat_bonus_damage);
 	RegisterUInt16(mitigation_pct_pve);
 	RegisterUInt16(mitigation_pct_pvp);

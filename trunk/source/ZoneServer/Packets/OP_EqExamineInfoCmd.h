@@ -6,7 +6,7 @@
 class OP_EqExamineInfoCmd_Packet : public OP_ClientCmdMsg_Packet {
 public:
 	OP_EqExamineInfoCmd_Packet(uint32_t version, bool bStructDump = true)
-		: OP_ClientCmdMsg_Packet(version), bShowName(true), bShowPopup(false), unknown1(0), unknown{ 0, 0, 0 } {
+		: OP_ClientCmdMsg_Packet(version), bShowName(true), bShowPopup(false), bTradeskillExamine(false), unknown{ 0, 0, 0 } {
 		RegisterElements(bStructDump);
 	}
 
@@ -19,7 +19,7 @@ public:
 	bool bShowName;
 	uint8_t unknown[3];
 	bool bShowPopup;
-	uint8_t unknown1;
+	bool bTradeskillExamine;
 	
 	void FindOpcode() override {
 		if (typeid(*this) != typeid(OP_EqExamineInfoCmd_Packet)) {
@@ -44,7 +44,7 @@ private:
 		RegisterUInt8(unknown)->SetCount(3);
 		RegisterBool(bShowPopup);
 		if (GetVersion() >= 1193)
-			RegisterUInt8(unknown1);
+			RegisterBool(bTradeskillExamine);
 
 		if (bStructDump) {
 			baseSubstruct.emplace(GetVersion(), true);

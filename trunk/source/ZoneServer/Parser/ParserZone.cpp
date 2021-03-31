@@ -4,8 +4,12 @@
 #include "../../common/log.h"
 #include "../../common/Parser/PacketLog.h"
 #include "../Packets/ItemPackets.h"
+#include "../Packets/OP_DressingRoom_Packet.h"
+#include "../Packets/OP_SetRemoteCmdsMsg_Packet.h"
+#include "../Packets/OP_RemoteCmdMsg_Packet.h"
 #include "../../common/Parser/ParserDatabase.h"
 #include "../../common/DatabaseRow.h"
+#include "../../common/Separator.h"
 
 #include <set>
 
@@ -26,6 +30,9 @@ void ParserZone::ProcessLogs() {
 			if (opt == "-items") {
 				ProcessItems(*log);
 			}
+			else if (opt == "-appearances") {
+				ProcessAppearances(*log);
+			}
 		}
 	}
 
@@ -37,7 +44,11 @@ void ParserZone::ProcessItems(PacketLog& log) {
 	LogItemsParser processor(log, database);
 }
 
-LogItemsParser::LogItemsParser(PacketLog& plog, ParserDatabase& db) : database(db), log(plog) {
+void ParserZone::ProcessAppearances(PacketLog& log) {
+	LogAppearancesParser processor(log, database);
+}
+
+LogItemsParser::LogItemsParser(PacketLog& plog, ParserDatabase& db) : LogParser(plog, db) {
 	auto packets = log.FindPackets<OP_EqExamineInfoCmd_Packet, ExamineInfoCmd_Item_Packet>();
 
 	if (!packets.empty()) {
@@ -46,62 +57,76 @@ LogItemsParser::LogItemsParser(PacketLog& plog, ParserDatabase& db) : database(d
 
 	LogDebug(LOG_PARSER, 0, "Item count for log %s : %llu", log.filename.c_str(), packets.size());
 	for (auto& itr : packets) {
-		int32_t id = itr->itemDesc->header.itemID;
+		auto& p = itr.second;
+		int32_t id = p->itemDesc->header.itemID;
 		//If we haven't parsed this item yet, do so now
 		if (parsed_soe_items.insert(id).second) {
-			ProcessItemDesc(itr->itemDesc, false);
-			if (itr->pvpDesc) ProcessItemDesc(itr->pvpDesc, true);
+			ProcessItemDesc(p->itemDesc, false);
+			if (p->pvpDesc) ProcessItemDesc(p->pvpDesc, true);
 		}
 	}
 	ProcessQueuedInserts();
 	LogDebug(LOG_PARSER, 0, "Done with log.");
 }
 
-void LogItemsParser::ProcessQueuedInserts() {
-	auto DoInsertsForTable = [this](const char* table, int maxPerQuery) {
-		bool bFirst = true;
-		int i = 0;
-		
-		auto itr = queued_inserts.find(table);
+void LogParser::DoInsertsForTable(const char* table, int maxPerQuery) {
+	bool bFirst = true;
+	int i = 0;
 
-		if (itr == queued_inserts.end()) {
-			return;
-		}
+	auto itr = queued_inserts.find(table);
 
-		const std::string& fields = itr->second.first;
-		const std::vector<std::string>& vals = itr->second.second;
+	if (itr == queued_inserts.end()) {
+		return;
+	}
 
-		auto ResetQuery = [&bFirst, &i, table](std::ostringstream& ss, const std::string& fields) {
-			i = 0;
-			bFirst = true;
-			ss.str("");
-			ss << "INSERT INTO " << table << " " << fields << " VALUES ";
-		};
+	const std::string& fields = itr->second.first;
+	const std::vector<std::string>& vals = itr->second.second;
 
-		if (!vals.empty()) {
-			std::ostringstream ss;
-			ResetQuery(ss, fields);
-			for (auto& itr : vals) {
-				if (bFirst) bFirst = false;
-				else ss << ",\n";
-
-				ss << itr;
-
-				if (++i == maxPerQuery) {
-					//Start a new query;
-					database.Query(ss.str().c_str());
-					ResetQuery(ss, fields);
-				}
-			}
-
-			if (i) {
-				database.Query(ss.str().c_str());
-			}
-		}
-
-		queued_inserts.erase(itr);
+	auto ResetQuery = [&bFirst, &i, table](std::ostringstream& ss, const std::string& fields) {
+		i = 0;
+		bFirst = true;
+		ss.str("");
+		ss << "INSERT INTO " << table << " " << fields << " VALUES ";
 	};
 
+	if (!vals.empty()) {
+		std::ostringstream ss;
+		ResetQuery(ss, fields);
+		for (auto& itr : vals) {
+			if (bFirst) bFirst = false;
+			else ss << ",\n";
+
+			ss << itr;
+
+			if (++i == maxPerQuery) {
+				//Start a new query;
+				database.Query(ss.str().c_str());
+				ResetQuery(ss, fields);
+			}
+		}
+
+		if (i) {
+			database.Query(ss.str().c_str());
+		}
+	}
+
+	queued_inserts.erase(itr);
+};
+
+void LogParser::QueueRowInsert(DatabaseRow& row) {
+	auto& ins = queued_inserts[row.m_tableName];
+	if (ins.first.empty()) {
+		std::ostringstream ss;
+		row.GenerateFieldList(ss);
+		ins.first = ss.str();
+	}
+
+	std::ostringstream ss;
+	row.GenerateValuesList(ss, true, false);
+	ins.second.emplace_back(ss.str());
+}
+
+void LogItemsParser::ProcessQueuedInserts() {
 	DoInsertsForTable("items", 250);
 	DoInsertsForTable("item_effects", 250);
 	DoInsertsForTable("item_mod_stats", 250);
@@ -127,19 +152,6 @@ void LogItemsParser::ProcessQueuedInserts() {
 	DoInsertsForTable("item_details_reward_crate_item", 250);
 	DoInsertsForTable("item_details_book", 250);
 	DoInsertsForTable("item_details_decorations", 250);
-}
-
-void LogItemsParser::QueueRowInsert(DatabaseRow& row) {
-	auto& ins = queued_inserts[row.m_tableName];
-	if (ins.first.empty()) {
-		std::ostringstream ss;
-		row.GenerateFieldList(ss);
-		ins.first = ss.str();
-	}
-
-	std::ostringstream ss;
-	row.GenerateValuesList(ss, true, false);
-	ins.second.emplace_back(ss.str());
 }
 
 void LogItemsParser::LoadExistingData() {
@@ -789,4 +801,120 @@ void LogItemsParser::ProcessItemReforgingDecoration(Substruct_ExamineDescItem_Re
 	row.RegisterField("item_id", item_id);
 	row.RegisterField("decoration_name", r->decoName);
 	QueueRowInsert(row);
+}
+
+LogAppearancesParser::LogAppearancesParser(PacketLog& log, ParserDatabase& db) : LogParser(log, db) {
+	std::map<uint32_t, std::string> requests;
+	{
+		//Find the try_on command index
+		uint32_t cmd_index = 0xFFFFFFFF;
+		{
+			auto command_list = log.FindPackets<OP_SetRemoteCmdsMsg_Packet>();
+			if (command_list.empty()) {
+				return;
+			}
+
+			uint32_t tmp = 0;
+			for (auto& cmd : command_list[0].second->commands_array) {
+				if (cmd.name == "try_on") {
+					cmd_index = tmp;
+					break;
+				}
+				tmp++;
+			}
+
+			if (cmd_index == 0xFFFFFFFF) return;
+		}
+
+		//Now build a reference of packet lines for try_on requests
+		auto packets = log.FindPackets<OP_RemoteCmdMsg_Packet>();
+		for (auto& itr : packets) {
+			auto& p = itr.second;
+			uint32_t line = itr.first;
+			if (p->command_handler == cmd_index) {
+				requests[line] = std::move(itr.second->arguments);
+			}
+		}
+
+		if (requests.empty()) return;
+	}
+
+	auto FindRequestForPacket = [&requests](uint32_t line) -> std::string {
+		const std::string* req = nullptr;
+		for (auto& itr : requests) {
+			if (itr.first >= line) break;
+			req = &itr.second;
+		}
+
+		if (req) return *req;
+		return std::string();
+	};
+
+	auto packets = log.FindPackets<OP_DressingRoom_Packet>();
+	if (packets.empty()) return;
+
+	for (auto& itr : packets) {
+		uint32_t line = itr.first;
+		std::unique_ptr<OP_DressingRoom_Packet>& p = itr.second;
+
+		std::string args = FindRequestForPacket(line);
+		if (args.empty()) {
+			LogError(LOG_PARSER, 0, "Could not find request for a dressing room packet on line %u!", line);
+			continue;
+		}
+
+		Separator sep(args);
+
+		if (strcmp(sep.GetString(0), "crc") != 0) {
+			LogError(LOG_PARSER, 0, "Got a try_on command using type %s!", sep.GetString(0));
+			continue;
+		}
+
+		if (strcmp(sep.GetString(1), "drss") != 0) {
+			LogError(LOG_PARSER, 0, "Got a try_on command using sub-type %s!", sep.GetString(1));
+			continue;
+		}
+
+		if (dynamic_cast<DressingRoom_NetAppearance_Packet*>(p.get())) {
+			LogDebug(LOG_PARSER, 0, "Got a net appearance dressing room packet (%s).", args.c_str());
+			continue;
+		}
+
+		auto* dr = static_cast<DressingRoom_Standard_Packet*>(p.get());
+
+		DatabaseRow row;
+		row.m_tableName = "raw_appearances";
+
+		row.RegisterField("soe_item_id_unsigned", static_cast<uint32_t>(sep.GetInt(2)));
+		row.RegisterField("soe_item_crc_unsigned", static_cast<uint32_t>(sep.GetInt(3)));
+		row.RegisterField("equip_type", dr->appearance_type);
+		EQ2ColorFloat& color = dr->color;
+		row.RegisterField("red", static_cast<int32_t>(color.Red * 255.f));
+		row.RegisterField("green", static_cast<int32_t>(color.Green * 255.f));
+		row.RegisterField("blue", static_cast<int32_t>(color.Blue * 255.f));
+		EQ2ColorFloat& h = dr->highlight;
+		row.RegisterField("highlight_red", static_cast<int32_t>(h.Red * 255.f));
+		row.RegisterField("highlight_green", static_cast<int32_t>(h.Green * 255.f));
+		row.RegisterField("highlight_blue", static_cast<int32_t>(h.Blue * 255.f));
+		row.RegisterField("attach1", dr->attach1);
+		row.RegisterField("attach2", dr->attach2);
+		row.RegisterField("unk_type", dr->unk_type);
+		row.RegisterField("mount_type", dr->mount_type);
+		row.RegisterField("slot", dr->slot);
+		//Confirmed those 2 are item id/crc but not always sent
+		//row.RegisterField("unk_id1", dr->item_id);
+		row.RegisterField("unk_id2", dr->item_id2);
+		//row.RegisterField("unk_crc", dr->item_crc);
+		row.RegisterField("unk3a", dr->unknown3a);
+		row.RegisterField("unk3b", dr->unknown3b);
+		row.RegisterField("unk4a", dr->unknown4a);
+		row.RegisterField("unk4b", dr->unknown4b);
+		row.RegisterField("unk8", dr->unknown8);
+		row.RegisterField("heraldry", std::string(reinterpret_cast<const char*>(dr->heraldry), 7));
+		row.RegisterField("unk1", dr->unk1);
+		row.RegisterField("type", dr->type);
+		QueueRowInsert(row);
+	}
+
+	DoInsertsForTable("raw_appearances", 250);
 }

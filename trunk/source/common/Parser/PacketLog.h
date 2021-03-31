@@ -18,7 +18,7 @@ public:
 	~PacketLog() = default;
 
 	template<typename T, typename SubT = T>
-	std::vector<std::unique_ptr<SubT> > FindPackets() {
+	std::vector<std::pair<uint32_t, std::unique_ptr<SubT> > > FindPackets() {
 		uint16_t op;
 		static_assert(std::is_base_of_v<EQ2Packet, T>);
 		{
@@ -32,9 +32,11 @@ public:
 				op = p.GetOpcode();
 		}
 
-		std::vector<std::unique_ptr<SubT>> ret;
+		std::vector<std::pair<uint32_t, std::unique_ptr<SubT> > > ret;
+		ret.reserve(packets[op].size());
 
 		for (auto& itr : packets[op]) {
+			uint32_t line = itr.first;
 			const std::string& data = itr.second;
 			std::unique_ptr<EQ2Packet> p(new T(logVersion));
 			auto bytes = reinterpret_cast<const unsigned char*>(data.c_str());
@@ -55,7 +57,7 @@ public:
 				SubT* subp = dynamic_cast<SubT*>(p.get());
 				if (subp) {
 					p.release();
-					ret.emplace_back(subp);
+					ret.emplace_back(std::make_pair(line, subp));
 				}
 			}
 		}

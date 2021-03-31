@@ -14,6 +14,7 @@ public:
 	void ProcessLogs();
 
 	void ProcessItems(PacketLog& log);
+	void ProcessAppearances(PacketLog& log);
 };
 
 struct ItemSetKey {
@@ -26,12 +27,28 @@ struct ItemSetKey {
 	}
 };
 
-class LogItemsParser {
+class LogParser {
+public:
+	LogParser(PacketLog& l, class ParserDatabase& db) : log(l), database(db) {}
+	virtual ~LogParser() = default;
+
+	void QueueRowInsert(class DatabaseRow& row);
+	void DoInsertsForTable(const char* table, int maxPerQuery);
+
+private:
+	//map<tableName, pair<fields, vector<values> > >
+	std::unordered_map<std::string, std::pair<std::string, std::vector<std::string>>> queued_inserts;
+
+protected:
+	class ParserDatabase& database;
+	PacketLog& log;
+};
+
+class LogItemsParser : public LogParser {
 public:
 	LogItemsParser(PacketLog& log, class ParserDatabase& db);
 
 private:
-	void QueueRowInsert(class DatabaseRow& row);
 	void ProcessQueuedInserts();
 	std::string GetItemTypeAsString(uint8_t type);
 
@@ -60,13 +77,16 @@ private:
 	void ProcessHouseData(class Substruct_HouseItem* h);
 	uint32_t ProcessItemSetData(class Substruct_ExamineDescItem* item, bool bPvp);
 
-	class ParserDatabase& database;
-	PacketLog& log;
-	 std::unordered_set<uint32_t> parsed_soe_items;
+	std::unordered_set<uint32_t> parsed_soe_items;
 	std::vector<ItemSetKey> parsed_item_sets;
 	uint32_t next_id;
 	uint32_t item_id;
+};
 
-	//map<tableName, pair<fields, vector<values> > >
-	std::unordered_map<std::string, std::pair<std::string, std::vector<std::string>>> queued_inserts;
+class LogAppearancesParser : public LogParser {
+public:
+	LogAppearancesParser(PacketLog& log, class ParserDatabase& db);
+	~LogAppearancesParser() = default;
+
+
 };
