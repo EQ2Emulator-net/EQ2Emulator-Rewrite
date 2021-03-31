@@ -38,10 +38,10 @@ struct SpellDescInfo {
 	uint32_t spell_text_color;
 	uint8_t num_levels;
 	uint8_t tier;
-	int32_t health_cost;
-	int32_t health_upkeep;
-	int32_t power_cost;
-	int16_t power_upkeep;
+	int64_t health_cost;
+	int64_t health_upkeep;
+	int64_t power_cost;
+	int64_t power_upkeep;
 	int16_t savagery_cost;
 	int16_t savagery_upkeep;
 	int16_t dissonance_cost;
@@ -158,7 +158,13 @@ public:
 	~Substruct_SpellDesc() = default;
 
 	void PreWrite() override {
-		if (GetVersion() < 60114) {
+		if (GetVersion() >= 69195) {
+			health_cost_int32_do_not_set = static_cast<int32_t>(health_cost);
+			health_upkeep_int32_do_not_set = static_cast<int32_t>(health_upkeep);
+			power_cost_int32_do_not_set = static_cast<int32_t>(power_cost);
+			power_upkeep_int16_do_not_set = static_cast<int32_t>(power_upkeep);
+		}
+		else if (GetVersion() < 60114) {
 			health_cost_do_not_set = static_cast<int16_t>(health_cost);
 			health_upkeep_do_not_set = static_cast<int16_t>(health_upkeep);
 			power_cost_do_not_set = static_cast<int16_t>(power_cost);
@@ -186,6 +192,12 @@ public:
 			health_cost = health_cost_do_not_set;
 			health_upkeep = health_upkeep_do_not_set;
 			power_cost = power_cost_do_not_set;
+		}
+		else if (GetVersion() < 69195) {
+			health_cost = health_cost_int32_do_not_set;
+			health_upkeep = health_upkeep_int32_do_not_set;
+			power_cost = power_cost_int32_do_not_set;
+			power_upkeep = power_upkeep_int16_do_not_set;
 		}
 
 		SpellDescInfo::spell_levels.clear();
@@ -233,19 +245,32 @@ public:
 		if (GetVersion() < 60114) {
 			int16_t& health_cost = health_cost_do_not_set;
 			int16_t& health_upkeep = health_upkeep_do_not_set;
-			int16_t power_cost = power_cost_do_not_set;
+			int16_t& power_cost = power_cost_do_not_set;
+			int16_t& power_upkeep = power_upkeep_int16_do_not_set;
 
 			RegisterOversizedByte(health_cost);
 			RegisterOversizedByte(health_upkeep);
 			RegisterOversizedByte(power_cost);
+			RegisterOversizedByte(power_upkeep);
 		}
-		else {
+		else if (GetVersion() < 69195) {
+			int32_t& health_cost = health_cost_int32_do_not_set;
+			int32_t& health_upkeep = health_upkeep_int32_do_not_set;
+			int32_t& power_cost = power_cost_int32_do_not_set;
+			int16_t& power_upkeep = power_upkeep_int16_do_not_set;
+
 			RegisterInt32(health_cost);
 			RegisterInt32(health_upkeep);
 			RegisterInt32(power_cost);
+			RegisterOversizedByte(power_upkeep);
 		}
-
-		RegisterOversizedByte(power_upkeep);
+		else {
+			RegisterInt64(health_cost);
+			RegisterInt64(health_upkeep);
+			RegisterInt64(power_cost);
+			RegisterInt64(power_upkeep);
+		}
+		
 		RegisterOversizedByte(savagery_cost);
 		RegisterOversizedByte(savagery_upkeep);
 		if (GetVersion() >= 60114) {
@@ -314,6 +339,12 @@ private:
 	int16_t health_cost_do_not_set;
 	int16_t health_upkeep_do_not_set;
 	int16_t power_cost_do_not_set;
+	
+	//Now these went from int32 to int64 as well as power_upkeep
+	int32_t health_cost_int32_do_not_set;
+	int32_t health_upkeep_int32_do_not_set;
+	int32_t power_cost_int32_do_not_set;
+	int16_t power_upkeep_int16_do_not_set;
 
 	std::vector<Substruct_SpellLevel> spell_levels;
 	std::vector<Substruct_SpellReagent> reagents;
