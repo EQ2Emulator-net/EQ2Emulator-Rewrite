@@ -353,6 +353,13 @@ void Database::AddConnectionToPool(DatabaseConnection* con) {
 	}
 }
 
+template <typename T, typename = void>
+struct is_defined_v : std::false_type {};
+
+template <typename T>
+struct is_defined_v<T, std::enable_if_t<std::is_object_v<T> && !std::is_pointer_v<T> && (sizeof(T) > 0)> > : std::true_type {};
+
+
 DatabaseConnection::DatabaseConnection(const char* host, unsigned int port, const char* user, const char* password, const char* db) {
 	//mutexing this call per SQL documentation since mysql_init will try to call mysql_library_init which is not thread safe
 	static SpinLock lock;
@@ -362,7 +369,7 @@ DatabaseConnection::DatabaseConnection(const char* host, unsigned int port, cons
 
 	lock.Unlock();
 
-	my_bool reconnect = 1;
+	bool reconnect = 1;
 	mysql_options(mysql_con, MYSQL_OPT_RECONNECT, &reconnect);
 
 	unsigned int conn_timeout = 10;

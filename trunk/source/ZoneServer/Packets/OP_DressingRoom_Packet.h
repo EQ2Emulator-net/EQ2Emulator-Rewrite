@@ -16,8 +16,8 @@ public:
 		//type 4 is net appearance, type 3 with model_type == -1 is also net appearance
 		//type 1 = changing mount, type 3 = changing main model 
 		RegisterUInt16(type);
-		RegisterUInt32(attach1);
-		RegisterUInt32(attach2);
+		RegisterUInt32(vis_state);
+		RegisterUInt32(vis_state2);
 		RegisterUInt32(appearance_type);
 	}
 
@@ -26,8 +26,8 @@ public:
 	uint16_t unk1;
 	uint16_t type;
 	uint32_t appearance_type;
-	uint32_t attach1;
-	uint32_t attach2;
+	uint32_t vis_state;
+	uint32_t vis_state2;
 };
 
 class DressingRoom_NetAppearance_Packet : public OP_DressingRoom_Packet {
@@ -54,11 +54,11 @@ public:
 	void RegisterElements() {
 		RegisterUInt16(slot);
 		RegisterUInt8(unknown4a);
-		RegisterUInt8(unknown4b);
+		RegisterBool(b2hWeapon);
 		RegisterEQ2ColorFloat(color);
 		RegisterEQ2ColorFloat(highlight);
-		RegisterUInt8(unknown3a);
-		RegisterUInt8(unknown3b);
+		RegisterBool(bEquipment);
+		RegisterBool(b1hWeapon);
 		RegisterUInt16(icon);
 		RegisterUInt32(item_id);
 		RegisterUInt32(item_crc);
@@ -67,18 +67,18 @@ public:
 		RescopeArrayElement(heraldry);
 		RegisterUInt8(heraldry)->SetCount(7);
 		RegisterUInt32(mount_type);
-		RegisterUInt8(unknown8);
+		RegisterUInt8(housePlacementType);
 	}
 
 	EQ2Packet* GetSubPacket() override { return nullptr; }
 
 	uint16_t slot;
+	bool b2hWeapon;
 	uint8_t unknown4a;
-	uint8_t unknown4b;
 	EQ2ColorFloat color;
 	EQ2ColorFloat highlight;
-	uint8_t unknown3a;
-	uint8_t unknown3b;
+	bool bEquipment;
+	bool b1hWeapon;
 	uint16_t icon;
 	//id+crc are not always sent!
 	uint32_t item_id;
@@ -88,5 +88,5 @@ public:
 	//BG Color, Emblem, Emblem Color, Edge, Edge Color, pattern/color (unknown order)
 	uint8_t heraldry[7];
 	uint32_t mount_type;
-	uint8_t unknown8;
+	uint8_t housePlacementType;
 };
