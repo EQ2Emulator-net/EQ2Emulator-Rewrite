@@ -453,6 +453,15 @@
     <ClCompile Include="..\..\source\ZoneServer\Packets\OP_DressingRoom_Packet.cpp">
       <Filter>source\Packets\Server-&gt;Client</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Parser\LogItemsParser.cpp">
+      <Filter>source\Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\common\Parser\LogParser.cpp">
+      <Filter>common\Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Parser\LogAppearancesParser.cpp">
+      <Filter>source\Parser</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h">
@@ -1169,6 +1178,15 @@
     </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DressingRoom_Packet.h">
       <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Parser\LogAppearancesParser.h">
+      <Filter>source\Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Parser\LogItemsParser.h">
+      <Filter>source\Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Parser\LogParser.h">
+      <Filter>common\Parser</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

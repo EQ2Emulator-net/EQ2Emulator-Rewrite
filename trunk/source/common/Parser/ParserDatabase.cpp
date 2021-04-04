@@ -4,6 +4,7 @@
 #include "../log.h"
 #include "../EmuAssert.h"
 #include "../../ZoneServer/Parser/ParserZone.h"
+#include "../../ZoneServer/Parser/LogItemsParser.h"
 
 ParserDatabase::ParserDatabase() {
 

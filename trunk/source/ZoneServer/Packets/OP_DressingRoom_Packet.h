@@ -63,7 +63,7 @@ public:
 		RegisterUInt32(item_id);
 		RegisterUInt32(item_crc);
 		RegisterUInt32(item_id2);
-		RegisterUInt32(unk_type);
+		RegisterUInt32(reforging_decoration);
 		RescopeArrayElement(heraldry);
 		RegisterUInt8(heraldry)->SetCount(7);
 		RegisterUInt32(mount_type);
@@ -84,7 +84,7 @@ public:
 	uint32_t item_id;
 	uint32_t item_crc;
 	uint32_t item_id2;
-	uint32_t unk_type;
+	uint32_t reforging_decoration;
 	//BG Color, Emblem, Emblem Color, Edge, Edge Color, pattern/color (unknown order)
 	uint8_t heraldry[7];
 	uint32_t mount_type;

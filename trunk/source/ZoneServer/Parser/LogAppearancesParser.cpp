@@ -57,7 +57,7 @@ LogAppearancesParser::LogAppearancesParser(PacketLog& log, ParserDatabase& db) :
 	auto packets = log.FindPackets<OP_DressingRoom_Packet>();
 	if (packets.empty()) return;
 
-	auto errors = log.FindPackets<OP_DisplayTextCmd_Packet>();
+	//auto errors = log.FindPackets<OP_DisplayTextCmd_Packet>();
 
 	for (auto& itr : packets) {
 		uint32_t line = itr.first;
@@ -91,6 +91,8 @@ LogAppearancesParser::LogAppearancesParser(PacketLog& log, ParserDatabase& db) :
 		DatabaseRow row;
 		row.m_tableName = "raw_appearances";
 
+		row.RegisterField("log_id", log.log_id);
+		row.RegisterField("line", line);
 		row.RegisterField("soe_item_id_unsigned", static_cast<uint32_t>(sep.GetInt(2)));
 		row.RegisterField("soe_item_crc_unsigned", static_cast<uint32_t>(sep.GetInt(3)));
 		row.RegisterField("equip_type", dr->appearance_type);
@@ -104,7 +106,7 @@ LogAppearancesParser::LogAppearancesParser(PacketLog& log, ParserDatabase& db) :
 		row.RegisterField("highlight_blue", static_cast<int32_t>(h.Blue * 255.f));
 		row.RegisterField("vis_state", dr->vis_state);
 		row.RegisterField("vis_state2", dr->vis_state2);
-		row.RegisterField("unk_type", dr->unk_type);
+		row.RegisterField("reforging_deco", dr->reforging_decoration);
 		row.RegisterField("mount_type", dr->mount_type);
 		row.RegisterField("slot", dr->slot);
 		//Confirmed those 2 are item id/crc but not always sent
