@@ -13,6 +13,15 @@ LogItemsParser::LogItemsParser(PacketLog& plog, ParserDatabase& db) : LogParser(
 	LogDebug(LOG_PARSER, 0, "Item count for log %s : %llu", log.filename.c_str(), packets.size());
 	for (auto& itr : packets) {
 		auto& p = itr.second;
+		//if (auto i = dynamic_cast<Substruct_ExamineDescItem_SpellScroll*>(p->itemDesc)) {
+		//	if (i->spell.id == 0) {
+		//		DatabaseRow row;
+		//		row.m_tableName = "spell_crc_0_packets";
+		//		row.RegisterField("log_id", log.log_id);
+		//		row.RegisterField("line", itr.first);
+		//		QueueRowInsert(row);
+		//	}
+		//}
 		int32_t id = p->itemDesc->header.itemID;
 		//If we haven't parsed this item yet, do so now
 		if (parsed_soe_items.insert(id).second) {
@@ -50,6 +59,7 @@ void LogItemsParser::ProcessQueuedInserts() {
 	DoInsertsForTable("item_details_reward_crate_item", 250);
 	DoInsertsForTable("item_details_book", 250);
 	DoInsertsForTable("item_details_decorations", 250);
+	DoInsertsForTable("spell_crc_0_packets", 250);
 }
 
 void LogItemsParser::LoadExistingData() {
@@ -373,7 +383,7 @@ void LogItemsParser::ProcessItemDesc(Substruct_ExamineDescItem* item, bool bPvp)
 	row.RegisterField("harvest", f.bHarvestedMaterial);
 	//Header and footer unknowns
 	//Of the below unknowns only header_ftr_type_unk and header_unk19 are sent in our parse
-	row.RegisterField("header_ftr_type_unk", h.footerTypeUnknown);
+	row.RegisterField("header_ftr_type_unk", h.nameColor);
 	row.RegisterField("header_unk19", h.unknown19);
 
 	row.RegisterField("footer_unk_61", f.unknown61);

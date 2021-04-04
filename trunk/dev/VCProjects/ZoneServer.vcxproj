@@ -43,6 +43,7 @@
     <ClCompile Include="..\..\source\common\Packets\PacketElements\PacketSubstruct.cpp" />
     <ClCompile Include="..\..\source\common\Packets\ProtocolPacket.cpp" />
     <ClCompile Include="..\..\source\common\Packets\XmlStructDumper.cpp" />
+    <ClCompile Include="..\..\source\common\Parser\LogParser.cpp" />
     <ClCompile Include="..\..\source\common\Parser\PacketLog.cpp" />
     <ClCompile Include="..\..\source\common\Parser\Parser.cpp" />
     <ClCompile Include="..\..\source\common\Parser\ParserDatabase.cpp" />
@@ -224,6 +225,8 @@
     <ClCompile Include="..\..\source\ZoneServer\Packets\OP_EqExamineInfoCmd.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Packets\ZoneServerPackets.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Packets\ZoneServerSubstructs.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Parser\LogAppearancesParser.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Parser\LogItemsParser.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Parser\PacketLog_Zone.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Parser\ParserZone.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Players\CharacterSheet.cpp" />
@@ -265,6 +268,7 @@
     <ClInclude Include="..\..\source\common\EmuAssert.h" />
     <ClInclude Include="..\..\source\common\Packets\EmuPackets\Emu_NotifyCharacterLinkdead_Packet.h" />
     <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketCharString.h" />
+    <ClInclude Include="..\..\source\common\Parser\LogParser.h" />
     <ClInclude Include="..\..\source\common\Parser\PacketLog.h" />
     <ClInclude Include="..\..\source\common\Parser\Parser.h" />
     <ClInclude Include="..\..\source\common\Parser\ParserDatabase.h" />
@@ -464,6 +468,8 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_SpawnHeader.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_SpellDesc.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_SpellEffects.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Parser\LogAppearancesParser.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Parser\LogItemsParser.h" />
     <ClInclude Include="..\..\source\ZoneServer\Parser\ParserZone.h" />
     <ClInclude Include="..\..\source\ZoneServer\Players\CharacterInventory.h" />
     <ClInclude Include="..\..\source\ZoneServer\Players\CharacterSheet.h" />

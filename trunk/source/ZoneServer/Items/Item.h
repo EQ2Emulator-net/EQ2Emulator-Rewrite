@@ -79,7 +79,7 @@ struct ItemDescBaseData {
 	uint8_t classReqCount;
 	uint8_t slotCount;
 	uint32_t slotBitmask;
-	uint32_t footerTypeUnknown;
+	int32_t nameColor;
 	uint8_t itemType;
 
 	//Dynamic

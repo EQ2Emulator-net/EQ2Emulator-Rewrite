@@ -179,6 +179,13 @@ public:
 		PacketSubstruct::PreWrite();
 	}
 
+	void PostRead() override {
+		slotBitmask = 0;
+		for (auto& itr : slotArray) {
+			slotBitmask |= (1 << itr.slotID);
+		}
+	}
+
 	uint8_t itemVersion;
 	std::vector<Substruct_ItemStatMod> statModArray;
 	std::vector<Substruct_ItemUnknown> unknownArray;
@@ -236,7 +243,7 @@ public:
 		classCount->SetMyArray(RegisterArray(classReqArray, Substruct_ItemClassReq));
 		auto nSlots = RegisterUInt8(slotCount);
 		nSlots->SetMyArray(RegisterArray(slotArray, Substruct_ItemSlot));
-		RegisterUInt32(footerTypeUnknown);
+		RegisterInt32(nameColor);
 		RegisterUInt8(itemType);
 	}
 };
