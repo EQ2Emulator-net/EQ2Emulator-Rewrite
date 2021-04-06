@@ -25,6 +25,7 @@ private:
 class Mutex {
 public:
 	Mutex();
+	Mutex(const char* name);
 	~Mutex();
 
 	void SetName(const char *name);

@@ -239,9 +239,10 @@ bool Database::Select(DatabaseResult* result, const char* fmt, ...) {
 		success = false;
 	}
 
-	if (success && (res = mysql_store_result(mysql))) {
-		bool bFirst = true;
+	if (success) {
+		bool bFirst = true;	
 		for (;;) {
+			res = mysql_store_result(mysql);
 			result->AddResult(res, bFirst);
 			bFirst = false;
 
@@ -255,8 +256,6 @@ bool Database::Select(DatabaseResult* result, const char* fmt, ...) {
 			else if (sqlerrno == -1) {
 				break;
 			}
-
-			res = mysql_store_result(mysql);
 		}
 	}
 	AddConnectionToPool(connection);

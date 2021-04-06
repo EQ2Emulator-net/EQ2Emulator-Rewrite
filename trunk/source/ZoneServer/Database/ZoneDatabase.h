@@ -87,6 +87,9 @@ public:
 	uint32_t GetSpawnLocationCount(uint32_t locationID, std::shared_ptr<Spawn> spawn);
 	bool RemoveSpawnFromSpawnLocation(std::shared_ptr<Spawn> spawn);
 
+	//Skills
+	void LoadMasterSkillList(class MasterSkillList& skills);
+
 private:
 	//The return value is the next indice in the query result
 	uint32_t ProcessSpawnTableFields(const std::shared_ptr<class Spawn>& spawn, class DatabaseResult& result);

@@ -16,6 +16,8 @@
 #include "MasterZoneLookup.h"
 #include "../WorldTalk/WorldStream.h"
 #include "../Players/SpawnCampDebug.h"
+#include "../../common/Rules.h"
+#include "../Skills/MasterSkillList.h"
 
 // Packets
 #include "../Packets/OP_ZoneInfoMsg_Packet.h"
@@ -26,7 +28,7 @@
 #include "../Packets/OP_EqDestroyGhostCmd_Packet.h"
 #include "../Packets/OP_MapFogDataInitMsg_Packet.h"
 #include "../Packets/OP_BioUpdateMsg_Packet.h"
-#include "../../common/Rules.h"
+#include "../Packets/OP_PopulateSkillMapsMsg.h"
 #include "../../common/Packets/EmuPackets/Emu_ClientSessionEnded_Packet.h"
 #include "../../common/Packets/EmuPackets/Emu_NotifyCharacterLinkdead_Packet.h"
 #include "../../common/Packets/EmuPackets/Emu_CharacterLinkdeadTimeout_Packet.h"
@@ -46,6 +48,7 @@ extern CommandProcess g_commandProcess;
 extern LuaGlobals g_luaGlobals;
 extern MasterZoneLookup g_masterZoneLookup;
 extern RuleManager g_ruleManager;
+extern MasterSkillList g_masterSkillList;
 
 ZoneServer::ZoneServer(uint32_t zone_id):  chat(Clients, *this) {
 	id = zone_id;
@@ -177,7 +180,7 @@ void ZoneServer::Process() {
 	}
 }
 
-bool ZoneServer::AddClient(std::shared_ptr<Client> c) {
+bool ZoneServer::AddClient(std::shared_ptr<Client> c, bool bInitialLogin) {
 	c->SetZone(shared_from_this());
 	
 	WriteLocker lock(pendingClientAdd_lock);
@@ -233,7 +236,11 @@ bool ZoneServer::AddClient(std::shared_ptr<Client> c) {
 	}
 
 	c->QueuePacket(zone);
-	g_commandProcess.SendCommandList(c);
+
+	if (bInitialLogin) {
+		g_commandProcess.SendCommandList(c);
+		g_masterSkillList.SendSkillMapPacket(c);
+	}
 
 	//Send any map data we may have for this zone
 	if (auto info = g_masterZoneLookup.GetZoneInfoByID(GetID())) {	

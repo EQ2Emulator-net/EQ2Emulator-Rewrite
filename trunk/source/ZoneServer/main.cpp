@@ -17,6 +17,7 @@
 #include "Lua/LuaGlobals.h"
 #include "Items/MasterItemList.h"
 #include "Parser/ParserZone.h"
+#include "Skills/MasterSkillList.h"
 
 ZoneDatabase database;
 Classes classes;
@@ -28,6 +29,7 @@ MasterEntityCommandList g_masterEntityCommandList;
 MasterZoneLookup g_masterZoneLookup;
 LuaGlobals g_luaGlobals;
 MasterItemList g_masterItemList;
+MasterSkillList g_masterSkillList;
 
 int main(int argc, char** argv) {
 	bool looping = true;
@@ -66,6 +68,11 @@ int main(int argc, char** argv) {
 	if (success) {
 		LogDebug(LOG_DATABASE, 0, "Loading rules...");
 		database.LoadRules(g_ruleManager);
+	}
+
+	if (success) {
+		LogDebug(LOG_DATABASE, 0, "Loading skills...");
+		database.LoadMasterSkillList(g_masterSkillList);
 	}
 
 	if (success) {

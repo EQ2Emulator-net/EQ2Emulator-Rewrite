@@ -92,7 +92,7 @@ void ZoneOperator::ClientLogIn(std::shared_ptr<Client> client, OP_LoginByNumRequ
 		client->SendLoginReply(0);
 		client->SetCharacterID(pc.character_id);
 		clients.erase(client);
-		z->AddClient(client);
+		z->AddClient(client, pc.bInitialLogin);
 	}
 	else {
 		client->SendLoginReply(3);

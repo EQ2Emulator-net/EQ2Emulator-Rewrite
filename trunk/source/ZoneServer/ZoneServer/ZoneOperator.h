@@ -14,6 +14,7 @@ struct PendingClient {
 	uint32_t character_id;
 	uint32_t zone_id;
 	uint32_t instance_id;
+	bool bInitialLogin;
 };
 
 struct Command {

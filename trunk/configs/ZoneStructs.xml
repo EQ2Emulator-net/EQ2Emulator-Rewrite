@@ -6998,6 +6998,15 @@
 		<Data ElementName="vis_state2" Type="int32" Size="1"/>
 		<Data ElementName="appearance_type" Type="int32" Size="1"/>
 	</Struct>
+	<Struct Name="WS_PopulateSkillMapsMsg" ClientVersion="1" OpcodeName="OP_PopulateSkillMapsMsg">
+		<Data ElementName="skill_count" Type="int32" Size="1"/>
+		<Data ElementName="skills" Type="Array" ArraySizeVariable="skill_count">
+			<Data ElementName="skillID" Type="int32" Size="1"/>
+			<Data ElementName="shortName" Type="EQ2_16Bit_String" Size="1"/>
+			<Data ElementName="name" Type="EQ2_16Bit_String" Size="1"/>
+			<Data ElementName="description" Type="EQ2_16Bit_String" Size="1"/>
+		</Data>
+	</Struct>
 	<Struct Name="WS_LoginByNumRequestMsg" ClientVersion="1" OpcodeName="OP_LoginByNumRequestMsg">
 		<Data ElementName="account_id" Type="int32" Size="1"/>
 		<Data ElementName="access_code" Type="int32" Size="1"/>
