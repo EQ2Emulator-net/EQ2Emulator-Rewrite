@@ -18,7 +18,7 @@ DatabaseResult::~DatabaseResult() {
 
 void DatabaseResult::Clear() {
 	for (auto& itr : results) {
-		mysql_free_result(itr);
+		if (itr) mysql_free_result(itr);
 	}
 	results.clear();
 	if (current_res) {
@@ -31,7 +31,7 @@ void DatabaseResult::AddResult(MYSQL_RES* res, bool first) {
 	if (first) {
 		if (!results.empty()) {
 			for (auto& itr : results) {
-				mysql_free_result(itr);
+				if (itr) mysql_free_result(itr);
 			}
 			results.clear();
 		}

@@ -80,6 +80,7 @@ struct ItemDescBaseData {
 	uint8_t slotCount;
 	uint32_t slotBitmask;
 	int32_t nameColor;
+	uint32_t set_id;
 	uint8_t itemType;
 
 	//Dynamic
@@ -130,6 +131,7 @@ struct ItemSetBonus {
 	uint8_t effectCount;
 	std::vector<ItemStatMod> stats;
 	std::vector<ItemSetBonusEffect> effects;
+	uint32_t bonusID;
 };
 
 struct ItemSetItem {
