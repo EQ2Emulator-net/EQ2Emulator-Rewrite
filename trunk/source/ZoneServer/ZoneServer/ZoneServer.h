@@ -31,7 +31,7 @@ public:
 
 	void Process();
 
-	bool AddClient(std::shared_ptr<Client> client);
+	bool AddClient(std::shared_ptr<Client> client, bool bInitialLogin);
 
 	void SendCharacterInfo(std::shared_ptr<Client> client);
 	std::shared_ptr<Entity> LoadCharacter(const std::shared_ptr<Client>& client);

@@ -111,12 +111,13 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 		<< "SELECT * FROM items i INNER JOIN item_details_house_container idhc ON bPvpDesc = 0 AND  i.id = idhc.item_id;\n"
 		<< "SELECT i.*, idb.*, idh.* FROM items i INNER JOIN item_details_book idb ON i.bPvpDesc = 0 AND i.id = idb.item_id INNER JOIN item_details_house idh ON idb.item_id = idh.item_id;\n"
 		<< "SELECT * FROM items WHERE bPvpDesc = 0 AND  id IN (SELECT DISTINCT voucher_item_id FROM item_details_reward_voucher);\n"
-		<< "SELECT * FROM items WHERE bPvpDesc = 0 AND  id IN (SELECT DISTINCT item_id FROM item_details_reward_crate);\n"
+		<< "SELECT * FROM items i INNER JOIN item_details_reward_crate irc ON i.bPvpDesc = 0 AND irc.item_id = i.id;\n"
+		<< "SELECT * FROM items i INNER JOIN item_details_adornments ida ON i.bPvpDesc = 0 AND i.id = ida.item_id;\n"
+		<< "SELECT * FROM items i INNER JOIN item_details_decorations idd ON i.bPvpDesc = 0 AND i.id = idd.item_id;\n"
+		<< "SELECT * from items i INNER JOIN item_details_achievement_profile ida ON i.bPvpDesc = 0 AND i.id = ida.item_id;\n"
 		<< "SELECT * FROM item_details_reward_voucher;\n"
-		<< "SELECT * FROM item_details_reward_crate_item;\n";
-		//<< "SELECT idri.item_id, i.icon, idri.name FROM items i INNER JOIN item_details_recipe_items idri ON i.id = idri.item_id;\n"
-		//
-		//<< "SELECT * FROM items i INNER JOIN item_details_adornments ida ON i.id = ida.item_id;\n";
+		<< "SELECT * FROM item_details_reward_crate_item;\n"
+		<< "SELECT * FROM item_details_recipe_items;\n";
 
 	std::thread statThread(LoadStats);
 	std::thread appearanceThread(LoadAppearances);
@@ -219,7 +220,7 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 	}
 	//Finished loading set info
 	
-	for (int i = 0; i < 15; i++) {
+	for (int i = 0; i < 18; i++) {
 		while (result.Next()) {
 			EItemType type = Item::GetItemTypeFromName(result.GetString(3));
 
@@ -271,6 +272,25 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 		EmuAssert(item);
 
 		ProcessItemRewardCrateResult(result, item);
+	}
+	result.NextResultSet();
+
+	while (result.Next()) {
+		uint32_t id = result.GetUInt32(1);
+
+		auto itr = loadList.find(id);
+		if (itr == loadList.end()) {
+			continue;
+		}
+
+		auto item = std::dynamic_pointer_cast<ItemRecipeBook>(itr->second);
+		EmuAssert(item);
+
+		item->items.emplace_back();
+		RecipeBookItem& i = item->items.back();
+		i.recipeName = result.GetString(2);
+		i.icon = result.GetUInt16(3);
+		i.recipeID = result.GetUInt32(4);
 	}
 
 	statThread.join();
@@ -600,6 +620,8 @@ void ItemBook::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
 }
 
 void ItemRewardVoucher::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
+	unknown1 = 0;
+	unknown2 = 0;
 }
 
 void ItemGeneric::LoadTypeSpecificData(DatabaseResult& res, uint32_t i) {
@@ -607,7 +629,9 @@ void ItemGeneric::LoadTypeSpecificData(DatabaseResult& res, uint32_t i) {
 }
 
 void ItemRewardCrate::LoadTypeSpecificData(DatabaseResult& res, uint32_t i) {
-
+	i += 2;
+	unknown1 = res.GetUInt8(i++);
+	unknown2 = res.GetUInt8(i++);
 }
 
 void ItemSpellScroll::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
@@ -642,15 +666,27 @@ uint32_t ZoneDatabase::ProcessItemRewardCrateResult(DatabaseResult& result, cons
 	return i;
 }
 
-//The below classes are still TODO
 void ItemAdornment::LoadTypeSpecificData(DatabaseResult& res, uint32_t i) {
-
-}
-
-void ItemAchievementProfile::LoadTypeSpecificData(DatabaseResult& res, uint32_t i) {
-
+	i += 2;
+	duration = res.GetFloat(i++);
+	itemTypes = res.GetUInt64(i++);
+	slotColor = res.GetUInt16(i++);
+	ItemAdornmentData::description = res.GetString(i++);
+	description2 = res.GetString(i++);
+	unknown = res.GetUInt32(i++);
+	unknown2 = res.GetUInt32(i++);
 }
 
 void ItemReforgingDecoration::LoadTypeSpecificData(DatabaseResult& res, uint32_t i) {
+	i += 2;
+	decoName = res.GetString(i++);
+}
 
+void ItemAchievementProfile::LoadTypeSpecificData(DatabaseResult& res, uint32_t i) {
+	i += 2;
+	rentStatusReduction = res.GetUInt32(i++);
+	rentCoinReduction = res.GetFloat(i++);
+	houseType = res.GetUInt8(i++);
+	unknownString = res.GetString(i++);
+	unknown = res.GetUInt8(i++);
 }

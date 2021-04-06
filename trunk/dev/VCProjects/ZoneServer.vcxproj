@@ -232,6 +232,7 @@
     <ClCompile Include="..\..\source\ZoneServer\Players\CharacterSheet.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Players\NPCPathDebug.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Players\SpawnCampDebug.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Skills\MasterSkillList.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Spawns\Entity.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Spawns\EntityCommands.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Spawns\Object.cpp" />
@@ -443,6 +444,7 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_DialogOpenCmd_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_PaperdollImage_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_PlayFlythroughCmd_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_PopulateSkillMapsMsg.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_PredictionUpdateMsg.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_ReadyToZoneMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_RemoteCmdMsg_Packet.h" />
@@ -475,6 +477,8 @@
     <ClInclude Include="..\..\source\ZoneServer\Players\CharacterSheet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Players\NPCPathDebug.h" />
     <ClInclude Include="..\..\source\ZoneServer\Players\SpawnCampDebug.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Skills\MasterSkillList.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Skills\Skill.h" />
     <ClInclude Include="..\..\source\ZoneServer\Spawns\Entity.h" />
     <ClInclude Include="..\..\source\ZoneServer\Spawns\EntityCommands.h" />
     <ClInclude Include="..\..\source\ZoneServer\Spawns\GroundSpawn.h" />

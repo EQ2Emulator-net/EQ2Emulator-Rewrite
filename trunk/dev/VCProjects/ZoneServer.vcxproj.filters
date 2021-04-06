@@ -76,6 +76,9 @@
     <Filter Include="source\Parser">
       <UniqueIdentifier>{0be84d3d-84cb-4338-bcdc-850d71a8f5a5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\Skills">
+      <UniqueIdentifier>{d94509c1-60b8-4bca-b57f-8b9274c17721}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\ZoneServer\main.cpp">
@@ -461,6 +464,9 @@
     </ClCompile>
     <ClCompile Include="..\..\source\ZoneServer\Parser\LogAppearancesParser.cpp">
       <Filter>source\Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Skills\MasterSkillList.cpp">
+      <Filter>source\Skills</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1109,9 +1115,6 @@
     <ClInclude Include="..\..\source\ZoneServer\Items\Item.h">
       <Filter>source\Items</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\ZoneServer\Items\MasterItemList.h">
-      <Filter>source\Database</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\AI\NPCMovement.h">
       <Filter>source\AI</Filter>
     </ClInclude>
@@ -1187,6 +1190,18 @@
     </ClInclude>
     <ClInclude Include="..\..\source\common\Parser\LogParser.h">
       <Filter>common\Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Skills\MasterSkillList.h">
+      <Filter>source\Skills</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Skills\Skill.h">
+      <Filter>source\Skills</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Items\MasterItemList.h">
+      <Filter>source\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_PopulateSkillMapsMsg.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

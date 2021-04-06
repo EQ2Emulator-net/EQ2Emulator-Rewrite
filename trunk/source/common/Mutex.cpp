@@ -17,14 +17,22 @@ const chrono::seconds MUTEX_TIMEOUT(MUTEX_TIMEOUT_SECONDS);
 /**
 * @brief Constructor.
 *
+*/
+Mutex::Mutex() : num_readlocks(0) {
+#if defined(EQ2_DEBUG)
+	name[0] = 0;
+#endif
+}
+
+/**
+* @brief Constructor.
+*
 * @param name The name of the mutex.
 */
-Mutex::Mutex() {
+Mutex::Mutex(const char* name) : num_readlocks(0) {
 #if defined(EQ2_DEBUG)
-	memset(name, 0, sizeof(name));
-	num_readlocks = 0;
+	strncpy(this->name, name, sizeof(this->name) - 1);
 #endif
-
 }
 
 /**

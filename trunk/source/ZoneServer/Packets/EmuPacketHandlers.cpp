@@ -64,6 +64,7 @@ void Emu_TransferClient_Packet::HandlePacket(std::shared_ptr<WorldStream> w) {
 	pc.character_id = character_id;
 	pc.zone_id = zone_id;
 	pc.instance_id = instance_id;
+	pc.bInitialLogin = !bFromZone;
 
 	g_zoneOperator.AddPendingClient(account_id, pc);
 
