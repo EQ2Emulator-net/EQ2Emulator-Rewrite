@@ -614,15 +614,15 @@ public:
 			e->SetMyArray(RegisterArray(footerAdornmentArray, Substruct_ItemAdornmentDetails));
 		}
 		if (itemVersion >= 35) {
-			auto e1 = RegisterUInt8(collectable_unk);
+			auto e1 = RegisterBool(bQuestExamine);
 			auto e2 = RegisterBool(bCollectable);
-			auto e3 = RegisterBool(bCollectionNeeded);
+			auto e3 = RegisterBool(bExamineNeeded);
 			e3->AddIfAnyVariableSet(e1);
 			e3->AddIfAnyVariableSet(e2);
 		}
 		else if (itemVersion >= 20) {
 			auto e1 = RegisterBool(bCollectable);
-			auto e2 = RegisterBool(bCollectionNeeded);
+			auto e2 = RegisterBool(bExamineNeeded);
 			e2->SetIsVariableSet(e1);
 		}
 		if (itemVersion >= 80) {

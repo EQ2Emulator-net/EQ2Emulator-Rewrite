@@ -86,7 +86,8 @@ ALTER TABLE `spawn_npcs`
 /*Items*/;
 ALTER TABLE `items`
 	ADD COLUMN `script_id` INT(10) UNSIGNED NULL AFTER `lua_script`,
-	ADD CONSTRAINT `FK_Item_ScriptID` FOREIGN KEY (`script_id`) REFERENCES `lua_scripts` (`id`);
+	ADD CONSTRAINT `FK_Item_ScriptID` FOREIGN KEY (`script_id`) REFERENCES `lua_scripts` (`id`),
+	ADD INDEX `LuaScriptIDX` (`lua_script`);
 	
 UPDATE items i
 	INNER JOIN lua_scripts ls ON LENGTH(i.lua_script) > 0 AND i.lua_script = ls.name

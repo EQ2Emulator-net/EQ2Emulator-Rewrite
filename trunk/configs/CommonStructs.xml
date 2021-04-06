@@ -1,0 +1,565 @@
+<EQ2EmulatorRewrite>
+	<Struct Name="Substruct_NetAppearance" ClientVersion="1">
+		<Data ElementName="netAppearanceVersion" Type="int8" Size="1"/>
+		<Data ElementName="race_type" Type="int16" Size="1"/>
+		<Data ElementName="skin_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="eye_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="Equip" Type="EQ2_EquipmentItem" Size="24" bShortType="true"/>
+		<Data ElementName="texture_slot_item" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="sliderBytes" Type="sint8" Size="26"/>
+		<Data ElementName="mount" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="hair_color1" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="hair_color2" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="hair_scatter" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="info_vis_flags" Type="int8" Size="1"/>
+	</Struct>
+	<Struct Name="Substruct_NetAppearance" ClientVersion="284">
+		<Data ElementName="netAppearanceVersion" Type="int8" Size="1"/>
+		<Data ElementName="race_type" Type="int16" Size="1"/>
+		<Data ElementName="skin_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="eye_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="model_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="Equip" Type="EQ2_EquipmentItem" Size="24" bShortType="true"/>
+		<Data ElementName="texture_slot_item" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="hair" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="hair_face" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="wings" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="shirt" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="pants" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="sliderBytes" Type="sint8" Size="26"/>
+		<Data ElementName="mount" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="hair_color1" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="hair_color2" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="hair_scatter" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="combat_voice" Type="int16" Size="1"/>
+		<Data ElementName="emote_voice" Type="int16" Size="1"/>
+		<Data ElementName="unkType1" Type="int16" Size="1"/>
+		<Data ElementName="info_vis_flags" Type="int32" Size="1"/>
+		<Data ElementName="soga_race_type" Type="int16" Size="1"/>
+		<Data ElementName="soga_skin_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_eye_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_model_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="sogaSliderBytes" Type="sint8" Size="26"/>
+		<Data ElementName="soga_hair_color1" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_hair_color2" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_hair_scatter" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_hair" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="soga_hair_face" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="heraldry" Type="int8" Size="7"/>
+	</Struct>
+	<Struct Name="Substruct_NetAppearance" ClientVersion="1193">
+		<Data ElementName="netAppearanceVersion" Type="int8" Size="1"/>
+		<Data ElementName="race_type" Type="int16" Size="1"/>
+		<Data ElementName="skin_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="eye_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="model_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="Equip" Type="EQ2_EquipmentItem" Size="24" bShortType="true"/>
+		<Data ElementName="mount_adornment_slot_item" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="mount_armor_slot_item" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="texture_slot_item" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="hair" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="hair_face" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="wings" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="shirt" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="pants" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="back_slot_item" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="sliderBytes" Type="sint8" Size="26"/>
+		<Data ElementName="mount" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="hair_color1" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="hair_color2" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="hair_scatter" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="combat_voice" Type="int16" Size="1"/>
+		<Data ElementName="emote_voice" Type="int16" Size="1"/>
+		<Data ElementName="unkType1" Type="int16" Size="1"/>
+		<Data ElementName="info_vis_flags" Type="int32" Size="1"/>
+		<Data ElementName="soga_race_type" Type="int16" Size="1"/>
+		<Data ElementName="soga_skin_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_eye_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_model_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="sogaSliderBytes" Type="sint8" Size="26"/>
+		<Data ElementName="soga_hair_color1" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_hair_color2" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_hair_scatter" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_hair" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="soga_hair_face" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="heraldry" Type="int8" Size="7"/>
+		<Data ElementName="soga_heraldry" Type="int8" Size="7"/>
+	</Struct>
+	<Struct Name="Substruct_NetAppearance" ClientVersion="60114">
+		<Data ElementName="netAppearanceVersion" Type="int8" Size="1"/>
+		<Data ElementName="race_type" Type="int32" Size="1"/>
+		<Data ElementName="skin_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="eye_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="model_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="Equip" Type="EQ2_EquipmentItem" Size="24" bShortType="false"/>
+		<Data ElementName="mount_adornment_slot_item" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="mount_armor_slot_item" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="texture_slot_item" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="hair" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="hair_face" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="wings" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="shirt" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="pants" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="back_slot_item" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="sliderBytes" Type="sint8" Size="26"/>
+		<Data ElementName="mount" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="hair_color1" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="hair_color2" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="hair_scatter" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="combat_voice" Type="int32" Size="1"/>
+		<Data ElementName="emote_voice" Type="int32" Size="1"/>
+		<Data ElementName="unkType1" Type="int32" Size="1"/>
+		<Data ElementName="info_vis_flags" Type="int32" Size="1"/>
+		<Data ElementName="soga_race_type" Type="int32" Size="1"/>
+		<Data ElementName="soga_skin_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_eye_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_model_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="sogaSliderBytes" Type="sint8" Size="26"/>
+		<Data ElementName="soga_hair_color1" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_hair_color2" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_hair_scatter" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_hair" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="soga_hair_face" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="heraldry" Type="int8" Size="7"/>
+		<Data ElementName="soga_heraldry" Type="int8" Size="7"/>
+	</Struct>
+	<Struct Name="Substruct_NetAppearance" ClientVersion="67650">
+		<Data ElementName="netAppearanceVersion" Type="int8" Size="1"/>
+		<Data ElementName="race_type" Type="int32" Size="1"/>
+		<Data ElementName="skin_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="eye_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="model_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="Equip" Type="EQ2_EquipmentItem" Size="24" bShortType="false"/>
+		<Data ElementName="mount_adornment_slot_item" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="mount_armor_slot_item" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="texture_slot_item" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="hair" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="hair_face" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="wings" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="shirt" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="pants" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="back_slot_item" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="sliderBytes" Type="sint8" Size="26"/>
+		<Data ElementName="mount" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="hair_color1" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="hair_color2" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="hair_scatter" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="combat_voice" Type="int32" Size="1"/>
+		<Data ElementName="emote_voice" Type="int32" Size="1"/>
+		<Data ElementName="unkType1" Type="int32" Size="1"/>
+		<Data ElementName="info_vis_flags" Type="int32" Size="1"/>
+		<Data ElementName="soga_race_type" Type="int32" Size="1"/>
+		<Data ElementName="soga_skin_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_eye_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_model_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="sogaSliderBytes" Type="sint8" Size="26"/>
+		<Data ElementName="soga_hair_color1" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_hair_color2" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_hair_scatter" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_hair" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="soga_hair_face" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="heraldry" Type="int8" Size="7"/>
+		<Data ElementName="soga_heraldry" Type="int8" Size="7"/>
+	</Struct>
+	<Struct Name="Substruct_NetAppearance" ClientVersion="67804">
+		<Data ElementName="netAppearanceVersion" Type="int8" Size="1"/>
+		<Data ElementName="race_type" Type="int32" Size="1"/>
+		<Data ElementName="skin_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="eye_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="model_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="Equip" Type="EQ2_EquipmentItem" Size="24" bShortType="false"/>
+		<Data ElementName="mount_adornment_slot_item" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="mount_armor_slot_item" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="texture_slot_item" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="hair" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="hair_face" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="wings" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="tail" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="shirt" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="pants" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="back_slot_item" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="sliderBytes" Type="sint8" Size="26"/>
+		<Data ElementName="mount" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="hair_color1" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="hair_color2" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="hair_scatter" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="combat_voice" Type="int32" Size="1"/>
+		<Data ElementName="emote_voice" Type="int32" Size="1"/>
+		<Data ElementName="unkType1" Type="int32" Size="1"/>
+		<Data ElementName="info_vis_flags" Type="int32" Size="1"/>
+		<Data ElementName="soga_race_type" Type="int32" Size="1"/>
+		<Data ElementName="soga_skin_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_eye_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_model_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="sogaSliderBytes" Type="sint8" Size="26"/>
+		<Data ElementName="soga_hair_color1" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_hair_color2" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_hair_scatter" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_hair" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="soga_hair_face" Type="EQ2_EquipmentItem" Size="1" bShortType="false"/>
+		<Data ElementName="heraldry" Type="int8" Size="7"/>
+		<Data ElementName="soga_heraldry" Type="int8" Size="7"/>
+	</Struct>
+	<Struct Name="CS_LoginRequestMsg" ClientVersion="1" OpcodeName="OP_LoginRequestMsg">
+		<Data ElementName="AccessCode" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Unknown1" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Username" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Password" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Unknown2" Type="sint32" Size="1"/>
+		<Data ElementName="Unknown3" Type="sint32" Size="1"/>
+		<Data ElementName="Version" Type="int16" Size="1"/>
+	</Struct>
+	<Struct Name="CS_LoginReplyMsg" ClientVersion="283" OpcodeName="OP_LoginReplyMsg">
+		<Data ElementName="Response" Type="int8" Size="1"/>
+		<Data ElementName="worldName" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="ParentalControlFlag" Type="int8" Size="1"/>
+		<Data ElementName="ParentalControlTimer" Type="int64" Size="1"/>
+		<Data ElementName="AccountID" Type="int32" Size="1"/>
+	</Struct>
+	<Struct Name="CS_LoginReplyMsg" ClientVersion="284" OpcodeName="OP_LoginReplyMsg">
+		<Data ElementName="Response" Type="int8" Size="1"/>
+		<Data ElementName="worldName" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="ParentalControlFlag" Type="int8" Size="1"/>
+		<Data ElementName="ParentalControlTimer" Type="int64" Size="1"/>
+		<Data ElementName="Unknown2" Type="int32" Size="1"/>
+		<Data ElementName="AccountID" Type="int32" Size="1"/>
+		<Data ElementName="Unknown3" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="ResetAppearance" Type="int8" Size="1"/>
+		<Data ElementName="DoNotForceSoga" Type="int8" Size="1"/>
+		<Data ElementName="Unknown4" Type="int64" Size="1"/>
+		<Data ElementName="Unknown7" Type="int64" Size="1"/>
+		<Data ElementName="RaceUnknown" Type="int32" Size="1"/>
+		<Data ElementName="Unknown8" Type="int8" Size="1"/>
+		<Data ElementName="Unknown10" Type="int8" Size="1"/>
+		<Data ElementName="NumClassItems" Type="int8" Size="1" IfVariableSet="Unknown10"/>
+		<Data ElementName="ClassItems" Type="Array" ArraySizeVariable="NumClassItems">
+			<Data ElementName="ClassID" Type="int8" Size="1"/>
+			<Data ElementName="NumItems" Type="int8" Size="1"/>
+			<Data ElementName="StartingItems" Type="Array" ArraySizeVariable="NumItems">
+				<Data ElementName="ModelID" Type="int16" Size="1"/>
+				<Data ElementName="SlotID" Type="int8" Size="1"/>
+				<Data ElementName="UseColor" Type="int8" Size="1"/>
+				<Data ElementName="UseHighlightColor" Type="int8" Size="1"/>
+				<Data ElementName="ModelColor" Type="EQ2_Color" Size="1"/>
+				<Data ElementName="ModelHighlightColor" Type="EQ2_Color" Size="1"/>
+			</Data>
+		</Data>
+		<Data ElementName="UnknownArraySize" Type="int8" Size="1"/>
+		<Data ElementName="UnknownArray2" Type="Array" ArraySizeVariable="UnknownArraySize">
+			<Data ElementName="Array2Unknown" Type="int32" Size="1"/>
+		</Data>
+		<Data ElementName="Unknown11" Type="int32" Size="1"/>
+		<Data ElementName="SubscriptionLevel" Type="int32" Size="1"/>
+		<Data ElementName="RaceFlag" Type="int32" Size="1"/>
+		<Data ElementName="ClassFlag" Type="int32" Size="1"/>
+		<Data ElementName="Password" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Username" Type="EQ2_16Bit_String" Size="1"/>
+	</Struct>
+	<Struct Name="CS_LoginReplyMsg" ClientVersion="1096" OpcodeName="OP_LoginReplyMsg">
+		<Data ElementName="Response" Type="int8" Size="1"/>
+		<Data ElementName="worldName" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="ParentalControlFlag" Type="int8" Size="1"/>
+		<Data ElementName="ParentalControlTimer" Type="int64" Size="1"/>
+		<Data ElementName="Unknown2" Type="int32" Size="1"/>
+		<Data ElementName="AccountID" Type="int32" Size="1"/>
+		<Data ElementName="Unknown3" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="ResetAppearance" Type="int8" Size="1"/>
+		<Data ElementName="DoNotForceSoga" Type="int8" Size="1"/>
+		<Data ElementName="Unknown4" Type="int64" Size="1"/>
+		<Data ElementName="Unknown7" Type="int64" Size="1"/>
+		<Data ElementName="RaceUnknown" Type="int32" Size="1"/>
+		<Data ElementName="Unknown8" Type="int8" Size="1"/>
+		<Data ElementName="Unknown10" Type="int8" Size="1"/>
+		<Data ElementName="NumClassItems" Type="int8" Size="1" IfVariableSet="Unknown10"/>
+		<Data ElementName="ClassItems" Type="Array" ArraySizeVariable="NumClassItems">
+			<Data ElementName="ClassID" Type="int8" Size="1"/>
+			<Data ElementName="NumItems" Type="int8" Size="1"/>
+			<Data ElementName="StartingItems" Type="Array" ArraySizeVariable="NumItems">
+				<Data ElementName="ModelID" Type="int16" Size="1"/>
+				<Data ElementName="SlotID" Type="int8" Size="1"/>
+				<Data ElementName="UseColor" Type="int8" Size="1"/>
+				<Data ElementName="UseHighlightColor" Type="int8" Size="1"/>
+				<Data ElementName="ModelColor" Type="EQ2_Color" Size="1"/>
+				<Data ElementName="ModelHighlightColor" Type="EQ2_Color" Size="1"/>
+			</Data>
+		</Data>
+		<Data ElementName="UnknownArraySize" Type="int8" Size="1"/>
+		<Data ElementName="UnknownArray2" Type="Array" ArraySizeVariable="UnknownArraySize">
+			<Data ElementName="Array2Unknown" Type="int32" Size="1"/>
+		</Data>
+		<Data ElementName="Unknown11" Type="int32" Size="1"/>
+		<Data ElementName="SubscriptionLevel" Type="int32" Size="1"/>
+		<Data ElementName="RaceFlag" Type="int32" Size="1"/>
+		<Data ElementName="ClassFlag" Type="int32" Size="1"/>
+		<Data ElementName="Password" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Username" Type="EQ2_16Bit_String" Size="1"/>
+	</Struct>
+	<Struct Name="CS_LoginReplyMsg" ClientVersion="1188" OpcodeName="OP_LoginReplyMsg">
+		<Data ElementName="Response" Type="int8" Size="1"/>
+		<Data ElementName="worldName" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="ParentalControlFlag" Type="int8" Size="1"/>
+		<Data ElementName="ParentalControlTimer" Type="int64" Size="1"/>
+		<Data ElementName="Unknown2" Type="int32" Size="1"/>
+		<Data ElementName="AccountID" Type="int32" Size="1"/>
+		<Data ElementName="Unknown3" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="ResetAppearance" Type="int8" Size="1"/>
+		<Data ElementName="DoNotForceSoga" Type="int8" Size="1"/>
+		<Data ElementName="Unknown4" Type="int64" Size="1"/>
+		<Data ElementName="Unknown7" Type="int64" Size="1"/>
+		<Data ElementName="RaceUnknown" Type="int32" Size="1"/>
+		<Data ElementName="Unknown8" Type="int8" Size="1"/>
+		<Data ElementName="Unknown10" Type="int8" Size="1"/>
+		<Data ElementName="NumClassItems" Type="int8" Size="1" IfVariableSet="Unknown10"/>
+		<Data ElementName="ClassItems" Type="Array" ArraySizeVariable="NumClassItems">
+			<Data ElementName="ClassID" Type="int8" Size="1"/>
+			<Data ElementName="NumItems" Type="int8" Size="1"/>
+			<Data ElementName="StartingItems" Type="Array" ArraySizeVariable="NumItems">
+				<Data ElementName="ModelID" Type="int16" Size="1"/>
+				<Data ElementName="SlotID" Type="int8" Size="1"/>
+				<Data ElementName="UseColor" Type="int8" Size="1"/>
+				<Data ElementName="UseHighlightColor" Type="int8" Size="1"/>
+				<Data ElementName="ModelColor" Type="EQ2_Color" Size="1"/>
+				<Data ElementName="ModelHighlightColor" Type="EQ2_Color" Size="1"/>
+			</Data>
+		</Data>
+		<Data ElementName="UnknownArraySize" Type="int8" Size="1"/>
+		<Data ElementName="UnknownArray2" Type="Array" ArraySizeVariable="UnknownArraySize">
+			<Data ElementName="Array2Unknown" Type="int32" Size="1"/>
+		</Data>
+		<Data ElementName="Unknown11" Type="int32" Size="1"/>
+		<Data ElementName="SubscriptionLevel" Type="int32" Size="1"/>
+		<Data ElementName="RaceFlag" Type="int32" Size="1"/>
+		<Data ElementName="ClassFlag" Type="int32" Size="1"/>
+		<Data ElementName="Password" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Username" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Service" Type="EQ2_16Bit_String" Size="1"/>
+	</Struct>
+	<Struct Name="CS_LoginReplyMsg" ClientVersion="57080" OpcodeName="OP_LoginReplyMsg">
+		<Data ElementName="Response" Type="int8" Size="1"/>
+		<Data ElementName="worldName" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="ParentalControlFlag" Type="int8" Size="1"/>
+		<Data ElementName="ParentalControlTimer" Type="int64" Size="1"/>
+		<Data ElementName="Unknown2" Type="int32" Size="1"/>
+		<Data ElementName="AccountID" Type="int32" Size="1"/>
+		<Data ElementName="Unknown3" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="ResetAppearance" Type="int8" Size="1"/>
+		<Data ElementName="DoNotForceSoga" Type="int8" Size="1"/>
+		<Data ElementName="Unknown4" Type="int64" Size="1"/>
+		<Data ElementName="Unknown7" Type="int64" Size="1"/>
+		<Data ElementName="RaceUnknown" Type="int32" Size="1"/>
+		<Data ElementName="Unknown8" Type="int8" Size="1"/>
+		<Data ElementName="Unknown10" Type="int8" Size="1"/>
+		<Data ElementName="NumClassItems" Type="int8" Size="1" IfVariableSet="Unknown10"/>
+		<Data ElementName="ClassItems" Type="Array" ArraySizeVariable="NumClassItems">
+			<Data ElementName="ClassID" Type="int8" Size="1"/>
+			<Data ElementName="NumItems" Type="int8" Size="1"/>
+			<Data ElementName="StartingItems" Type="Array" ArraySizeVariable="NumItems">
+				<Data ElementName="ModelID" Type="int32" Size="1"/>
+				<Data ElementName="SlotID" Type="int8" Size="1"/>
+				<Data ElementName="UseColor" Type="int8" Size="1"/>
+				<Data ElementName="UseHighlightColor" Type="int8" Size="1"/>
+				<Data ElementName="ModelColor" Type="EQ2_Color" Size="1"/>
+				<Data ElementName="ModelHighlightColor" Type="EQ2_Color" Size="1"/>
+			</Data>
+		</Data>
+		<Data ElementName="UnknownArraySize" Type="int8" Size="1"/>
+		<Data ElementName="UnknownArray2" Type="Array" ArraySizeVariable="UnknownArraySize">
+			<Data ElementName="Array2Unknown" Type="int32" Size="1"/>
+		</Data>
+		<Data ElementName="Unknown11" Type="int32" Size="1"/>
+		<Data ElementName="SubscriptionLevel" Type="int32" Size="1"/>
+		<Data ElementName="RaceFlag" Type="int32" Size="1"/>
+		<Data ElementName="ClassFlag" Type="int32" Size="1"/>
+		<Data ElementName="Password" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Username" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Service" Type="EQ2_16Bit_String" Size="1"/>
+	</Struct>
+	<Struct Name="CS_LoginReplyMsg" ClientVersion="60100" OpcodeName="OP_LoginReplyMsg">
+		<Data ElementName="Response" Type="int8" Size="1"/>
+		<Data ElementName="worldName" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="ParentalControlFlag" Type="int8" Size="1"/>
+		<Data ElementName="ParentalControlTimer" Type="int64" Size="1"/>
+		<Data ElementName="Unknown2" Type="int32" Size="1"/>
+		<Data ElementName="AccountID" Type="int32" Size="1"/>
+		<Data ElementName="Unknown3" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="ResetAppearance" Type="int8" Size="1"/>
+		<Data ElementName="DoNotForceSoga" Type="int8" Size="1"/>
+		<Data ElementName="Unknown4" Type="int64" Size="1"/>
+		<Data ElementName="Unknown7" Type="int64" Size="1"/>
+		<Data ElementName="RaceUnknown" Type="int32" Size="1"/>
+		<Data ElementName="Unknown8" Type="int8" Size="1"/>
+		<Data ElementName="Unknown10" Type="int8" Size="1"/>
+		<Data ElementName="NumClassItems" Type="int8" Size="1" IfVariableSet="Unknown10"/>
+		<Data ElementName="ClassItems" Type="Array" ArraySizeVariable="NumClassItems">
+			<Data ElementName="ClassID" Type="int8" Size="1"/>
+			<Data ElementName="NumItems" Type="int8" Size="1"/>
+			<Data ElementName="StartingItems" Type="Array" ArraySizeVariable="NumItems">
+				<Data ElementName="ModelID" Type="int32" Size="1"/>
+				<Data ElementName="SlotID" Type="int8" Size="1"/>
+				<Data ElementName="UseColor" Type="int8" Size="1"/>
+				<Data ElementName="UseHighlightColor" Type="int8" Size="1"/>
+				<Data ElementName="ModelColor" Type="EQ2_Color" Size="1"/>
+				<Data ElementName="ModelHighlightColor" Type="EQ2_Color" Size="1"/>
+			</Data>
+		</Data>
+		<Data ElementName="UnknownArraySize" Type="int8" Size="1"/>
+		<Data ElementName="UnknownArray2" Type="Array" ArraySizeVariable="UnknownArraySize">
+			<Data ElementName="Array2Unknown" Type="int32" Size="1"/>
+		</Data>
+		<Data ElementName="Unknown11" Type="int32" Size="1"/>
+		<Data ElementName="SubscriptionLevel" Type="int32" Size="1"/>
+		<Data ElementName="RaceFlag" Type="int32" Size="1"/>
+		<Data ElementName="ClassFlag" Type="int32" Size="1"/>
+		<Data ElementName="Password" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Username" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Service" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Unknown12" Type="int8" Size="1"/>
+		<Data ElementName="LVL90NumClassItems" Type="int8" Size="1" IfVariableSet="Unknown12"/>
+		<Data ElementName="LVL90ClassItems" Type="Array" ArraySizeVariable="LVL90NumClassItems">
+			<Data ElementName="ClassID" Type="int8" Size="1"/>
+			<Data ElementName="NumItems" Type="int8" Size="1"/>
+			<Data ElementName="StartingItems" Type="Array" ArraySizeVariable="NumItems">
+				<Data ElementName="ModelID" Type="int32" Size="1"/>
+				<Data ElementName="SlotID" Type="int8" Size="1"/>
+				<Data ElementName="UseColor" Type="int8" Size="1"/>
+				<Data ElementName="UseHighlightColor" Type="int8" Size="1"/>
+				<Data ElementName="ModelColor" Type="EQ2_Color" Size="1"/>
+				<Data ElementName="ModelHighlightColor" Type="EQ2_Color" Size="1"/>
+			</Data>
+		</Data>
+		<Data ElementName="Unknown13" Type="int8" Size="1"/>
+		<Data ElementName="TimeLockedNumClassItems" Type="int8" Size="1" IfVariableSet="Unknown13"/>
+		<Data ElementName="TimeLockedClassItems" Type="Array" ArraySizeVariable="TimeLockedNumClassItems">
+			<Data ElementName="ClassID" Type="int8" Size="1"/>
+			<Data ElementName="NumItems" Type="int8" Size="1"/>
+			<Data ElementName="StartingItems" Type="Array" ArraySizeVariable="NumItems">
+				<Data ElementName="ModelID" Type="int32" Size="1"/>
+				<Data ElementName="SlotID" Type="int8" Size="1"/>
+				<Data ElementName="UseColor" Type="int8" Size="1"/>
+				<Data ElementName="UseHighlightColor" Type="int8" Size="1"/>
+				<Data ElementName="ModelColor" Type="EQ2_Color" Size="1"/>
+				<Data ElementName="ModelHighlightColor" Type="EQ2_Color" Size="1"/>
+			</Data>
+		</Data>
+		<Data ElementName="Unknown14" Type="int8" Size="13"/>
+	</Struct>
+	<Struct Name="CS_LoginReplyMsg" ClientVersion="67650" OpcodeName="OP_LoginReplyMsg">
+		<Data ElementName="Response" Type="int8" Size="1"/>
+		<Data ElementName="worldName" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="ParentalControlFlag" Type="int8" Size="1"/>
+		<Data ElementName="ParentalControlTimer" Type="int64" Size="1"/>
+		<Data ElementName="Unknown2" Type="int32" Size="1"/>
+		<Data ElementName="AccountID" Type="int32" Size="1"/>
+		<Data ElementName="Unknown3" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="ResetAppearance" Type="int8" Size="1"/>
+		<Data ElementName="DoNotForceSoga" Type="int8" Size="1"/>
+		<Data ElementName="bolUnknown4" Type="EQ2_32Bit_String" Size="1"/>
+		<Data ElementName="bolUnknown7" Type="EQ2_32Bit_String" Size="1"/>
+		<Data ElementName="RaceUnknown" Type="int32" Size="1"/>
+		<Data ElementName="Unknown8" Type="int8" Size="1"/>
+		<Data ElementName="Unknown10" Type="int8" Size="1"/>
+		<Data ElementName="NumClassItems" Type="int8" Size="1" IfVariableSet="Unknown10"/>
+		<Data ElementName="ClassItems" Type="Array" ArraySizeVariable="NumClassItems">
+			<Data ElementName="ClassID" Type="int8" Size="1"/>
+			<Data ElementName="NumItems" Type="int8" Size="1"/>
+			<Data ElementName="StartingItems" Type="Array" ArraySizeVariable="NumItems">
+				<Data ElementName="ModelID" Type="int32" Size="1"/>
+				<Data ElementName="SlotID" Type="int8" Size="1"/>
+				<Data ElementName="UseColor" Type="int8" Size="1"/>
+				<Data ElementName="UseHighlightColor" Type="int8" Size="1"/>
+				<Data ElementName="ModelColor" Type="EQ2_Color" Size="1"/>
+				<Data ElementName="ModelHighlightColor" Type="EQ2_Color" Size="1"/>
+			</Data>
+		</Data>
+		<Data ElementName="UnknownArraySize" Type="int8" Size="1"/>
+		<Data ElementName="UnknownArray2" Type="Array" ArraySizeVariable="UnknownArraySize">
+			<Data ElementName="Array2Unknown" Type="int32" Size="1"/>
+		</Data>
+		<Data ElementName="Unknown11" Type="int32" Size="1"/>
+		<Data ElementName="SubscriptionLevel" Type="int32" Size="1"/>
+		<Data ElementName="RaceFlag" Type="int32" Size="1"/>
+		<Data ElementName="ClassFlag" Type="int32" Size="1"/>
+		<Data ElementName="Password" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Username" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Service" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Unknown12" Type="int8" Size="1"/>
+		<Data ElementName="LVL90NumClassItems" Type="int8" Size="1" IfVariableSet="Unknown12"/>
+		<Data ElementName="LVL90ClassItems" Type="Array" ArraySizeVariable="LVL90NumClassItems">
+			<Data ElementName="ClassID" Type="int8" Size="1"/>
+			<Data ElementName="NumItems" Type="int8" Size="1"/>
+			<Data ElementName="StartingItems" Type="Array" ArraySizeVariable="NumItems">
+				<Data ElementName="ModelID" Type="int32" Size="1"/>
+				<Data ElementName="SlotID" Type="int8" Size="1"/>
+				<Data ElementName="UseColor" Type="int8" Size="1"/>
+				<Data ElementName="UseHighlightColor" Type="int8" Size="1"/>
+				<Data ElementName="ModelColor" Type="EQ2_Color" Size="1"/>
+				<Data ElementName="ModelHighlightColor" Type="EQ2_Color" Size="1"/>
+			</Data>
+		</Data>
+		<Data ElementName="Unknown13" Type="int8" Size="1"/>
+		<Data ElementName="TimeLockedNumClassItems" Type="int8" Size="1" IfVariableSet="Unknown13"/>
+		<Data ElementName="TimeLockedClassItems" Type="Array" ArraySizeVariable="TimeLockedNumClassItems">
+			<Data ElementName="ClassID" Type="int8" Size="1"/>
+			<Data ElementName="NumItems" Type="int8" Size="1"/>
+			<Data ElementName="StartingItems" Type="Array" ArraySizeVariable="NumItems">
+				<Data ElementName="ModelID" Type="int32" Size="1"/>
+				<Data ElementName="SlotID" Type="int8" Size="1"/>
+				<Data ElementName="UseColor" Type="int8" Size="1"/>
+				<Data ElementName="UseHighlightColor" Type="int8" Size="1"/>
+				<Data ElementName="ModelColor" Type="EQ2_Color" Size="1"/>
+				<Data ElementName="ModelHighlightColor" Type="EQ2_Color" Size="1"/>
+			</Data>
+		</Data>
+		<Data ElementName="Unknown14" Type="int8" Size="13"/>
+	</Struct>
+	<Struct Name="CS_UIEvent" ClientVersion="1" OpcodeName="OP_UIEvent">
+		<Data ElementName="unknown0" Type="sint32" Size="1"/>
+		<Data ElementName="unknown1" Type="sint32" Size="1"/>
+		<Data ElementName="unknown2" Type="int64" Size="1"/>
+		<Data ElementName="unknown3" Type="sint16" Size="1"/>
+		<Data ElementName="unknown4" Type="sint32" Size="1"/>
+		<Data ElementName="uiEvent" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="byteArraySize" Type="sint32" Size="1"/>
+		<Data ElementName="byteArray" Type="Array" ArraySizeVariable="byteArraySize">
+			<Data ElementName="myByte" Type="int8" Size="1"/>
+		</Data>
+		<Data ElementName="stringArraySize" Type="sint32" Size="1"/>
+		<Data ElementName="stringArray" Type="Array" ArraySizeVariable="stringArraySize">
+			<Data ElementName="myString" Type="EQ2_16Bit_String" Size="1"/>
+		</Data>
+		<Data ElementName="intArraySize" Type="sint32" Size="1"/>
+		<Data ElementName="intArray" Type="Array" ArraySizeVariable="intArraySize">
+			<Data ElementName="myInt" Type="sint32" Size="1"/>
+		</Data>
+		<Data ElementName="floatArraySize" Type="sint32" Size="1"/>
+		<Data ElementName="floatArray" Type="Array" ArraySizeVariable="floatArraySize">
+			<Data ElementName="myFloat" Type="float" Size="1"/>
+		</Data>
+	</Struct>
+	<Struct Name="CS_UIEvent" ClientVersion="1209" OpcodeName="OP_UIEvent">
+		<Data ElementName="unknown0" Type="sint32" Size="1"/>
+		<Data ElementName="unknown1" Type="sint32" Size="1"/>
+		<Data ElementName="unknown2" Type="int64" Size="1"/>
+		<Data ElementName="unknown3" Type="sint16" Size="1"/>
+		<Data ElementName="unknown4" Type="sint32" Size="1"/>
+		<Data ElementName="unknown5" Type="int8" Size="1"/>
+		<Data ElementName="uiEvent" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="byteArraySize" Type="sint32" Size="1"/>
+		<Data ElementName="byteArray" Type="Array" ArraySizeVariable="byteArraySize">
+			<Data ElementName="myByte" Type="int8" Size="1"/>
+		</Data>
+		<Data ElementName="stringArraySize" Type="sint32" Size="1"/>
+		<Data ElementName="stringArray" Type="Array" ArraySizeVariable="stringArraySize">
+			<Data ElementName="myString" Type="EQ2_16Bit_String" Size="1"/>
+		</Data>
+		<Data ElementName="intArraySize" Type="sint32" Size="1"/>
+		<Data ElementName="intArray" Type="Array" ArraySizeVariable="intArraySize">
+			<Data ElementName="myInt" Type="sint32" Size="1"/>
+		</Data>
+		<Data ElementName="floatArraySize" Type="sint32" Size="1"/>
+		<Data ElementName="floatArray" Type="Array" ArraySizeVariable="floatArraySize">
+			<Data ElementName="myFloat" Type="float" Size="1"/>
+		</Data>
+	</Struct>
+</EQ2EmulatorRewrite>
+

@@ -329,7 +329,7 @@ Item::Item() : bUseable(false), scriptID(0) {
 
 	memset(adornSlots, 0xFF, sizeof(adornSlots));
 	uniqueID = 0xFFFFFFFF;
-	footerTypeUnknown = 3;
+	nameColor = 3;
 	condition = 100;
 }
 

@@ -74,8 +74,9 @@ int main(int argc, char **argv)
 	{
 		//TODO: Add a rule in for whether to generate this file, or just a console command
 		XmlStructDumper StructDump;
-		StructDump.DumpStructsFile("LoginStructs.xml");
-		StructDump.DumpStructsFile("CommonStructs.xml");
+		std::string directory = g_ruleManager.GetGlobalRule(ERuleCategory::R_Dev, ERuleType::StructOutputDirectory)->GetString();
+		StructDump.DumpStructsFile("LoginStructs.xml", directory.c_str());
+		StructDump.DumpStructsFile("CommonStructs.xml", directory.c_str());
 	}
 
 	if (success)

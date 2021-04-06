@@ -122,7 +122,9 @@ int main(int argc, char** argv) {
 	{
 		//TODO: Add a rule in for whether to generate this file
 		XmlStructDumper structDump;
-		structDump.DumpStructsFile("ZoneStructs.xml");
+		std::string directory = g_ruleManager.GetGlobalRule(ERuleCategory::R_Dev, ERuleType::StructOutputDirectory)->GetString();
+		
+		structDump.DumpStructsFile("ZoneStructs.xml", directory.c_str());
 	}
 
 	Timer reconnectTimer;

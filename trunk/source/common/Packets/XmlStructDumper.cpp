@@ -252,14 +252,17 @@ void XmlStructDumper::DumpSubstructsToFile(const char* filename, xml_document<>&
 	}
 }
 
-void XmlStructDumper::DumpStructsFile(const char* filename) {
+void XmlStructDumper::DumpStructsFile(const char* filename, const char* directory) {
 	std::unique_ptr<xml_document<>> doc(new xml_document<>);
 	xml_node<>* root = doc->allocate_node(node_element, "EQ2EmulatorRewrite");
 	DumpSubstructsToFile(filename, *doc, *root);
 	DumpPacketStructsToFile(filename, *doc, *root);
 	doc->append_node(root);
 
-	std::ofstream outfile(filename, std::ios::trunc);
+	std::ostringstream ss;
+	ss << directory << filename;
+
+	std::ofstream outfile(ss.str(), std::ios::trunc);
 	outfile << *doc;
 }
 

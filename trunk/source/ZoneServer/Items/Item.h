@@ -185,9 +185,9 @@ struct ItemDescFooterData {
 	uint16_t stackSize;
 	uint8_t footerUnknownArrayCount;
 	uint8_t adornCount;
-	uint8_t collectable_unk;
+	bool bQuestExamine;
 	bool bCollectable;
-	bool bCollectionNeeded;
+	bool bExamineNeeded;
 	uint8_t unknown60055a;
 	uint8_t unknown60055b;
 	uint8_t offersQuestColor;

@@ -15,6 +15,7 @@ enum class ERuleCategory {
 	R_UI,
 	R_World,
 	R_Zone,
+	R_Dev,
 	R_CategoryInvalid
 };
 
@@ -97,6 +98,9 @@ enum class ERuleType {
 	SaveHeadshotImage,
 	SendPaperdollImagesToLogin,
 	TreasureChestDisabled,
+
+	/* DEV */
+	StructOutputDirectory,
 
 	/* ZONE */
 	MinZoneLevelOverrideStatus,
