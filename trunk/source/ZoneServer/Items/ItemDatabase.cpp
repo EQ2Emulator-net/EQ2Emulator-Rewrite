@@ -92,6 +92,11 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 	LogInfo(LOG_DATABASE, 0, "Loading items...");
 
 	ss << "SELECT COUNT(id) FROM items WHERE bPvpDesc = 0;\n"
+		<< "SELECT id, set_name FROM item_itemsets;\n"
+		<< "SELECT id, set_id, num_items_needed FROM item_itemset_bonus ORDER BY set_id, `index`;\n"
+		<< "SELECT sb.set_id, sbe.set_bonus_id, sbe.indent, sbe.description, sbe.percentage FROM item_itemset_bonus_effects sbe INNER JOIN item_itemset_bonus sb ON sbe.set_bonus_id = sb.id ORDER BY set_bonus_id, effect_order;\n"
+		<< "SELECT sb.set_id, sbs.set_bonus_id, sbs.type, sbs.subtype, sbs.iValue, sbs.fValue, sbs.sValue FROM item_itemset_bonus_stats sbs INNER JOIN item_itemset_bonus sb ON sbs.set_bonus_id = sb.id ORDER BY set_bonus_id, stats_order;\n"
+		<< "SELECT * FROM item_itemset_items ORDER BY set_id, `index`;\n"
 		<< "SELECT * FROM items WHERE bPvpDesc = 0 AND item_type IN ('Normal', 'Dungeon Maker');\n"
 		<< "SELECT * FROM items i INNER JOIN item_details_weapon idw ON bPvpDesc = 0 AND  i.id = idw.item_id;\n"
 		<< "SELECT * FROM items i INNER JOIN item_details_range idr ON bPvpDesc = 0 AND  i.id = idr.item_id;\n"
@@ -100,17 +105,15 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 		<< "SELECT * FROM items i INNER JOIN item_details_bag idb ON bPvpDesc = 0 AND  i.id = idb.item_id;\n"
 		<< "SELECT * FROM items i INNER JOIN item_details_food idf ON bPvpDesc = 0 AND  i.id = idf.item_id;\n"
 		<< "SELECT * FROM items i INNER JOIN item_details_recipe idr ON bPvpDesc = 0 AND  i.id = idr.item_id;\n"
-		<< "SELECT * FROM items i INNER JOIN item_details_house idh ON i.bPvpDesc = 0 i.item_type = 'House' AND  i.id = idh.item_id;\n"
+		<< "SELECT * FROM items i INNER JOIN item_details_house idh ON i.bPvpDesc = 0 AND i.item_type = 'House' AND  i.id = idh.item_id;\n"
 		<< "SELECT * FROM items i INNER JOIN item_details_bauble idb ON bPvpDesc = 0 AND  i.id = idb.item_id;\n"
 		<< "SELECT * FROM items i INNER JOIN item_details_thrown idt ON bPvpDesc = 0 AND  i.id = idt.item_id;\n"
 		<< "SELECT * FROM items i INNER JOIN item_details_house_container idhc ON bPvpDesc = 0 AND  i.id = idhc.item_id;\n"
 		<< "SELECT i.*, idb.*, idh.* FROM items i INNER JOIN item_details_book idb ON i.bPvpDesc = 0 AND i.id = idb.item_id INNER JOIN item_details_house idh ON idb.item_id = idh.item_id;\n"
-		<< "SELECT * FROM items WHERE bPvpDesc = 0 AND  id IN (SELECT DISTINCT item_id FROM item_details_pattern);\n"
-		<< "SELECT * FROM items WHERE bPvpDesc = 0 AND  id IN (SELECT DISTINCT itemset_item_id FROM item_details_itemset);\n"
-		<< "SELECT * FROM items WHERE bPvpDesc = 0 AND  id IN (SELECT DISTINCT marketplace_item_id FROM item_details_marketplace);\n"
-		<< "SELECT idp.item_id, i.id, i.name, i.icon FROM item_details_pattern idp INNER JOIN items i ON bPvpDesc = 0 AND  i.soe_item_id = idp.pattern_item_id;\n"
-		<< "SELECT idm.marketplace_item_id, i.id, i.name, i.icon FROM item_details_marketplace idm INNER JOIN items i ON bPvpDesc = 0 AND  i.soe_item_id = idm.item_id;"
-		<< "SELECT ids.*, i.name, i.id FROM item_details_itemset ids INNER JOIN items i ON bPvpDesc = 0 AND  i.soe_item_id = ids.item_id;";
+		<< "SELECT * FROM items WHERE bPvpDesc = 0 AND  id IN (SELECT DISTINCT voucher_item_id FROM item_details_reward_voucher);\n"
+		<< "SELECT * FROM items WHERE bPvpDesc = 0 AND  id IN (SELECT DISTINCT item_id FROM item_details_reward_crate);\n"
+		<< "SELECT * FROM item_details_reward_voucher;\n"
+		<< "SELECT * FROM item_details_reward_crate_item;\n";
 		//<< "SELECT idri.item_id, i.icon, idri.name FROM items i INNER JOIN item_details_recipe_items idri ON i.id = idri.item_id;\n"
 		//
 		//<< "SELECT * FROM items i INNER JOIN item_details_adornments ida ON i.id = ida.item_id;\n";
@@ -129,8 +132,94 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 	//Item count
 	loadList.reserve(result.GetUInt32(0));
 	result.NextResultSet();
+
+	//Item Sets (temp, will need something more robust later)
+	//Names first
+	std::unordered_map<uint32_t, std::string> setNames;
+	setNames.reserve(result.GetNumRows());
+	while (result.Next()) {
+		setNames[result.GetUInt32(0)] = result.GetString(1);
+	}
+	result.NextResultSet();
+
+	std::unordered_map<uint32_t, ItemSetDetails> setDetails;
+	setDetails.reserve(setNames.size());
+	//Item Set Bonuses
+	while (result.Next()) {
+		ItemSetDetails& det = setDetails[result.GetUInt32(1)];
+		det.setBonuses.emplace_back();
+		ItemSetBonus& b = det.setBonuses.back();
+		b.bonusID = result.GetUInt32(0);
+		b.itemsNeeded = result.GetUInt8(2);
+	}
+	result.NextResultSet();
+
+	//Item Set Bonus Effects
+	while (result.Next()) {
+		ItemSetDetails& det = setDetails[result.GetUInt32(0)];
+		
+		uint32_t bonusID = result.GetUInt32(1);
+		for (auto& itr : det.setBonuses) {
+			if (itr.bonusID == bonusID) {
+				itr.effects.emplace_back();
+				ItemSetBonusEffect& e = itr.effects.back();
+				e.tabIndex = result.GetUInt8(2);
+				e.effectText = result.GetString(3);
+				e.percentage = result.GetUInt8(4);
+				break;
+			}
+		}
+	}
+	result.NextResultSet();
+
+	//Item Set Bonus Stats
+	while (result.Next()) {
+		ItemSetDetails& det = setDetails[result.GetUInt32(0)];
+
+		uint32_t bonusID = result.GetUInt32(1);
+		for (auto& itr : det.setBonuses) {
+			if (itr.bonusID == bonusID) {
+				itr.stats.emplace_back();
+				ItemStatMod& mod = itr.stats.back();
+				
+				mod.statType = result.GetUInt8(2);
+				mod.statSubtype = result.GetInt16(3);
+				if (mod.statType == 6) {
+					mod.fValue = result.GetFloat(5);
+					mod.statAsFloat = mod.fValue;
+				}
+				else {
+					mod.iValue = result.GetInt32(4);
+					mod.statAsFloat = static_cast<float>(mod.iValue);
+				}
+				mod.stringVal = result.GetString(6);
+				mod.unknown64 = 0;
+				mod.unknown92 = 0;
+				break;
+			}
+		}
+	}
+	result.NextResultSet();
+
+	//Set Items
+	while (result.Next()) {
+		ItemSetDetails& det = setDetails[result.GetUInt32(1)];
+		det.setItems.emplace_back();
+		ItemSetItem& i = det.setItems.back();
+		i.itemName = result.GetString(3);
+		i.unknown1 = 0;
+		i.unknown2 = 0;
+	}
+	result.NextResultSet();
+
+	//Finish up sets
+	for (auto& itr : setDetails) {
+		auto& det = itr.second;
+		det.numItemsInSet = static_cast<uint8_t>(det.setItems.size());
+	}
+	//Finished loading set info
 	
-	for (int i = 0; i < 16; i++) {
+	for (int i = 0; i < 15; i++) {
 		while (result.Next()) {
 			EItemType type = Item::GetItemTypeFromName(result.GetString(3));
 
@@ -142,32 +231,34 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 			item->itemType = static_cast<uint8_t>(type);
 			uint32_t i = ProcessItemTableResult(result, item);
 			item->LoadTypeSpecificData(result, i);
+
+			if (item->set_id) {
+				item->setName = setNames[item->set_id];
+				item->setDetails = setDetails[item->set_id];
+			}
+
 			loadList[item->itemID] = item;
 		}
 		result.NextResultSet();
 	}
 
-	//item_details_pattern/marketplace
-	for (int i = 0; i < 2; i++) {
-		while (result.Next()) {
-			uint32_t id = result.GetUInt32(0);
+	//item_details_reward_voucher
+	while (result.Next()) {
+		uint32_t id = result.GetUInt32(1);
 
-			auto itr = loadList.find(id);
-			if (itr == loadList.end()) {
-				continue;
-			}
-
-			auto item = std::dynamic_pointer_cast<ItemRewardVoucher>(itr->second);
-			if (!item) {
-				continue;
-			}
-
-			ProcessItemRewardVoucherResult(result, item);
+		auto itr = loadList.find(id);
+		if (itr == loadList.end()) {
+			continue;
 		}
-		result.NextResultSet();
-	}
 
-	//item_details_itemset NOTE We need to change from SOE item id to OUR id, item_name field that was parsed for patterns is also useless because it is the base item not the sub item
+		auto item = std::dynamic_pointer_cast<ItemRewardVoucher>(itr->second);
+		EmuAssert(item);
+
+		ProcessItemRewardVoucherResult(result, item);
+	}
+	result.NextResultSet();
+
+	//item_details_reward_crate_item
 	while (result.Next()) {
 		uint32_t id = result.GetUInt32(1);
 
@@ -177,9 +268,7 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 		}
 
 		auto item = std::dynamic_pointer_cast<ItemRewardCrate>(itr->second);
-		if (!item) {
-			continue;
-		}
+		EmuAssert(item);
 
 		ProcessItemRewardCrateResult(result, item);
 	}
@@ -341,8 +430,7 @@ uint32_t ZoneDatabase::ProcessItemTableResult(DatabaseResult& result, const std:
 	item->flags = flags;
 	item->bUseable = result.GetBool(i++);
 	item->slotBitmask = result.GetUInt32(i++);
-	i++;
-	//TODO item set info
+	item->set_id = result.GetUInt32(i++);
 	i++;
 	item->sell_status_amount = result.GetUInt32(i++);
 	item->stackSize = result.GetUInt32(i++);
@@ -527,29 +615,30 @@ void ItemSpellScroll::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
 }
 
 uint32_t ZoneDatabase::ProcessItemRewardVoucherResult(DatabaseResult& result, const std::shared_ptr<ItemRewardVoucher>& item) {
-	uint32_t i = 1;
+	uint32_t i = 2;
 	item->items.emplace_back();
 	RewardVoucherItem& reward = item->items.back();
 	reward.itemID = result.GetUInt32(i++);
-	reward.itemName = result.GetString(i++);
+	i++;
+	reward.crc = result.GetUInt32(i++);
 	reward.icon = result.GetUInt16(i++);
-	reward.crc = 0;
+	reward.itemName = result.GetString(i++);
 	reward.unknown = 0;
 	return i;
 }
 
 uint32_t ZoneDatabase::ProcessItemRewardCrateResult(DatabaseResult& result, const std::shared_ptr<ItemRewardCrate>& item) {
-	uint32_t i = 3;
+	uint32_t i = 2;
 	item->items.emplace_back();
 	RewardCrateItem& reward = item->items.back();
-	//TODO: Really need to change this table to use OUR ids not sony's...
+	reward.itemID = result.GetUInt32(i++);
+	i++;
+	reward.crc = result.GetUInt32(i++);
 	reward.icon = result.GetUInt16(i++);
 	reward.stackSize = result.GetUInt32(i++);
 	reward.colorID = result.GetUInt32(i++);
-	reward.language = result.GetUInt8(i++);
 	reward.itemName = result.GetString(i++);
-	reward.itemID = result.GetUInt32(i++);
-	reward.crc = 0;
+	reward.language = result.GetUInt8(i++);
 	return i;
 }
 

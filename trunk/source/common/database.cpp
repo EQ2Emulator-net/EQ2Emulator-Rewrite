@@ -240,10 +240,23 @@ bool Database::Select(DatabaseResult* result, const char* fmt, ...) {
 	}
 
 	if (success && (res = mysql_store_result(mysql))) {
-		for (bool first = true; res != NULL || mysql_next_result(mysql) == 0; first = false, res = mysql_store_result(mysql)) {
-			if (res != NULL) {
-				result->AddResult(res, first);
+		bool bFirst = true;
+		for (;;) {
+			result->AddResult(res, bFirst);
+			bFirst = false;
+
+			int sqlerrno = mysql_next_result(mysql);
+			if (sqlerrno > 0) {
+				LogError(LOG_DATABASE, 0, "Error running MySQL query (%d): %s\n%s", sqlerrno, mysql_error(mysql), query);
+				success = false;
+				result->Clear();
+				break;
 			}
+			else if (sqlerrno == -1) {
+				break;
+			}
+
+			res = mysql_store_result(mysql);
 		}
 	}
 	AddConnectionToPool(connection);
