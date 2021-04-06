@@ -15,7 +15,7 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 
 	auto LoadStats = [this, &stats, &stringStats] {
 		DatabaseResult result;
-		if (!Select(&result, "SELECT item_id, type, subtype, value, text, description FROM item_stats;")) {
+		if (!Select(&result, "SELECT item_id, type, subtype, iValue, fValue, sValue FROM item_mod_stats WHERE item_id < 10000000;")) {
 			LogError(LOG_DATABASE, 0, "Error loading item stats.");
 			return;
 		}
@@ -23,40 +23,45 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 		while (result.Next()) {
 			uint32_t itemID = result.GetUInt32(0);
 			uint8_t type = result.GetUInt8(1);
-			std::string text = result.GetString(4);
 
-			if (type == 1 || text.empty()) {
-				std::vector<ItemStatMod>& mods = stats[itemID];
-				mods.emplace_back();
-				ItemStatMod& mod = mods.back();
-				mod.statType = type;
-				mod.statSubtype = result.GetInt16(2);
-				if (mod.statType == 6) {
-					mod.fValue = result.GetFloat(3);
-					mod.statAsFloat = mod.fValue;
-				}
-				else {
-					mod.iValue = result.GetInt32(3);
-					mod.statAsFloat = mod.iValue;
-				}
-				mod.stringVal = std::move(text);
-				mod.unknown64 = 0;
-				mod.unknown92 = 0;
-				//This is set to something else for string stats but not sure what it does
-				mod.stringStatUnknown = -1;
+			std::vector<ItemStatMod>& mods = stats[itemID];
+			mods.emplace_back();
+			ItemStatMod& mod = mods.back();
+			mod.statType = type;
+			mod.statSubtype = result.GetInt16(2);
+			if (mod.statType == 6) {
+				mod.fValue = result.GetFloat(4);
+				mod.statAsFloat = mod.fValue;
 			}
 			else {
-				std::vector<ItemStringMod>& mods = stringStats[itemID];
-				mods.emplace_back();
-				ItemStringMod& mod = mods.back();
-				mod.stringVal = std::move(text);
-				mod.statDescription = result.GetString(5);
-				mod.unknown1 = 0;
-				mod.unknown2 = 0;
-				mod.unknown3 = 0;
-				mod.unknown4 = 0;
-				mod.unknown5 = 0;
+				mod.iValue = result.GetInt32(3);
+				mod.statAsFloat = static_cast<float>(mod.iValue);
 			}
+			mod.stringVal = result.GetString(5);
+			mod.unknown64 = 0;
+			mod.unknown92 = 0;
+			//This is set to something else for string stats but not sure what it does
+			mod.stringStatUnknown = -1;
+		}
+
+		if (!Select(&result, "SELECT item_id, `mod`, `description` FROM item_mod_strings WHERE item_id < 10000000;")) {
+			LogError(LOG_DATABASE, 0, "Error loading item mod strings.");
+			return;
+		}
+
+		while (result.Next()) {
+			uint32_t itemID = result.GetUInt32(0);
+			std::vector<ItemStringMod>& mods = stringStats[itemID];
+
+			mods.emplace_back();
+			ItemStringMod& m = mods.back();
+			m.stringVal = result.GetString(1);
+			m.statDescription = result.GetString(2);
+			m.unknown1 = 0;
+			m.unknown2 = 0;
+			m.unknown3 = 0;
+			m.unknown4 = 0;
+			m.unknown5 = 0;
 		}
 	};
 
@@ -86,26 +91,26 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 
 	LogInfo(LOG_DATABASE, 0, "Loading items...");
 
-	ss << "SELECT COUNT(id) FROM items;\n"
-		<< "SELECT * FROM items WHERE item_type IN ('Normal', 'Dungeon Maker');\n"
-		<< "SELECT * FROM items i INNER JOIN item_details_weapon idw ON i.id = idw.item_id;\n"
-		<< "SELECT * FROM items i INNER JOIN item_details_range idr ON i.id = idr.item_id;\n"
-		<< "SELECT * FROM items i INNER JOIN item_details_armor ida ON i.id = ida.item_id;\n"
-		<< "SELECT * FROM items i INNER JOIN item_details_shield ids ON i.id = ids.item_id;\n"
-		<< "SELECT * FROM items i INNER JOIN item_details_bag idb ON i.id = idb.item_id;\n"
-		<< "SELECT * FROM items i INNER JOIN item_details_food idf ON i.id = idf.item_id;\n"
-		<< "SELECT * FROM items i INNER JOIN item_details_recipe idr ON i.id = idr.item_id;\n"
-		<< "SELECT * FROM items i INNER JOIN item_details_house idh ON i.id = idh.item_id;\n"
-		<< "SELECT * FROM items i INNER JOIN item_details_bauble idb ON i.id = idb.item_id;\n"
-		<< "SELECT * FROM items i INNER JOIN item_details_thrown idt ON i.id = idt.item_id;\n"
-		<< "SELECT * FROM items i INNER JOIN item_details_house_container idhc ON i.id = idhc.item_id;\n"
-		<< "SELECT * FROM items i INNER JOIN item_details_book idb ON i.id = idb.item_id;\n"
-		<< "SELECT * FROM items WHERE id IN (SELECT DISTINCT item_id FROM item_details_pattern);\n"
-		<< "SELECT * FROM items WHERE id IN (SELECT DISTINCT itemset_item_id FROM item_details_itemset);\n"
-		<< "SELECT * FROM items WHERE id IN (SELECT DISTINCT marketplace_item_id FROM item_details_marketplace);\n"
-		<< "SELECT idp.item_id, i.id, i.name, i.icon FROM item_details_pattern idp INNER JOIN items i ON i.soe_item_id = idp.pattern_item_id;\n"
-		<< "SELECT idm.marketplace_item_id, i.id, i.name, i.icon FROM item_details_marketplace idm INNER JOIN items i ON i.soe_item_id = idm.item_id;"
-		<< "SELECT ids.*, i.name, i.id FROM item_details_itemset ids INNER JOIN items i ON i.soe_item_id = ids.item_id;";
+	ss << "SELECT COUNT(id) FROM items WHERE bPvpDesc = 0;\n"
+		<< "SELECT * FROM items WHERE bPvpDesc = 0 AND item_type IN ('Normal', 'Dungeon Maker');\n"
+		<< "SELECT * FROM items i INNER JOIN item_details_weapon idw ON bPvpDesc = 0 AND  i.id = idw.item_id;\n"
+		<< "SELECT * FROM items i INNER JOIN item_details_range idr ON bPvpDesc = 0 AND  i.id = idr.item_id;\n"
+		<< "SELECT * FROM items i INNER JOIN item_details_armor ida ON bPvpDesc = 0 AND  i.id = ida.item_id;\n"
+		<< "SELECT * FROM items i INNER JOIN item_details_shield ids ON bPvpDesc = 0 AND  i.id = ids.item_id;\n"
+		<< "SELECT * FROM items i INNER JOIN item_details_bag idb ON bPvpDesc = 0 AND  i.id = idb.item_id;\n"
+		<< "SELECT * FROM items i INNER JOIN item_details_food idf ON bPvpDesc = 0 AND  i.id = idf.item_id;\n"
+		<< "SELECT * FROM items i INNER JOIN item_details_recipe idr ON bPvpDesc = 0 AND  i.id = idr.item_id;\n"
+		<< "SELECT * FROM items i INNER JOIN item_details_house idh ON i.bPvpDesc = 0 i.item_type = 'House' AND  i.id = idh.item_id;\n"
+		<< "SELECT * FROM items i INNER JOIN item_details_bauble idb ON bPvpDesc = 0 AND  i.id = idb.item_id;\n"
+		<< "SELECT * FROM items i INNER JOIN item_details_thrown idt ON bPvpDesc = 0 AND  i.id = idt.item_id;\n"
+		<< "SELECT * FROM items i INNER JOIN item_details_house_container idhc ON bPvpDesc = 0 AND  i.id = idhc.item_id;\n"
+		<< "SELECT i.*, idb.*, idh.* FROM items i INNER JOIN item_details_book idb ON i.bPvpDesc = 0 AND i.id = idb.item_id INNER JOIN item_details_house idh ON idb.item_id = idh.item_id;\n"
+		<< "SELECT * FROM items WHERE bPvpDesc = 0 AND  id IN (SELECT DISTINCT item_id FROM item_details_pattern);\n"
+		<< "SELECT * FROM items WHERE bPvpDesc = 0 AND  id IN (SELECT DISTINCT itemset_item_id FROM item_details_itemset);\n"
+		<< "SELECT * FROM items WHERE bPvpDesc = 0 AND  id IN (SELECT DISTINCT marketplace_item_id FROM item_details_marketplace);\n"
+		<< "SELECT idp.item_id, i.id, i.name, i.icon FROM item_details_pattern idp INNER JOIN items i ON bPvpDesc = 0 AND  i.soe_item_id = idp.pattern_item_id;\n"
+		<< "SELECT idm.marketplace_item_id, i.id, i.name, i.icon FROM item_details_marketplace idm INNER JOIN items i ON bPvpDesc = 0 AND  i.soe_item_id = idm.item_id;"
+		<< "SELECT ids.*, i.name, i.id FROM item_details_itemset ids INNER JOIN items i ON bPvpDesc = 0 AND  i.soe_item_id = ids.item_id;";
 		//<< "SELECT idri.item_id, i.icon, idri.name FROM items i INNER JOIN item_details_recipe_items idri ON i.id = idri.item_id;\n"
 		//
 		//<< "SELECT * FROM items i INNER JOIN item_details_adornments ida ON i.id = ida.item_id;\n";
@@ -127,7 +132,7 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 	
 	for (int i = 0; i < 16; i++) {
 		while (result.Next()) {
-			EItemType type = Item::GetItemTypeFromName(result.GetString(2));
+			EItemType type = Item::GetItemTypeFromName(result.GetString(3));
 
 			if (type == EItemType::EINVALID) {
 				type = EItemType::EGENERIC;
@@ -218,6 +223,8 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 uint32_t ZoneDatabase::ProcessItemTableResult(DatabaseResult& result, const std::shared_ptr<Item>& item) {
 	uint32_t i = 0;
 	item->itemID = result.GetUInt32(i++);
+	//bPvpDesc
+	i++;
 	item->itemName = result.GetString(i++);
 	//Set the item type before this function
 	i++;
@@ -295,45 +302,86 @@ uint32_t ZoneDatabase::ProcessItemTableResult(DatabaseResult& result, const std:
 	if (result.GetBool(i++)) {
 		flags |= Item::ITEM_FLAG_NO_REPAIR;
 	}
-	i++;
+	if (result.GetBool(i++)) {
+		flags |= Item::ITEM_FLAG_ETHEREAL;
+	}
 	if (result.GetBool(i++)) {
 		flags |= Item::ITEM_FLAG_REFINED;
 	}
-	i++;
+	if (result.GetBool(i++)) {
+		flags |= Item::ITEM_FLAG_NO_SALVAGE;
+	}
+	if (result.GetBool(i++)) {
+		flags |= Item::ITEM_FLAG_INDESTRUCTIBLE;
+	}
+	if (result.GetBool(i++)) {
+		flags |= Item::ITEM_FLAG_NO_EXPERIMENT;
+	}
+	if (result.GetBool(i++)) {
+		flags |= Item::ITEM_FLAG_HOUSE_LORE;
+	}
+	if (result.GetBool(i++)) {
+		flags |= Item::ITEM_FLAG_UNK_28;
+	}
+	if (result.GetBool(i++)) {
+		flags |= Item::ITEM_FLAG_BUILDING_BLOCK;
+	}
+	if (result.GetBool(i++)) {
+		flags |= Item::ITEM_FLAG_FREE_REFORGE;
+	}
+	if (result.GetBool(i++)) {
+		flags |= Item::ITEM_FLAG_INFUSABLE;
+	}
+	if (result.GetBool(i++)) {
+		flags |= Item::ITEM_FLAG_MERC_ONLY;
+	}
+	if (result.GetBool(i++)) {
+		flags |= Item::ITEM_FLAG_MOUNT_ONLY;
+	}
 	item->flags = flags;
 	item->bUseable = result.GetBool(i++);
 	item->slotBitmask = result.GetUInt32(i++);
 	i++;
-	//Do not set the set name because for some stupid reason set data wasn't parsed and that adds elements to the packet...
-	//item->setName = result.GetString(i++);
-	i += 2;
+	//TODO item set info
+	i++;
+	item->sell_status_amount = result.GetUInt32(i++);
 	item->stackSize = result.GetUInt32(i++);
 	item->bCollectable = result.GetBool(i++);
+	item->bQuestExamine = result.GetBool(i++);
 	
 	for (int x = 0; x < 6; x++) {
 		item->adornSlots[x] = result.GetUInt8(i++);
 	}
 
-	//Several fields which we arent using yet..
-	i += 5;
+	//Offers quest id
+	i++;
+
+	item->offersQuest = result.GetString(i++);
+	item->requiredByQuest = result.GetString(i++);
+
+	i += 2;
 
 	item->chargesMax = result.GetUInt16(i++);
 	item->chargesRemaining = item->chargesMax;
-	i++;
+	item->bHasCharges = result.GetBool(i++);
 	item->recommendedLevel = result.GetUInt8(i++);
+	i += 2;
 	item->requiredLevel = result.GetUInt8(i++);
-	i++;
 	item->requiredClasses = result.GetUInt64(i++);
 	item->requiredClasses2 = item->requiredClasses;
 	i++;
 	//Skipping SOE fields
-	i += 2;
+	i += 4;
 	i++;
-	i++;
+	item->bTransmutedMaterial = result.GetBool(i++);
+	item->bHarvestedMaterial = result.GetBool(i++);
+	//Skipping body_drop, no_buy_back, unk fields
+	i += 10;
 	return i;
 }
 
 void ItemMeleeWeapon::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
+	i += 2;
 	wieldType = result.GetUInt8(i++);
 	damageType = result.GetUInt8(i++);
 	minDmg = result.GetInt16(i++);
@@ -344,7 +392,7 @@ void ItemMeleeWeapon::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
 	baseMaxDamage = result.GetInt16(i++);
 	delay = result.GetUInt8(i++);
 	damageRating = result.GetFloat(i++);
-	itemScore = 0;
+	itemScore = result.GetUInt32(i++);
 }
 
 void ItemRangedWeapon::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
@@ -360,31 +408,33 @@ void ItemRangedWeapon::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) 
 	maxRange = result.GetUInt16(i++);
 	damageRating = result.GetFloat(i++);
 	damageType = result.GetUInt8(i++);
-	itemScore = 0;
+	itemScore = result.GetUInt32(i++);
 }
 
 void ItemArmor::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
 	i += 2;
 	mitigationLow = result.GetInt32(i++);
 	mitigationHigh = result.GetInt32(i++);
-	itemScore = 0;
+	absorb = result.GetInt16(i++);
+	i++;
+	itemScore = result.GetUInt32(i++);
 }
 
 void ItemShield::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
 	i += 2;
 	mitigationLow = result.GetInt32(i++);
 	mitigationHigh = result.GetInt32(i++);
-	itemScore = 0;
+	itemScore = result.GetUInt32(i++);
 }
 
 void ItemBag::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
 	i += 2;
 	numSlots = result.GetUInt8(i++);
 	weightReduction = result.GetUInt8(i++);
-	bagUnknown1 = 0;
-	bBackpack = false;
-	bagUnknown3 = 0;
-	bagUnknown4 = 0;
+	bagUnknown1 = result.GetUInt8(i++);
+	bBackpack = result.GetBool(i++);
+	bagUnknown3 = result.GetUInt8(i++);
+	bagUnknown4 = result.GetUInt32(i++);
 	numEmptySlots = numSlots;
 	numItems = 0;
 }
@@ -423,13 +473,13 @@ void ItemBauble::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
 	effectRadius = result.GetFloat(i++);
 	maxAoeTargets = result.GetInt32(i++);
 	bDisplayUntilCancelled = result.GetBool(i++);
+	itemScore = result.GetUInt32(i++);
 }
 
 void ItemAmmo::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
 	i += 2;
 	range = result.GetInt32(i++);
 	damageModifier = result.GetInt32(i++);
-	i++;
 	hitBonus = result.GetFloat(i++);
 	damageType = result.GetUInt32(i++);
 }
@@ -450,8 +500,15 @@ void ItemBook::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {
 	language = result.GetUInt8(i++);
 	author = result.GetString(i++);
 	title = result.GetString(i++);
-	//TODO: add in this data for books
-	memset(&houseData, 0, sizeof(houseData));
+	
+
+	//item_details_house info
+	i += 3;
+	houseData.rentStatusReduction = result.GetInt32(i++);
+	houseData.rentCoinReduction = result.GetFloat(i++);
+	houseData.houseType = result.GetUInt8(i++);
+	houseData.ItemHouseData::unknown1 = 0;
+	houseData.ItemHouseData::unknown2 = 0xFF;
 }
 
 void ItemRewardVoucher::LoadTypeSpecificData(DatabaseResult& result, uint32_t i) {

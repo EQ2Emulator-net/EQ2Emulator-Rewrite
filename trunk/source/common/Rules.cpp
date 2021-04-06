@@ -57,20 +57,19 @@ void RuleSet::CopyRulesInto(RuleSet* in_rule_set) {
 		return;
 	}
 
-	auto in_rules = in_rule_set->GetRules();
-	Rule* rule;
-
 	EmuAssert(in_rule_set);
 
+	ReadLocker l(in_rule_set->m_rules);
+	auto in_rules = in_rule_set->GetRules();
+
 	ClearRules();
-	m_rules.WriteLock();
+	WriteLocker l2(m_rules);
 	for (auto& itr : *in_rules) {
 		for (auto& itr2 : itr.second) {
-			rule = itr2.second;
+			Rule* rule = itr2.second;
 			rules[rule->GetCategory()][rule->GetType()] = new Rule(rule);
 		}
 	}
-	m_rules.WriteUnlock();
 }
 
 void RuleSet::AddRule(Rule* rule) {
@@ -125,6 +124,7 @@ void RuleManager::InitEnumLookups() {
 	CATEGORY_INIT(R_UI);
 	CATEGORY_INIT(R_World);
 	CATEGORY_INIT(R_Zone);
+	CATEGORY_INIT(R_Dev);
 	CATEGORY_INIT(R_CategoryInvalid);
 #undef CATEGORY_INIT
 
@@ -216,6 +216,7 @@ void RuleManager::InitEnumLookups() {
 	RULE_TYPE_INIT(SpawnDeleteTimer);
 	RULE_TYPE_INIT(RuleTypeInvalid);
 	RULE_TYPE_INIT(HearChatDistance);
+	RULE_TYPE_INIT(StructOutputDirectory);
 #undef RULE_TYPE_INIT
 }
 
@@ -238,6 +239,7 @@ void RuleManager::InitRuleDefaults() {
 	RuleInit(ERuleCategory::R_Zone, ERuleType::HearChatDistance, "30");
 	RuleInit(ERuleCategory::R_World, ERuleType::PlayerCampTimer, "20");
 	RuleInit(ERuleCategory::R_World, ERuleType::LinkDeadTimer, "120000");
+	RuleInit(ERuleCategory::R_Dev, ERuleType::StructOutputDirectory, "");
 }
 
 RuleManager::~RuleManager() {
@@ -269,6 +271,7 @@ bool RuleManager::AddRuleSet(uint32_t id, const char* name) {
 		rs->SetName(name);
 		rule_sets[id] = rs;
 		ret = true;
+		LoadCodedDefaultsIntoRuleSet(rs);
 	}
 	m_rule_sets.WriteUnlock();
 
@@ -371,17 +374,19 @@ ERuleType RuleManager::GetRuleTypeByName(const char* name) {
 
 //The return value is whether this rule has been implemented (default value set in RuleManager::InitRuleDefaults() )
 bool RuleManager::SetRuleValue(uint32_t ruleset_id, ERuleCategory cat, ERuleType rt, const char* value) {
-	bool ret = false;
 	ReadLocker lock(m_rule_sets);
-	auto itr = rules.find(cat);
-	if (itr != rules.end()) {
-		auto rule = itr->second.find(rt);
-		if (rule != itr->second.end()) {
-			ret = true;
-			rule->second->SetValue(value);
-		}
-	}
-	return ret;
+	auto itr = rule_sets.find(ruleset_id);
+	if (itr == rule_sets.end()) return false;
+
+
+	RuleSet* rs = itr->second;
+	
+	Rule* r = rs->GetRule(cat, rt);
+	if (!r) return false;
+
+	r->SetValue(value);
+
+	return true;
 }
 
 void CommonDatabase::LoadRules(RuleManager& rule_manager) {
@@ -418,4 +423,7 @@ void CommonDatabase::LoadRules(RuleManager& rule_manager) {
 			LogWarn(LOG_RULES, 0, "Rule %s.%s has not been implemented yet!", category_str, type_str);
 		}
 	}
+
+	//TODO: Load global ruleset id from the variables table
+	rule_manager.SetGlobalRuleSet(1);
 }

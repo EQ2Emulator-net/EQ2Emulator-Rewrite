@@ -91,7 +91,7 @@ public:
 	XmlStructDumper() = default;
 	~XmlStructDumper() = default;
 
-	void DumpStructsFile(const char* filename);
+	void DumpStructsFile(const char* filename, const char* directory = "");
 
 private:
 	std::deque<rapidxml::xml_node<>*> PacketStructToXml(rapidxml::xml_document<>& doc, const std::string& name);

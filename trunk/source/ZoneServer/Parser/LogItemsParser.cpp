@@ -360,7 +360,7 @@ void LogItemsParser::ProcessItemDesc(Substruct_ExamineDescItem* item, bool bPvp)
 	}
 
 	row.RegisterField("stack_count", f.stackSize);
-	row.RegisterField("collectable_unk", f.collectable_unk);
+	row.RegisterField("collectable_unk", f.bQuestExamine);
 	row.RegisterField("collectable", f.bCollectable);
 	row.RegisterField("adornment_slot1", f.adornSlots[0]);
 	row.RegisterField("adornment_slot2", f.adornSlots[1]);
