@@ -182,7 +182,17 @@ public:
 	void PostRead() override {
 		slotBitmask = 0;
 		for (auto& itr : slotArray) {
-			slotBitmask |= (1 << itr.slotID);
+			auto AddSlot = [this](EItemSlot s) {
+				slotBitmask |= 1 << static_cast<uint32_t>(s);
+			};
+
+			EItemSlot id = static_cast<EItemSlot>(itr.slotID);
+			AddSlot(id);
+			
+			if (id == EItemSlot::RING1) AddSlot(EItemSlot::RING2);
+			else if (id == EItemSlot::WRIST1) AddSlot(EItemSlot::WRIST2);
+			else if (id == EItemSlot::EAR1) AddSlot(EItemSlot::EAR2);
+			else if (id == EItemSlot::CHARM1) AddSlot(EItemSlot::CHARM2);
 		}
 	}
 
