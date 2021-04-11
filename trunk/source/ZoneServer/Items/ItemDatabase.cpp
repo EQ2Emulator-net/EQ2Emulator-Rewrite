@@ -12,6 +12,7 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 
 	std::unordered_map<uint32_t, std::vector<ItemStatMod>> stats;
 	std::unordered_map<uint32_t, std::vector<ItemStringMod>> stringStats;
+	std::unordered_map<uint32_t, std::vector<ItemEffect>> effects;
 
 	auto LoadStats = [this, &stats, &stringStats] {
 		DatabaseResult result;
@@ -89,6 +90,26 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 		}
 	};
 
+	auto LoadEffects = [this, &effects] {
+		DatabaseResult result;
+		if (!Select(&result, "SELECT * FROM item_effects ORDER BY item_id, `index`;")) {
+			LogError(LOG_DATABASE, 0, "Error loading item stats.");
+			return;
+		}
+
+		effects.reserve(result.GetNumRows() / 2);
+
+		while (result.Next()) {
+			uint32_t i = 1;
+			auto& vec = effects[result.GetUInt32(1)];
+			vec.emplace_back();
+			ItemEffect& e = vec.back();
+			e.effectText = result.GetString(2);
+			e.percentage = result.GetUInt8(3);
+			e.tabIndex = result.GetUInt16(4);
+		}
+	};
+
 	LogInfo(LOG_DATABASE, 0, "Loading items...");
 
 	ss << "SELECT COUNT(id) FROM items WHERE bPvpDesc = 0;\n"
@@ -120,6 +141,7 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 		<< "SELECT * FROM item_details_recipe_items;\n";
 
 	std::thread statThread(LoadStats);
+	std::thread effectThread(LoadEffects);
 	std::thread appearanceThread(LoadAppearances);
 
 	DatabaseResult result;
@@ -294,6 +316,7 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 	}
 
 	statThread.join();
+	effectThread.join();
 	appearanceThread.join();
 
 	//Move loaded stats over
@@ -305,6 +328,7 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 
 		f->second->statMods = std::move(itr.second);
 	}
+
 	for (auto& itr : stringStats) {
 		auto f = loadList.find(itr.first);
 		if (f == loadList.end()) {
@@ -322,6 +346,15 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 		}
 
 		f->second->appearance.emplace(itr.second);
+	}
+
+	for (auto& itr : effects) {
+		auto f = loadList.find(itr.first);
+		if (f == loadList.end()) {
+			continue;
+		}
+
+		f->second->effects = std::move(itr.second);
 	}
 
 	LogInfo(LOG_DATABASE, 0, "Successfully loaded %u items.", static_cast<uint32_t>(loadList.size()));;

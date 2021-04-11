@@ -10,6 +10,34 @@ class Substruct_ExamineDescItem;
 class Client;
 class DatabaseResult;
 
+enum class EItemSlot : uint32_t {
+	PRIMARY = 0,
+	SECONDARY = 1,
+	HEAD = 2,
+	CHEST = 3,
+	SHOULDERS = 4,
+	FOREARMS = 5,
+	HANDS = 6,
+	LEGS = 7,
+	FEET = 8,
+	RING1 = 9,
+	RING2 = 10,
+	EAR1 = 11,
+	EAR2 = 12,
+	NECK = 13,
+	WRIST1 = 14,
+	WRIST2 = 15,
+	RANGE = 16,
+	AMMO = 17,
+	WAIST = 18,
+	CLOAK = 19,
+	CHARM1 = 20,
+	CHARM2 = 21,
+	FOOD = 22,
+	DRINK = 23,
+	TEXTURE = 24
+};
+
 struct ItemStatMod {
 	uint8_t statType;
 	int16_t statSubtype;
