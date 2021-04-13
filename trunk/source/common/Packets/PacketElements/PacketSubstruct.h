@@ -93,7 +93,7 @@ public:
 	virtual void PostRead();
 
 protected:
-	PacketSubstruct(uint32_t p_version, bool p_inline = false): elementsInitialized(false), version(p_version), bInline(p_inline) {
+	PacketSubstruct(uint32_t p_version, bool p_inline = false) : elementsInitialized(false), version(p_version), bInline(p_inline) {
 	}
 
 	//Copy constructor

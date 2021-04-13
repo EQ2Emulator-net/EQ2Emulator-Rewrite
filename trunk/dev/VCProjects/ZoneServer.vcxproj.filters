@@ -1148,7 +1148,6 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_EnterMoveObjectModeMsg_Packet.h">
       <Filter>source\Packets\Server-&gt;Client</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketCharString.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_UpdateRaidMsg_Packet.h">
       <Filter>source\Packets\Server-&gt;Client</Filter>
     </ClInclude>
@@ -1202,6 +1201,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_PopulateSkillMapsMsg.h">
       <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\Packets\PacketElements\PacketCharString.h">
+      <Filter>common\Packets\PacketElements</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
