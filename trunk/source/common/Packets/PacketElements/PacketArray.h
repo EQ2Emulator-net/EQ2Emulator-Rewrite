@@ -10,16 +10,25 @@ class PacketArrayBase : public PacketElement {
 protected:
 	PacketArrayBase() : arraySizeName("") {}
 	virtual ~PacketArrayBase() = default;
-	
+
 public:
 	virtual void SetArraySize(uint32_t size) = 0;
 	virtual uint32_t GetArraySize() = 0;
-	virtual std::unique_ptr<PacketSubstruct> GetArraySubstruct() = 0;
+	const char* arraySizeName;
+};
+
+class PacketSubstructArray : public PacketArrayBase {
+public:
 	virtual void PreWrite() = 0;
 	virtual void PostWrite() = 0;
 	virtual void PreRead() = 0;
 	virtual void PostRead() = 0;
-	const char* arraySizeName;
+	virtual std::unique_ptr<PacketSubstruct> GetArraySubstruct() = 0;
+};
+
+class PacketElementArrayBase : public PacketArrayBase {
+public:
+	virtual std::unique_ptr<PacketElement> GetArrayTypeElement() = 0;
 };
 
 //Just a note to self for xml structs
@@ -27,7 +36,7 @@ public:
 class PacketArraySize {
 protected:
 	PacketArrayBase* myArray;
-	
+
 	PacketArraySize() : myArray(nullptr) {}
 	virtual ~PacketArraySize() = default;
 
@@ -42,7 +51,7 @@ public:
 
 //This element should link to a vector (or vectors) of an object derived from PacketSubstruct
 template <typename T>
-class PacketArray : public PacketArrayBase {
+class PacketArray : public PacketSubstructArray {
 	static_assert(std::is_base_of<PacketSubstruct, T>::value, "PacketArray must use a class derived from PacketSubtruct for its template!");
 
 public:
@@ -121,7 +130,7 @@ public:
 			itr.PostWrite();
 		}
 	}
-	
+
 	void PostRead() override {
 		for (auto& itr : *element) {
 			itr.PostRead();
@@ -137,4 +146,65 @@ public:
 private:
 	std::vector<T>* element;
 	uint32_t version;
+};
+
+template <typename T, typename E>
+class PacketElementArray : public PacketElementArrayBase {
+	static_assert(std::is_base_of<PacketElement, E>::value, "PacketElementArray must use a class derived from PacketElement for its template!");
+
+public:
+	PacketElementArray(std::vector<T>& in_element) : element(&in_element) {
+	}
+	~PacketElementArray() = default;
+
+	void SetArraySize(uint32_t size) override {
+		for (int i = 0; i < count; i++) {
+			element[i].resize(size);
+		}
+	}
+
+	uint32_t GetArraySize() override {
+		return static_cast<uint32_t>(element[0].size());
+	}
+
+	std::unique_ptr<PacketElement> GetArrayTypeElement() override {
+		static T foo;
+		return std::unique_ptr<E>(new E(foo));
+	}
+
+	uint32_t GetSize() override {
+		uint32_t size = 0;
+		for (int i = 0; i < count; i++) {
+			for (auto& itr : element[i]) {
+				E e(itr);
+				size += e.GetSize();
+			}
+		}
+		return size;
+	}
+
+	bool ReadElement(const unsigned char* srcbuf, uint32_t& offset, uint32_t bufsize) override {
+		for (int i = 0; i < count; i++) {
+			for (auto& itr : element[i]) {
+				E e(itr);
+				if (!e.ReadElement(srcbuf, offset, bufsize)) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
+		for (int i = 0; i < count; i++) {
+			for (auto& itr : element[i]) {
+				E e(itr);
+				e.WriteElement(outbuf, offset);
+			}
+		}
+	}
+
+private:
+	std::vector<T>* element;
 };

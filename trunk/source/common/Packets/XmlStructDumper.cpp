@@ -134,7 +134,7 @@ void XmlStructDumper::ElementToXml(PacketElement* e, xml_document<>& doc, xml_no
 			ElementToXml(itr, doc, *dataNode);
 		}
 	}
-	else if (auto pa = dynamic_cast<PacketArrayBase*>(e)) {
+	else if (auto pa = dynamic_cast<PacketSubstructArray*>(e)) {
 		dataNode->append_attribute(doc.allocate_attribute("ElementName", doc.allocate_string(e->name)));
 		dataNode->append_attribute(doc.allocate_attribute("Type", "Array"));
 		dataNode->append_attribute(doc.allocate_attribute("ArraySizeVariable", pa->arraySizeName));
@@ -143,6 +143,15 @@ void XmlStructDumper::ElementToXml(PacketElement* e, xml_document<>& doc, xml_no
 		std::string defaultArrayDataName = std::string(e->name) + "_data";
 		arrayType->SetName(defaultArrayDataName.c_str());
 		ElementToXml(arrayType.get(), doc, *dataNode);
+	}
+	else if (auto pa = dynamic_cast<PacketElementArrayBase*>(e)) {
+		dataNode->append_attribute(doc.allocate_attribute("ElementName", doc.allocate_string(e->name)));
+		dataNode->append_attribute(doc.allocate_attribute("Type", "Array"));
+		dataNode->append_attribute(doc.allocate_attribute("ArraySizeVariable", pa->arraySizeName));
+		auto pe = pa->GetArrayTypeElement();
+		std::string defaultArrayDataName = std::string(e->name) + "_data";
+		pe->name = defaultArrayDataName.c_str();
+		ElementToXml(pe.get(), doc, *dataNode);
 	}
 	else if (auto ps = dynamic_cast<PacketSubstruct*>(e)) {
 		//This is is encoded data add an extra tag

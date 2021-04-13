@@ -163,7 +163,7 @@ void EQ2Packet::PreWrite() {
 		if (auto substr = dynamic_cast<PacketSubstructParentBase*>(e)) {
 			substr->PreWrite();
 		}
-		if (auto arr = dynamic_cast<PacketArrayBase*>(e)) {
+		if (auto arr = dynamic_cast<PacketSubstructArray*>(e)) {
 			arr->PreWrite();
 		}
 	}
@@ -174,7 +174,7 @@ void EQ2Packet::PostWrite() {
 		if (auto substr = dynamic_cast<PacketSubstructParentBase*>(e)) {
 			substr->PostWrite();
 		}
-		if (auto arr = dynamic_cast<PacketArrayBase*>(e)) {
+		if (auto arr = dynamic_cast<PacketSubstructArray*>(e)) {
 			arr->PostWrite();
 		}
 	}
@@ -185,7 +185,7 @@ void EQ2Packet::PostRead() {
 		if (auto substr = dynamic_cast<PacketSubstructParentBase*>(e)) {
 			substr->PostRead();
 		}
-		if (auto arr = dynamic_cast<PacketArrayBase*>(e)) {
+		if (auto arr = dynamic_cast<PacketSubstructArray*>(e)) {
 			arr->PostRead();
 		}
 	}
@@ -196,7 +196,7 @@ void EQ2Packet::PreRead() {
 		if (auto substr = dynamic_cast<PacketSubstructParentBase*>(e)) {
 			substr->PreRead();
 		}
-		if (auto arr = dynamic_cast<PacketArrayBase*>(e)) {
+		if (auto arr = dynamic_cast<PacketSubstructArray*>(e)) {
 			arr->PreRead();
 		}
 	}
