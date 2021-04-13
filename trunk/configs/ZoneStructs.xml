@@ -6528,7 +6528,7 @@
 	<Struct Name="WS_SetRemoteCmdsMsg" ClientVersion="1" OpcodeName="OP_SetRemoteCmdsMsg">
 		<Data ElementName="num_commands" Type="int16" Size="1"/>
 		<Data ElementName="commands_array" Type="Array" ArraySizeVariable="num_commands">
-			<Data ElementName="name" Type="EQ2_8Bit_String" Size="1"/>
+			<Data ElementName="commands_array_data" Type="EQ2_8Bit_String" Size="1"/>
 		</Data>
 	</Struct>
 	<Struct Name="WS_EqUpdateGhostCmd" ClientVersion="1" OpcodeName="OP_ClientCmdMsg" OpcodeType="OP_EqUpdateGhostCmd">
