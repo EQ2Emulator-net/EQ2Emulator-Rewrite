@@ -175,8 +175,10 @@ public:
 	uint32_t GetSize() override {
 		uint32_t size = 0;
 		for (int i = 0; i < count; i++) {
-			for (auto& itr : element[i]) {
-				E e(itr);
+			auto& v = element[i];
+			if (!v.empty()) {
+				E e(v[0]);
+				e.SetCount(static_cast<int32_t>(v.size()));
 				size += e.GetSize();
 			}
 		}
@@ -185,8 +187,10 @@ public:
 
 	bool ReadElement(const unsigned char* srcbuf, uint32_t& offset, uint32_t bufsize) override {
 		for (int i = 0; i < count; i++) {
-			for (auto& itr : element[i]) {
-				E e(itr);
+			auto& v = element[i];
+			if (!v.empty()) {
+				E e(v[0]);
+				e.SetCount(static_cast<int32_t>(v.size()));
 				if (!e.ReadElement(srcbuf, offset, bufsize)) {
 					return false;
 				}
@@ -198,8 +202,10 @@ public:
 
 	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
 		for (int i = 0; i < count; i++) {
-			for (auto& itr : element[i]) {
-				E e(itr);
+			auto& v = element[i];
+			if (!v.empty()) {
+				E e(v[0]);
+				e.SetCount(static_cast<int32_t>(v.size()));
 				e.WriteElement(outbuf, offset);
 			}
 		}

@@ -20,7 +20,7 @@ LogAppearancesParser::LogAppearancesParser(PacketLog& log, ParserDatabase& db) :
 
 			uint32_t tmp = 0;
 			for (auto& cmd : command_list[0].second->commands_array) {
-				if (cmd.name == "try_on") {
+				if (cmd == "try_on") {
 					cmd_index = tmp;
 					break;
 				}

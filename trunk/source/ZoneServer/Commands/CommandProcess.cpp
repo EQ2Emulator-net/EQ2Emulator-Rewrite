@@ -172,9 +172,7 @@ void CommandProcess::SendCommandList(const std::shared_ptr<Client>& client) {
 	packet.commands_array.reserve(rootCommands.size());
 
 	for (auto& itr : rootCommands) {
-		packet.commands_array.emplace_back(client->GetVersion());
-		auto& entry = packet.commands_array.back();
-		entry.name = itr.second->cmdText;
+		packet.commands_array.emplace_back(itr.second->cmdText);
 	}
 
 	client->QueuePacket(packet);
@@ -205,12 +203,12 @@ void CommandProcess::CommandTest(const std::shared_ptr<Client>& client, Separato
 		return;
 	}
 
-	auto player = client->GetController()->GetControlled();
-	union {
-		const SpawnInfoStruct* cs;
-		SpawnInfoStruct* s;
-	};
-	cs = player->GetInfoStruct();
+	//auto player = client->GetController()->GetControlled();
+	//union {
+	//	const SpawnInfoStruct* cs;
+	//	SpawnInfoStruct* s;
+	//};
+	//cs = player->GetInfoStruct();
 
 	//BG Color, Emblem, Emblem Color, Edge, Edge Color, pattern/color (unknown order)
 	//s->heraldry[0] = 7; //bg color
@@ -222,7 +220,8 @@ void CommandProcess::CommandTest(const std::shared_ptr<Client>& client, Separato
 	//s->heraldry[6] = 0; //pattern color
 	//player->SetInfo(&s->equipment_types[19], 6469);
 
-	/*uint32_t id = sep.GetUInt32(0);
+	uint32_t id = sep.GetUInt32(0);
+	int32_t a2 = sep.GetInt(1);
 
 	auto item = g_masterItemList.GetReferenceItem(id);
 
@@ -234,7 +233,7 @@ void CommandProcess::CommandTest(const std::shared_ptr<Client>& client, Separato
 
 	ExamineInfoCmd_Item_Packet p(client->GetVersion(), itemDesc.get());
 	p.bShowPopup = true;
-	client->QueuePacket(p, true);*/
+	client->QueuePacket(p, true);
 }
 
 void CommandProcess::CommandZone(const std::shared_ptr<Client>& client, Separator& sep) {
