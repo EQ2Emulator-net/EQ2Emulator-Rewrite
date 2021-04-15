@@ -14,6 +14,7 @@
 #include "Substruct_SpellDesc.h"
 #include "Substruct_AADesc.h"
 #include "Substruct_ExamineDescSpell.h"
+#include "OP_EqUpdateMerchantCmd_Packet.h"
 #define RegisterZoneSubstruct(pt, ...) RegisterXmlSubstruct(pt, "ZoneStructs.xml", __VA_ARGS__)
 
 //Order these so struct dependencies are registered before their dependents
@@ -85,3 +86,4 @@ RegisterZoneSubstruct(Substruct_ExamineDescSpell, 1208, 60114, 67650);
 RegisterZoneSubstruct(Substruct_AADesc, 1193);
 RegisterZoneSubstruct(Substruct_MapFogData, 1188);
 RegisterZoneSubstruct(Substruct_MapData, 1188);
+RegisterZoneSubstruct(Substruct_MerchantItem, 67650);

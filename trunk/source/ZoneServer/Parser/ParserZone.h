@@ -15,4 +15,5 @@ public:
 
 	void ProcessItems(PacketLog& log);
 	void ProcessAppearances(PacketLog& log);
+	void ProcessMerchantPrices(PacketLog& log);
 };
