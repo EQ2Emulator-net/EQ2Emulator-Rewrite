@@ -5,6 +5,8 @@
 #include "LogItemsParser.h"
 #include "LogAppearancesParser.h"
 
+#include "../Packets/OP_EqUpdateMerchantCmd_Packet.h"
+
 #include <set>
 #include <thread>
 
@@ -41,4 +43,12 @@ void ParserZone::ProcessItems(PacketLog& log) {
 
 void ParserZone::ProcessAppearances(PacketLog& log) {
 	LogAppearancesParser processor(log, database);
+}
+
+void ParserZone::ProcessMerchantPrices(PacketLog& log) {
+	auto packets = log.FindPackets<OP_EqUpdateMerchantCmd_Packet>();
+
+	for (auto& itr : packets) {
+		auto& p = itr.second;
+	}
 }
