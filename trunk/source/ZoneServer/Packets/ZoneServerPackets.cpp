@@ -90,7 +90,7 @@ RegisterZoneStruct("OP_PlayFlythroughCmd", OP_PlayFlythroughCmd_Packet, 1);
 RegisterZoneStruct("OP_UpdateRaidMsg", OP_UpdateRaidMsg_Packet, 1);
 RegisterZoneStruct("OP_DressingRoom", OP_DressingRoom_Packet, 67650);
 RegisterZoneStruct("OP_PopulateSkillMapsMsg", OP_PopulateSkillMapsMsg_Packet, 1);
-RegisterZoneStruct("OP_EqUpdateMerchandCmd", OP_EqUpdateMerchantCmd_Packet, 67650);
+RegisterZoneStruct("OP_EqUpdateMerchantCmd", OP_EqUpdateMerchantCmd_Packet, 67650);
 
 // Client to Server
 RegisterZoneStruct("OP_LoginByNumRequestMsg", OP_LoginByNumRequestMsg_Packet, 1, 1212);
