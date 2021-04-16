@@ -34,8 +34,7 @@ public:
 
 	std::string name;
 	uint64_t price;
-	uint32_t itemID;
-	uint32_t uniqueID;
+	uint64_t uniqueID;
 	uint32_t stack_size;
 	uint16_t icon;
 	uint8_t unk67650;
@@ -46,8 +45,8 @@ public:
 	uint8_t unknown5;
 	uint8_t tier;
 	uint32_t status;
-	uint32_t crc;
-	uint32_t stack_size2;
+	uint32_t itemID;
+	uint32_t maxStackSize;
 	uint32_t status2;
 	uint32_t station_cash;
 	uint16_t sorting;
@@ -58,8 +57,8 @@ public:
 	void RegisterElements() override {
 		Register8String(name);
 		RegisterUInt64(price);
-		RegisterUInt32(itemID);
-		RegisterUInt32(uniqueID);
+		//Item id for "Buy" items (not yet unique, for sell this is unique id)
+		RegisterUInt64(uniqueID);
 		RegisterUInt32(stack_size);
 		RegisterUInt16(icon);
 		RegisterUInt8(unk67650);
@@ -70,8 +69,8 @@ public:
 		RegisterUInt8(unknown5);
 		RegisterUInt8(tier);
 		RegisterUInt32(status);
-		RegisterUInt32(crc);
-		RegisterUInt32(stack_size2);
+		RegisterUInt32(itemID);
+		RegisterUInt32(maxStackSize);
 		RegisterUInt32(status2);
 		RegisterUInt32(station_cash);
 		RegisterUInt16(sorting);
@@ -147,11 +146,11 @@ public:
 		RegisterUInt8(page_index_last);
 		RescopeArrayElement(unkFloats);
 		RegisterFloat(unkFloats)->SetCount(5);
-		auto e = RegisterUInt32(unkArray1Count);
-		e->SetMyArray(RegisterArray(unkArray1, Substruct_MerchantUnkArray1));
+		auto e2 = RegisterUInt32(unkArray1Count);
+		e2->SetMyArray(RegisterArray(unkArray1, Substruct_MerchantUnkArray1));
 		RescopeArrayElement(unkInts);
 		RegisterInt32(unkInts)->SetCount(4);
-		auto e = RegisterUInt8(unknownArray2Count);
-		e->SetMyArray(RegisterArray(unkArray2, Substruct_MerchantUnkArray2));
+		auto e3 = RegisterUInt8(unknownArray2Count);
+		e3->SetMyArray(RegisterArray(unkArray2, Substruct_MerchantUnkArray2));
 	}
 };

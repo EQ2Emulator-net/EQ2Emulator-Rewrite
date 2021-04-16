@@ -30,6 +30,9 @@ void ParserZone::ProcessLogs() {
 			else if (opt == "-appearances") {
 				ProcessAppearances(*log);
 			}
+			else if (opt == "-prices") {
+				ProcessMerchantPrices(*log);
+			}
 		}
 	}
 
@@ -47,8 +50,22 @@ void ParserZone::ProcessAppearances(PacketLog& log) {
 
 void ParserZone::ProcessMerchantPrices(PacketLog& log) {
 	auto packets = log.FindPackets<OP_EqUpdateMerchantCmd_Packet>();
+	LogParser lp(log, database);
 
 	for (auto& itr : packets) {
 		auto& p = itr.second;
+
+		//Parse the buyback and sell pages
+		if ((p->type & 513) == 0) continue;
+
+		for (auto& itr : p->items) {
+			DatabaseRow row;
+			row.m_tableName = "raw_sell_prices";
+			row.RegisterField("soe_item_id_unsigned", itr.itemID);
+			row.RegisterField("price", itr.price);
+			lp.QueueRowInsert(row);
+		}
 	}
+
+	lp.DoInsertsForTable("raw_sell_prices", 250, true);
 }

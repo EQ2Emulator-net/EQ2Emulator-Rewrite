@@ -431,6 +431,7 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_EqSetControlGhostCmd_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_EqSetPOVGhostCmd_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_CreateGhostCmd_Packet.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Packets\OP_EqUpdateMerchantCmd_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_FlythroughEndMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_GameWorldTimeMsg_Packet.h" />
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_HearChatCmd_Packet.h" />

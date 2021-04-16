@@ -5847,6 +5847,36 @@
 			<Data ElementName="unkData" Type="sint32" Size="5"/>
 		</Data>
 	</Struct>
+	<Struct Name="Substruct_MerchantItem" ClientVersion="67650">
+		<Data ElementName="name" Type="EQ2_8Bit_String" Size="1"/>
+		<Data ElementName="price" Type="int64" Size="1"/>
+		<Data ElementName="uniqueID" Type="int64" Size="1"/>
+		<Data ElementName="stack_size" Type="int32" Size="1"/>
+		<Data ElementName="icon" Type="int16" Size="1"/>
+		<Data ElementName="unk67650" Type="int8" Size="1"/>
+		<Data ElementName="name_color" Type="int8" Size="1"/>
+		<Data ElementName="level" Type="int8" Size="1"/>
+		<Data ElementName="flags" Type="int16" Size="1"/>
+		<Data ElementName="quantity" Type="int8" Size="1"/>
+		<Data ElementName="unknown5" Type="int8" Size="1"/>
+		<Data ElementName="tier" Type="int8" Size="1"/>
+		<Data ElementName="status" Type="int32" Size="1"/>
+		<Data ElementName="itemID" Type="int32" Size="1"/>
+		<Data ElementName="maxStackSize" Type="int32" Size="1"/>
+		<Data ElementName="status2" Type="int32" Size="1"/>
+		<Data ElementName="station_cash" Type="int32" Size="1"/>
+		<Data ElementName="sorting" Type="int16" Size="1"/>
+		<Data ElementName="num_tokens" Type="int8" Size="1"/>
+		<Data ElementName="tokens" Type="Array" ArraySizeVariable="num_tokens">
+			<Data ElementName="icon" Type="int16" Size="1"/>
+			<Data ElementName="unk67650" Type="int8" Size="1"/>
+			<Data ElementName="quantity" Type="int16" Size="1"/>
+			<Data ElementName="token_id" Type="int32" Size="1"/>
+			<Data ElementName="token_id2" Type="int32" Size="1"/>
+			<Data ElementName="name" Type="EQ2_16Bit_String" Size="1"/>
+		</Data>
+		<Data ElementName="description" Type="EQ2_16Bit_String" Size="1"/>
+	</Struct>
 	<Struct Name="WS_ZoneInfoMsg" ClientVersion="283" OpcodeName="OP_ZoneInfoMsg">
 		<Data ElementName="zone" Type="EQ2_8Bit_String" Size="1"/>
 		<Data ElementName="zone2" Type="EQ2_8Bit_String" Size="1"/>
@@ -7005,6 +7035,31 @@
 			<Data ElementName="shortName" Type="EQ2_16Bit_String" Size="1"/>
 			<Data ElementName="name" Type="EQ2_16Bit_String" Size="1"/>
 			<Data ElementName="description" Type="EQ2_16Bit_String" Size="1"/>
+		</Data>
+	</Struct>
+	<Struct Name="WS_EqUpdateMerchantCmd" ClientVersion="67650" OpcodeName="OP_ClientCmdMsg" OpcodeType="OP_EqUpdateMerchantCmd">
+		<Data ElementName="spawn_id" Type="int32" Size="1"/>
+		<Data ElementName="num_items" Type="int16" Size="1"/>
+		<Data ElementName="items" Type="Array" ArraySizeVariable="num_items">
+			<Data ElementName="items_data" Substruct="Substruct_MerchantItem" Size="1"/>
+		</Data>
+		<Data ElementName="type" Type="int32" Size="1"/>
+		<Data ElementName="page_index_current" Type="int8" Size="1"/>
+		<Data ElementName="page_index_last" Type="int8" Size="1"/>
+		<Data ElementName="unkFloats" Type="float" Size="5"/>
+		<Data ElementName="unkArray1Count" Type="int32" Size="1"/>
+		<Data ElementName="unkArray1" Type="Array" ArraySizeVariable="unkArray1Count">
+			<Data ElementName="unk1" Type="sint32" Size="1"/>
+			<Data ElementName="unk2" Type="sint32" Size="1"/>
+		</Data>
+		<Data ElementName="unkInts" Type="sint32" Size="4"/>
+		<Data ElementName="unknownArray2Count" Type="int8" Size="1"/>
+		<Data ElementName="unkArray2" Type="Array" ArraySizeVariable="unknownArray2Count">
+			<Data ElementName="unk1" Type="int8" Size="2"/>
+			<Data ElementName="unk2" Type="sint32" Size="1"/>
+			<Data ElementName="unk3" Type="int8" Size="2"/>
+			<Data ElementName="unk4" Type="EQ2_16Bit_String" Size="1"/>
+			<Data ElementName="unk5" Type="EQ2_16Bit_String" Size="1"/>
 		</Data>
 	</Struct>
 	<Struct Name="WS_LoginByNumRequestMsg" ClientVersion="1" OpcodeName="OP_LoginByNumRequestMsg">
