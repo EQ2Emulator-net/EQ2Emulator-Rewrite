@@ -106,7 +106,7 @@ void ZoneDatabase::LoadMasterItems(MasterItemList& masterItems) {
 			ItemEffect& e = vec.back();
 			e.effectText = result.GetString(2);
 			e.percentage = result.GetUInt8(3);
-			e.tabIndex = result.GetUInt16(4);
+			e.tabIndex = result.GetUInt8(4);
 		}
 	};
 
@@ -703,7 +703,7 @@ void ItemAdornment::LoadTypeSpecificData(DatabaseResult& res, uint32_t i) {
 	i += 2;
 	duration = res.GetFloat(i++);
 	itemTypes = res.GetUInt64(i++);
-	slotColor = res.GetUInt16(i++);
+	slotColor = res.GetUInt8(i++);
 	ItemAdornmentData::description = res.GetString(i++);
 	description2 = res.GetString(i++);
 	unknown = res.GetUInt32(i++);

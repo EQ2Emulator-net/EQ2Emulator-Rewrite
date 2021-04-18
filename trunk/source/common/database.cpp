@@ -82,6 +82,7 @@ bool Database::ValidateConfig() {
 #define CONNECTION_POOL_SIZE 10
 
 bool Database::Connect() {
+	bool ret = false;
 	SpinLocker lock(m_connection_pool);
 	for (int i = 0; i < CONNECTION_POOL_SIZE; i++) {
 		DatabaseConnection* con = OpenNewConnection();
@@ -90,9 +91,10 @@ bool Database::Connect() {
 		}
 
 		connection_pool.push(con);
+		ret = true;
 	}
 
-	return true;
+	return ret;
 }
 
 DatabaseConnection* Database::OpenNewConnection() {
