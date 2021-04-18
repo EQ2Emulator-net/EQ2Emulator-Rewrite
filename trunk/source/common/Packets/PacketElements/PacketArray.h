@@ -172,7 +172,19 @@ public:
 		return std::unique_ptr<E>(new E(foo));
 	}
 
-	uint32_t GetSize() override {
+private:
+	//std::vector<bool> is specialized and we can't get a direct reference to an array of bool
+	template <typename X = T>
+	inline std::enable_if_t<std::is_same<X, bool>::value, uint32_t> GetSizeInternal() {
+		uint32_t size = 0;
+		for (int i = 0; i < count; i++) {
+			size += static_cast<uint32_t>(element[i].size());
+		}
+		return size;
+	}
+
+	template <typename X = T>
+	inline std::enable_if_t<!std::is_same<X, bool>::value, uint32_t> GetSizeInternal() {
 		uint32_t size = 0;
 		for (int i = 0; i < count; i++) {
 			auto& v = element[i];
@@ -185,7 +197,26 @@ public:
 		return size;
 	}
 
-	bool ReadElement(const unsigned char* srcbuf, uint32_t& offset, uint32_t bufsize) override {
+	template <typename X = T>
+	inline std::enable_if_t<std::is_same<X, bool>::value, bool>
+		ReadElementInternal(const unsigned char* srcbuf, uint32_t& offset, uint32_t bufsize) {
+		for (int i = 0; i < count; i++) {
+			auto& v = element[i];
+			if (!v.empty()) {
+				if (offset + v.size() > bufsize) {
+					return false;
+				}
+				for (int j = 0; j < v.size(); j++) {
+					v[i] = srcbuf[offset++];
+				}
+			}
+		}
+		return true;
+	}
+
+	template <typename X = T>
+	inline std::enable_if_t<!std::is_same<X, bool>::value, bool>
+		ReadElementInternal(const unsigned char* srcbuf, uint32_t& offset, uint32_t bufsize) {
 		for (int i = 0; i < count; i++) {
 			auto& v = element[i];
 			if (!v.empty()) {
@@ -196,11 +227,23 @@ public:
 				}
 			}
 		}
-
 		return true;
 	}
 
-	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
+	template <typename X = T>
+	inline std::enable_if_t<std::is_same<X, bool>::value>
+		WriteElementInternal(unsigned char* outbuf, uint32_t& offset) {
+		for (int i = 0; i < count; i++) {
+			auto& v = element[i];
+			for (auto& itr : v) {
+				outbuf[offset++] = itr;
+			}
+		}
+	}
+
+	template <typename X = T>
+	inline std::enable_if_t<!std::is_same<X, bool>::value>
+		WriteElementInternal(unsigned char* outbuf, uint32_t& offset) {
 		for (int i = 0; i < count; i++) {
 			auto& v = element[i];
 			if (!v.empty()) {
@@ -209,6 +252,19 @@ public:
 				e.WriteElement(outbuf, offset);
 			}
 		}
+	}
+
+public:
+	uint32_t GetSize() override {
+		return GetSizeInternal();
+	}
+
+	bool ReadElement(const unsigned char* srcbuf, uint32_t& offset, uint32_t bufsize) override {
+		return ReadElementInternal(srcbuf, offset, bufsize);
+	}
+
+	void WriteElement(unsigned char* outbuf, uint32_t& offset) override {
+		WriteElementInternal(outbuf, offset);
 	}
 
 private:

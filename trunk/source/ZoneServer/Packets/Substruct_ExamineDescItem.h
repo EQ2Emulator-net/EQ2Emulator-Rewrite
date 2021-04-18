@@ -722,7 +722,7 @@ public:
 			RegisterUInt8(unknown94);
 		}
 		if (itemVersion >= 97) {
-			Register16String(unknownString97);
+			Register16String(tradeRestrictedTime);
 		}
 		Register8String(itemName);
 		Register16String(description);

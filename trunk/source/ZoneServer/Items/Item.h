@@ -254,7 +254,7 @@ public:
 	std::vector<ItemTierLineEntry> tierLine;
 	std::string unknown68;
 	std::string unknown71;
-	std::string unknownString97;
+	std::string tradeRestrictedTime;
 	std::string itemName;
 	std::string description;
 	std::string unknown88String;
