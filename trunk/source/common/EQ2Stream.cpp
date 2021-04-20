@@ -338,8 +338,9 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 		break;
 	}
 	case OP_OutOfSession: {
-		LogError(LOG_NET, 0, "OutOfSession packet");
-		NonSequencedPush(new OP_OutOfSession_Packet);
+		LogTrace(LOG_NET, 0, "OutOfSession packet");
+		//Client is telling us to fk off and not send anything else
+		State = EQStreamState::CLIENTCONFIRMEDCLOSED;
 		break;
 	}
 	default:
@@ -572,6 +573,10 @@ void EQ2Stream::NonSequencedPush(ProtocolPacket* p) {
 }
 
 void EQ2Stream::Write() {
+	if (State == EQStreamState::CLIENTCONFIRMEDCLOSED) {
+		return;
+	}
+
 	vector<std::unique_ptr<ProtocolPacket> > ReadyToSend;
 	vector<ProtocolPacket*> SeqReadyToSend;
 	uint32_t currentTime = Timer::GetServerTime();

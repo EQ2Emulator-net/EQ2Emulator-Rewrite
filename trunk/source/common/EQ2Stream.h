@@ -21,7 +21,8 @@ class ProtocolPacket;
 enum class EQStreamState {
 	ESTABLISHED,
 	CLOSING,
-	CLOSED
+	CLOSED,
+	CLIENTCONFIRMEDCLOSED
 };
 
 class EQ2Stream : public Stream, public std::enable_shared_from_this<EQ2Stream> {
