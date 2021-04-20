@@ -8,12 +8,15 @@
 #include <regex>
 #include <filesystem>
 
+extern CommonDatabase* dbFieldTrackerDB;
+
 Parser::Parser(int argc, char** argv) : database(*ParserDatabase::GetGlobal()) {
 	LoggingSystem::LogStart();
 	LoggingSystem::LogSetPrefix("EQ2Emu-PacketParser");
 	ConfigReader cr(nullptr, &database, nullptr);
 	cr.ReadConfig("parser-config.xml");
 	InitDatabase();
+	dbFieldTrackerDB = &database;
 
 	const std::regex regex_check("^LOGFILE_REGEX\\((.*)\\)$");
 

@@ -30,12 +30,19 @@ MasterZoneLookup g_masterZoneLookup;
 LuaGlobals g_luaGlobals;
 MasterItemList g_masterItemList;
 MasterSkillList g_masterSkillList;
+CommonDatabase* dbFieldTrackerDB = nullptr;
 
 int main(int argc, char** argv) {
 	bool looping = true;
 	bool success = true;
 
 	srand(static_cast<unsigned int>(time(nullptr)));
+
+	if (argc > 1 && strcmp(argv[1], "--parse") == 0) {
+		//Transfer control to the parser
+		ParserZone(argc, argv);
+		return 0;
+	}
 
 	WorldTalk talk;
 
@@ -47,15 +54,11 @@ int main(int argc, char** argv) {
 	if (success)
 		database.Start();
 
+	dbFieldTrackerDB = &database;
+
 	if (success) {
 		LogDebug(LOG_DATABASE, 0, "Loading opcodes...");
 		success = database.LoadOpcodes();
-	}
-
-	if (argc > 1 && strcmp(argv[1], "--parse") == 0) {
-		//Transfer control to the parser
-		ParserZone(argc, argv);
-		return 0;
 	}
 
 	LoggingSystem::LogStart();

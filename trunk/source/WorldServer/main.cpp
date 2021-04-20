@@ -25,6 +25,7 @@ Classes classes;
 ZoneTalk zoneTalk;
 RuleManager g_ruleManager;
 CharacterList g_characterList;
+CommonDatabase* dbFieldTrackerDB = nullptr;
 
 int main(int argc, char **argv)
 {
@@ -44,6 +45,8 @@ int main(int argc, char **argv)
 
 	if (success)
 		success = database.Start();
+
+	dbFieldTrackerDB = &database;
 
 	if (success) {
 		LogDebug(LOG_DATABASE, 0, "Loading opcodes...");

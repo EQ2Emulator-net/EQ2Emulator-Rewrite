@@ -6,13 +6,7 @@
 #include <sstream>
 #include "EmuAssert.h"
 
-#ifdef EQ2_WORLD
-#include "../WorldServer/Database/WorldDatabase.h"
-extern WorldDatabase database;
-#elif defined EQ2_ZONE
-#include "../ZoneServer/Database/ZoneDatabase.h"
-extern ZoneDatabase database;
-#endif
+extern CommonDatabase* dbFieldTrackerDB;
 
 struct SQLNull {
 	bool operator!=(const SQLNull&) const { return false; }
@@ -79,7 +73,8 @@ public:
 
 	template<typename X>
 	std::enable_if_t<bIsString<X> && !bHasManip<X, Manip>> PushValue(std::ostream& ss, const X& v) {
-		ss << '\'' << database.Escape(v) << '\'';
+		//DBFieldTracker needs an active database connection to properly escape!
+		ss << '\'' << dbFieldTrackerDB->Escape(v) << '\'';
 	}
 
 	template<typename X>
