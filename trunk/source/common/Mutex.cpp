@@ -21,7 +21,7 @@ const chrono::seconds MUTEX_TIMEOUT(MUTEX_TIMEOUT_SECONDS);
 Mutex::Mutex() {
 #if defined(EQ2_DEBUG)
 	name[0] = 0;
-	num_readlocks = 0
+	num_readlocks = 0;
 #endif
 }
 

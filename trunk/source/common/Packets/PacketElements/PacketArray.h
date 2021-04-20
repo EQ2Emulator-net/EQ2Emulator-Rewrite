@@ -206,8 +206,8 @@ private:
 				if (offset + v.size() > bufsize) {
 					return false;
 				}
-				for (int j = 0; j < v.size(); j++) {
-					v[i] = srcbuf[offset++];
+				for (auto& itr : v) {
+					itr = srcbuf[offset++];
 				}
 			}
 		}
