@@ -199,8 +199,8 @@ void Substruct_SpawnPosition::DecompressData() {
 	desiredForwardSpeed = ExpandFloat(desiredForwardSpeed_compressed, 256);
 	desiredRoll = ExpandFloat(desiredRoll_compressed, 256);
 	desiredRollVelocity = ExpandFloat(desiredRollVelocity_compressed, 256);
-	size = ExpandFloat(size_compressed, 32);
-	if (version > 910) {
+	if (GetVersion() <= 910) {
+		size = ExpandFloat(size_compressed, 32);
 		sizeUnknown = ExpandFloat(sizeUnknown_compressed, 16384);
 	}
 	unk70 = ExpandFloat(unk70_compressed, 256);
