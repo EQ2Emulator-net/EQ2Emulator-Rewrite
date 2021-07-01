@@ -468,6 +468,9 @@
     <ClCompile Include="..\..\source\ZoneServer\Skills\MasterSkillList.cpp">
       <Filter>source\Skills</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\Parser\LogSpawnsParser.cpp">
+      <Filter>source\Parser</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h">
@@ -1207,6 +1210,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\Packets\OP_EqUpdateMerchantCmd_Packet.h">
       <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\ZoneServer\Parser\LogSpawnsParser.h">
+      <Filter>source\Parser</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -413,9 +413,9 @@
 		<Data ElementName="Password" Type="EQ2_16Bit_String" Size="1"/>
 		<Data ElementName="Username" Type="EQ2_16Bit_String" Size="1"/>
 		<Data ElementName="Service" Type="EQ2_16Bit_String" Size="1"/>
-		<Data ElementName="Unknown12" Type="int8" Size="1"/>
-		<Data ElementName="LVL90NumClassItems" Type="int8" Size="1" IfVariableSet="Unknown12"/>
-		<Data ElementName="LVL90ClassItems" Type="Array" ArraySizeVariable="LVL90NumClassItems">
+		<Data ElementName="bHasHeroicItems" Type="bool" Size="1"/>
+		<Data ElementName="NumHeroicClassItems" Type="int8" Size="1" IfVariableSet="bHasHeroicItems"/>
+		<Data ElementName="HeroicClassItems" Type="Array" ArraySizeVariable="NumHeroicClassItems">
 			<Data ElementName="ClassID" Type="int8" Size="1"/>
 			<Data ElementName="NumItems" Type="int8" Size="1"/>
 			<Data ElementName="StartingItems" Type="Array" ArraySizeVariable="NumItems">
@@ -441,7 +441,8 @@
 				<Data ElementName="ModelHighlightColor" Type="EQ2_Color" Size="1"/>
 			</Data>
 		</Data>
-		<Data ElementName="Unknown14" Type="int8" Size="13"/>
+		<Data ElementName="Unknown14" Type="int8" Size="9"/>
+		<Data ElementName="bLaunchpadLogin" Type="bool" Size="1"/>
 	</Struct>
 	<Struct Name="CS_LoginReplyMsg" ClientVersion="67650" OpcodeName="OP_LoginReplyMsg">
 		<Data ElementName="Response" Type="int8" Size="1"/>
@@ -482,9 +483,9 @@
 		<Data ElementName="Password" Type="EQ2_16Bit_String" Size="1"/>
 		<Data ElementName="Username" Type="EQ2_16Bit_String" Size="1"/>
 		<Data ElementName="Service" Type="EQ2_16Bit_String" Size="1"/>
-		<Data ElementName="Unknown12" Type="int8" Size="1"/>
-		<Data ElementName="LVL90NumClassItems" Type="int8" Size="1" IfVariableSet="Unknown12"/>
-		<Data ElementName="LVL90ClassItems" Type="Array" ArraySizeVariable="LVL90NumClassItems">
+		<Data ElementName="bHasHeroicItems" Type="bool" Size="1"/>
+		<Data ElementName="NumHeroicClassItems" Type="int8" Size="1" IfVariableSet="bHasHeroicItems"/>
+		<Data ElementName="HeroicClassItems" Type="Array" ArraySizeVariable="NumHeroicClassItems">
 			<Data ElementName="ClassID" Type="int8" Size="1"/>
 			<Data ElementName="NumItems" Type="int8" Size="1"/>
 			<Data ElementName="StartingItems" Type="Array" ArraySizeVariable="NumItems">
@@ -510,7 +511,8 @@
 				<Data ElementName="ModelHighlightColor" Type="EQ2_Color" Size="1"/>
 			</Data>
 		</Data>
-		<Data ElementName="Unknown14" Type="int8" Size="13"/>
+		<Data ElementName="Unknown14" Type="int8" Size="9"/>
+		<Data ElementName="bLaunchpadLogin" Type="bool" Size="1"/>
 	</Struct>
 	<Struct Name="CS_UIEvent" ClientVersion="1" OpcodeName="OP_UIEvent">
 		<Data ElementName="unknown0" Type="sint32" Size="1"/>

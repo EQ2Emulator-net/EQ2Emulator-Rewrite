@@ -10,7 +10,7 @@
 #include "SpawnGroupList.h"
 
 //EntityFlagValues
-const uint32_t EntityFlagAlive = 1;
+const uint32_t EntityFlagCorpse = 1;
 const uint32_t EntityIsNpc = 1 << 1;
 const uint32_t EntityIsMercenary = 1 << 2;
 const uint32_t EntityFlagIsPet = 1 << 3;

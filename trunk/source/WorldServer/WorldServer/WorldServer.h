@@ -41,7 +41,7 @@ public:
 
 	using loginSI = OP_LoginReplyMsg_Packet::ClassItem::StartingItem;
 	std::map<uint8_t, std::vector<loginSI> > NormalEquipment;
-	std::map<uint8_t, std::vector<loginSI> > LVL90Equipment;
+	std::map<uint8_t, std::vector<loginSI> > HeroicEquipment;
 	std::map<uint8_t, std::vector<loginSI> > TLEquipment;
 protected:
 	std::shared_ptr<Stream> GetNewStream(unsigned int ip, unsigned short port) override;

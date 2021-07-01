@@ -19,8 +19,9 @@ const uint32_t POS_STATE_SITTING = 1 << 6;
 const uint32_t POS_STATE_ON_GROUND = 1 << 7;
 const uint32_t POS_STATE_ON_TRANSPORT = 1 << 8;
 const uint32_t POS_STATE_CROUCHING = 1 << 9;
-//Not sure what this is but *most* npcs have it
-const uint32_t POS_STATE_UNKNOWN = 1 << 14;
+//Somewhat guessing this is to enable gravity with the next bit being a temporary override for spawns who use it
+//MOST NPCs use this where static objects are often sent as in flymode this this bit cleared
+const uint32_t POS_STATE_SIMULATE_GRAVITY = 1 << 14;
 const uint32_t POS_STATE_DISABLE_GRAVITY = 1 << 15;
 
 struct vec3 {
@@ -150,7 +151,8 @@ public:
 	void RegisterElements() override;
 
 	void WriteElement(unsigned char* outbuf, uint32_t& offset) override;
-	bool ReadElement(const unsigned char* buf, uint32_t& offset, uint32_t bufsize) override;
+
+	void PostRead() override;
 };
 
 ///<summary>Packet struct containing the "viewer specific" variables which change depending on the client</summary>
@@ -186,10 +188,6 @@ struct SpawnVisualizationStruct {
 	uint32_t CalculateCRC();
 	void DetermineForClient(const std::shared_ptr<class Client>& client, const std::shared_ptr<class Spawn>& spawn);
 
-private:
-	void SetVisualFlags(const std::shared_ptr<class Client>& client, const std::shared_ptr<class Spawn>& spawn, const std::shared_ptr<class Entity>& player);
-	void SetConLevel(const std::shared_ptr<class Spawn>& spawn, const std::shared_ptr<class Entity>& player);
-
 	static const uint16_t VIS_FLAG_GROUPED_WITH_PLAYER = 1 << 0;
 	static const uint16_t VIS_FLAG_SHOW_COMMAND_ICON = 1 << 1;
 	static const uint16_t VIS_FLAG_TARGETABLE = 1 << 2;
@@ -199,6 +197,9 @@ private:
 	static const uint16_t VIS_FLAG_ATTACKABLE = 1 << 6;
 	static const uint16_t VIS_FLAG_HAS_AA_EXP = 1 << 8;
 
+private:
+	void SetVisualFlags(const std::shared_ptr<class Client>& client, const std::shared_ptr<class Spawn>& spawn, const std::shared_ptr<class Entity>& player);
+	void SetConLevel(const std::shared_ptr<class Spawn>& spawn, const std::shared_ptr<class Entity>& player);
 };
 
 class Substruct_SpawnVisualization : public SpawnVisualizationStruct, public PacketEncodedData {

@@ -267,7 +267,7 @@ void ZoneDatabase::ProcessNpcResult(DatabaseResult& result, const std::shared_pt
 	uint32_t i = ProcessSpawnTableFields(npc, result);
 
 	//Default for most npcs
-	npc->EnablePositionState(POS_STATE_UNKNOWN | ((npc->GetPosStruct()->positionState & POS_STATE_DISABLE_GRAVITY) ? 0 : POS_STATE_ON_GROUND) );
+	npc->EnablePositionState(POS_STATE_SIMULATE_GRAVITY | ((npc->GetPosStruct()->positionState & POS_STATE_DISABLE_GRAVITY) ? 0 : POS_STATE_ON_GROUND) );
 
 	npc->SetLevel(result.GetUInt8(i++));
 	npc->SetOrigLevel(npc->GetAdventureLevel());

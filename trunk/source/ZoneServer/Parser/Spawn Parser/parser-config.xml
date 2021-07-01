@@ -1,0 +1,141 @@
+<eq2emu>	
+    <!-- Credentials to use to connect to the MySQL server -->
+    <database host="127.0.0.1" port="3306" user="eq2emu" password="eq2emu" database="eq2parser" />
+    
+    <!-- Logging -->
+    <logging format="text" split="false" pid="false">
+        <category name="Init">
+            <type name="Info" color="WhiteBold" level="0" enabled="true" logs="3" />
+            <type name="Error" color="RedBold" level="0" enabled="true" logs="3" />
+            <type name="Warn" color="YellowBold" level="0" enabled="true" logs="3" />
+            <type name="Debug" color="GreenBold" level="0" enabled="true" logs="3" />
+            <type name="Trace" color="Yellow" level="0" enabled="true" logs="3" />
+        </category>
+        <category name="Signal">
+            <type name="Info" color="WhiteBold" level="0" enabled="true" logs="3" />
+            <type name="Error" color="RedBold" level="0" enabled="true" logs="3" />
+            <type name="Warn" color="YellowBold" level="0" enabled="true" logs="3" />
+            <type name="Debug" color="GreenBold" level="0" enabled="true" logs="3" />
+            <type name="Trace" color="Yellow" level="0" enabled="true" logs="3" />
+        </category>
+        <category name="TCP">
+            <type name="Info" color="WhiteBold" level="0" enabled="true" logs="3" />
+            <type name="Error" color="RedBold" level="0" enabled="true" logs="3" />
+            <type name="Warn" color="YellowBold" level="0" enabled="true" logs="3" />
+            <type name="Debug" color="GreenBold" level="0" enabled="true" logs="3" />
+            <type name="Trace" color="Yellow" level="0" enabled="true" logs="3" />
+        </category>
+        <category name="Packet">
+            <type name="Info" color="WhiteBold" level="0" enabled="true" logs="3" />
+            <type name="Error" color="RedBold" level="0" enabled="true" logs="3" />
+            <type name="Warn" color="YellowBold" level="0" enabled="true" logs="3" />
+            <type name="Debug" color="GreenBold" level="0" enabled="true" logs="3" />
+            <type name="Trace" color="Yellow" level="0" enabled="true" logs="3" />
+        </category>
+        <category name="CPI">
+            <type name="Info" color="WhiteBold" level="0" enabled="true" logs="3" />
+            <type name="Error" color="RedBold" level="0" enabled="true" logs="3" />
+            <type name="Warn" color="YellowBold" level="0" enabled="true" logs="3" />
+            <type name="Debug" color="GreenBold" level="0" enabled="true" logs="3" />
+            <type name="Trace" color="Yellow" level="0" enabled="true" logs="3" />
+        </category>
+        <category name="IO">
+            <type name="Info" color="WhiteBold" level="0" enabled="true" logs="3" />
+            <type name="Error" color="RedBold" level="0" enabled="true" logs="3" />
+            <type name="Warn" color="YellowBold" level="0" enabled="true" logs="3" />
+            <type name="Debug" color="GreenBold" level="0" enabled="true" logs="3" />
+            <type name="Trace" color="Yellow" level="0" enabled="true" logs="3" />
+        </category>
+        <category name="Config">
+            <type name="Info" color="WhiteBold" level="0" enabled="true" logs="3" />
+            <type name="Error" color="RedBold" level="0" enabled="true" logs="3" />
+            <type name="Warn" color="YellowBold" level="0" enabled="true" logs="3" />
+            <type name="Debug" color="GreenBold" level="0" enabled="true" logs="3" />
+            <type name="Trace" color="Yellow" level="0" enabled="true" logs="3" />
+        </category>
+        <category name="Database">
+            <type name="Info" color="WhiteBold" level="0" enabled="true" logs="3" />
+            <type name="Error" color="RedBold" level="0" enabled="true" logs="3" />
+            <type name="Warn" color="YellowBold" level="0" enabled="true" logs="3" />
+            <type name="Debug" color="GreenBold" level="0" enabled="true" logs="3" />
+            <type name="Trace" color="Yellow" level="0" enabled="true" logs="3" />
+        </category>
+        <category name="Thread">
+            <type name="Info" color="WhiteBold" level="0" enabled="true" logs="3" />
+            <type name="Error" color="RedBold" level="0" enabled="true" logs="3" />
+            <type name="Warn" color="YellowBold" level="0" enabled="true" logs="3" />
+            <type name="Debug" color="GreenBold" level="0" enabled="true" logs="3" />
+            <type name="Trace" color="Yellow" level="0" enabled="true" logs="3" />
+        </category>
+        <category name="Net">
+            <type name="Info" color="WhiteBold" level="0" enabled="true" logs="3" />
+            <type name="Error" color="RedBold" level="0" enabled="true" logs="3" />
+            <type name="Warn" color="YellowBold" level="0" enabled="true" logs="3" />
+            <type name="Debug" color="GreenBold" level="0" enabled="true" logs="3" />
+            <type name="Trace" color="Yellow" level="0" enabled="true" logs="3" />
+        </category>
+        <category name="General">
+            <type name="Info" color="WhiteBold" level="0" enabled="true" logs="3" />
+            <type name="Error" color="RedBold" level="0" enabled="true" logs="3" />
+            <type name="Warn" color="YellowBold" level="0" enabled="true" logs="3" />
+            <type name="Debug" color="GreenBold" level="0" enabled="true" logs="3" />
+            <type name="Trace" color="Yellow" level="0" enabled="true" logs="3" />
+        </category>
+        <category name="Console">
+            <type name="Info" color="WhiteBold" level="0" enabled="true" logs="3" />
+            <type name="Error" color="RedBold" level="0" enabled="true" logs="3" />
+            <type name="Warn" color="YellowBold" level="0" enabled="true" logs="3" />
+            <type name="Debug" color="GreenBold" level="0" enabled="true" logs="3" />
+            <type name="Trace" color="Yellow" level="0" enabled="true" logs="3" />
+        </category>
+        <category name="Rules">
+            <type name="Info" color="WhiteBold" level="0" enabled="true" logs="3" />
+            <type name="Error" color="RedBold" level="0" enabled="true" logs="3" />
+            <type name="Warn" color="YellowBold" level="0" enabled="true" logs="3" />
+            <type name="Debug" color="GreenBold" level="0" enabled="true" logs="3" />
+            <type name="Trace" color="Yellow" level="0" enabled="true" logs="3" />
+        </category>
+        <category name="Command">
+            <type name="Info" color="WhiteBold" level="0" enabled="true" logs="3" />
+            <type name="Error" color="RedBold" level="0" enabled="true" logs="3" />
+            <type name="Warn" color="YellowBold" level="0" enabled="true" logs="3" />
+            <type name="Debug" color="GreenBold" level="0" enabled="true" logs="3" />
+            <type name="Trace" color="Yellow" level="0" enabled="true" logs="3" />
+        </category>
+        <category name="Parser">
+            <type name="Info" color="WhiteBold" level="0" enabled="true" logs="3" />
+            <type name="Error" color="RedBold" level="0" enabled="true" logs="3" />
+            <type name="Warn" color="YellowBold" level="0" enabled="true" logs="3" />
+            <type name="Debug" color="GreenBold" level="0" enabled="true" logs="3" />
+            <type name="Trace" color="Yellow" level="0" enabled="true" logs="3" />
+        </category>
+		<category name="Chat">
+            <type name="Info" color="WhiteBold" level="0" enabled="true" logs="3" />
+            <type name="Error" color="RedBold" level="0" enabled="true" logs="3" />
+            <type name="Warn" color="YellowBold" level="0" enabled="true" logs="3" />
+            <type name="Debug" color="GreenBold" level="0" enabled="true" logs="3" />
+            <type name="Trace" color="Yellow" level="0" enabled="true" logs="3" />
+        </category>
+        <category name="Stats">
+            <type name="Info" color="WhiteBold" level="0" enabled="true" logs="3" />
+            <type name="Error" color="RedBold" level="0" enabled="true" logs="3" />
+            <type name="Warn" color="YellowBold" level="0" enabled="true" logs="3" />
+            <type name="Debug" color="GreenBold" level="0" enabled="true" logs="3" />
+            <type name="Trace" color="Yellow" level="0" enabled="true" logs="3" />
+        </category>
+        <category name="Patch">
+            <type name="Info" color="WhiteBold" level="0" enabled="true" logs="3" />
+            <type name="Error" color="RedBold" level="0" enabled="true" logs="3" />
+            <type name="Warn" color="YellowBold" level="0" enabled="true" logs="3" />
+            <type name="Debug" color="GreenBold" level="0" enabled="true" logs="3" />
+            <type name="Trace" color="Yellow" level="0" enabled="true" logs="3" />
+        </category>
+		<category name="Mutex">
+            <type name="Info" color="WhiteBold" level="0" enabled="true" logs="3" />
+            <type name="Error" color="RedBold" level="0" enabled="true" logs="3" />
+            <type name="Warn" color="YellowBold" level="0" enabled="true" logs="3" />
+            <type name="Debug" color="GreenBold" level="0" enabled="true" logs="3" />
+            <type name="Trace" color="Yellow" level="0" enabled="true" logs="3" />
+        </category>
+    </logging>
+</eq2emu>

@@ -55,7 +55,7 @@ void Client::SendLoginReply(uint8_t reply) {
 		r->ClassFlag = GetAllowedClasses();
 
 		if (GetVersion() >= 67650) {
-			//They moved the 2 8 byte bitflags below to 9 byte elements but array of byte
+			//1 << 59 bit is prison server flag enabled
 			static const unsigned char unk4Bytes[] = { 0x7F, 0xFF, 0xF8, 0x90, 0x44, 0x94, 0x00, 0x10, 0x10 };
 			static const unsigned char unk7Bytes[] = { 0x7F, 0xFF, 0xFF, 0xF6, 0xFF, 0xFF, 0xFF, 0xFF, 0xFE };
 
@@ -88,14 +88,14 @@ void Client::SendLoginReply(uint8_t reply) {
 		}
 
 		// Equipment shown during heroic (lvl 90) character creation
-		r->Unknown12 = 1;
-		for (itr = s->LVL90Equipment.begin(); itr != s->LVL90Equipment.end(); itr++) {
+		r->bHasHeroicItems = true;
+		for (itr = s->HeroicEquipment.begin(); itr != s->HeroicEquipment.end(); itr++) {
 			OP_LoginReplyMsg_Packet::ClassItem ci;
 			ci.ClassID = itr->first;
 			for (itr2 = itr->second.begin(); itr2 != itr->second.end(); itr2++)
 				ci.StartingItems.push_back(*itr2);
 
-			r->LVL90ClassItems.push_back(ci);
+			r->HeroicClassItems.push_back(ci);
 		}
 
 		// Equipment shown during time locked character creation

@@ -67,7 +67,7 @@ struct Substruct_MovementData : public PacketEncodedData, public SpawnPositionSt
 			RegisterFloat(unk70);
 			RegisterUInt8(movementMode);
 			RegisterUInt8(unkByte);
-			static uint16_t align_trash;
+			static uint16_t align_trash = 0;
 			RegisterUInt16(align_trash);
 		}
 		RegisterUInt32(grid_id);

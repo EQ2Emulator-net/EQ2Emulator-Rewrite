@@ -17,6 +17,7 @@ public:
 	uint32_t CreateItemSet(std::string name, bool bPvp, int16_t level);
 	uint32_t CreateItemSetBonus(uint32_t set_id, uint32_t index, uint32_t items_needed);
 	uint32_t LoadNextItemID();
+	uint32_t LoadNextSpawnID();
 
 	static ParserDatabase* GetGlobal() { static ParserDatabase g_database; return &g_database; }
 };

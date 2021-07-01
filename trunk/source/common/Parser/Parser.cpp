@@ -52,6 +52,7 @@ Parser::Parser(int argc, char** argv) : database(*ParserDatabase::GetGlobal()) {
 
 void Parser::InitDatabase() {
 	database.Start();
+	database.LoadOpcodes();
 }
 
 std::optional<PacketLog> Parser::PopNextLog() {
@@ -61,6 +62,7 @@ std::optional<PacketLog> Parser::PopNextLog() {
 		ret.emplace(log_names.back());
 		log_names.pop_back();
 
+		LogInfo(LOG_PARSER, 0, "Processing log %s", ret->filename.c_str());
 		if (ret->TransformPackets()) break;
 		ret.reset();
 	}

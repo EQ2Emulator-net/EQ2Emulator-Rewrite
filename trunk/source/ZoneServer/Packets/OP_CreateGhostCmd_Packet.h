@@ -28,6 +28,19 @@ public:
 		}
 	}
 
+	void PostRead() override {
+		//This is for the parser
+		if (packedData.lastPackedSize != 0) {
+			pos.DecodedRead();
+			vis.DecodedRead();
+			info.DecodedRead();
+
+			pos.PostRead();
+			vis.PostRead();
+			info.PostRead();
+		}
+	}
+
 	virtual void InsertSpawnData(const std::shared_ptr<Client>& client, const std::shared_ptr<Spawn>& spawn, uint16_t index) {
 		SetHeaderData(client, spawn, index, client->GetIDForSpawn(spawn));
 		pos.InsertSpawnData(client, spawn);

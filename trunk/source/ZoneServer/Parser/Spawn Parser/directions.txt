@@ -1,0 +1,57 @@
+1. Setup your database username/password as well as the parsing database you're using in parser-config.xml.
+
+2. Import tables.sql to your parsing database (this should be different from your world database).
+
+3. Your parsing database requires an opcodes table with data. Import a copy into that database.
+
+4. Put packet logs into the SpawnLogs directory.
+
+5. Run parse_spawns.bat to perform a parse.
+
+6. To clear any parsed data, run the following query ON YOUR PARSING DATABASE (don't nuke your world!!!):
+
+DELETE FROM `YOURPARSERDB`.`spawn` WHERE 1;
+
+7. To export a parsed spawn, find your desired raw spawn in the parser's spawn table. Update the spawn ID to the desired new ID for your world.
+This will update all related entries as well.
+
+Export the rows for different spawns as follows:
+
+spawn table for everything
+
+other tables with the corresponding spawn_id as follows for each type
+-------------------------------------
+NPC
+spawn_npcs -> npc_appearance -> npc_appearance_equip
+--------------------------------------
+Sign
+spawn_signs
+--------------------------------------
+Object
+spawn_objects
+---------------------------------------
+Widget
+spawn_widgets
+---------------------------------------
+Ground Spawn (harvests)
+spawn_ground
+
+
+IF working locally you may move spawns via this script instead:
+
+*********************************
+
+SET @parseDB = 'YOURPARSERDB';
+SET @targetDB = 'YOURWORLDDBNAME';
+SET @spawnID = 1337;
+
+INSERT INTO `@targetDB`.`spawn` SELECT * FROM `@parseDB`.`spawn` WHERE `spawn_id` = @spawnID;
+INSERT INTO `@targetDB`.`spawn_npcs` SELECT * FROM `@parseDB`.`spawn_npcs` WHERE `spawn_id` = @spawnID;
+INSERT INTO `@targetDB`.`npc_appearance` (spawn_id, signed_value, `type`, red, green, blue) SELECT spawn_id, signed_value, `type`, red, green, blue FROM `@parseDB`.`npc_appearance` WHERE `spawn_id` = @spawnID;
+INSERT INTO `@targetDB`.`npc_appearance_equip` (spawn_id, slot_id, equip_type, red, green, blue, highlight_red, highlight_green, highlight_blue) SELECT spawn_id, slot_id, equip_type, red, green, blue, highlight_red, highlight_green, highlight_blue FROM `@parseDB`.`npc_appearance_equip` WHERE `spawn_id` = @spawnID;
+INSERT INTO `@targetDB`.`spawn_widgets` SELECT * FROM `@parseDB`.`spawn_widgets` WHERE `spawn_id` = @spawnID;
+INSERT INTO `@targetDB`.`spawn_objects` SELECT * FROM `@parseDB`.`spawn_objects` WHERE `spawn_id` = @spawnID;
+INSERT INTO `@targetDB`.`spawn_signs` SELECT * FROM `@parseDB`.`spawn_signs` WHERE `spawn_id` = @spawnID;
+INSERT INTO `@targetDB`.`spawn_ground` SELECT * FROM `@parseDB`.`spawn_ground` WHERE `spawn_id` = @spawnID;
+
+**********************************
