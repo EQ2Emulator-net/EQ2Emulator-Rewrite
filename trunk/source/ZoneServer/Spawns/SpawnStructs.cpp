@@ -97,6 +97,9 @@ void Substruct_SpawnVisualization::RegisterElements() {
 	if (version < 60055 && (version == 936 || version >= 1188)) {
 		RegisterUInt8(unknown2)->SetCount(4);
 	}
+	else if (version == 1008) {
+		RegisterUInt8(unknown2);
+	}
 	else if (version == 955) {
 		RegisterUInt8(unknown2)->SetCount(3);
 	}
@@ -243,15 +246,19 @@ void Substruct_SpawnPosition::RegisterElements() {
 		RegisterInt16(destY2_compressed);
 		RegisterInt16(destZ2_compressed);
 	}
-	RegisterInt16(desiredHeadingVelocity_compressed);
+	if (GetVersion() >= 1096) {
+		RegisterInt16(desiredHeadingVelocity_compressed);
+	}
 	RegisterInt16(speedModifier_compressed);
-	if (GetVersion() > 283) {
+	if (GetVersion() >= 1096) {
 		RegisterInt16(airSpeed_compressed);
 	}
 	RegisterInt16(swimmingSpeedMultiplier_compressed);
 	RegisterInt16(desiredStrafeSpeed_compressed);
-	RegisterInt16(desiredVertSpeed_compressed);
-	RegisterInt16(unkSpeed3_compressed);
+	if (GetVersion() >= 1096) {
+		RegisterInt16(desiredVertSpeed_compressed);
+		RegisterInt16(unkSpeed3_compressed);
+	}
 	if (GetVersion() > 283) {
 		RegisterInt16(desiredRoll_compressed);
 		RegisterInt16(desiredRollVelocity_compressed);
@@ -306,14 +313,12 @@ void Substruct_SpawnPosition::WriteElement(unsigned char* outbuf, uint32_t& offs
 	desiredHeading = tmpDesiredHeading;
 }
 
-bool Substruct_SpawnPosition::ReadElement(const unsigned char* buf, uint32_t& offset, uint32_t bufsize) {
-	bool ret = PacketEncodedData::ReadElement(buf, offset, bufsize);
+void Substruct_SpawnPosition::PostRead() {
 	DecompressData();
 
 	//Convert the heading values to something we use
 	heading += 180.f;
 	desiredHeading += 180.f;
-	return ret;
 }
 
 void Substruct_SpawnInfo::RegisterElements() {
@@ -641,6 +646,11 @@ void Substruct_SpawnInfo::RegisterElements() {
 		else if ((version >= 1096 && version < 1188) || version >= 57080) {
 			RegisterUInt8(unknown17)->SetCount(4);
 		}
+		else if (version == 1008) {
+			uint8_t g_sfunk[12] = { 0 };
+			uint8_t& sfunk = g_sfunk[0];
+			RegisterUInt8(sfunk)->SetCount(12);
+		}
 		RegisterUInt8(visual_flag);
 		RegisterUInt8(interaction_flag);
 
@@ -803,13 +813,13 @@ void Substruct_SpawnInfo::PreWrite() {
 		if (version < 1188) {
 			//Some entity flags moved over one when they added mercs, shift those flags back one
 			entity_flags_pre_write = entityFlags;
-			//Save the alive and npc flag because those didn't move
-			uint32_t tmp = entityFlags & (EntityFlagAlive | EntityIsNpc);
-			//Drop alive, npc and mercenary
-			entityFlags &= ~(EntityFlagAlive | EntityIsNpc | EntityIsMercenary);
+			//Save the corpse and npc flag because those didn't move
+			uint32_t tmp = entityFlags & (EntityFlagCorpse | EntityIsNpc);
+			//Drop corpse, npc and mercenary
+			entityFlags &= ~(EntityFlagCorpse | EntityIsNpc | EntityIsMercenary);
 			//Shift remaining
 			entityFlags >>= 1;
-			//Add back alive/npc
+			//Add back corpse/npc
 			entityFlags |= tmp;
 		}
 	}

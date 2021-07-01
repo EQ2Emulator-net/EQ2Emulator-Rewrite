@@ -101,3 +101,13 @@ uint32_t ParserDatabase::LoadNextItemID() {
 
 	return res.GetUInt32(0);
 }
+
+uint32_t ParserDatabase::LoadNextSpawnID() {
+	DatabaseResult res;
+
+	Select(&res, "SELECT IF(COUNT(id) = 0, 1, MAX(id)+1) as id FROM `spawn`;");
+
+	assert(res.Next());
+
+	return res.GetUInt32(0);
+}

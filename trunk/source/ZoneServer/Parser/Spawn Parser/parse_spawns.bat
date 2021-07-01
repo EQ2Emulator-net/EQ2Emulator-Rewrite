@@ -1,0 +1,1 @@
+ZoneServer.exe --parse -spawns LOGFILE_REGEX(SpawnLogs/.*\.log)

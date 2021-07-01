@@ -29,6 +29,8 @@ public:
 		encodingBuf = buf;
 	}
 
+	bool DecodedRead();
+
 private:
 	std::shared_ptr<EncodedBuffer> encodingBuf;
 	std::vector<unsigned char> buf;

@@ -32,7 +32,7 @@ public:
 		NumClassItems = 0;
 		UnknownArraySize = 0;
 		Unknown11 = 0;
-		SubscriptionLevel = ~2;
+		SubscriptionLevel = 2;
 		RaceFlag = 0;
 		ClassFlag = 0;
 		//Password = "";
@@ -40,11 +40,13 @@ public:
 		//Service = "";
 
 		// 60100 elements
-		Unknown12 = 0;
-		LVL90NumClassItems = 0;
+		bHasHeroicItems = false;
+		NumHeroicClassItems = 0;
 		Unknown13 = 0;
 		TimeLockedNumClassItems = 0;
 		memset(Unknown14, 0, sizeof(Unknown14));
+		//This enables the pvp event server char create option, not sure what else
+		bLaunchpadLogin = true;
 
 		RegisterElements();
 	}
@@ -137,9 +139,9 @@ public:
 	std::string Username;
 	std::string Service; //1188
 
-	uint8_t Unknown12;
-	uint8_t LVL90NumClassItems;
-	std::vector<ClassItem> LVL90ClassItems;
+	bool bHasHeroicItems;
+	uint8_t NumHeroicClassItems;
+	std::vector<ClassItem> HeroicClassItems;
 
 	uint8_t Unknown13;
 	uint8_t TimeLockedNumClassItems;
@@ -150,6 +152,8 @@ public:
 	//Arrays of byte
 	std::string bolUnknown4;
 	std::string bolUnknown7;
+
+	bool bLaunchpadLogin;
 
 private:
 	void RegisterElements() {
@@ -197,10 +201,10 @@ private:
 			Register16String(Service); // service
 
 		if (GetVersion() >= 60100) {
-			auto u12 = RegisterUInt8(Unknown12);
-			asize = RegisterUInt8(LVL90NumClassItems);
+			auto u12 = RegisterBool(bHasHeroicItems);
+			asize = RegisterUInt8(NumHeroicClassItems);
 			asize->SetIsVariableSet(u12);
-			asize->SetMyArray(RegisterArray(LVL90ClassItems, ClassItem));
+			asize->SetMyArray(RegisterArray(HeroicClassItems, ClassItem));
 
 			auto u13 = RegisterUInt8(Unknown13);
 			asize = RegisterUInt8(TimeLockedNumClassItems);
@@ -208,7 +212,8 @@ private:
 			asize->SetMyArray(RegisterArray(TimeLockedClassItems, ClassItem));
 
 			RescopeArrayElement(Unknown14);
-			RegisterUInt8(Unknown14)->SetCount(13);
+			RegisterUInt8(Unknown14)->SetCount(9);
+			RegisterBool(bLaunchpadLogin);
 		}
 	}
 };

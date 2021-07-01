@@ -69,6 +69,59 @@
 		<Data ElementName="legsAsset" Substruct="Substruct_CharacterCustomization_Asset" Size="1"/>
 		<Data ElementName="sliderFloats" Type="float" Size="26"/>
 	</Struct>
+	<Struct Name="Substruct_WorldListEntry" ClientVersion="1">
+		<Data ElementName="ID" Type="int32" Size="1"/>
+		<Data ElementName="Name" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="bServerUp" Type="bool" Size="1"/>
+		<Data ElementName="Locked" Type="int8" Size="1"/>
+		<Data ElementName="NumPlayers" Type="int8" Size="1"/>
+		<Data ElementName="NumOnlineFlag" Type="int8" Size="1"/>
+	</Struct>
+	<Struct Name="Substruct_WorldListEntry" ClientVersion="284">
+		<Data ElementName="ID" Type="int32" Size="1"/>
+		<Data ElementName="Name" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Name2" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="bServerUp" Type="bool" Size="1"/>
+		<Data ElementName="Locked" Type="int8" Size="1"/>
+		<Data ElementName="Hidden" Type="int8" Size="1"/>
+		<Data ElementName="Unknown" Type="int8" Size="1"/>
+		<Data ElementName="NumPlayers" Type="int8" Size="1"/>
+		<Data ElementName="Index" Type="int16" Size="1"/>
+		<Data ElementName="NumOnlineFlag" Type="int8" Size="1"/>
+		<Data ElementName="Unk2" Type="int8" Size="1"/>
+		<Data ElementName="Flags" Type="int8" Size="1"/>
+		<Data ElementName="AllowedRaces" Type="int32" Size="1"/>
+	</Struct>
+	<Struct Name="Substruct_WorldListEntry" ClientVersion="60100">
+		<Data ElementName="ID" Type="int32" Size="1"/>
+		<Data ElementName="Name" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Name2" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="bServerUp" Type="bool" Size="1"/>
+		<Data ElementName="Locked" Type="int8" Size="1"/>
+		<Data ElementName="Hidden" Type="int8" Size="1"/>
+		<Data ElementName="Unknown" Type="int8" Size="1"/>
+		<Data ElementName="NumPlayers" Type="int8" Size="1"/>
+		<Data ElementName="Index" Type="int16" Size="1"/>
+		<Data ElementName="NumOnlineFlag" Type="int8" Size="1"/>
+		<Data ElementName="Unk2" Type="int8" Size="1"/>
+		<Data ElementName="Flags" Type="int16" Size="1"/>
+		<Data ElementName="AllowedRaces" Type="int32" Size="1"/>
+	</Struct>
+	<Struct Name="Substruct_WorldListEntry" ClientVersion="67969">
+		<Data ElementName="ID" Type="int32" Size="1"/>
+		<Data ElementName="Name" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Name2" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="bServerUp" Type="bool" Size="1"/>
+		<Data ElementName="Locked" Type="int8" Size="1"/>
+		<Data ElementName="Hidden" Type="int8" Size="1"/>
+		<Data ElementName="Unknown" Type="int8" Size="1"/>
+		<Data ElementName="NumPlayers" Type="int8" Size="1"/>
+		<Data ElementName="Index" Type="int16" Size="1"/>
+		<Data ElementName="NumOnlineFlag" Type="int8" Size="1"/>
+		<Data ElementName="Unk2" Type="int8" Size="1"/>
+		<Data ElementName="Flags" Type="int16" Size="1"/>
+		<Data ElementName="AllowedRaces" Type="int32" Size="1"/>
+	</Struct>
 	<Struct Name="LS_AllCharactersDescReplyMsg" ClientVersion="1" OpcodeName="OP_AllCharactersDescReplyMsg">
 		<Data ElementName="NumCharacters" Type="int8" Size="1"/>
 		<Data ElementName="CharacterList" Type="Array" ArraySizeVariable="NumCharacters">
@@ -329,27 +382,16 @@
 	<Struct Name="LS_AllWSDescRequestMsg" ClientVersion="1" OpcodeName="OP_AllWSDescRequestMsg"/>
 	<Struct Name="LS_WorldListMsg" ClientVersion="1" OpcodeName="OP_WorldListMsg">
 		<Data ElementName="NumWorlds" Type="int8" Size="1"/>
-		<Data ElementName="ID" Type="int32" Size="1"/>
-		<Data ElementName="Name" Type="EQ2_16Bit_String" Size="1"/>
-		<Data ElementName="Tag" Type="int8" Size="1"/>
-		<Data ElementName="Locked" Type="int8" Size="1"/>
-		<Data ElementName="NumPlayers" Type="int16" Size="1"/>
-		<Data ElementName="NumOnlineFlag" Type="int8" Size="1"/>
+		<Data ElementName="worlds" Type="Array" ArraySizeVariable="NumWorlds">
+			<Data ElementName="worlds_data" Substruct="Substruct_WorldListEntry" Size="1"/>
+		</Data>
 	</Struct>
 	<Struct Name="LS_WorldListMsg" ClientVersion="60100" OpcodeName="OP_WorldListMsg">
 		<Data ElementName="NumWorlds" Type="int8" Size="1"/>
-		<Data ElementName="ID" Type="int32" Size="1"/>
-		<Data ElementName="Name" Type="EQ2_16Bit_String" Size="1"/>
-		<Data ElementName="Name2" Type="EQ2_16Bit_String" Size="1"/>
-		<Data ElementName="Tag" Type="int8" Size="1"/>
-		<Data ElementName="Locked" Type="int8" Size="1"/>
-		<Data ElementName="Hidden" Type="int8" Size="1"/>
-		<Data ElementName="Unknown" Type="int8" Size="1"/>
-		<Data ElementName="NumPlayers" Type="int16" Size="1"/>
-		<Data ElementName="Load" Type="int8" Size="1"/>
-		<Data ElementName="NumOnlineFlag" Type="int8" Size="1"/>
-		<Data ElementName="FeatureSet" Type="int8" Size="2"/>
-		<Data ElementName="AllowedRaces" Type="int32" Size="1"/>
+		<Data ElementName="worlds" Type="Array" ArraySizeVariable="NumWorlds">
+			<Data ElementName="worlds_data" Substruct="Substruct_WorldListEntry" Size="1"/>
+		</Data>
+		<Data ElementName="Unknown2" Type="int8" Size="1"/>
 	</Struct>
 	<Struct Name="LS_DeleteCharacterReplyMsg" ClientVersion="283" OpcodeName="OP_DeleteCharacterReplyMsg">
 		<Data ElementName="response" Type="int8" Size="1"/>

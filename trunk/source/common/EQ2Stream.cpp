@@ -84,7 +84,8 @@ void EQ2Stream::Process(const unsigned char* data, unsigned int length) {
 	}
 	//Randomly the client sends an EQ2Packet without a protocol opcode after logging into a zone
 	//Attempt to handle it or else our encryption will desync
-	else if (ntohs(*reinterpret_cast<const uint16_t*>(data)) > 0x1e) {
+	//We didn't handle the opcode and we handle pretty much everything the client normally sends, so assume it is bad
+	else { //if (ntohs(*reinterpret_cast<const uint16_t*>(data)) > 0x1e) {
 		//Possible garbage packet? Try to decrypt it
 		LogWarn(LOG_PACKET, 0, "Received an out of protocol packet, trying to process it.");
 		uint32_t pSize = length - 2;
@@ -96,6 +97,9 @@ void EQ2Stream::Process(const unsigned char* data, unsigned int length) {
 				InboundQueuePush(newpacket);
 			}
 		}
+		//TODO: if this packet is the same thing each time (thinking paperdoll), test the bytes by
+		//decrypting some of them without changing the state of the cipher, to test if this may be garbage
+		DumpBytes(pData, pSize, "Garbage Packet");
 		delete[] pData;
 	}
 }
@@ -338,7 +342,7 @@ void EQ2Stream::ProcessPacket(ProtocolPacket* p) {
 		break;
 	}
 	case OP_OutOfSession: {
-		LogTrace(LOG_NET, 0, "OutOfSession packet");
+		LogTrace(LOG_NET, 1, "OutOfSession packet");
 		//Client is telling us to fk off and not send anything else
 		State = EQStreamState::CLIENTCONFIRMEDCLOSED;
 		break;

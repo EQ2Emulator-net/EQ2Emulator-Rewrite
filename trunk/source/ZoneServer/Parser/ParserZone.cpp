@@ -4,6 +4,7 @@
 #include "../../common/log.h"
 #include "LogItemsParser.h"
 #include "LogAppearancesParser.h"
+#include "LogSpawnsParser.h"
 
 #include "../Packets/OP_EqUpdateMerchantCmd_Packet.h"
 
@@ -32,6 +33,9 @@ void ParserZone::ProcessLogs() {
 			}
 			else if (opt == "-prices") {
 				ProcessMerchantPrices(*log);
+			}
+			else if (opt == "-spawns") {
+				ProcessSpawns(*log);
 			}
 		}
 	}
@@ -63,9 +67,14 @@ void ParserZone::ProcessMerchantPrices(PacketLog& log) {
 			row.m_tableName = "raw_sell_prices";
 			row.RegisterField("soe_item_id_unsigned", itr.itemID);
 			row.RegisterField("price", itr.price);
+			row.RegisterField("status", itr.status2);
 			lp.QueueRowInsert(row);
 		}
 	}
 
 	lp.DoInsertsForTable("raw_sell_prices", 250, true);
+}
+
+void ParserZone::ProcessSpawns(PacketLog& log) {
+	LogSpawnsParser processor(log, database);
 }

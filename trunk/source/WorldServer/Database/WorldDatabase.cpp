@@ -1029,7 +1029,7 @@ bool WorldDatabase::LoadServerConfig(WorldServer* s) {
 		si.ModelHighlightColor.Green = result.GetUInt8(11);
 		si.ModelHighlightColor.Blue = result.GetUInt8(12);
 
-		s->LVL90Equipment[class_id].push_back(si);
+		s->HeroicEquipment[class_id].push_back(si);
 	}
 
 	success = Select(&result, "SELECT * FROM character_create_equipment WHERE type = 'Time Locked'");

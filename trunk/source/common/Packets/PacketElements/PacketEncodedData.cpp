@@ -19,6 +19,11 @@ void PacketEncodedData::EncodeData() {
 	encodingBuf->Encode(buf.data(), element_size);
 }
 
+bool PacketEncodedData::DecodedRead() {
+	uint32_t tmp = 0;
+	return PacketSubstruct::ReadElement(buf.data(), tmp, static_cast<uint32_t>(buf.size()));
+}
+
 bool PacketEncodedData::DecodeData(std::shared_ptr<EncodedBuffer>& xorBuf) {
 	if (!b_ready_for_decode) {
 		LogError(LOG_PACKET, 0, "Tried to decode a packet that was not read properly!");
@@ -26,9 +31,8 @@ bool PacketEncodedData::DecodeData(std::shared_ptr<EncodedBuffer>& xorBuf) {
 	}
 	b_ready_for_decode = false;
 
-	uint32_t tmp = 0;
 	xorBuf->Decode(buf.data(), static_cast<uint32_t>(buf.size()));
-	return PacketSubstruct::ReadElement(buf.data(), tmp, static_cast<uint32_t>(buf.size()));
+	return DecodedRead();
 }
 
 bool PacketEncodedData::ReadElement(const unsigned char* srcbuf, uint32_t& offset, uint32_t bufsize) {
@@ -45,6 +49,7 @@ bool PacketEncodedData::ReadElement(const unsigned char* srcbuf, uint32_t& offse
 	}
 
 	memcpy(buf.data(), srcbuf + offset, element_size);
+	offset += element_size;
 	b_ready_for_decode = true;
 	b_size_initialized = false;
 	return true;

@@ -17,11 +17,11 @@ public:
 		// Need this for when we load the server info
 		WorldServer* s = client->GetServer();
 
-		OP_WorldListMsg_Packet* world_list = new OP_WorldListMsg_Packet(client->GetVersion());
-		world_list->Name = s->GetName();
-		world_list->Name2 = s->GetName();
+		OP_WorldListMsg_Packet world_list(client->GetVersion());
+		
+		world_list.worlds[0].Name = s->GetName();
+		world_list.worlds[0].Name2 = s->GetName();
 
-		//uint32_t AllowedRaces = s->GetAllowedRaces();
 		LogWarn(LOG_PACKET, 0, "Sending world reply");
 		client->QueuePacket(world_list);
 	}

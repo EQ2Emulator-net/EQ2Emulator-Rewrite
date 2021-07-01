@@ -227,6 +227,7 @@
     <ClCompile Include="..\..\source\ZoneServer\Packets\ZoneServerSubstructs.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Parser\LogAppearancesParser.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Parser\LogItemsParser.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Parser\LogSpawnsParser.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Parser\PacketLog_Zone.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Parser\ParserZone.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Players\CharacterSheet.cpp" />
@@ -473,6 +474,7 @@
     <ClInclude Include="..\..\source\ZoneServer\Packets\Substruct_SpellEffects.h" />
     <ClInclude Include="..\..\source\ZoneServer\Parser\LogAppearancesParser.h" />
     <ClInclude Include="..\..\source\ZoneServer\Parser\LogItemsParser.h" />
+    <ClInclude Include="..\..\source\ZoneServer\Parser\LogSpawnsParser.h" />
     <ClInclude Include="..\..\source\ZoneServer\Parser\ParserZone.h" />
     <ClInclude Include="..\..\source\ZoneServer\Players\CharacterInventory.h" />
     <ClInclude Include="..\..\source\ZoneServer\Players\CharacterSheet.h" />
