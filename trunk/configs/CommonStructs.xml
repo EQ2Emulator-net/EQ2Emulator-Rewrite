@@ -1,5 +1,5 @@
 <EQ2EmulatorRewrite>
-	<Struct Name="Substruct_NetAppearance" ClientVersion="1">
+	<Struct Name="Substruct_NetAppearance" ClientVersion="283">
 		<Data ElementName="netAppearanceVersion" Type="int8" Size="1"/>
 		<Data ElementName="race_type" Type="int16" Size="1"/>
 		<Data ElementName="skin_color" Type="EQ2_Color" Size="1"/>
@@ -14,6 +14,38 @@
 		<Data ElementName="info_vis_flags" Type="int8" Size="1"/>
 	</Struct>
 	<Struct Name="Substruct_NetAppearance" ClientVersion="284">
+		<Data ElementName="netAppearanceVersion" Type="int8" Size="1"/>
+		<Data ElementName="race_type" Type="int16" Size="1"/>
+		<Data ElementName="skin_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="eye_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="Equip" Type="EQ2_EquipmentItem" Size="24" bShortType="true"/>
+		<Data ElementName="texture_slot_item" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="hair" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="hair_face" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="wings" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="shirt" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="pants" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="sliderBytes" Type="sint8" Size="26"/>
+		<Data ElementName="mount" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="hair_color1" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="hair_color2" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="hair_scatter" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="combat_voice" Type="int16" Size="1"/>
+		<Data ElementName="emote_voice" Type="int16" Size="1"/>
+		<Data ElementName="unkType1" Type="int16" Size="1"/>
+		<Data ElementName="info_vis_flags" Type="int32" Size="1"/>
+		<Data ElementName="soga_race_type" Type="int16" Size="1"/>
+		<Data ElementName="soga_skin_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_eye_color" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="sogaSliderBytes" Type="sint8" Size="26"/>
+		<Data ElementName="soga_hair_color1" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_hair_color2" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_hair_scatter" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="soga_hair" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="soga_hair_face" Type="EQ2_EquipmentItem" Size="1" bShortType="true"/>
+		<Data ElementName="heraldry" Type="int8" Size="7"/>
+	</Struct>
+	<Struct Name="Substruct_NetAppearance" ClientVersion="844">
 		<Data ElementName="netAppearanceVersion" Type="int8" Size="1"/>
 		<Data ElementName="race_type" Type="int16" Size="1"/>
 		<Data ElementName="skin_color" Type="EQ2_Color" Size="1"/>
@@ -223,15 +255,15 @@
 		<Data ElementName="ParentalControlTimer" Type="int64" Size="1"/>
 		<Data ElementName="Unknown2" Type="int32" Size="1"/>
 		<Data ElementName="AccountID" Type="int32" Size="1"/>
-		<Data ElementName="Unknown3" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="trialPopupLink" Type="EQ2_16Bit_String" Size="1"/>
 		<Data ElementName="ResetAppearance" Type="int8" Size="1"/>
 		<Data ElementName="DoNotForceSoga" Type="int8" Size="1"/>
-		<Data ElementName="Unknown4" Type="int64" Size="1"/>
-		<Data ElementName="Unknown7" Type="int64" Size="1"/>
-		<Data ElementName="RaceUnknown" Type="int32" Size="1"/>
+		<Data ElementName="Unknown4" Type="int32" Size="1"/>
+		<Data ElementName="Unknown7" Type="int32" Size="1"/>
+		<Data ElementName="AvailableStartingCities" Type="int32" Size="1"/>
 		<Data ElementName="Unknown8" Type="int8" Size="1"/>
-		<Data ElementName="Unknown10" Type="int8" Size="1"/>
-		<Data ElementName="NumClassItems" Type="int8" Size="1" IfVariableSet="Unknown10"/>
+		<Data ElementName="bUsePacketClassItems" Type="bool" Size="1"/>
+		<Data ElementName="NumClassItems" Type="int8" Size="1" IfVariableSet="bUsePacketClassItems"/>
 		<Data ElementName="ClassItems" Type="Array" ArraySizeVariable="NumClassItems">
 			<Data ElementName="ClassID" Type="int8" Size="1"/>
 			<Data ElementName="NumItems" Type="int8" Size="1"/>
@@ -246,7 +278,73 @@
 		</Data>
 		<Data ElementName="UnknownArraySize" Type="int8" Size="1"/>
 		<Data ElementName="UnknownArray2" Type="Array" ArraySizeVariable="UnknownArraySize">
-			<Data ElementName="Array2Unknown" Type="int32" Size="1"/>
+			<Data ElementName="UnknownArray2_data" Type="int32" Size="1"/>
+		</Data>
+	</Struct>
+	<Struct Name="CS_LoginReplyMsg" ClientVersion="864" OpcodeName="OP_LoginReplyMsg">
+		<Data ElementName="Response" Type="int8" Size="1"/>
+		<Data ElementName="worldName" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="ParentalControlFlag" Type="int8" Size="1"/>
+		<Data ElementName="ParentalControlTimer" Type="int64" Size="1"/>
+		<Data ElementName="Unknown2" Type="int32" Size="1"/>
+		<Data ElementName="AccountID" Type="int32" Size="1"/>
+		<Data ElementName="trialPopupLink" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="ResetAppearance" Type="int8" Size="1"/>
+		<Data ElementName="DoNotForceSoga" Type="int8" Size="1"/>
+		<Data ElementName="Unknown4" Type="int32" Size="1"/>
+		<Data ElementName="Unknown7" Type="int32" Size="1"/>
+		<Data ElementName="AvailableStartingCities" Type="int32" Size="1"/>
+		<Data ElementName="Unknown8" Type="int8" Size="1"/>
+		<Data ElementName="bUsePacketClassItems" Type="bool" Size="1"/>
+		<Data ElementName="NumClassItems" Type="int8" Size="1" IfVariableSet="bUsePacketClassItems"/>
+		<Data ElementName="ClassItems" Type="Array" ArraySizeVariable="NumClassItems">
+			<Data ElementName="ClassID" Type="int8" Size="1"/>
+			<Data ElementName="NumItems" Type="int8" Size="1"/>
+			<Data ElementName="StartingItems" Type="Array" ArraySizeVariable="NumItems">
+				<Data ElementName="ModelID" Type="int16" Size="1"/>
+				<Data ElementName="SlotID" Type="int8" Size="1"/>
+				<Data ElementName="UseColor" Type="int8" Size="1"/>
+				<Data ElementName="UseHighlightColor" Type="int8" Size="1"/>
+				<Data ElementName="ModelColor" Type="EQ2_Color" Size="1"/>
+				<Data ElementName="ModelHighlightColor" Type="EQ2_Color" Size="1"/>
+			</Data>
+		</Data>
+		<Data ElementName="UnknownArraySize" Type="int8" Size="1"/>
+		<Data ElementName="UnknownArray2" Type="Array" ArraySizeVariable="UnknownArraySize">
+			<Data ElementName="UnknownArray2_data" Type="int32" Size="1"/>
+		</Data>
+	</Struct>
+	<Struct Name="CS_LoginReplyMsg" ClientVersion="865" OpcodeName="OP_LoginReplyMsg">
+		<Data ElementName="Response" Type="int8" Size="1"/>
+		<Data ElementName="worldName" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="ParentalControlFlag" Type="int8" Size="1"/>
+		<Data ElementName="ParentalControlTimer" Type="int64" Size="1"/>
+		<Data ElementName="Unknown2" Type="int32" Size="1"/>
+		<Data ElementName="AccountID" Type="int32" Size="1"/>
+		<Data ElementName="trialPopupLink" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="ResetAppearance" Type="int8" Size="1"/>
+		<Data ElementName="DoNotForceSoga" Type="int8" Size="1"/>
+		<Data ElementName="Unknown4" Type="int64" Size="1"/>
+		<Data ElementName="Unknown7" Type="int64" Size="1"/>
+		<Data ElementName="AvailableStartingCities" Type="int32" Size="1"/>
+		<Data ElementName="Unknown8" Type="int8" Size="1"/>
+		<Data ElementName="bUsePacketClassItems" Type="bool" Size="1"/>
+		<Data ElementName="NumClassItems" Type="int8" Size="1" IfVariableSet="bUsePacketClassItems"/>
+		<Data ElementName="ClassItems" Type="Array" ArraySizeVariable="NumClassItems">
+			<Data ElementName="ClassID" Type="int8" Size="1"/>
+			<Data ElementName="NumItems" Type="int8" Size="1"/>
+			<Data ElementName="StartingItems" Type="Array" ArraySizeVariable="NumItems">
+				<Data ElementName="ModelID" Type="int16" Size="1"/>
+				<Data ElementName="SlotID" Type="int8" Size="1"/>
+				<Data ElementName="UseColor" Type="int8" Size="1"/>
+				<Data ElementName="UseHighlightColor" Type="int8" Size="1"/>
+				<Data ElementName="ModelColor" Type="EQ2_Color" Size="1"/>
+				<Data ElementName="ModelHighlightColor" Type="EQ2_Color" Size="1"/>
+			</Data>
+		</Data>
+		<Data ElementName="UnknownArraySize" Type="int8" Size="1"/>
+		<Data ElementName="UnknownArray2" Type="Array" ArraySizeVariable="UnknownArraySize">
+			<Data ElementName="UnknownArray2_data" Type="int32" Size="1"/>
 		</Data>
 		<Data ElementName="Unknown11" Type="int32" Size="1"/>
 		<Data ElementName="SubscriptionLevel" Type="int32" Size="1"/>
@@ -262,15 +360,15 @@
 		<Data ElementName="ParentalControlTimer" Type="int64" Size="1"/>
 		<Data ElementName="Unknown2" Type="int32" Size="1"/>
 		<Data ElementName="AccountID" Type="int32" Size="1"/>
-		<Data ElementName="Unknown3" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="trialPopupLink" Type="EQ2_16Bit_String" Size="1"/>
 		<Data ElementName="ResetAppearance" Type="int8" Size="1"/>
 		<Data ElementName="DoNotForceSoga" Type="int8" Size="1"/>
 		<Data ElementName="Unknown4" Type="int64" Size="1"/>
 		<Data ElementName="Unknown7" Type="int64" Size="1"/>
-		<Data ElementName="RaceUnknown" Type="int32" Size="1"/>
+		<Data ElementName="AvailableStartingCities" Type="int32" Size="1"/>
 		<Data ElementName="Unknown8" Type="int8" Size="1"/>
-		<Data ElementName="Unknown10" Type="int8" Size="1"/>
-		<Data ElementName="NumClassItems" Type="int8" Size="1" IfVariableSet="Unknown10"/>
+		<Data ElementName="bUsePacketClassItems" Type="bool" Size="1"/>
+		<Data ElementName="NumClassItems" Type="int8" Size="1" IfVariableSet="bUsePacketClassItems"/>
 		<Data ElementName="ClassItems" Type="Array" ArraySizeVariable="NumClassItems">
 			<Data ElementName="ClassID" Type="int8" Size="1"/>
 			<Data ElementName="NumItems" Type="int8" Size="1"/>
@@ -285,7 +383,7 @@
 		</Data>
 		<Data ElementName="UnknownArraySize" Type="int8" Size="1"/>
 		<Data ElementName="UnknownArray2" Type="Array" ArraySizeVariable="UnknownArraySize">
-			<Data ElementName="Array2Unknown" Type="int32" Size="1"/>
+			<Data ElementName="UnknownArray2_data" Type="int32" Size="1"/>
 		</Data>
 		<Data ElementName="Unknown11" Type="int32" Size="1"/>
 		<Data ElementName="SubscriptionLevel" Type="int32" Size="1"/>
@@ -301,15 +399,15 @@
 		<Data ElementName="ParentalControlTimer" Type="int64" Size="1"/>
 		<Data ElementName="Unknown2" Type="int32" Size="1"/>
 		<Data ElementName="AccountID" Type="int32" Size="1"/>
-		<Data ElementName="Unknown3" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="trialPopupLink" Type="EQ2_16Bit_String" Size="1"/>
 		<Data ElementName="ResetAppearance" Type="int8" Size="1"/>
 		<Data ElementName="DoNotForceSoga" Type="int8" Size="1"/>
 		<Data ElementName="Unknown4" Type="int64" Size="1"/>
 		<Data ElementName="Unknown7" Type="int64" Size="1"/>
-		<Data ElementName="RaceUnknown" Type="int32" Size="1"/>
+		<Data ElementName="AvailableStartingCities" Type="int32" Size="1"/>
 		<Data ElementName="Unknown8" Type="int8" Size="1"/>
-		<Data ElementName="Unknown10" Type="int8" Size="1"/>
-		<Data ElementName="NumClassItems" Type="int8" Size="1" IfVariableSet="Unknown10"/>
+		<Data ElementName="bUsePacketClassItems" Type="bool" Size="1"/>
+		<Data ElementName="NumClassItems" Type="int8" Size="1" IfVariableSet="bUsePacketClassItems"/>
 		<Data ElementName="ClassItems" Type="Array" ArraySizeVariable="NumClassItems">
 			<Data ElementName="ClassID" Type="int8" Size="1"/>
 			<Data ElementName="NumItems" Type="int8" Size="1"/>
@@ -324,7 +422,7 @@
 		</Data>
 		<Data ElementName="UnknownArraySize" Type="int8" Size="1"/>
 		<Data ElementName="UnknownArray2" Type="Array" ArraySizeVariable="UnknownArraySize">
-			<Data ElementName="Array2Unknown" Type="int32" Size="1"/>
+			<Data ElementName="UnknownArray2_data" Type="int32" Size="1"/>
 		</Data>
 		<Data ElementName="Unknown11" Type="int32" Size="1"/>
 		<Data ElementName="SubscriptionLevel" Type="int32" Size="1"/>
@@ -341,15 +439,15 @@
 		<Data ElementName="ParentalControlTimer" Type="int64" Size="1"/>
 		<Data ElementName="Unknown2" Type="int32" Size="1"/>
 		<Data ElementName="AccountID" Type="int32" Size="1"/>
-		<Data ElementName="Unknown3" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="trialPopupLink" Type="EQ2_16Bit_String" Size="1"/>
 		<Data ElementName="ResetAppearance" Type="int8" Size="1"/>
 		<Data ElementName="DoNotForceSoga" Type="int8" Size="1"/>
 		<Data ElementName="Unknown4" Type="int64" Size="1"/>
 		<Data ElementName="Unknown7" Type="int64" Size="1"/>
-		<Data ElementName="RaceUnknown" Type="int32" Size="1"/>
+		<Data ElementName="AvailableStartingCities" Type="int32" Size="1"/>
 		<Data ElementName="Unknown8" Type="int8" Size="1"/>
-		<Data ElementName="Unknown10" Type="int8" Size="1"/>
-		<Data ElementName="NumClassItems" Type="int8" Size="1" IfVariableSet="Unknown10"/>
+		<Data ElementName="bUsePacketClassItems" Type="bool" Size="1"/>
+		<Data ElementName="NumClassItems" Type="int8" Size="1" IfVariableSet="bUsePacketClassItems"/>
 		<Data ElementName="ClassItems" Type="Array" ArraySizeVariable="NumClassItems">
 			<Data ElementName="ClassID" Type="int8" Size="1"/>
 			<Data ElementName="NumItems" Type="int8" Size="1"/>
@@ -364,7 +462,7 @@
 		</Data>
 		<Data ElementName="UnknownArraySize" Type="int8" Size="1"/>
 		<Data ElementName="UnknownArray2" Type="Array" ArraySizeVariable="UnknownArraySize">
-			<Data ElementName="Array2Unknown" Type="int32" Size="1"/>
+			<Data ElementName="UnknownArray2_data" Type="int32" Size="1"/>
 		</Data>
 		<Data ElementName="Unknown11" Type="int32" Size="1"/>
 		<Data ElementName="SubscriptionLevel" Type="int32" Size="1"/>
@@ -381,15 +479,15 @@
 		<Data ElementName="ParentalControlTimer" Type="int64" Size="1"/>
 		<Data ElementName="Unknown2" Type="int32" Size="1"/>
 		<Data ElementName="AccountID" Type="int32" Size="1"/>
-		<Data ElementName="Unknown3" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="trialPopupLink" Type="EQ2_16Bit_String" Size="1"/>
 		<Data ElementName="ResetAppearance" Type="int8" Size="1"/>
 		<Data ElementName="DoNotForceSoga" Type="int8" Size="1"/>
 		<Data ElementName="Unknown4" Type="int64" Size="1"/>
 		<Data ElementName="Unknown7" Type="int64" Size="1"/>
-		<Data ElementName="RaceUnknown" Type="int32" Size="1"/>
+		<Data ElementName="AvailableStartingCities" Type="int32" Size="1"/>
 		<Data ElementName="Unknown8" Type="int8" Size="1"/>
-		<Data ElementName="Unknown10" Type="int8" Size="1"/>
-		<Data ElementName="NumClassItems" Type="int8" Size="1" IfVariableSet="Unknown10"/>
+		<Data ElementName="bUsePacketClassItems" Type="bool" Size="1"/>
+		<Data ElementName="NumClassItems" Type="int8" Size="1" IfVariableSet="bUsePacketClassItems"/>
 		<Data ElementName="ClassItems" Type="Array" ArraySizeVariable="NumClassItems">
 			<Data ElementName="ClassID" Type="int8" Size="1"/>
 			<Data ElementName="NumItems" Type="int8" Size="1"/>
@@ -404,7 +502,7 @@
 		</Data>
 		<Data ElementName="UnknownArraySize" Type="int8" Size="1"/>
 		<Data ElementName="UnknownArray2" Type="Array" ArraySizeVariable="UnknownArraySize">
-			<Data ElementName="Array2Unknown" Type="int32" Size="1"/>
+			<Data ElementName="UnknownArray2_data" Type="int32" Size="1"/>
 		</Data>
 		<Data ElementName="Unknown11" Type="int32" Size="1"/>
 		<Data ElementName="SubscriptionLevel" Type="int32" Size="1"/>
@@ -451,15 +549,15 @@
 		<Data ElementName="ParentalControlTimer" Type="int64" Size="1"/>
 		<Data ElementName="Unknown2" Type="int32" Size="1"/>
 		<Data ElementName="AccountID" Type="int32" Size="1"/>
-		<Data ElementName="Unknown3" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="trialPopupLink" Type="EQ2_16Bit_String" Size="1"/>
 		<Data ElementName="ResetAppearance" Type="int8" Size="1"/>
 		<Data ElementName="DoNotForceSoga" Type="int8" Size="1"/>
 		<Data ElementName="bolUnknown4" Type="EQ2_32Bit_String" Size="1"/>
 		<Data ElementName="bolUnknown7" Type="EQ2_32Bit_String" Size="1"/>
-		<Data ElementName="RaceUnknown" Type="int32" Size="1"/>
+		<Data ElementName="AvailableStartingCities" Type="int32" Size="1"/>
 		<Data ElementName="Unknown8" Type="int8" Size="1"/>
-		<Data ElementName="Unknown10" Type="int8" Size="1"/>
-		<Data ElementName="NumClassItems" Type="int8" Size="1" IfVariableSet="Unknown10"/>
+		<Data ElementName="bUsePacketClassItems" Type="bool" Size="1"/>
+		<Data ElementName="NumClassItems" Type="int8" Size="1" IfVariableSet="bUsePacketClassItems"/>
 		<Data ElementName="ClassItems" Type="Array" ArraySizeVariable="NumClassItems">
 			<Data ElementName="ClassID" Type="int8" Size="1"/>
 			<Data ElementName="NumItems" Type="int8" Size="1"/>
@@ -474,7 +572,7 @@
 		</Data>
 		<Data ElementName="UnknownArraySize" Type="int8" Size="1"/>
 		<Data ElementName="UnknownArray2" Type="Array" ArraySizeVariable="UnknownArraySize">
-			<Data ElementName="Array2Unknown" Type="int32" Size="1"/>
+			<Data ElementName="UnknownArray2_data" Type="int32" Size="1"/>
 		</Data>
 		<Data ElementName="Unknown11" Type="int32" Size="1"/>
 		<Data ElementName="SubscriptionLevel" Type="int32" Size="1"/>

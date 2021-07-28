@@ -63,7 +63,10 @@ std::optional<PacketLog> Parser::PopNextLog() {
 		log_names.pop_back();
 
 		LogInfo(LOG_PARSER, 0, "Processing log %s", ret->filename.c_str());
-		if (ret->TransformPackets()) break;
+		if (ret->TransformPackets())
+			break;
+		else 
+			LogError(LOG_PARSER, 0, "Error processing log %s!", ret->filename.c_str());
 		ret.reset();
 	}
 

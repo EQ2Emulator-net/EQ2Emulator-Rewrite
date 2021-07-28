@@ -109,8 +109,12 @@ public:
 		else if (version >= 1193) {
 			netAppearanceVersion = 20;
 		}
-		else if (version > 283) {
+		else if (version > 843) {
 			netAppearanceVersion = 16;
+		}
+		else if (version > 283) {
+			//15 = ROK
+			netAppearanceVersion = 15;
 		}
 		else {
 			netAppearanceVersion = 5;
@@ -210,8 +214,11 @@ public:
 		RegisterEQ2Color(soga_hair_scatter);
 		RegisterEQ2EquipmentItem(soga_hair, appVersion < 21);
 		RegisterEQ2EquipmentItem(soga_hair_face, appVersion < 21);
-		uint8_t& heraldry = this->heraldry[0];
-		RegisterUInt8(heraldry)->SetCount(7);
+
+		if (appVersion >= 15) {
+			uint8_t& heraldry = this->heraldry[0];
+			RegisterUInt8(heraldry)->SetCount(7);
+		}
 
 		if (appVersion >= 18) {
 			RescopeArrayElement(soga_heraldry);

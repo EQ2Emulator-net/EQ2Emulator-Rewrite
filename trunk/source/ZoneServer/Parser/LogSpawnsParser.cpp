@@ -213,6 +213,8 @@ void LogSpawnsParser::ParseNPCAppearance(OP_CreateGhostCmd_Packet& p, uint32_t s
 	//First take care of the morph sliders
 	{
 		auto CreateSliderRow = [this, &spawn_id](const char* type, int8_t* field) {
+			if (field[0] == 0 && field[1] == 0 && field[2] == 0) return;
+
 			DatabaseRow row;
 			row.m_tableName = "npc_appearance";
 
@@ -259,6 +261,8 @@ void LogSpawnsParser::ParseNPCAppearance(OP_CreateGhostCmd_Packet& p, uint32_t s
 	}
 
 	auto CreateColorRow = [this, &spawn_id](const char* type, const EQ2Color& c) {
+		if (c.Red == 0 && c.Blue == 0 && c.Green == 0) return;
+
 		DatabaseRow row;
 		row.m_tableName = "npc_appearance";
 

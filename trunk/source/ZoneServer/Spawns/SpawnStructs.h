@@ -115,6 +115,7 @@ struct CompressedSpawnPositionData {
 	int16_t pitch_compressed;
 	int16_t collisionRadius_compressed;
 	int16_t size_compressed;
+	int16_t size_ratio_compressed;
 	int16_t actorStopRange_compressed;
 	int16_t roll_compressed;
 	int16_t unk70_compressed;
@@ -220,8 +221,14 @@ public:
 	void RegisterElements() override {
 		RegisterInt32(spell_id);
 		RegisterInt16(spell_icon);
-		RegisterInt16(spell_triggercount);
+		if (version > 864) {
+			RegisterInt16(spell_triggercount);
+		}
 		RegisterUInt16(spell_icon_backdrop);
+		if (version <= 864) {
+			RescopeToReference(spell_triggercount, uint8_t);
+			RegisterUInt8(spell_triggercount);
+		}
 		if (version >= 60055) {
 			RegisterUInt16(unknown);
 		}
@@ -449,9 +456,11 @@ public:
 
 	void RegisterElements() override {
 		std::string& name = SpawnTitleStruct::name;
-		Register16String(name);
+		Register16String(name);		
 		RegisterUInt8(unknown1);
-		RegisterBool(isPlayer);
+		if (GetVersion() > 864) {
+			RegisterBool(isPlayer);
+		}
 		Register16String(last_name);
 		Register16String(suffix_title);
 		Register16String(prefix_title);
@@ -559,7 +568,9 @@ public:
 		auto e = RegisterBool(has_lerp);
 		RegisterSubstruct(lerp1)->SetIsVariableSet(e);
 		RegisterSubstruct(lerp2)->SetIsVariableSet(e);
-		RegisterUInt8(spawn_type);
+		if (GetVersion() > 864) {
+			RegisterUInt8(spawn_type);
+		}
 	}
 
 	Substruct_SpawnTitleStruct titleStruct;

@@ -84,6 +84,20 @@
 		<Data ElementName="bServerUp" Type="bool" Size="1"/>
 		<Data ElementName="Locked" Type="int8" Size="1"/>
 		<Data ElementName="Hidden" Type="int8" Size="1"/>
+		<Data ElementName="NumPlayers" Type="int8" Size="1"/>
+		<Data ElementName="Index" Type="int16" Size="1"/>
+		<Data ElementName="NumOnlineFlag" Type="int8" Size="1"/>
+		<Data ElementName="Unk2" Type="int8" Size="1"/>
+		<Data ElementName="Flags" Type="int8" Size="1"/>
+		<Data ElementName="AllowedRaces" Type="int32" Size="1"/>
+	</Struct>
+	<Struct Name="Substruct_WorldListEntry" ClientVersion="865">
+		<Data ElementName="ID" Type="int32" Size="1"/>
+		<Data ElementName="Name" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Name2" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="bServerUp" Type="bool" Size="1"/>
+		<Data ElementName="Locked" Type="int8" Size="1"/>
+		<Data ElementName="Hidden" Type="int8" Size="1"/>
 		<Data ElementName="Unknown" Type="int8" Size="1"/>
 		<Data ElementName="NumPlayers" Type="int8" Size="1"/>
 		<Data ElementName="Index" Type="int16" Size="1"/>
@@ -171,8 +185,6 @@
 			<Data ElementName="account_id" Type="int32" Size="1"/>
 			<Data ElementName="Unknown6" Type="int8" Size="2"/>
 			<Data ElementName="unknown7" Type="int32" Size="1"/>
-			<Data ElementName="tradeskill_class" Type="int8" Size="1"/>
-			<Data ElementName="tradeskill_level" Type="int32" Size="1"/>
 			<Data ElementName="appearance" Substruct="Substruct_NetAppearance" Size="1"/>
 		</Data>
 		<Data ElementName="AccountID" Type="int32" Size="1"/>

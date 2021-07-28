@@ -26,9 +26,9 @@ public:
 		DoNotForceSoga = 1;
 		Unknown4 = 0;
 		Unknown7 = 0;
-		RaceUnknown = 0;
+		AvailableStartingCities = 255;
 		Unknown8 = 0;
-		Unknown10 = 1;
+		bUsePacketClassItems = true;
 		NumClassItems = 0;
 		UnknownArraySize = 0;
 		Unknown11 = 0;
@@ -57,14 +57,14 @@ public:
 	uint64_t ParentalControlTimer;
 	uint32_t Unknown2;					//<Data ElementName = "unknown2" Type = "int8" Size = "8" / >
 	uint32_t AccountID;
-	std::string Unknown3;
+	std::string trialPopupLink;
 	uint8_t ResetAppearance;
 	uint8_t DoNotForceSoga;
 	uint64_t Unknown4;
 	uint64_t Unknown7;
-	uint32_t RaceUnknown;
+	uint32_t AvailableStartingCities;
 	uint8_t Unknown8;
-	uint8_t Unknown10;
+	bool bUsePacketClassItems;
 	uint8_t NumClassItems;				//<Data ElementName = "num_class_items" Type = "int8" IfVariableSet = "unknown10" Size = "1" / >
 	struct ClassItem : public PacketSubstruct {
 		uint8_t ClassID;
@@ -117,20 +117,7 @@ public:
 	};
 	std::vector<ClassItem> ClassItems;
 	uint8_t UnknownArraySize;
-	struct UnknownArray : public PacketSubstruct {
-		uint32_t Array2Unknown;
-
-		UnknownArray(uint32_t ver = 0) : PacketSubstruct(ver, true) {
-			Array2Unknown = 0;
-
-			RegisterElements();
-		}
-
-		void RegisterElements() {
-			RegisterUInt32(Array2Unknown);
-		}
-	};
-	std::vector<UnknownArray> UnknownArray2;
+	std::vector<uint32_t> UnknownArray2;
 	uint32_t Unknown11;
 	uint32_t SubscriptionLevel;
 	uint32_t RaceFlag;
@@ -168,10 +155,17 @@ private:
 		if (GetVersion() <= 283) {
 			return;
 		}
-		Register16String(Unknown3);
+		Register16String(trialPopupLink);
 		RegisterUInt8(ResetAppearance);
 		RegisterUInt8(DoNotForceSoga);
-		if (GetVersion() < 67650) {
+		if (GetVersion() <= 864) {
+			//ROK
+			RescopeToReference(Unknown4, uint32_t);
+			RescopeToReference(Unknown7, uint32_t);
+			RegisterUInt32(Unknown4);
+			RegisterUInt32(Unknown7);
+		}
+		else if (GetVersion() < 67650) {
 			RegisterUInt64(Unknown4);
 			RegisterUInt64(Unknown7);
 		}
@@ -180,40 +174,43 @@ private:
 			Register32String(bolUnknown7);
 		}
 
-		RegisterUInt32(RaceUnknown);
+		RegisterUInt32(AvailableStartingCities);
 		RegisterUInt8(Unknown8);
 
-		auto u10 = RegisterUInt8(Unknown10);
+		auto u10 = RegisterBool(bUsePacketClassItems);
 		PacketUInt8* asize = RegisterUInt8(NumClassItems);
 		asize->SetIsVariableSet(u10);
 		asize->SetMyArray(RegisterArray(ClassItems, ClassItem));
 		// end of if var set
 
 		asize = RegisterUInt8(UnknownArraySize);
-		asize->SetMyArray(RegisterArray(UnknownArray2, UnknownArray));
-		RegisterUInt32(Unknown11);
-		RegisterUInt32(SubscriptionLevel);
-		RegisterUInt32(RaceFlag);
-		RegisterUInt32(ClassFlag);
-		Register16String(Password);
-		Register16String(Username);
-		if (GetVersion() >= 1188)
-			Register16String(Service); // service
+		asize->SetMyArray(RegisterElementArray(UnknownArray2, uint32_t, PacketUInt32));
 
-		if (GetVersion() >= 60100) {
-			auto u12 = RegisterBool(bHasHeroicItems);
-			asize = RegisterUInt8(NumHeroicClassItems);
-			asize->SetIsVariableSet(u12);
-			asize->SetMyArray(RegisterArray(HeroicClassItems, ClassItem));
+		if (GetVersion() > 864) {
+			RegisterUInt32(Unknown11);
+			RegisterUInt32(SubscriptionLevel);
+			RegisterUInt32(RaceFlag);
+			RegisterUInt32(ClassFlag);
+			Register16String(Password);
+			Register16String(Username);
+			if (GetVersion() >= 1188)
+				Register16String(Service); // service
 
-			auto u13 = RegisterUInt8(Unknown13);
-			asize = RegisterUInt8(TimeLockedNumClassItems);
-			asize->SetIsVariableSet(u13);
-			asize->SetMyArray(RegisterArray(TimeLockedClassItems, ClassItem));
+			if (GetVersion() >= 60100) {
+				auto u12 = RegisterBool(bHasHeroicItems);
+				asize = RegisterUInt8(NumHeroicClassItems);
+				asize->SetIsVariableSet(u12);
+				asize->SetMyArray(RegisterArray(HeroicClassItems, ClassItem));
 
-			RescopeArrayElement(Unknown14);
-			RegisterUInt8(Unknown14)->SetCount(9);
-			RegisterBool(bLaunchpadLogin);
+				auto u13 = RegisterUInt8(Unknown13);
+				asize = RegisterUInt8(TimeLockedNumClassItems);
+				asize->SetIsVariableSet(u13);
+				asize->SetMyArray(RegisterArray(TimeLockedClassItems, ClassItem));
+
+				RescopeArrayElement(Unknown14);
+				RegisterUInt8(Unknown14)->SetCount(9);
+				RegisterBool(bLaunchpadLogin);
+			}
 		}
 	}
 };
