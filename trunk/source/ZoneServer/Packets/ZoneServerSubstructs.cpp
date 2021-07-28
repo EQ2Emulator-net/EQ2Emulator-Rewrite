@@ -20,15 +20,15 @@
 //Order these so struct dependencies are registered before their dependents
 RegisterZoneSubstruct(Substruct_MovementData, 283, 284, 1144);
 RegisterZoneSubstruct(Substruct_SpawnHeader, 283, 284, 57080);
-RegisterZoneSubstruct(Substruct_SpawnPosition, 283, 284, 911, 1096);
-RegisterZoneSubstruct(Substruct_TargetSpellInfo, 1, 60055);
-RegisterZoneSubstruct(Substruct_SpawnInfo, 283, 284, 860, 861, 864, 936, 955, 1008, 1096, 1188, 1198, 60055, 67633, 67804);
-RegisterZoneSubstruct(Substruct_SpawnVisualization, 1, 936, 955, 1008, 1142, 1188, 60055);
+RegisterZoneSubstruct(Substruct_SpawnPosition, 283, 284, 843, 911, 1096);
+RegisterZoneSubstruct(Substruct_TargetSpellInfo, 1, 864, 865, 60055);
+RegisterZoneSubstruct(Substruct_SpawnInfo, 283, 284, 843, 860, 861, 864, 936, 955, 1008, 1096, 1188, 1198, 60055, 67633, 67804);
+RegisterZoneSubstruct(Substruct_SpawnVisualization, 1, 843, 936, 955, 1008, 1142, 1188, 60055);
 RegisterZoneSubstruct(Substruct_Lerp, 1);
 RegisterZoneSubstruct(Substruct_Matrix3, 1);
 RegisterZoneSubstruct(Substruct_Position, 1);
-RegisterZoneSubstruct(Substruct_SpawnTitleStruct, 1);
-RegisterZoneSubstruct(Substruct_SpawnFooter, 1);
+RegisterZoneSubstruct(Substruct_SpawnTitleStruct, 1, 865);
+RegisterZoneSubstruct(Substruct_SpawnFooter, 1, 865);
 RegisterZoneSubstruct(Substruct_WidgetFooter, 1);
 RegisterZoneSubstruct(Substruct_SignFooter, 283, 284, 60070);
 RegisterZoneSubstruct(Substruct_SpellEffects, 1, 843, 1193);

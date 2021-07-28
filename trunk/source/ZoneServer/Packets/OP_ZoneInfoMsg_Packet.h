@@ -42,7 +42,8 @@ public:
 		num_client_setup = 0;
 		unknown11 = 0;
 		tab_count = 0;
-		unknown67650Count;
+		unknown67650Count = 0;
+		unk69239 = 0;
 
 		unknown_mj = 0;
 		unkArrayCount = 0;
@@ -90,6 +91,7 @@ public:
 	int32_t unknown10c;
 	uint8_t permission_level;
 	bool bHasFlythrough;
+	uint8_t unk69239;
 	Substruct_FlythroughDesc flythrough;
 
 	uint32_t num_adv;
@@ -276,6 +278,10 @@ private:
 
 		asize32 = RegisterUInt32(num_client_setup);
 		asize32->SetMyArray(RegisterArray(client_cmd_array, ClientCommands));
+
+		if (version >= 69239) {
+			RegisterUInt8(unk69239);
+		}
 
 		RegisterInt32(unknown11);
 

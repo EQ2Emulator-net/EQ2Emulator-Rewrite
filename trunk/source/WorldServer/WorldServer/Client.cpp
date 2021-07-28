@@ -48,9 +48,9 @@ void Client::SendLoginReply(uint8_t reply) {
 		r->AccountID = AccountID;
 		r->ResetAppearance = 0;
 		r->DoNotForceSoga = 1;
-		r->RaceUnknown = 63;
+		//r->AvailableStartingCities = 63;
 		r->Unknown11 = 7;
-		//r->SubscriptionLevel = 2;
+		r->SubscriptionLevel = 2;
 		r->RaceFlag = GetAllowedRaces();
 		r->ClassFlag = GetAllowedClasses();
 
@@ -66,15 +66,23 @@ void Client::SendLoginReply(uint8_t reply) {
 			r->Unknown4 = 392192;
 			//we had this as 2 separate elements, some kind of flags
 			r->Unknown7 = 4219469759ull | (8388607ull << 32);
-			r->RaceUnknown = 255;
+			//r->RaceUnknown = 255;
 		}
 		else if (GetVersion() >= 1096) {
 			r->Unknown4 = 293888;
 			r->Unknown7 = 2145009599ull;
 		}
+		else if (GetVersion() >= 843) {
+			r->Unknown4 = 0xFFFFFFFE;
+			//Disable play the fae, trial of the isle, freeplay account, freeplay exceeded
+			r->Unknown4 ^= 1 << 1;
+			r->Unknown4 ^= 1 << 2;
+			r->Unknown4 ^= 1 << 17;
+			r->Unknown4 ^= 1 << 18;
+			r->Unknown7 = r->Unknown4;
+		}
 
 		// Equipment shown during normal character creation
-		r->Unknown10 = 1;
 		WorldServer* s = GetServer();
 		std::map<uint8_t, std::vector<OP_LoginReplyMsg_Packet::ClassItem::StartingItem> >::iterator itr;
 		std::vector<OP_LoginReplyMsg_Packet::ClassItem::StartingItem>::iterator itr2;

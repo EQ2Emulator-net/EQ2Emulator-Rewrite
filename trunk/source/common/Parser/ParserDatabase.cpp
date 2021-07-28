@@ -26,7 +26,10 @@ std::unordered_map<std::string, uint16_t> ParserDatabase::LoadOpcodesForVersion(
 
 	std::unordered_map<std::string, uint16_t> ret;
 	ret.reserve(res.GetNumRows());
-	EmuAssert(res.GetNumRows());
+	
+	if (res.GetNumRows() == 0) {
+		LogError(LOG_PARSER, 0, "Could not find opcodes for version %u! Update?", ver);
+	}
 
 	while (res.Next()) {
 		ret[res.GetString(0)] = res.GetUInt16(1);
@@ -97,7 +100,7 @@ uint32_t ParserDatabase::LoadNextItemID() {
 	//Starting raw item ids at 20mil
 	Select(&res, "SELECT IF(COUNT(id) = 0, 20000000, MAX(id)+1) as id FROM `items`;");
 
-	assert(res.Next());
+	EmuAssert(res.Next());
 
 	return res.GetUInt32(0);
 }
@@ -107,7 +110,7 @@ uint32_t ParserDatabase::LoadNextSpawnID() {
 
 	Select(&res, "SELECT IF(COUNT(id) = 0, 1, MAX(id)+1) as id FROM `spawn`;");
 
-	assert(res.Next());
+	EmuAssert(res.Next());
 
 	return res.GetUInt32(0);
 }

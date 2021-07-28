@@ -5,4 +5,4 @@
 
 #define RegisterCommonSubstruct(pt, ...) RegisterXmlSubstruct(pt, "CommonStructs.xml", __VA_ARGS__)
 
-RegisterCommonSubstruct(Substruct_NetAppearance, 1, 284, 1193, 60114, 67650, 67804);
+RegisterCommonSubstruct(Substruct_NetAppearance, 283, 284, 844, 1193, 60114, 67650, 67804);

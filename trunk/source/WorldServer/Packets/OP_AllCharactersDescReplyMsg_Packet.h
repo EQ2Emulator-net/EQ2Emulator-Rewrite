@@ -138,7 +138,7 @@ public:
 			else if (version >= 1193) {
 				entryVersion = 13;
 			}
-			else if (version > 283) {
+			else if (version > 843) {
 				entryVersion = 6;
 			}
 			else {
@@ -187,12 +187,14 @@ public:
 				uint8_t& Unknown6 = unknown6[0]; // Size = "2"
 				RegisterUInt8(Unknown6)->SetCount(2);
 				RegisterUInt32(unknown7);
-				RegisterUInt8(tradeskill_class); // 887
-				RegisterUInt32(tradeskill_level); //887
-				if (entryVersion >= 7) RegisterUInt8(unknowne7);
-				if (entryVersion >= 8) RegisterUInt8(unknowne8);
-				if (entryVersion >= 9) RegisterUInt8(unknowne9);
-				if (entryVersion >= 10) RegisterUInt8(unknowne10);
+				if (GetVersion() >= 887) {
+					RegisterUInt8(tradeskill_class); // 887
+					RegisterUInt32(tradeskill_level); //887
+					if (entryVersion >= 7) RegisterUInt8(unknowne7);
+					if (entryVersion >= 8) RegisterUInt8(unknowne8);
+					if (entryVersion >= 9) RegisterUInt8(unknowne9);
+					if (entryVersion >= 10) RegisterUInt8(unknowne10);
+				}
 			}
 			
 			RegisterSubstruct(appearance);

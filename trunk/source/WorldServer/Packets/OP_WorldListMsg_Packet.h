@@ -32,7 +32,9 @@ public:
 		RegisterUInt8(Locked);
 		if (GetVersion() > 283) {
 			RegisterUInt8(Hidden);
-			RegisterUInt8(Unknown);
+			if (GetVersion() > 864) {
+				RegisterUInt8(Unknown);
+			}
 		}
 		RegisterUInt8(NumPlayers);
 		if (GetVersion() > 283) {
@@ -45,6 +47,7 @@ public:
 		}
 
 		RegisterUInt8(Unk2);
+
 		if (GetVersion() >= 60100) {
 			RegisterUInt16(Flags);
 		}
@@ -88,12 +91,12 @@ public:
 
 		NumWorlds = 1;
 		Unknown2 = 0;
-		worlds.emplace_back();
-		auto& tar = worlds[1];
-		tar.Name = "Tarinax";
-		tar.Name2 = tar.Name;
-		tar.Flags = 256 | 32;
-		tar.ID = 2;
+		//worlds.emplace_back();
+		//auto& tar = worlds[1];
+		//tar.Name = "Tarinax";
+		//tar.Name2 = tar.Name;
+		//tar.Flags = 256 | 32;
+		//tar.ID = 2;
 	}
 
 	uint8_t Unknown2; // 60100

@@ -142,6 +142,10 @@ bool PacketLog::TransformPackets() {
 
 	opcodeLookup = std::move(ParserDatabase::GetGlobal()->LoadOpcodesForVersion(logVersion));
 
+	if (opcodeLookup.empty()) {
+		return false;
+	}
+
 	SortClientCommands();
 
 	return true;
