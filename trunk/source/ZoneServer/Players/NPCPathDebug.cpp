@@ -5,6 +5,7 @@
 #include "../ZoneServer/Client.h"
 #include "../Controllers/BaseController.h"
 #include "../Controllers/PlayerController.h"
+#include "../Controllers/NPCController.h"
 #include "../AI/NPCMovement.h"
 #include "../ZoneServer/ZoneServer.h"
 #include "../../common/log.h"
@@ -34,15 +35,18 @@ void NPCPathDebug::Start(std::shared_ptr<Spawn> target) {
 	}
 
 	m_targetSpawn = target;
-	m_locations = target->GetController()->GetNPCMovement()->GetLocations();
+	std::shared_ptr<NPCController> controller = std::dynamic_pointer_cast<NPCController>(target->GetController());
+	if (controller) {
+		m_locations = controller->GetNPCMovement()->GetLocations();
 
-	// Create spawns for the locations if there are any
-	if (GenerateSpawns()) {
-		SendClientMessage("Showing the path for " + target->GetName());
-		SendLocationSpawnsToClient();
+		// Create spawns for the locations if there are any
+		if (GenerateSpawns()) {
+			SendClientMessage("Showing the path for " + target->GetName());
+			SendLocationSpawnsToClient();
+		}
+		else
+			SendClientMessage("No path for " + target->GetName());
 	}
-	else
-		SendClientMessage("No path for " + target->GetName());
 }
 
 bool NPCPathDebug::GenerateSpawns() {
