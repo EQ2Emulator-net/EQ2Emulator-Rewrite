@@ -2,13 +2,16 @@
 
 #include "BaseController.h"
 
+// Temp until ai is worked out
+#include "../AI/NPCMovement.h"
+
 class NPCController : public BaseController {
 public:
 	NPCController() { }
 
 	bool IsNPCController() override { return true; }
 
-	bool Process() override { return true; };
+	bool Process() override;
 	void Possess() override {};
 	void UnPossess() override {};
 

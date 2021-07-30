@@ -108,6 +108,10 @@ public:
 	float GetX() const { return m_posStruct.x; }
 	float GetY() const { return m_posStruct.y; }
 	float GetZ() const { return m_posStruct.z; }
+	float GetDestinationX() const { return m_posStruct.destLocX; }
+	float GetDestinationY() const { return m_posStruct.destLocY; }
+	float GetDestinationZ() const { return m_posStruct.destLocZ; }
+	float GetSpeed() const { return m_posStruct.desiredForwardSpeed; }
 	uint32_t GetServerID() const { return m_spawnID; }
 	uint32_t GetDatabaseID() { return m_spawnDatabaseID; }
 	void SetDatabaseID(uint32_t id) { m_spawnDatabaseID = id; }
@@ -572,9 +576,9 @@ public:
 		UpdateCellCoordinates();
 	}
 	void SetLocation(float x, float y, float z, bool updateFlags = true) {
-		SetPos(&m_posStruct.x, x, updateFlags);
-		SetPos(&m_posStruct.y, y, updateFlags);
-		SetPos(&m_posStruct.z, z, updateFlags);
+		SetPos(&m_posStruct.x, x, false);
+		SetPos(&m_posStruct.y, y, false);
+		SetPos(&m_posStruct.z, z, updateFlags); // only set the update flag on the last call
 		UpdateCellCoordinates();
 	}
 	void SetHeading(float heading, bool updateFlags = true) {
@@ -600,7 +604,12 @@ public:
 		SetPos(&m_posStruct.destLocY, y, updateFlags);
 	}
 	void SetDestZ(float z, bool updateFlags = true) {
-		SetPos(&m_posStruct.destLocZ, updateFlags);
+		SetPos(&m_posStruct.destLocZ, z, updateFlags);
+	}
+	void SetDestLocation(float x, float y, float z, bool updateFlags = true) {
+		SetPos(&m_posStruct.destLocX, x, false);
+		SetPos(&m_posStruct.destLocY, y, false);
+		SetPos(&m_posStruct.destLocZ, z, updateFlags);
 	}
 	void SetDestX2(float x, bool updateFlags = true) {
 		SetPos(&m_posStruct.destLocX2, x, updateFlags);
@@ -609,6 +618,11 @@ public:
 		SetPos(&m_posStruct.destLocY2, y, updateFlags);
 	}
 	void SetDestZ2(float z, bool updateFlags = true) {
+		SetPos(&m_posStruct.destLocZ2, z, updateFlags);
+	}
+	void SetDest2Location(float x, float y, float z, bool updateFlags = true) {
+		SetPos(&m_posStruct.destLocX2, x, false);
+		SetPos(&m_posStruct.destLocY2, y, false);
 		SetPos(&m_posStruct.destLocZ2, z, updateFlags);
 	}
 	void SetMovementMode(uint8_t value, bool updateFlags = true) {
