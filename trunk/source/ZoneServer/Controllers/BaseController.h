@@ -23,14 +23,7 @@ public:
 
 	virtual bool IsNPCController() { return false; }
 
-	// temp until ai is worked out
-	NPCMovement* GetNPCMovement() { return &movement; }
-	void AddMovementLocation(std::shared_ptr<MovementLocationInfo> loc) { movement.AddLocation(loc); }
-
 protected:
 	std::weak_ptr<Entity> controlled;
 	std::weak_ptr<Spawn> target;
-
-	// temp for now until actual ai is worked out
-	NPCMovement movement;
 };

@@ -3,7 +3,7 @@
 #include "LuaSpawnFunctions.h"
 #include "../Spawns/Entity.h"
 #include "../AI/MovementLocationInfo.h"
-#include "../Controllers/BaseController.h"
+#include "../Controllers/NPCController.h"
 
 void LuaSpawnFunctions::RegisterFunctions(lua_State* state) {
 	lua_register(state, "FaceTarget", Emu_Lua_FaceTarget);
@@ -58,7 +58,7 @@ int LuaSpawnFunctions::Emu_Lua_MovementLoopAddLocation(lua_State* state) {
 		return 0;
 	}
 
-	std::shared_ptr<BaseController> controller = spawn->GetController();
+	std::shared_ptr<NPCController> controller = std::dynamic_pointer_cast<NPCController>(spawn->GetController());
 	if (!controller) {
 		LuaError("Lua MovementLoopAddLocation command error: unable to get a controller for the given spawn");
 		return 0;
