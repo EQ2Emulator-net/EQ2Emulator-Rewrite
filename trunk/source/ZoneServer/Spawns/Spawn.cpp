@@ -60,7 +60,6 @@ Spawn::Spawn() : m_updateFlagsByte(0) {
 	m_origRoll = 0.0f;
 	m_primaryCommandListID = 0;
 	m_secondaryCommandListID = 0;
-	//m_posStruct.desiredForwardSpeed = 2.0f;
 }
 
 Spawn::Spawn(std::shared_ptr<Spawn> in) {

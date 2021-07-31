@@ -15,6 +15,7 @@ public:
 
 	void Process(std::shared_ptr<Entity> spawn);
 	
+	void UpdateMovementTimestamp();
 
 private:
 	// Actual movement calculations are here

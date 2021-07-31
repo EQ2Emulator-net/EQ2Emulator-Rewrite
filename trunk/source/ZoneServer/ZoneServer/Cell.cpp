@@ -7,6 +7,7 @@
 #include "../../common/log.h"
 #include "../Controllers/PlayerController.h"
 #include "../Spawns/Entity.h"
+#include "../Controllers/NPCController.h"
 
 Cell::Cell(std::pair<int32_t, int32_t> cellCoordinates) {
 	m_cellCoordinates = cellCoordinates;
@@ -79,6 +80,12 @@ void Cell::ActivateCell(std::shared_ptr<Client> client) {
 	for (std::weak_ptr<Spawn> s : m_spawnList) {
 		std::shared_ptr<Spawn> spawn = s.lock();
 		if (spawn) {
+			// Need to update movement timestamps when a cell activates otherwise there can be huge jumps in movement depending on when the cell was last active
+			std::shared_ptr<NPCController> controller = std::dynamic_pointer_cast<NPCController>(spawn->GetController());
+			if (controller) {
+				controller->UpdateMovementTimestamp();
+			}
+
 			std::shared_ptr<ZoneServer> zone = client->GetZone();
 			if (zone)
 				zone->SendSpawnToClient(spawn, client);

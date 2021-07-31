@@ -18,6 +18,7 @@ public:
 	// temp until ai is worked out
 	NPCMovement* GetNPCMovement() { return &movement; }
 	void AddMovementLocation(std::shared_ptr<MovementLocationInfo> loc) { movement.AddLocation(loc); }
+	void UpdateMovementTimestamp() { movement.UpdateMovementTimestamp(); }
 
 protected:
 	// temp for now until actual ai is worked out

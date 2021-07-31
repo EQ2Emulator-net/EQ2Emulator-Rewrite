@@ -27,13 +27,36 @@ void NPCMovement::Process(std::shared_ptr<Entity> spawn) {
 			if (m_movementLoopIndex >= m_locations.size())
 				m_movementLoopIndex = 0;
 
-			targetLocation = m_locations.at(m_movementLoopIndex);
+			if (targetLocation->delay == 0.0f) {
+				uint32_t nextIndex = m_movementLoopIndex + 1;
+				if (nextIndex >= m_locations.size())
+					nextIndex = 0;
 
-			spawn->SetDestLocation(targetLocation->x, targetLocation->y, targetLocation->z);
+				targetLocation = m_locations.at(m_movementLoopIndex);
+				std::shared_ptr<MovementLocationInfo> targetLocation2 = m_locations.at(nextIndex);
+				spawn->SetDest2Location(targetLocation2->x, targetLocation2->y, targetLocation2->z, false);
+			}
+			else {
+				spawn->SetDest2Location(0.0f, 0.0f, 0.0f, false);
+			}
+			spawn->SetDestLocation(targetLocation->x, targetLocation->y, targetLocation->z, Timer::GetServerTime());
 			spawn->SetSpeed(targetLocation->speed);
 		}
 		else if (spawn->GetDestinationX() != targetLocation->x || spawn->GetDestinationY() != targetLocation->y || spawn->GetDestinationZ() != targetLocation->z) {
-			spawn->SetDestLocation(targetLocation->x, targetLocation->y, targetLocation->z);
+			if (targetLocation->delay == 0.0f) {
+				uint32_t nextIndex = m_movementLoopIndex + 1;
+				if (nextIndex >= m_locations.size())
+					nextIndex = 0;
+
+				targetLocation = m_locations.at(m_movementLoopIndex);
+				std::shared_ptr<MovementLocationInfo> targetLocation2 = m_locations.at(nextIndex);
+				spawn->SetDest2Location(targetLocation2->x, targetLocation2->y, targetLocation2->z, false);
+			}
+			else {
+				spawn->SetDest2Location(0.0f, 0.0f, 0.0f, false);
+			}
+
+			spawn->SetDestLocation(targetLocation->x, targetLocation->y, targetLocation->z, Timer::GetServerTime());
 			spawn->SetSpeed(targetLocation->speed);
 		}
 
@@ -72,4 +95,8 @@ void NPCMovement::CalculateChange(std::shared_ptr<Entity> spawn) {
 	else
 		spawn->SetLocation(nx + vx, ny + vy, nz + vz, false);
 
+}
+
+void NPCMovement::UpdateMovementTimestamp() {
+	m_lastMovementUpdateTimestamp = Timer::GetServerTime();
 }

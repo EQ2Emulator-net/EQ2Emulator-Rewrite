@@ -606,10 +606,11 @@ public:
 	void SetDestZ(float z, bool updateFlags = true) {
 		SetPos(&m_posStruct.destLocZ, z, updateFlags);
 	}
-	void SetDestLocation(float x, float y, float z, bool updateFlags = true) {
+	void SetDestLocation(float x, float y, float z, uint32_t timestamp, bool updateFlags = true) {
 		SetPos(&m_posStruct.destLocX, x, false);
 		SetPos(&m_posStruct.destLocY, y, false);
 		SetPos(&m_posStruct.destLocZ, z, updateFlags);
+		movementTimestamp = timestamp;
 	}
 	void SetDestX2(float x, bool updateFlags = true) {
 		SetPos(&m_posStruct.destLocX2, x, updateFlags);
