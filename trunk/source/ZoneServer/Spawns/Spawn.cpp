@@ -148,7 +148,8 @@ Spawn::~Spawn() {
 }
 
 void Spawn::Process() {
-	// m_controller->Process();
+	if (m_controller)
+		m_controller->Process();
 
 	if (IsLinkdead()) {
 		//TODO: move this to a Player specific process or handle in the player controller process?

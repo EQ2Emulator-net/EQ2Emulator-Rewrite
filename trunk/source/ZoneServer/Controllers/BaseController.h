@@ -2,9 +2,6 @@
 
 #include <memory>
 
-// Temp until ai is worked out
-#include "../AI/NPCMovement.h"
-
 class Spawn;
 class Entity;
 
