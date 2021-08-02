@@ -15,6 +15,7 @@ EQ2Packet::EQ2Packet(uint32_t version) {
 	PacketPrepared = false;
 	bCombined = false;
 	opcode = 0;
+	bDumpOffsets = false;
 }
 
 uint8_t EQ2Packet::PreparePacket(uint16_t MaxLen) {

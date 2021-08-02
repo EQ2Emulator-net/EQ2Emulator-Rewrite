@@ -37,11 +37,54 @@ void UpdateCharacterSheetMsgData::PreWrite() {
 	agi_base_do_not_set = static_cast<int16_t>(attributes->agi.baseValue);
 
 	if (GetVersion() >= 67730) {
+		//Float -> Double
 		advExp_do_not_set = advExp;
 		advExpNextLevel_do_not_set = advExpNextLevel;
 		tsExp_do_not_set = tsExp;
 		tsExpNextLevel_do_not_set = tsExpNextLevel;
 	}
+
+	//Float -> int16 for legacy
+	adv_xp_do_not_set = static_cast<int16_t>(advExp * 1000);
+	adv_xp_next_level_do_not_set = static_cast<int16_t>(advExpNextLevel * 1000);
+	adv_xp_debt_do_not_set = static_cast<int16_t>(advExpDebt * 1000);
+	ts_xp_do_not_set = static_cast<int16_t>(tsExp * 1000);
+	ts_xp_next_level_do_not_set = static_cast<int16_t>(tsExpNextLevel * 1000);
+	ts_xp_debt_do_not_set = static_cast<int16_t>(tsExpDebt * 1000);
+
+	//Legacy resists (just mapping to newer ones for now)
+	resist_slashing_do_not_set = static_cast<int16_t>(attributes->mitigation.currentValue);
+	resist_crushing_do_not_set = static_cast<int16_t>(attributes->mitigation.currentValue);
+	resist_piercing_do_not_set = static_cast<int16_t>(attributes->mitigation.currentValue);
+	resist_heat_do_not_set = static_cast<int16_t>(attributes->elemental.currentValue);
+	resist_cold_do_not_set = static_cast<int16_t>(attributes->elemental.currentValue);
+	resist_magic_do_not_set = static_cast<int16_t>(attributes->arcane.currentValue);
+	resist_mental_do_not_set = static_cast<int16_t>(attributes->arcane.currentValue);
+	resist_divine_do_not_set = static_cast<int16_t>(attributes->arcane.currentValue);
+	resist_disease_do_not_set = static_cast<int16_t>(attributes->noxious.currentValue);
+	resist_poison_do_not_set = static_cast<int16_t>(attributes->noxious.currentValue);
+
+	resist_base_slashing_do_not_set = static_cast<int16_t>(attributes->mitigation.baseValue);
+	resist_base_crushing_do_not_set = static_cast<int16_t>(attributes->mitigation.baseValue);
+	resist_base_piercing_do_not_set = static_cast<int16_t>(attributes->mitigation.baseValue);
+	resist_base_heat_do_not_set = static_cast<int16_t>(attributes->elemental.baseValue);
+	resist_base_cold_do_not_set = static_cast<int16_t>(attributes->elemental.baseValue);
+	resist_base_magic_do_not_set = static_cast<int16_t>(attributes->arcane.baseValue);
+	resist_base_mental_do_not_set = static_cast<int16_t>(attributes->arcane.baseValue);
+	resist_base_divine_do_not_set = static_cast<int16_t>(attributes->arcane.baseValue);
+	resist_base_disease_do_not_set = static_cast<int16_t>(attributes->noxious.baseValue);
+	resist_base_poison_do_not_set = static_cast<int16_t>(attributes->noxious.baseValue);
+
+	resist_absorb_slashing_do_not_set = static_cast<int16_t>(physical_absorb_pve);
+	resist_absorb_crushing_do_not_set = static_cast<int16_t>(physical_absorb_pve);
+	resist_absorb_piercing_do_not_set = static_cast<int16_t>(physical_absorb_pve);
+	resist_absorb_heat_do_not_set = static_cast<int16_t>(elemental_absorb_pve);
+	resist_absorb_cold_do_not_set = static_cast<int16_t>(elemental_absorb_pve);
+	resist_absorb_divine_do_not_set = static_cast<int16_t>(arcane_absorb_pve);
+	resist_absorb_magic_do_not_set = static_cast<int16_t>(arcane_absorb_pve);
+	resist_absorb_mental_do_not_set = static_cast<int16_t>(arcane_absorb_pve);
+	resist_absorb_disease_do_not_set = static_cast<int16_t>(noxious_absorb_pve);
+	resist_absorb_poison_do_not_set = static_cast<int16_t>(noxious_absorb_pve);
 }
 
 void CharacterUpdateGenerator::LinkUpdateFields(const CharacterSheet& sheet) {
@@ -120,13 +163,13 @@ void CharacterUpdateGenerator::LinkCharacterDetailsFields(const CharacterSheet& 
 	characterDetailsUpdates.RegisterField("agi", attributes->agi.baseValue);
 	characterDetailsUpdates.RegisterField("wis", attributes->wis.baseValue);
 	characterDetailsUpdates.RegisterField("intel", attributes->intel.baseValue);
-	characterDetailsUpdates.RegisterField("heat", attributes->heat.baseValue);
-	characterDetailsUpdates.RegisterField("cold", attributes->cold.baseValue);
-	characterDetailsUpdates.RegisterField("magic", attributes->magic.baseValue);
-	characterDetailsUpdates.RegisterField("mental", attributes->mental.baseValue);
-	characterDetailsUpdates.RegisterField("divine", attributes->divine.baseValue);
-	characterDetailsUpdates.RegisterField("disease", attributes->disease.baseValue);
-	characterDetailsUpdates.RegisterField("poison", attributes->poison.baseValue);
+	//characterDetailsUpdates.RegisterField("heat", attributes->heat.baseValue);
+	//characterDetailsUpdates.RegisterField("cold", attributes->cold.baseValue);
+	//characterDetailsUpdates.RegisterField("magic", attributes->magic.baseValue);
+	//characterDetailsUpdates.RegisterField("mental", attributes->mental.baseValue);
+	//characterDetailsUpdates.RegisterField("divine", attributes->divine.baseValue);
+	//characterDetailsUpdates.RegisterField("disease", attributes->disease.baseValue);
+	//characterDetailsUpdates.RegisterField("poison", attributes->poison.baseValue);
 	characterDetailsUpdates.RegisterField("elemental", attributes->elemental.baseValue);
 	characterDetailsUpdates.RegisterField("arcane", attributes->arcane.baseValue);
 	characterDetailsUpdates.RegisterField("noxious", attributes->noxious.baseValue);
@@ -223,7 +266,13 @@ void UpdateCharacterSheetMsgData::RegisterAttributeElements() {
 
 void UpdateCharacterSheetMsgData::RegisterElements() {
 	const uint32_t version = this->version;
-	if (version >= 67650) {
+	if (version <= 843) {
+		//843 is ROK
+		RegisterElementsLegacy();
+		return;
+	}
+	else if (version >= 67650) {
+		//67650 is Blood of Luclin
 		RegisterElements67650();
 		return;
 	}
@@ -578,6 +627,295 @@ void UpdateCharacterSheetMsgData::RegisterElements() {
 	RegisterCharString(bind_zone, 32);
 	uint8_t& Unknown188 = unknown188[0];
 	RegisterUInt8(Unknown188)->SetCount(version >= 60114 ? 42 : 49);
+}
+
+void UpdateCharacterSheetMsgData::RegisterElementsLegacy() {
+	const uint32_t version = this->version;
+
+	static EntityAttributeSheet structDumperHackSheet;
+
+	EntityAttributeSheet* attributes = this->attributes ? this->attributes : &structDumperHackSheet;
+
+	std::string& char_name = namingInfo->name;
+	RegisterCharString(char_name, 42);
+	uint8_t& race = *this->race;
+	RegisterUInt8(race);
+	uint8_t& gender = *this->gender;
+	RegisterUInt8(gender);
+	RegisterUInt8(alignment);
+	RegisterUInt32(advArchetype);
+	RegisterUInt32(advBaseClass);
+	RegisterUInt32(advClass);
+	RegisterUInt32(tsArchetype);
+	RegisterUInt32(tsBaseClass);
+	RegisterUInt32(tsClass);
+	uint16_t& level = *advOrigLevel;
+	uint16_t& effective_level = *advLevel;
+	RegisterUInt16(level);
+	RegisterUInt16(effective_level);
+	RegisterUInt16(tsLevel);
+	RegisterInt32(gmLevel); //0-15
+
+	//Account age used to be 20 int16s! Each one an additive number of days
+	RegisterUInt16(account_age_base);
+	static uint16_t g_account_age_bonuses[19]{ 0 };
+	uint16_t& account_age_bonuses = g_account_age_bonuses[0];
+	RegisterUInt16(account_age_bonuses)->SetCount(19);
+
+	static std::string deity = "deity";
+	RegisterCharString(deity, 32);
+	std::string& last_name = namingInfo->last_name;
+	RegisterCharString(last_name, 21);
+
+	int32_t& hp = attributes->hp.currentValue;
+	int32_t& maxHp = attributes->hp.maxValue;
+	int32_t& maxHpBase = attributes->hp.baseValue;
+
+	RegisterInt32(hp);
+	RegisterInt32(maxHp);
+	RegisterInt32(maxHpBase);
+
+	int32_t& current_power = attributes->power.currentValue;
+	int32_t& max_power = attributes->power.maxValue;
+	int32_t& base_power = attributes->power.baseValue;
+	RegisterInt32(current_power);
+	RegisterInt32(max_power);
+	RegisterInt32(base_power);
+
+	auto& conc_used = reinterpret_cast<uint8_t&>(attributes->concentration.currentValue);
+	auto& conc_max = reinterpret_cast<uint8_t&>(attributes->concentration.maxValue);
+	RegisterUInt8(conc_used);
+	RegisterUInt8(conc_max);
+
+	static int32_t unknown198 = 0;
+	RegisterInt32(unknown198);
+
+	int32_t& hp_regen = this->hp_regen_do_not_set;
+	int32_t& power_regen = this->power_regen_do_not_set;
+	RegisterInt32(hp_regen);
+	RegisterInt32(power_regen);
+
+	RegisterFloat(ranged_attack_min_distance);
+	RegisterFloat(ranged_attack_max_distance);
+	
+	//FIX
+	static int16_t mitigation = 0, mitigation_base = 0, absorb = 0, absorb_base = 0;
+	RegisterInt16(mitigation);
+	RegisterInt16(mitigation_base);
+	RegisterInt16(absorb);
+	RegisterInt16(absorb_base);
+
+	RegisterInt16(avoidance_overall_chance);
+	RegisterInt16(avoidance_base);
+	RegisterInt16(avoidance_overall_chance);
+	RegisterInt16(avoidance_base_chance);
+	RegisterInt16(avoidance_base_chance_base);
+	RegisterInt16(avoidance_parry_chance);
+	RegisterInt16(avoidance_parry_chance_base);
+	RegisterInt16(avoidance_deflection_chance);
+	RegisterInt16(avoidance_deflection_chance_base);
+	RegisterInt16(avoidance_block_chance);
+	RegisterInt16(avoidance_block_chance_base);
+
+	RegisterAttributeElements();
+
+	int16_t &resist_slashing = resist_slashing_do_not_set, 
+		&resist_crushing = resist_crushing_do_not_set,
+		&resist_piercing = resist_piercing_do_not_set,
+		&resist_heat = resist_heat_do_not_set,
+		&resist_cold = resist_cold_do_not_set,
+		&resist_magic = resist_magic_do_not_set,
+		&resist_mental = resist_mental_do_not_set,
+		&resist_divine = resist_divine_do_not_set,
+		&resist_disease = resist_disease_do_not_set, 
+		&resist_poison = resist_poison_do_not_set;
+
+	RegisterInt16(resist_slashing);
+	RegisterInt16(resist_crushing);
+	RegisterInt16(resist_piercing);
+	RegisterInt16(resist_heat);
+	RegisterInt16(resist_cold);
+	RegisterInt16(resist_magic);
+	RegisterInt16(resist_mental);
+	RegisterInt16(resist_divine);
+	RegisterInt16(resist_disease);
+	RegisterInt16(resist_poison);
+
+	int16_t& resist_slashing_base = resist_base_slashing_do_not_set,
+		&resist_crushing_base = resist_base_crushing_do_not_set,
+		&resist_piercing_base = resist_base_piercing_do_not_set,
+		&resist_heat_base = resist_base_heat_do_not_set,
+		&resist_cold_base = resist_base_cold_do_not_set,
+		&resist_magic_base = resist_base_magic_do_not_set,
+		&resist_mental_base = resist_base_mental_do_not_set,
+		&resist_divine_base = resist_base_divine_do_not_set,
+		&resist_disease_base = resist_base_disease_do_not_set,
+		&resist_poison_base = resist_base_poison_do_not_set;
+
+	RegisterInt16(resist_slashing_base);
+	RegisterInt16(resist_crushing_base);
+	RegisterInt16(resist_piercing_base);
+	RegisterInt16(resist_heat_base);
+	RegisterInt16(resist_cold_base);
+	RegisterInt16(resist_magic_base);
+	RegisterInt16(resist_mental_base);
+	RegisterInt16(resist_divine_base);
+	RegisterInt16(resist_disease_base);
+	RegisterInt16(resist_poison_base);
+
+	int16_t& resist_absorb_slashing = resist_absorb_slashing_do_not_set,
+		& resist_absorb_crushing = resist_absorb_crushing_do_not_set,
+		& resist_absorb_piercing = resist_absorb_piercing_do_not_set,
+		& resist_absorb_heat = resist_absorb_heat_do_not_set,
+		& resist_absorb_cold = resist_absorb_cold_do_not_set,
+		& resist_absorb_magic = resist_absorb_magic_do_not_set,
+		& resist_absorb_mental = resist_absorb_mental_do_not_set,
+		& resist_absorb_divine = resist_absorb_divine_do_not_set,
+		& resist_absorb_disease = resist_absorb_disease_do_not_set,
+		& resist_absorb_poison = resist_absorb_poison_do_not_set;
+
+	RegisterInt16(resist_absorb_slashing);
+	RegisterInt16(resist_absorb_crushing);
+	RegisterInt16(resist_absorb_piercing);
+	RegisterInt16(resist_absorb_heat);
+	RegisterInt16(resist_absorb_cold);
+	RegisterInt16(resist_absorb_magic);
+	RegisterInt16(resist_absorb_mental);
+	RegisterInt16(resist_absorb_divine);
+	RegisterInt16(resist_absorb_disease);
+	RegisterInt16(resist_absorb_poison);
+
+	//Experience values were compressed to a short in older clients
+	int16_t& advExp = adv_xp_do_not_set,
+		&advExpNextLevel = adv_xp_next_level_do_not_set,
+		&advExpDebt = adv_xp_debt_do_not_set,
+		&tsExp = ts_xp_do_not_set,
+		&tsExpNextLevel = ts_xp_next_level_do_not_set,
+		&tsExpDebt = ts_xp_debt_do_not_set;
+
+	RegisterInt16(advExp);
+	RegisterInt16(advExpDebt);
+	RegisterInt16(advExpNextLevel);
+	RegisterInt16(tsExp);
+	RegisterInt16(tsExpDebt);
+	RegisterInt16(tsExpNextLevel);
+
+	RegisterUInt16(adventure_vitality);
+	RegisterUInt16(adventure_vitality_yellow_arrow);
+	RegisterUInt16(adventure_vitality_blue_arrow);
+	RegisterUInt16(tradeskill_vitality);
+	RegisterUInt16(tradeskill_vitality_purple_arrow);
+	RegisterUInt16(tradeskill_vitality_blue_arrow);
+	RegisterFloat(mentor_bonus);
+	RegisterUInt16(earned_aa);
+	RegisterUInt16(max_aa);
+	RegisterUInt16(unassigned_aa);
+	RegisterUInt16(aa_green_bar);
+	RegisterUInt16(adv_xp_to_aa_xp_slider);
+	RegisterUInt16(aa_blue_bar);
+	RegisterUInt16(aa_next_level);
+	RegisterUInt16(aa_bonus_xp);
+
+	RegisterUInt32(aa_level_up_events);
+	RegisterUInt32(aa_items_found);
+	RegisterUInt32(aa_named_npcs_killed);
+	RegisterUInt32(aa_quests_completed);
+	RegisterUInt32(aa_exploration_events);
+	RegisterUInt32(aa_completed_collections);
+
+	uint8_t& Unknown24 = unknown24[0];
+	RegisterUInt8(Unknown24)->SetCount(6);
+
+	uint32_t& coins_copper = currency.copper;
+	uint32_t& coins_silver = currency.silver;
+	uint32_t& coins_gold = currency.gold;
+	uint32_t& coins_plat = currency.platinum;
+	RegisterUInt32(coins_copper);
+	RegisterUInt32(coins_silver);
+	RegisterUInt32(coins_gold);
+	RegisterUInt32(coins_plat);
+
+	RegisterInt32(weight);
+	RegisterInt32(maxWeight);
+
+	RescopeArrayElement(unknown34);
+	RegisterUInt32(unknown34)->SetCount(5);
+
+	RescopeArrayElement(spell_effects);
+	RegisterSubstruct(spell_effects)->SetCount(30);
+
+	RescopeArrayElement(detrimental_spell_effects);
+	RegisterSubstruct(detrimental_spell_effects)->SetCount(30);
+
+	RegisterUInt8(trauma_count);
+	RegisterUInt8(arcane_count);
+	RegisterUInt8(noxious_count);
+	RegisterUInt8(elemental_count);
+
+	RescopeArrayElement(maintained_effects);
+	RegisterSubstruct(maintained_effects)->SetCount(30);
+
+	RegisterFloat(breath);
+	RegisterUInt32(breathable_environment_flags);
+	RegisterUInt32(flags);
+	RegisterUInt32(flags2);
+	static std::string afk_message = "afk_message";
+	RegisterCharString(afk_message, 256);
+	RegisterSubstruct(pve_props);
+
+	static int32_t unknown1244 = 0;
+
+	RegisterInt32(unknown1244);
+
+	RescopeToReference(spell_state_flags, uint16_t);
+	RegisterUInt16(spell_state_flags);
+
+	static uint8_t g_unknown124a[10] = { 0 };
+	uint8_t& unknown124a = g_unknown124a[0];
+
+	RegisterUInt8(unknown124a)->SetCount(10);
+
+	RegisterSubstruct(groupSheet);
+
+	//Pet information was previously in the charsheet
+	static int32_t petID = -1;
+	static std::string petName("No Pet");
+	static float petHealth = 0.f;
+	static float petPower = 0.f;
+	static uint8_t petUnknown = 0;
+	static uint8_t petMovement = 0;
+	static uint8_t petBehavior = 0;
+
+	RegisterInt32(petID);
+	RegisterCharString(petName, 41);
+	RegisterFloat(petHealth);
+	RegisterFloat(petPower);
+	RegisterUInt8(petUnknown);
+	RegisterUInt8(petMovement);
+	RegisterUInt8(petBehavior);
+
+	RegisterFloat(humidity);
+	RegisterFloat(wind_direction);
+
+	RescopeToReference(statusPoints, uint32_t);
+	RescopeToReference(guild_status, uint32_t);
+	RegisterUInt32(statusPoints);
+	RegisterUInt32(guild_status);
+
+	//Obviously older than COE
+	RegisterUInt8(unknownCOEa);
+
+	//house zone and the following 151 bytes (199 total) appear to be the same object
+	static std::string house_zone = "house zone";
+	RegisterCharString(house_zone, 48);
+	uint8_t& Unknown526 = unknown526[0];
+	RegisterUInt8(Unknown526)->SetCount(16);
+
+	//bind zone and the following bytes (84 total) appear to be the same object
+	static std::string bind_zone = "bind zone";
+	RegisterCharString(bind_zone, 32);
+	uint8_t& Unknown188 = unknown188[0];
+	RegisterUInt8(Unknown188)->SetCount(27);
 }
 
 void UpdateCharacterSheetMsgData::RegisterElements67650() {

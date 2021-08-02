@@ -225,6 +225,14 @@ public:
 	void RegisterElements() override {
 		const uint32_t ver = GetVersion();
 
+		//Being lazy :)
+		if (ver <= 843) {
+			static float g_blueStats[66] = { 0.f };
+			float& blueStats = g_blueStats[0];
+			RegisterFloat(blueStats)->SetCount(66);
+			return;
+		}
+
 		RegisterFloat(hp_regen);
 		RegisterFloat(power_regen);
 		RegisterFloat(ooc_hp_regen);
@@ -404,7 +412,7 @@ struct CharacterSheetMiscData {
 		memset(this, 0, sizeof(*this));
 		breath = 30.f;
 		bCanLevelPast90 = true;
-		unknownCOEa = 6 ;
+		unknownCOEa = 6;
 	}
 
 	//Some elements are a different format in the packet from what we use, convert them here
@@ -459,6 +467,8 @@ struct CharacterSheetMiscData {
 	int16_t avoidance_base_chance_base;
 	int16_t avoidance_parry_chance;
 	int16_t avoidance_parry_chance_base;
+	int16_t avoidance_deflection_chance;
+	int16_t avoidance_deflection_chance_base;
 	int16_t avoidance_block_chance;
 	int16_t avoidance_block_chance_base;
 	int16_t avoidance_block_uncontested;
@@ -593,6 +603,48 @@ protected:
 	int32_t bonus_power_do_not_set;
 	int32_t hp_regen_do_not_set;
 	int32_t power_regen_do_not_set;
+
+	int16_t adv_xp_do_not_set;
+	int16_t adv_xp_next_level_do_not_set;
+	int16_t adv_xp_debt_do_not_set;
+
+	int16_t ts_xp_do_not_set;
+	int16_t ts_xp_next_level_do_not_set;
+	int16_t ts_xp_debt_do_not_set;
+
+	//Legacy resists
+	int16_t resist_slashing_do_not_set;
+	int16_t resist_crushing_do_not_set;
+	int16_t resist_piercing_do_not_set;
+	int16_t resist_heat_do_not_set;
+	int16_t resist_cold_do_not_set;
+	int16_t resist_magic_do_not_set;
+	int16_t resist_mental_do_not_set;
+	int16_t resist_divine_do_not_set;
+	int16_t resist_disease_do_not_set;
+	int16_t resist_poison_do_not_set;
+
+	int16_t resist_base_slashing_do_not_set;
+	int16_t resist_base_crushing_do_not_set;
+	int16_t resist_base_piercing_do_not_set;
+	int16_t resist_base_heat_do_not_set;
+	int16_t resist_base_cold_do_not_set;
+	int16_t resist_base_magic_do_not_set;
+	int16_t resist_base_mental_do_not_set;
+	int16_t resist_base_divine_do_not_set;
+	int16_t resist_base_disease_do_not_set;
+	int16_t resist_base_poison_do_not_set;
+
+	int16_t resist_absorb_slashing_do_not_set;
+	int16_t resist_absorb_crushing_do_not_set;
+	int16_t resist_absorb_piercing_do_not_set;
+	int16_t resist_absorb_heat_do_not_set;
+	int16_t resist_absorb_cold_do_not_set;
+	int16_t resist_absorb_magic_do_not_set;
+	int16_t resist_absorb_mental_do_not_set;
+	int16_t resist_absorb_divine_do_not_set;
+	int16_t resist_absorb_disease_do_not_set;
+	int16_t resist_absorb_poison_do_not_set;
 };
 
 class UpdateCharacterSheetMsgData : public CharacterSheetMiscData, public CharacterSheet, public PacketEncodedData {
@@ -608,6 +660,8 @@ public:
 		for (uint8_t i = 0; i < 30; i++)
 			maintained_effects[i].ResetVersion(version);
 		RegisterElements();
+		
+		bDumpOffsets = true;
 	}
 
 	UpdateCharacterSheetMsgData(uint32_t version, const CharacterSheet& sheet) : PacketEncodedData(version), CharacterSheet(sheet),
@@ -621,6 +675,8 @@ public:
 		for (uint8_t i = 0; i < 30; i++)
 			maintained_effects[i].ResetVersion(version);
 		RegisterElements();
+
+		bDumpOffsets = true;
 	}
 
 	void PreWrite() override;
@@ -658,6 +714,7 @@ private:
 	int16_t int_base_do_not_set;
 
 	void RegisterElements() override;
+	void RegisterElementsLegacy();
 	void RegisterElements67650();
 
 	void RegisterAttributeElements();

@@ -12,6 +12,7 @@
 struct Substruct_MovementData : public PacketEncodedData, public SpawnPositionStruct {
 	Substruct_MovementData(uint32_t version) : PacketEncodedData(version) {
 		RegisterElements();
+		bDumpOffsets = true;
 	}
 
 	void RegisterElements() override {

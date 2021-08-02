@@ -140,13 +140,14 @@ void ZoneDatabase::ProcessCharacterDetailsResult(DatabaseResult& res, const std:
 	attr->agi.Initialize(res.GetInt32(i++));
 	attr->wis.Initialize(res.GetInt32(i++));
 	attr->intel.Initialize(res.GetInt32(i++));
-	attr->heat.Initialize(res.GetInt32(i++));
-	attr->cold.Initialize(res.GetInt32(i++));
-	attr->magic.Initialize(res.GetInt32(i++));
-	attr->mental.Initialize(res.GetInt32(i++));
-	attr->divine.Initialize(res.GetInt32(i++));
-	attr->disease.Initialize(res.GetInt32(i++));
-	attr->poison.Initialize(res.GetInt32(i++));
+	i += 7;
+	//attr->heat.Initialize(res.GetInt32(i++));
+	//attr->cold.Initialize(res.GetInt32(i++));
+	//attr->magic.Initialize(res.GetInt32(i++));
+	//attr->mental.Initialize(res.GetInt32(i++));
+	//attr->divine.Initialize(res.GetInt32(i++));
+	//attr->disease.Initialize(res.GetInt32(i++));
+	//attr->poison.Initialize(res.GetInt32(i++));
 	attr->elemental.Initialize(res.GetInt32(i++));
 	attr->arcane.Initialize(res.GetInt32(i++));
 	attr->noxious.Initialize(res.GetInt32(i++));
@@ -308,13 +309,14 @@ void ZoneDatabase::ProcessNpcResult(DatabaseResult& result, const std::shared_pt
 	sheet.wis.Initialize(result.GetInt32(i++));
 	sheet.intel.Initialize(result.GetInt32(i++));
 	sheet.agi.Initialize(result.GetInt32(i++));
-	sheet.heat.Initialize(result.GetInt32(i++));
-	sheet.cold.Initialize(result.GetInt32(i++));
-	sheet.magic.Initialize(result.GetInt32(i++));
-	sheet.mental.Initialize(result.GetInt32(i++));
-	sheet.divine.Initialize(result.GetInt32(i++));
-	sheet.disease.Initialize(result.GetInt32(i++));
-	sheet.poison.Initialize(result.GetInt32(i++));
+	i += 7;
+	//sheet.heat.Initialize(result.GetInt32(i++));
+	//sheet.cold.Initialize(result.GetInt32(i++));
+	//sheet.magic.Initialize(result.GetInt32(i++));
+	//sheet.mental.Initialize(result.GetInt32(i++));
+	//sheet.divine.Initialize(result.GetInt32(i++));
+	//sheet.disease.Initialize(result.GetInt32(i++));
+	//sheet.poison.Initialize(result.GetInt32(i++));
 	// Aggro Radius
 	i++;
 	// Cast Percentage 

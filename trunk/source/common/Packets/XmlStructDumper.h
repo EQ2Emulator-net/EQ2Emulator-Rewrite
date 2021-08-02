@@ -88,7 +88,7 @@ public:
 
 class XmlStructDumper {
 public:
-	XmlStructDumper() = default;
+	XmlStructDumper() : bDumpOffset(false) {}
 	~XmlStructDumper() = default;
 
 	void DumpStructsFile(const char* filename, const char* directory = "");
@@ -96,11 +96,14 @@ public:
 private:
 	std::deque<rapidxml::xml_node<>*> PacketStructToXml(rapidxml::xml_document<>& doc, const std::string& name);
 	std::deque<rapidxml::xml_node<>*> SubstructToXml(rapidxml::xml_document<>& doc, const std::string& name);
-	static void ElementToXml(PacketElement* e, rapidxml::xml_document<>& doc, rapidxml::xml_node<>& parent);
+	void ElementToXml(PacketElement* e, rapidxml::xml_document<>& doc, rapidxml::xml_node<>& parent);
 	static const char* GetElementType(PacketElement* e);
 
 	void DumpSubstructsToFile(const char* filename, rapidxml::xml_document<>& doc, rapidxml::xml_node<>& root);
 	void DumpPacketStructsToFile(const char* filename, rapidxml::xml_document<>& doc, rapidxml::xml_node<>& root);
+
+	uint32_t dumpOffsetPos;
+	bool bDumpOffset;
 };
 
 #define RegisterXmlSubstruct(pt, f, ...) uint32_t zUNIQUENAMEVERz ## pt [] = { __VA_ARGS__ };\
