@@ -3,17 +3,15 @@
 #include <memory>
 
 class Spawn;
-class Entity;
 
 class BaseController : public std::enable_shared_from_this<BaseController> {
 public:
 	virtual ~BaseController() = default;
 	virtual bool Process() = 0;
-	virtual void Possess() = 0;
-	virtual void UnPossess() = 0;
+	virtual void Possess(std::shared_ptr<Spawn> spawn);
+	virtual void UnPossess() { }
 
-	virtual std::shared_ptr<Entity> GetControlled() { return controlled.lock(); }
-	virtual void SetControlled(const std::shared_ptr<Entity>& spawn) { controlled = spawn; }
+	virtual std::shared_ptr<Spawn> GetControlled() { return controlled.lock(); }
 	virtual void ClearTarget(bool bUpdateClient = true);
 	virtual void SetTarget(const std::shared_ptr<class Spawn>& spawn, bool bUpdateClient = true);
 	std::shared_ptr<class Spawn> GetTarget();
@@ -21,6 +19,6 @@ public:
 	virtual bool IsNPCController() { return false; }
 
 protected:
-	std::weak_ptr<Entity> controlled;
+	std::weak_ptr<Spawn> controlled;
 	std::weak_ptr<Spawn> target;
 };

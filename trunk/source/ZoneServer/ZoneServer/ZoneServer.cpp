@@ -1028,9 +1028,7 @@ void ZoneServer::AddSpawn(std::shared_ptr<Spawn> spawn, SpawnEntryType type) {
 
 	if (!spawn->GetController()) {
 		std::shared_ptr<NPCController> controller = std::make_shared<NPCController>();
-		std::shared_ptr<Entity> ent = std::dynamic_pointer_cast<Entity>(spawn);
-		if (ent)
-			controller->SetControlled(ent);
+		controller->Possess(spawn);
 		spawn->SetController(controller);
 	}
 
@@ -1211,7 +1209,7 @@ void ZoneServer::ActivateCellsForClient(std::shared_ptr<Client> client) {
 	if (!controller)
 		return;
 
-	std::shared_ptr<Entity> player = controller->GetControlled();
+	std::shared_ptr<Spawn> player = controller->GetControlled();
 	if (!player)
 		return;
 

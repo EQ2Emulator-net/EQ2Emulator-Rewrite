@@ -132,7 +132,7 @@ void NPCPathDebug::AddPathPoint() {
 	if (!target)
 		return;
 
-	uint32_t index = m_locationSpawns.size() + 1;
+	uint32_t index = static_cast<uint32_t>(m_locationSpawns.size() + 1);
 	std::shared_ptr<MovementLocationInfo> loc = std::make_shared<MovementLocationInfo>();
 	loc->x = player->GetX();
 	loc->y = player->GetY();

@@ -55,7 +55,7 @@ public:
 			//TODO: Check if admin to bypass camp timer
 			static const uint8_t campSeconds = g_ruleManager.GetGlobalRule(ERuleCategory::R_World, ERuleType::PlayerCampTimer)->GetUInt8();
 			p.numSeconds = campSeconds;
-			if (std::shared_ptr<Entity> controlled = client->GetController()->GetControlled()) {
+			if (std::shared_ptr<Spawn> controlled = client->GetController()->GetControlled()) {
 				controlled->SetActivityTimer(Timer::GetServerTime() + p.numSeconds * 1000, false);
 				controlled->EnableEntityFlags(EntityFlagCamping);
 			}

@@ -2,7 +2,7 @@
 
 #include "MovementLocationInfo.h"
 
-class Entity;
+class Spawn;
 
 class NPCMovement {
 public:
@@ -13,13 +13,13 @@ public:
 	void RemoveLocations();
 	std::vector<std::shared_ptr<MovementLocationInfo> > GetLocations() { return m_locations; }
 
-	void Process(std::shared_ptr<Entity> spawn);
+	void Process(std::shared_ptr<Spawn> spawn);
 	
 	void UpdateMovementTimestamp();
 
 private:
 	// Actual movement calculations are here
-	void CalculateChange(std::shared_ptr<Entity> spawn);
+	void CalculateChange(std::shared_ptr<Spawn> spawn);
 
 	std::vector<std::shared_ptr<MovementLocationInfo> > m_locations;
 	uint32_t m_lastMovementUpdateTimestamp;
