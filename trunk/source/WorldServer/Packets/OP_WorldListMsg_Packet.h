@@ -32,7 +32,7 @@ public:
 		RegisterUInt8(Locked);
 		if (GetVersion() > 283) {
 			RegisterUInt8(Hidden);
-			if (GetVersion() > 864) {
+			if (GetVersion() > 1208) {
 				RegisterUInt8(Unknown);
 			}
 		}
@@ -46,12 +46,14 @@ public:
 			return;
 		}
 
-		RegisterUInt8(Unk2);
-
 		if (GetVersion() >= 60100) {
+			if (GetVersion() >= 67650) {
+				RegisterUInt8(Unk2);
+			}
 			RegisterUInt16(Flags);
 		}
 		else {
+			RegisterUInt8(Unk2);
 			RescopeToReference(Flags, uint8_t);
 			RegisterUInt8(Flags);
 		}
@@ -73,6 +75,7 @@ public:
 	// 8 = Euro English
 	// 16 = Exchange enabled server
 	// 32 = PVP
+	// 128 = Battlegrounds
 	// 256 = TLE
 	// 512 = Event
 	// 1024 = Prison Server

@@ -28,7 +28,7 @@ public:
 		Unknown7 = 0;
 		AvailableStartingCities = 255;
 		Unknown8 = 0;
-		bUsePacketClassItems = false;
+		bUsePacketClassItems = true;
 		NumClassItems = 0;
 		UnknownArraySize = 0;
 		Unknown11 = 0;
