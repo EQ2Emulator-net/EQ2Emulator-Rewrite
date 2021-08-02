@@ -58,6 +58,8 @@ struct CharacterDetails {
 			gender = &entity->m_infoStruct.gender;
 			race = &entity->m_infoStruct.race;
 		}
+		weight = 1;
+		maxWeight = 100;
 	}
 
 	//Keep the player spawn pointer alive until we're done with this struct
@@ -100,6 +102,8 @@ struct CharacterDetails {
 
 	uint32_t characterID;
 	uint32_t deityID;
+	int32_t weight;
+	int32_t maxWeight;
 };
 
 class CharacterUpdateGenerator {

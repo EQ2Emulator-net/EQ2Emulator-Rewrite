@@ -55,7 +55,10 @@ public:
 	}
 
 	void RegisterElements() override {
-		RegisterUInt64(uniqueId);
+		const uint32_t version = GetVersion();
+		if (version > 843) {
+			RegisterUInt64(uniqueId);
+		}
 		RegisterUInt32(spawnId);
 		RegisterUInt32(petId);
 		if (GetVersion() >= 57048) {
@@ -93,9 +96,11 @@ public:
 		RegisterInt8(arcane);
 		RegisterInt8(noxious);
 		RegisterInt8(elemental);
-		RegisterInt8(curse);
-		RescopeArrayElement(unknown5);
-		RegisterUInt8(unknown5)->SetCount(2);
+		if (version > 843) {
+			RegisterInt8(curse);
+			RescopeArrayElement(unknown5);
+			RegisterUInt8(unknown5)->SetCount(2);
+		}
 		RegisterUInt8(coeUnknown);
 	}
 
@@ -332,14 +337,18 @@ public:
 		else {
 			RescopeArrayElement(members);
 			RegisterSubstruct(members)->SetCount(5);
-			RescopeArrayElement(locations);
-			RegisterSubstruct(locations)->SetCount(5);
-			if (version >= 1188) {
-				RescopeArrayElement(appearances);
-				RegisterSubstruct(appearances)->SetCount(5);
+			if (GetVersion() > 843) {
+				RescopeArrayElement(locations);
+				RegisterSubstruct(locations)->SetCount(5);
+				if (version >= 1188) {
+					RescopeArrayElement(appearances);
+					RegisterSubstruct(appearances)->SetCount(5);
+				}
 			}
 			RegisterInt32(leaderIndex);
-			RegisterInt32(unknown);
+			if (GetVersion() > 843) {
+				RegisterInt32(unknown);
+			}
 		}
 	}
 

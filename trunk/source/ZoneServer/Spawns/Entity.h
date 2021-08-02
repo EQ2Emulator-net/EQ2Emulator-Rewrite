@@ -53,13 +53,13 @@ struct EntityAttributeSheet {
 	EntityFloatAttribute attackSpeed;
 
 	//Resists
-	EntityAttribute heat;
-	EntityAttribute cold;
-	EntityAttribute magic;
-	EntityAttribute mental;
-	EntityAttribute divine;
-	EntityAttribute disease;
-	EntityAttribute poison;
+	//EntityAttribute heat;
+	//EntityAttribute cold;
+	//EntityAttribute magic;
+	//EntityAttribute mental;
+	//EntityAttribute divine;
+	//EntityAttribute disease;
+	//EntityAttribute poison;
 	EntityAttribute elemental;
 	EntityAttribute arcane;
 	EntityAttribute noxious;

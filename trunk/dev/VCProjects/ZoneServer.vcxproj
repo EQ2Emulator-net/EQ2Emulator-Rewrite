@@ -200,6 +200,7 @@
     <ClCompile Include="..\..\source\ZoneServer\Commands\CommandProcess.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Commands\CommandSpawn.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Controllers\BaseController.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\Controllers\NPCController.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Controllers\PlayerController.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Database\ZoneDatabase.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\Items\Item.cpp" />

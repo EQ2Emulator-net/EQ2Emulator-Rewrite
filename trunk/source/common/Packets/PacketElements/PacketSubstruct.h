@@ -93,7 +93,8 @@ public:
 	virtual void PostRead();
 
 protected:
-	PacketSubstruct(uint32_t p_version, bool p_inline = false) : elementsInitialized(false), version(p_version), bInline(p_inline) {
+	PacketSubstruct(uint32_t p_version, bool p_inline = false) : elementsInitialized(false), version(p_version), 
+		bInline(p_inline), bDumpOffsets(false) {
 	}
 
 	//Copy constructor
@@ -102,6 +103,7 @@ protected:
 		version = other.version;
 		elementsInitialized = false;
 		bInline = other.bInline;
+		bDumpOffsets = other.bDumpOffsets;
 	}
 
 	//Move constructor
@@ -110,11 +112,13 @@ protected:
 		version = other.version;
 		elementsInitialized = false;
 		bInline = other.bInline;
+		bDumpOffsets = other.bDumpOffsets;
 	}
 
 	std::vector<PacketElement*> elements;
 
 	uint32_t version;
+	bool bDumpOffsets;
 
 private:
 	bool elementsInitialized;

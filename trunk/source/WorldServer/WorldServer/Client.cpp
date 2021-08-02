@@ -86,6 +86,7 @@ void Client::SendLoginReply(uint8_t reply) {
 		WorldServer* s = GetServer();
 		std::map<uint8_t, std::vector<OP_LoginReplyMsg_Packet::ClassItem::StartingItem> >::iterator itr;
 		std::vector<OP_LoginReplyMsg_Packet::ClassItem::StartingItem>::iterator itr2;
+		r->bUsePacketClassItems = true;
 		for (itr = s->NormalEquipment.begin(); itr != s->NormalEquipment.end(); itr++) {
 			OP_LoginReplyMsg_Packet::ClassItem ci;
 			ci.ClassID = itr->first;

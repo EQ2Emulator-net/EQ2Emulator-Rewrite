@@ -12,9 +12,11 @@
 struct Substruct_MovementData : public PacketEncodedData, public SpawnPositionStruct {
 	Substruct_MovementData(uint32_t version) : PacketEncodedData(version) {
 		RegisterElements();
+		bDumpOffsets = true;
 	}
 
-	void RegisterElements() override {
+	void RegisterElementsLegacy() {
+		const uint32_t version = GetVersion();
 		RegisterUInt32(positionState);
 		if (GetVersion() > 283) {
 			RegisterUInt32(positionState2);
@@ -24,22 +26,17 @@ struct Substruct_MovementData : public PacketEncodedData, public SpawnPositionSt
 		}
 		RegisterFloat(desiredHeading);
 		RegisterFloat(desiredPitch);
-		if (GetVersion() > 283) {
-			RegisterFloat(unusedUnknown);
+		if (version > 283) {
+			RegisterFloat(speedModifier);
 		}
-		RegisterFloat(desiredHeadingVelocity);
 		RegisterFloat(desiredPitchVelocity);
 		RegisterFloat(collisionRadius);
 		RegisterFloat(size);
 		RegisterFloat(sizeRatio);
-		RegisterFloat(speedModifier);
-		if (GetVersion() > 283) {
-			RegisterFloat(airSpeed);
-			RegisterFloat(desiredStrafeSpeed);
-			RegisterFloat(desiredVertSpeed);
-			RegisterFloat(unkSpeed3);
-		}
 		RegisterFloat(swimmingSpeedMultiplier);
+		if (GetVersion() > 283) {
+			RegisterFloat(desiredStrafeSpeed);
+		}
 		RegisterFloat(desiredForwardSpeed);
 		if (GetVersion() > 283) {
 			RegisterFloat(desiredRoll);
@@ -70,6 +67,60 @@ struct Substruct_MovementData : public PacketEncodedData, public SpawnPositionSt
 			static uint16_t align_trash = 0;
 			RegisterUInt16(align_trash);
 		}
+		RegisterUInt32(grid_id);
+		RegisterFloat(x);
+		RegisterFloat(y);
+		RegisterFloat(z);
+		RegisterFloat(heading);
+		RegisterFloat(pitch);
+		RegisterFloat(roll);
+		RegisterFloat(velocityX);
+		RegisterFloat(velocityY);
+		RegisterFloat(velocityZ);
+	}
+
+	void RegisterElements() override {
+		if (GetVersion() <= 843) {
+			RegisterElementsLegacy();
+			return;
+		}
+
+		RegisterUInt32(positionState);
+		RegisterUInt32(positionState2);
+		RegisterFloat(desiredHeading);
+		RegisterFloat(desiredPitch);
+		RegisterFloat(unusedUnknown);
+		RegisterFloat(desiredHeadingVelocity);
+		RegisterFloat(desiredPitchVelocity);
+		RegisterFloat(collisionRadius);
+		RegisterFloat(size);
+		RegisterFloat(sizeRatio);
+		RegisterFloat(speedModifier);
+		RegisterFloat(airSpeed);
+		RegisterFloat(desiredStrafeSpeed);
+		RegisterFloat(desiredVertSpeed);
+		RegisterFloat(unkSpeed3);
+		RegisterFloat(swimmingSpeedMultiplier);
+		RegisterFloat(desiredForwardSpeed);
+		RegisterFloat(desiredRoll);
+		RegisterFloat(desiredRollVelocity);
+		RegisterFloat(destLocX);
+		RegisterFloat(destLocY);
+		RegisterFloat(destLocZ);
+		RegisterFloat(destLocX2);
+		RegisterFloat(destLocY2);
+		RegisterFloat(destLocZ2);
+		RegisterFloat(baseLocX);
+		RegisterFloat(baseLocY);
+		RegisterFloat(baseLocZ);
+		RegisterUInt32(faceActorID);
+		RegisterFloat(actorStopRange);
+		RegisterFloat(sizeUnknown);
+		RegisterFloat(unk70);
+		RegisterUInt8(movementMode);
+		RegisterUInt8(unkByte);
+		static uint16_t align_trash = 0;
+		RegisterUInt16(align_trash);
 		RegisterUInt32(grid_id);
 		RegisterFloat(x);
 		RegisterFloat(y);

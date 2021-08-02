@@ -57,6 +57,7 @@ public:
 	bool EQ2Compressed;
 	bool bOpcodeError;
 	bool bCombined;
+	bool bDumpOffsets;
 
 protected:
 	EQ2Packet(uint32_t version);

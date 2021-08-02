@@ -106,12 +106,21 @@ std::deque<xml_node<>*> XmlStructDumper::SubstructToXml(xml_document<>& doc, con
 		
 		std::unique_ptr<PacketSubstruct> ps(sa->Create(itr));
 
+		bDumpOffset = ps->bDumpOffsets;
+		dumpOffsetPos = 0;
+
 		ps->CheckElementsInitialized();
 
 		EmuAssert(!ps->bInline);
 		
 		for (auto& e : ps->elements) {
 			ElementToXml(e, doc, *structNode);
+		}
+
+		if (bDumpOffset) {
+			std::ostringstream ss;
+			ss << "0x" << std::hex << dumpOffsetPos;
+			structNode->append_attribute(doc.allocate_attribute("ByteSize", doc.allocate_string(ss.str().c_str())));
 		}
 
 		ret.push_back(structNode);
@@ -194,6 +203,9 @@ void XmlStructDumper::ElementToXml(PacketElement* e, xml_document<>& doc, xml_no
 		ps->ifVariableSet = e->ifVariableSet;
 		ps->count = e->count;
 		ElementToXml(ps, doc, parent);
+		if (bDumpOffset) {
+			dumpOffsetPos += ps->GetSize() * e->count;
+		}
 		return;
 	}
 	else {
@@ -232,6 +244,16 @@ void XmlStructDumper::ElementToXml(PacketElement* e, xml_document<>& doc, xml_no
 
 		dataNode->append_attribute(doc.allocate_attribute("IfAnyVariableSet", doc.allocate_string(ss.str().c_str())));
 	}
+
+	if (bDumpOffset) {
+		std::ostringstream ss;
+		ss << "0x" << std::hex << dumpOffsetPos;
+		if (!dynamic_cast<PacketSubstruct*>(e)) {
+			dumpOffsetPos += e->GetSize();
+		}
+		dataNode->append_attribute(doc.allocate_attribute("Offset", doc.allocate_string(ss.str().c_str())));
+	}
+
 	parent.append_node(dataNode);
 }
 
@@ -299,6 +321,9 @@ std::deque<xml_node<>*> XmlStructDumper::PacketStructToXml(xml_document<>& doc, 
 
 		std::unique_ptr<EQ2Packet> ps(pa->Create(itr));
 
+		bDumpOffset = ps->bDumpOffsets;
+		dumpOffsetPos = 0;
+
 #ifdef EQ2_ZONE
 		if (dynamic_cast<OP_ClientCmdMsg_Packet*>(ps.get())) {
 			if (strcmp(pa->opName, "OP_ClientCmdMsg") != 0) {
@@ -316,6 +341,12 @@ std::deque<xml_node<>*> XmlStructDumper::PacketStructToXml(xml_document<>& doc, 
 
 		for (auto& e : ps->elements) {
 			ElementToXml(e, doc, *structNode);
+		}
+
+		if (bDumpOffset) {
+			std::ostringstream ss;
+			ss << "0x" << std::hex << dumpOffsetPos;
+			structNode->append_attribute(doc.allocate_attribute("ByteSize", doc.allocate_string(ss.str().c_str())));
 		}
 
 		ret.push_back(structNode);
