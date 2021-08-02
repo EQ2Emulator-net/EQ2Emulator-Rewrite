@@ -18,6 +18,21 @@ bool PlayerController::Process() {
 	return ret;
 }
 
+void PlayerController::Possess(std::shared_ptr<Spawn> spawn) {
+	BaseController::Possess(spawn);
+
+	std::shared_ptr<Entity> ent = std::dynamic_pointer_cast<Entity>(spawn);
+	if (!ent)
+		return;
+
+	if (!charSheet) {
+		charSheet.emplace(ent);
+	}
+	else {
+		charSheet->LinkToGhost(ent);
+	}
+}
+
 bool PlayerController::CheckPredictionCrc(uint32_t crc) { 
 	bool ret = predictionCRC != crc;
 	predictionCRC = crc;
@@ -31,15 +46,4 @@ void PlayerController::ApplyPredictionUpdate(uint32_t deltaMS, const SpawnPositi
 	}
 
 	controlled->SetSpawnPositionData(update, deltaMS);
-}
-
-void PlayerController::SetControlled(const std::shared_ptr<Entity>& spawn) {
-	BaseController::Possess(spawn);
-
-	if (!charSheet) {
-		charSheet.emplace(spawn);
-	}
-	else {
-		charSheet->LinkToGhost(spawn);
-	}
 }

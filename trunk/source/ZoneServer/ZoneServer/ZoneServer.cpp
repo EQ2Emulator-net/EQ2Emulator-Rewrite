@@ -257,7 +257,7 @@ bool ZoneServer::AddClient(std::shared_ptr<Client> c, bool bInitialLogin) {
 std::shared_ptr<Entity> ZoneServer::LoadCharacter(const std::shared_ptr<Client>& client) {
 	std::shared_ptr<Entity> entity = std::make_shared<Entity>();
 	std::shared_ptr<PlayerController> controller = client->GetController();
-	controller->SetControlled(entity);
+	controller->Possess(entity);
 	entity->SetController(controller);
 	CharacterSheet* sheet = controller->GetCharacterSheet();
 	database.LoadCharacter(client->GetCharacterID(), client->GetAccountID(), entity, *sheet);
@@ -308,7 +308,7 @@ void ZoneServer::SendCharacterInfo(std::shared_ptr<Client> client) {
 		auto controller = client->GetController();
 		auto old_controller = dynamic_pointer_cast<PlayerController>(entity->GetController());
 		controller->MoveCharacterSheetFrom(old_controller->GetCharacterSheet());
-		controller->SetControlled(entity);
+		controller->Possess(entity);
 		entity->SetController(controller);
 	}
 	else {
@@ -1184,8 +1184,16 @@ void ZoneServer::AddSpawnToCell(std::shared_ptr<Spawn> spawn, std::pair<int32_t,
 		for (std::pair<uint32_t, std::weak_ptr<Client> > kvp : Clients) {
 			std::shared_ptr<Client> client = kvp.second.lock();
 			if (client) {
+				std::shared_ptr<PlayerController> controller = client->GetController();
+				if (!controller)
+					continue;
+
+				std::shared_ptr<Spawn> player = controller->GetControlled();
+				if (!player)
+					continue;
+
 				if (!client->WasSentSpawn(spawn)) {
-					if (GetCellDistance(client->GetController()->GetControlled()->GetCellCoordinates(), cell->GetCellCoordinates()) < 2)
+					if (GetCellDistance(player->GetCellCoordinates(), cell->GetCellCoordinates()) < 2)
 						SendSpawnToClient(spawn, client);
 				}
 			}
