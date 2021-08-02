@@ -5,7 +5,7 @@
 
 class Skill {
 public:
-	Skill() : skillID(0), bDisplay(false) {}
+	Skill() : skillID(0), skillType(0), bDisplay(false) {}
 	~Skill() = default;
 
 	std::string shortName;

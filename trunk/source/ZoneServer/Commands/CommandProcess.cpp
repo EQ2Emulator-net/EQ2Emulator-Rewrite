@@ -367,7 +367,7 @@ void CommandProcess::CommandOOC(const std::shared_ptr<Client>& client, Separator
 }
 
 void CommandProcess::CommandGrid(const std::shared_ptr<Client>& client, Separator& sep) {
-	std::shared_ptr<Entity> player = client->GetController()->GetControlled();
+	std::shared_ptr<Spawn> player = client->GetController()->GetControlled();
 	if (!player) {
 		return;
 	}
@@ -386,7 +386,7 @@ void CommandProcess::CommandGrid(const std::shared_ptr<Client>& client, Separato
 }
 
 void CommandProcess::CommandAFK(const std::shared_ptr<Client>& client, Separator& sep) {
-	std::shared_ptr<Entity> player = client->GetController()->GetControlled();
+	std::shared_ptr<Spawn> player = client->GetController()->GetControlled();
 	if (!player) {
 		return;
 	}
@@ -435,7 +435,7 @@ void CommandProcess::CommandAFK(const std::shared_ptr<Client>& client, Separator
 
 void CommandProcess::CommandTell(const std::shared_ptr<Client>& client, Separator& sep) {
 	// Does not handle cross zones yet only works in same zone
-	std::shared_ptr<Entity> player = client->GetController()->GetControlled();
+	std::shared_ptr<Spawn> player = client->GetController()->GetControlled();
 	if (!player) {
 		return;
 	}

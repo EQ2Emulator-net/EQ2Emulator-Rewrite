@@ -34,7 +34,7 @@ void PlayerController::ApplyPredictionUpdate(uint32_t deltaMS, const SpawnPositi
 }
 
 void PlayerController::SetControlled(const std::shared_ptr<Entity>& spawn) {
-	BaseController::SetControlled(spawn);
+	BaseController::Possess(spawn);
 
 	if (!charSheet) {
 		charSheet.emplace(spawn);

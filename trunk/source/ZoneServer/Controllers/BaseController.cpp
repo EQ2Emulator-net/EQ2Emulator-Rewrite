@@ -3,6 +3,10 @@
 #include "BaseController.h"
 #include "../Spawns/Spawn.h"
 
+void BaseController::Possess(std::shared_ptr<Spawn> spawn) {
+	controlled = spawn;
+}
+
 void BaseController::SetTarget(const std::shared_ptr<Spawn>& spawn, bool bUpdateClient) {
 	target = spawn;
 }

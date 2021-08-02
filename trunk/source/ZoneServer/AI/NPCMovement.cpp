@@ -2,7 +2,7 @@
 
 #include "NPCMovement.h"
 #include "../../common/log.h"
-#include "../Spawns/Entity.h"
+#include "../Spawns/Spawn.h"
 #include "../../common/timer.h"
 
 NPCMovement::NPCMovement() {
@@ -17,7 +17,7 @@ void NPCMovement::RemoveLocations() {
 	m_locations.clear();
 }
 
-void NPCMovement::Process(std::shared_ptr<Entity> spawn) {
+void NPCMovement::Process(std::shared_ptr<Spawn> spawn) {
 
 	// movement loop
 	if (m_locations.size() > 0) {
@@ -64,7 +64,7 @@ void NPCMovement::Process(std::shared_ptr<Entity> spawn) {
 	}
 }
 
-void NPCMovement::CalculateChange(std::shared_ptr<Entity> spawn) {
+void NPCMovement::CalculateChange(std::shared_ptr<Spawn> spawn) {
 	// Speed is per second so we need a time_step (amount of time since the last update) to modify movement by
 	float delta_time = (Timer::GetServerTime() - m_lastMovementUpdateTimestamp) * 0.001f;
 	// update the last timestamp to the current time now that we got the delta time

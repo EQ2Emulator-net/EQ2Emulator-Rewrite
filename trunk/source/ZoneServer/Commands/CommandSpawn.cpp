@@ -120,7 +120,7 @@ void CommandProcess::CommandSpawnSet(const std::shared_ptr<Client>& client, Sepa
 }
 
 void CommandProcess::CommandSpawnDetails(const std::shared_ptr<Client>& client, Separator& sep) {
-	std::shared_ptr<Entity> player = client->GetController()->GetControlled();
+	std::shared_ptr<Spawn> player = client->GetController()->GetControlled();
 	if (!player) {
 		return;
 	}
@@ -222,7 +222,7 @@ void CommandProcess::CommandSpawn(const std::shared_ptr<Client>& client, Separat
 		return; // syntax error
 
 	std::shared_ptr<ZoneServer> zone = client->GetZone();
-	std::shared_ptr<Entity> player = client->GetController()->GetControlled();
+	std::shared_ptr<Spawn> player = client->GetController()->GetControlled();
 	std::shared_ptr<Spawn> spawn = zone->GetNewSpawnFromMasterList(sep.GetUInt32(0));
 	if (spawn) {
 		spawn->SetLocation(player->GetX(), player->GetY(), player->GetZ(), false);
@@ -320,7 +320,7 @@ void CommandProcess::CommandSpawnCamp(const std::shared_ptr<Client>& client, Sep
 		controller->SetSpawnCampDebug(scd);
 	}
 
-	std::shared_ptr<Entity> player = controller->GetControlled();
+	std::shared_ptr<Spawn> player = controller->GetControlled();
 	std::shared_ptr<ZoneServer> zone = client->GetZone();
 
 	// Transform the sub command to lowercase

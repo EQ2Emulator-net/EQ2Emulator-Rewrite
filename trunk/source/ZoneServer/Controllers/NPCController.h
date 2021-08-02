@@ -12,8 +12,6 @@ public:
 	bool IsNPCController() override { return true; }
 
 	bool Process() override;
-	void Possess() override {};
-	void UnPossess() override {};
 
 	// temp until ai is worked out
 	NPCMovement* GetNPCMovement() { return &movement; }

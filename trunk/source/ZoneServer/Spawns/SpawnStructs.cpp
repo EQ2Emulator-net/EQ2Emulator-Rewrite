@@ -43,7 +43,7 @@ void SpawnVisualizationStruct::SetVisualFlags(const std::shared_ptr<Client>& cli
 }
 
 void SpawnVisualizationStruct::DetermineForClient(const std::shared_ptr<Client>& client, const std::shared_ptr<Spawn>& spawn) {
-	auto player = client->GetController()->GetControlled();
+	auto player = std::dynamic_pointer_cast<Entity>(client->GetController()->GetControlled());
 
 	if (!player) {
 		LogError(LOG_CLIENT, 0, "Tried to make a spawn visual packet for a client with no player?");

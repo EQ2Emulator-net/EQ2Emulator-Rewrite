@@ -3,7 +3,7 @@
 #include "../../common/Packets/PacketElements/PacketElements.h"
 #include "../../common/Packets/EQ2Packet.h"
 #include "../ZoneServer/Client.h"
-#include "../Spawns/Entity.h"
+#include "../Spawns/Spawn.h"
 #include "../Controllers/PlayerController.h"
 #include "OP_CampAbortedMsg_Packet.h"
 
@@ -13,7 +13,7 @@ public:
 	}
 
 	void HandlePacket(std::shared_ptr<Client> client) override {
-		std::shared_ptr<Entity> controlled = client->GetController()->GetControlled();
+		std::shared_ptr<Spawn> controlled = client->GetController()->GetControlled();
 
 		if (!controlled) {
 			return;

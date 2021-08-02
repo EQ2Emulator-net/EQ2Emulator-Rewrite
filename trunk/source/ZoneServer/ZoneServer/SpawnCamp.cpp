@@ -39,7 +39,7 @@ void SpawnCamp::Initialize() {
 
 			//float x = MakeRandom(m_x - m_radius, m_x + m_radius);
 			//float z = MakeRandom(m_z - m_radius, m_z + m_radius);
-			uint32_t id = m_spawnIDs.at(MakeRandomInt(0, m_spawnIDs.size() - 1));
+			uint32_t id = m_spawnIDs.at(MakeRandomInt(0, static_cast<int32_t>(m_spawnIDs.size() - 1)));
 
 			std::shared_ptr<Spawn> spawn = zone->GetNewSpawnFromMasterList(id);
 			if (spawn) {
