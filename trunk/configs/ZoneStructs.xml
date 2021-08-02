@@ -1,84 +1,77 @@
 <EQ2EmulatorRewrite>
-	<Struct Name="Substruct_MovementData" ClientVersion="283" ByteSize="0x7d">
+	<Struct Name="Substruct_MovementData" ClientVersion="283" ByteSize="0x75">
 		<Data ElementName="positionState" Type="int32" Size="1" Offset="0x0"/>
 		<Data ElementName="movementMode" Type="int8" Size="1" Offset="0x4"/>
 		<Data ElementName="desiredHeading" Type="float" Size="1" Offset="0x5"/>
 		<Data ElementName="desiredPitch" Type="float" Size="1" Offset="0x9"/>
-		<Data ElementName="desiredHeadingVelocity" Type="float" Size="1" Offset="0xd"/>
-		<Data ElementName="desiredPitchVelocity" Type="float" Size="1" Offset="0x11"/>
-		<Data ElementName="collisionRadius" Type="float" Size="1" Offset="0x15"/>
-		<Data ElementName="size" Type="float" Size="1" Offset="0x19"/>
-		<Data ElementName="sizeRatio" Type="float" Size="1" Offset="0x1d"/>
-		<Data ElementName="speedModifier" Type="float" Size="1" Offset="0x21"/>
-		<Data ElementName="swimmingSpeedMultiplier" Type="float" Size="1" Offset="0x25"/>
-		<Data ElementName="desiredForwardSpeed" Type="float" Size="1" Offset="0x29"/>
-		<Data ElementName="desiredStrafeSpeed" Type="float" Size="1" Offset="0x2d"/>
-		<Data ElementName="desiredVertSpeed" Type="float" Size="1" Offset="0x31"/>
-		<Data ElementName="destLocX" Type="float" Size="1" Offset="0x35"/>
-		<Data ElementName="destLocY" Type="float" Size="1" Offset="0x39"/>
-		<Data ElementName="destLocZ" Type="float" Size="1" Offset="0x3d"/>
-		<Data ElementName="destLocX2" Type="float" Size="1" Offset="0x41"/>
-		<Data ElementName="destLocY2" Type="float" Size="1" Offset="0x45"/>
-		<Data ElementName="destLocZ2" Type="float" Size="1" Offset="0x49"/>
-		<Data ElementName="faceActorID" Type="int32" Size="1" Offset="0x4d"/>
-		<Data ElementName="actorStopRange" Type="float" Size="1" Offset="0x51"/>
-		<Data ElementName="grid_id" Type="int32" Size="1" Offset="0x55"/>
-		<Data ElementName="x" Type="float" Size="1" Offset="0x59"/>
-		<Data ElementName="y" Type="float" Size="1" Offset="0x5d"/>
-		<Data ElementName="z" Type="float" Size="1" Offset="0x61"/>
-		<Data ElementName="heading" Type="float" Size="1" Offset="0x65"/>
-		<Data ElementName="pitch" Type="float" Size="1" Offset="0x69"/>
-		<Data ElementName="roll" Type="float" Size="1" Offset="0x6d"/>
-		<Data ElementName="velocityX" Type="float" Size="1" Offset="0x71"/>
-		<Data ElementName="velocityY" Type="float" Size="1" Offset="0x75"/>
-		<Data ElementName="velocityZ" Type="float" Size="1" Offset="0x79"/>
+		<Data ElementName="desiredPitchVelocity" Type="float" Size="1" Offset="0xd"/>
+		<Data ElementName="collisionRadius" Type="float" Size="1" Offset="0x11"/>
+		<Data ElementName="size" Type="float" Size="1" Offset="0x15"/>
+		<Data ElementName="sizeRatio" Type="float" Size="1" Offset="0x19"/>
+		<Data ElementName="swimmingSpeedMultiplier" Type="float" Size="1" Offset="0x1d"/>
+		<Data ElementName="desiredForwardSpeed" Type="float" Size="1" Offset="0x21"/>
+		<Data ElementName="desiredStrafeSpeed" Type="float" Size="1" Offset="0x25"/>
+		<Data ElementName="desiredVertSpeed" Type="float" Size="1" Offset="0x29"/>
+		<Data ElementName="destLocX" Type="float" Size="1" Offset="0x2d"/>
+		<Data ElementName="destLocY" Type="float" Size="1" Offset="0x31"/>
+		<Data ElementName="destLocZ" Type="float" Size="1" Offset="0x35"/>
+		<Data ElementName="destLocX2" Type="float" Size="1" Offset="0x39"/>
+		<Data ElementName="destLocY2" Type="float" Size="1" Offset="0x3d"/>
+		<Data ElementName="destLocZ2" Type="float" Size="1" Offset="0x41"/>
+		<Data ElementName="faceActorID" Type="int32" Size="1" Offset="0x45"/>
+		<Data ElementName="actorStopRange" Type="float" Size="1" Offset="0x49"/>
+		<Data ElementName="grid_id" Type="int32" Size="1" Offset="0x4d"/>
+		<Data ElementName="x" Type="float" Size="1" Offset="0x51"/>
+		<Data ElementName="y" Type="float" Size="1" Offset="0x55"/>
+		<Data ElementName="z" Type="float" Size="1" Offset="0x59"/>
+		<Data ElementName="heading" Type="float" Size="1" Offset="0x5d"/>
+		<Data ElementName="pitch" Type="float" Size="1" Offset="0x61"/>
+		<Data ElementName="roll" Type="float" Size="1" Offset="0x65"/>
+		<Data ElementName="velocityX" Type="float" Size="1" Offset="0x69"/>
+		<Data ElementName="velocityY" Type="float" Size="1" Offset="0x6d"/>
+		<Data ElementName="velocityZ" Type="float" Size="1" Offset="0x71"/>
 	</Struct>
-	<Struct Name="Substruct_MovementData" ClientVersion="284" ByteSize="0xac">
+	<Struct Name="Substruct_MovementData" ClientVersion="284" ByteSize="0x98">
 		<Data ElementName="positionState" Type="int32" Size="1" Offset="0x0"/>
 		<Data ElementName="positionState2" Type="int32" Size="1" Offset="0x4"/>
 		<Data ElementName="desiredHeading" Type="float" Size="1" Offset="0x8"/>
 		<Data ElementName="desiredPitch" Type="float" Size="1" Offset="0xc"/>
-		<Data ElementName="unusedUnknown" Type="float" Size="1" Offset="0x10"/>
-		<Data ElementName="desiredHeadingVelocity" Type="float" Size="1" Offset="0x14"/>
-		<Data ElementName="desiredPitchVelocity" Type="float" Size="1" Offset="0x18"/>
-		<Data ElementName="collisionRadius" Type="float" Size="1" Offset="0x1c"/>
-		<Data ElementName="size" Type="float" Size="1" Offset="0x20"/>
-		<Data ElementName="sizeRatio" Type="float" Size="1" Offset="0x24"/>
-		<Data ElementName="speedModifier" Type="float" Size="1" Offset="0x28"/>
-		<Data ElementName="airSpeed" Type="float" Size="1" Offset="0x2c"/>
-		<Data ElementName="desiredStrafeSpeed" Type="float" Size="1" Offset="0x30"/>
-		<Data ElementName="desiredVertSpeed" Type="float" Size="1" Offset="0x34"/>
-		<Data ElementName="unkSpeed3" Type="float" Size="1" Offset="0x38"/>
-		<Data ElementName="swimmingSpeedMultiplier" Type="float" Size="1" Offset="0x3c"/>
-		<Data ElementName="desiredForwardSpeed" Type="float" Size="1" Offset="0x40"/>
-		<Data ElementName="desiredRoll" Type="float" Size="1" Offset="0x44"/>
-		<Data ElementName="desiredRollVelocity" Type="float" Size="1" Offset="0x48"/>
-		<Data ElementName="destLocX" Type="float" Size="1" Offset="0x4c"/>
-		<Data ElementName="destLocY" Type="float" Size="1" Offset="0x50"/>
-		<Data ElementName="destLocZ" Type="float" Size="1" Offset="0x54"/>
-		<Data ElementName="destLocX2" Type="float" Size="1" Offset="0x58"/>
-		<Data ElementName="destLocY2" Type="float" Size="1" Offset="0x5c"/>
-		<Data ElementName="destLocZ2" Type="float" Size="1" Offset="0x60"/>
-		<Data ElementName="baseLocX" Type="float" Size="1" Offset="0x64"/>
-		<Data ElementName="baseLocY" Type="float" Size="1" Offset="0x68"/>
-		<Data ElementName="baseLocZ" Type="float" Size="1" Offset="0x6c"/>
-		<Data ElementName="faceActorID" Type="int32" Size="1" Offset="0x70"/>
-		<Data ElementName="actorStopRange" Type="float" Size="1" Offset="0x74"/>
-		<Data ElementName="sizeUnknown" Type="float" Size="1" Offset="0x78"/>
-		<Data ElementName="unk70" Type="float" Size="1" Offset="0x7c"/>
-		<Data ElementName="movementMode" Type="int8" Size="1" Offset="0x80"/>
-		<Data ElementName="unkByte" Type="int8" Size="1" Offset="0x81"/>
-		<Data ElementName="align_trash" Type="int16" Size="1" Offset="0x82"/>
-		<Data ElementName="grid_id" Type="int32" Size="1" Offset="0x84"/>
-		<Data ElementName="x" Type="float" Size="1" Offset="0x88"/>
-		<Data ElementName="y" Type="float" Size="1" Offset="0x8c"/>
-		<Data ElementName="z" Type="float" Size="1" Offset="0x90"/>
-		<Data ElementName="heading" Type="float" Size="1" Offset="0x94"/>
-		<Data ElementName="pitch" Type="float" Size="1" Offset="0x98"/>
-		<Data ElementName="roll" Type="float" Size="1" Offset="0x9c"/>
-		<Data ElementName="velocityX" Type="float" Size="1" Offset="0xa0"/>
-		<Data ElementName="velocityY" Type="float" Size="1" Offset="0xa4"/>
-		<Data ElementName="velocityZ" Type="float" Size="1" Offset="0xa8"/>
+		<Data ElementName="speedModifier" Type="float" Size="1" Offset="0x10"/>
+		<Data ElementName="desiredPitchVelocity" Type="float" Size="1" Offset="0x14"/>
+		<Data ElementName="collisionRadius" Type="float" Size="1" Offset="0x18"/>
+		<Data ElementName="size" Type="float" Size="1" Offset="0x1c"/>
+		<Data ElementName="sizeRatio" Type="float" Size="1" Offset="0x20"/>
+		<Data ElementName="swimmingSpeedMultiplier" Type="float" Size="1" Offset="0x24"/>
+		<Data ElementName="desiredStrafeSpeed" Type="float" Size="1" Offset="0x28"/>
+		<Data ElementName="desiredForwardSpeed" Type="float" Size="1" Offset="0x2c"/>
+		<Data ElementName="desiredRoll" Type="float" Size="1" Offset="0x30"/>
+		<Data ElementName="desiredRollVelocity" Type="float" Size="1" Offset="0x34"/>
+		<Data ElementName="destLocX" Type="float" Size="1" Offset="0x38"/>
+		<Data ElementName="destLocY" Type="float" Size="1" Offset="0x3c"/>
+		<Data ElementName="destLocZ" Type="float" Size="1" Offset="0x40"/>
+		<Data ElementName="destLocX2" Type="float" Size="1" Offset="0x44"/>
+		<Data ElementName="destLocY2" Type="float" Size="1" Offset="0x48"/>
+		<Data ElementName="destLocZ2" Type="float" Size="1" Offset="0x4c"/>
+		<Data ElementName="baseLocX" Type="float" Size="1" Offset="0x50"/>
+		<Data ElementName="baseLocY" Type="float" Size="1" Offset="0x54"/>
+		<Data ElementName="baseLocZ" Type="float" Size="1" Offset="0x58"/>
+		<Data ElementName="faceActorID" Type="int32" Size="1" Offset="0x5c"/>
+		<Data ElementName="actorStopRange" Type="float" Size="1" Offset="0x60"/>
+		<Data ElementName="sizeUnknown" Type="float" Size="1" Offset="0x64"/>
+		<Data ElementName="unk70" Type="float" Size="1" Offset="0x68"/>
+		<Data ElementName="movementMode" Type="int8" Size="1" Offset="0x6c"/>
+		<Data ElementName="unkByte" Type="int8" Size="1" Offset="0x6d"/>
+		<Data ElementName="align_trash" Type="int16" Size="1" Offset="0x6e"/>
+		<Data ElementName="grid_id" Type="int32" Size="1" Offset="0x70"/>
+		<Data ElementName="x" Type="float" Size="1" Offset="0x74"/>
+		<Data ElementName="y" Type="float" Size="1" Offset="0x78"/>
+		<Data ElementName="z" Type="float" Size="1" Offset="0x7c"/>
+		<Data ElementName="heading" Type="float" Size="1" Offset="0x80"/>
+		<Data ElementName="pitch" Type="float" Size="1" Offset="0x84"/>
+		<Data ElementName="roll" Type="float" Size="1" Offset="0x88"/>
+		<Data ElementName="velocityX" Type="float" Size="1" Offset="0x8c"/>
+		<Data ElementName="velocityY" Type="float" Size="1" Offset="0x90"/>
+		<Data ElementName="velocityZ" Type="float" Size="1" Offset="0x94"/>
 	</Struct>
 	<Struct Name="Substruct_MovementData" ClientVersion="1144" ByteSize="0xac">
 		<Data ElementName="positionState" Type="int32" Size="1" Offset="0x0"/>
