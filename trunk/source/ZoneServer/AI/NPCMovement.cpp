@@ -8,6 +8,7 @@
 NPCMovement::NPCMovement() {
 	m_lastMovementUpdateTimestamp = Timer::GetServerTime();
 	m_movementLoopIndex = 0;
+	m_delayMovementUntilServerTime = 0;
 }
 void NPCMovement::AddLocation(std::shared_ptr<MovementLocationInfo> loc) {
 	m_locations.push_back(loc);
@@ -21,34 +22,57 @@ void NPCMovement::Process(std::shared_ptr<Spawn> spawn) {
 
 	// movement loop
 	if (m_locations.size() > 0) {
+		// Get the target location
 		std::shared_ptr<MovementLocationInfo> targetLocation = m_locations.at(m_movementLoopIndex);
-		if (spawn->GetX() == targetLocation->x && spawn->GetY() == targetLocation->y && spawn->GetZ() == targetLocation->z) {
-			m_movementLoopIndex++;
-			if (m_movementLoopIndex >= m_locations.size())
-				m_movementLoopIndex = 0;
 
-			if (targetLocation->delay == 0.0f) {
-				uint32_t nextIndex = m_movementLoopIndex + 1;
-				if (nextIndex >= m_locations.size())
-					nextIndex = 0;
+		//Check if we are at the target location
+		if (spawn->GetX() == targetLocation->x && spawn->GetY() == targetLocation->y && spawn->GetZ() == targetLocation->z) {
+
+			// if destination has a delay but dely timestamp is not set then we just arrived so set the timestamp now
+			if (targetLocation->delay != 0.0f && m_delayMovementUntilServerTime == 0) {
+				m_delayMovementUntilServerTime = Timer::GetServerTime() + (targetLocation->delay * 1000);
+			}
+
+			// if there is no delay (timestamp == 0) or we have delayed long enough get the next location
+			if (m_delayMovementUntilServerTime == 0 || m_delayMovementUntilServerTime <= Timer::GetServerTime()) {
+				// Get the next location
+				m_movementLoopIndex++;
+				if (m_movementLoopIndex >= m_locations.size())
+					m_movementLoopIndex = 0;
 
 				targetLocation = m_locations.at(m_movementLoopIndex);
-				std::shared_ptr<MovementLocationInfo> targetLocation2 = m_locations.at(nextIndex);
-				spawn->SetDest2Location(targetLocation2->x, targetLocation2->y, targetLocation2->z, false);
+
+				// if next location does not have a delay get the location after that for destination 2 values
+				if (targetLocation->delay == 0.0f) {
+					uint32_t nextIndex = m_movementLoopIndex + 1;
+					if (nextIndex >= m_locations.size())
+						nextIndex = 0;
+
+					std::shared_ptr<MovementLocationInfo> targetLocation2 = m_locations.at(nextIndex);
+					spawn->SetDest2Location(targetLocation2->x, targetLocation2->y, targetLocation2->z, false);
+				}
+				else {
+					// Next location does have a delay so zero out destination 2 values
+					spawn->SetDest2Location(0.0f, 0.0f, 0.0f, false);
+				}
+
+				// set the target location as the destination
+				spawn->SetDestLocation(targetLocation->x, targetLocation->y, targetLocation->z, Timer::GetServerTime());
+
+				// Set the speed based on targetLocation desired speed
+				spawn->SetSpeed(targetLocation->speed);
+
+				// reset the delay timestamp
+				m_delayMovementUntilServerTime = 0;
 			}
-			else {
-				spawn->SetDest2Location(0.0f, 0.0f, 0.0f, false);
-			}
-			spawn->SetDestLocation(targetLocation->x, targetLocation->y, targetLocation->z, Timer::GetServerTime());
-			spawn->SetSpeed(targetLocation->speed);
 		}
+		// This sets up the first location after a spawn spawns
 		else if (spawn->GetDestinationX() != targetLocation->x || spawn->GetDestinationY() != targetLocation->y || spawn->GetDestinationZ() != targetLocation->z) {
 			if (targetLocation->delay == 0.0f) {
 				uint32_t nextIndex = m_movementLoopIndex + 1;
 				if (nextIndex >= m_locations.size())
 					nextIndex = 0;
 
-				targetLocation = m_locations.at(m_movementLoopIndex);
 				std::shared_ptr<MovementLocationInfo> targetLocation2 = m_locations.at(nextIndex);
 				spawn->SetDest2Location(targetLocation2->x, targetLocation2->y, targetLocation2->z, false);
 			}
@@ -60,15 +84,17 @@ void NPCMovement::Process(std::shared_ptr<Spawn> spawn) {
 			spawn->SetSpeed(targetLocation->speed);
 		}
 
+		// finally do the math to move the spawn on the server
 		CalculateChange(spawn);
 	}
+
+	// update the last timestamp to the current time
+	m_lastMovementUpdateTimestamp = Timer::GetServerTime();
 }
 
 void NPCMovement::CalculateChange(std::shared_ptr<Spawn> spawn) {
 	// Speed is per second so we need a time_step (amount of time since the last update) to modify movement by
 	float delta_time = (Timer::GetServerTime() - m_lastMovementUpdateTimestamp) * 0.001f;
-	// update the last timestamp to the current time now that we got the delta time
-	m_lastMovementUpdateTimestamp = Timer::GetServerTime();
 
 	// Get current poisiton
 	float nx = spawn->GetX();
