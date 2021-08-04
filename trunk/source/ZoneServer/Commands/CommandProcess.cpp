@@ -199,9 +199,14 @@ void CommandProcess::CommandMove(const std::shared_ptr<Client>& client, Separato
 #include "../Packets/ItemPackets.h"
 
 void CommandProcess::CommandTest(const std::shared_ptr<Client>& client, Separator& sep) {
-	if (!sep.IsNumber(0)) {
-		return;
-	}
+	auto target = client->GetController()->GetTarget();
+	if (!target) return;
+
+	target->SetVisualState(506);
+
+	//if (!sep.IsNumber(0)) {
+	//	return;
+	//}
 
 	//auto player = client->GetController()->GetControlled();
 	//union {
@@ -220,20 +225,20 @@ void CommandProcess::CommandTest(const std::shared_ptr<Client>& client, Separato
 	//s->heraldry[6] = 0; //pattern color
 	//player->SetInfo(&s->equipment_types[19], 6469);
 
-	uint32_t id = sep.GetUInt32(0);
-	int32_t a2 = sep.GetInt(1);
+	//uint32_t id = sep.GetUInt32(0);
+	//int32_t a2 = sep.GetInt(1);
 
-	auto item = g_masterItemList.GetReferenceItem(id);
+	//auto item = g_masterItemList.GetReferenceItem(id);
 
-	if (!item) {
-		return;
-	}
+	//if (!item) {
+	//	return;
+	//}
 
-	auto itemDesc = item->GetPacketData(client->GetVersion());
+	//auto itemDesc = item->GetPacketData(client->GetVersion());
 
-	ExamineInfoCmd_Item_Packet p(client->GetVersion(), itemDesc.get());
-	p.bShowPopup = true;
-	client->QueuePacket(p, true);
+	//ExamineInfoCmd_Item_Packet p(client->GetVersion(), itemDesc.get());
+	//p.bShowPopup = true;
+	//client->QueuePacket(p, true);
 }
 
 void CommandProcess::CommandZone(const std::shared_ptr<Client>& client, Separator& sep) {
@@ -276,7 +281,7 @@ void CommandProcess::CommandFlymode(const std::shared_ptr<Client>& client, Separ
 	}
 
 	OP_ChangeServerControlFlagMsg_Packet p(client->GetVersion());
-	p.positionState2 = 32;
+	p.positionState = POS_STATE_FLYMODE | POS_STATE_FLYMODE_NO_COLLIDE;
 	p.value = sep.GetUInt32(0) != 0;
 	client->QueuePacket(p);
 

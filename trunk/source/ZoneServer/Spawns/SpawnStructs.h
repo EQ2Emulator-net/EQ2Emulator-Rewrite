@@ -24,6 +24,8 @@ const uint32_t POS_STATE_CROUCHING = 1 << 9;
 const uint32_t POS_STATE_SIMULATE_GRAVITY = 1 << 14;
 const uint32_t POS_STATE_DISABLE_GRAVITY = 1 << 15;
 
+const uint32_t POS_STATE2_MOUNT_FLYMODE = 1 << 5;
+
 struct vec3 {
 	float x;
 	float y;

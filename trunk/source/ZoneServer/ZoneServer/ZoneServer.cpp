@@ -227,7 +227,8 @@ bool ZoneServer::AddClient(std::shared_ptr<Client> c, bool bInitialLogin) {
 	zone->client_cmd_array.back().client_cmd = "chat_linkbrackets_item 1";
 
 	if (zone->GetVersion() >= 67650) {
-		//The expansion bytes changed from 2 8 byte vals to 2 9 byte arrays here, I think these are just server side and we don't need them
+		//The expansion bytes changed from 2 8 byte vals to 2 9 byte arrays here
+		//MOST flags are server side but a few do have client changes, such as enabling pvp interfaces or the prison servers
 		static const unsigned char unk4Bytes[] = { 0x7F, 0xFF, 0xF8, 0x90, 0x44, 0x94, 0x00, 0x10, 0x10 };
 		static const unsigned char unk7Bytes[] = { 0x7F, 0xFF, 0xFB, 0xF6, 0xC7, 0xFF, 0xFF, 0xFF, 0xFF };
 
@@ -412,13 +413,15 @@ void ZoneServer::SendDestroyGhost(std::shared_ptr<Client> client, std::shared_pt
 	uint32_t index = client->GetIndexForSpawn(spawn);
 	OP_EqDestroyGhostCmd_Packet* p = new OP_EqDestroyGhostCmd_Packet(client->GetVersion());
 	p->spawn_index = index;
+	//This value doesn't actually do anything anymore (not sure if it has since the emu started)
+	//So instead do not remove the XOR buffers, just reuse them for the next ghost at this index.
 	p->bDelete = 1;
 	client->QueuePacket(p);
 
 	client->RemoveSpawnFromIndexMap(spawn);
-	client->encoded_packets.RemoveBuffer(EEncodedPackets::EEncoded_UpdateSpawnInfo, index);
-	client->encoded_packets.RemoveBuffer(EEncodedPackets::EEncoded_UpdateSpawnPos, index);
-	client->encoded_packets.RemoveBuffer(EEncodedPackets::EEncoded_UpdateSpawnVis, index);
+	//client->encoded_packets.RemoveBuffer(EEncodedPackets::EEncoded_UpdateSpawnInfo, index);
+	//client->encoded_packets.RemoveBuffer(EEncodedPackets::EEncoded_UpdateSpawnPos, index);
+	//client->encoded_packets.RemoveBuffer(EEncodedPackets::EEncoded_UpdateSpawnVis, index);
 
 	spawn->RemoveClient(client);
 }
