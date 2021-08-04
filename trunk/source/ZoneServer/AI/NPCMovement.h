@@ -24,4 +24,5 @@ private:
 	std::vector<std::shared_ptr<MovementLocationInfo> > m_locations;
 	uint32_t m_lastMovementUpdateTimestamp;
 	uint32_t m_movementLoopIndex;
+	uint32_t m_delayMovementUntilServerTime;
 };
