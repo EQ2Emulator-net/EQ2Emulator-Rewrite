@@ -18,6 +18,9 @@ public:
 	void AddMovementLocation(std::shared_ptr<MovementLocationInfo> loc) { movement.AddLocation(loc); }
 	void UpdateMovementTimestamp() { movement.UpdateMovementTimestamp(); }
 
+	void SetFollowTarget(std::shared_ptr<Spawn> spawn) { movement.SetFollowTarget(spawn); }
+	void ClearFollowTarget() { movement.ClearFollowTarget(); }
+
 protected:
 	// temp for now until actual ai is worked out
 	NPCMovement movement;

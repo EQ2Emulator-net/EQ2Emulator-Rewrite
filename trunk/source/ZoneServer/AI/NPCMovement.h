@@ -17,6 +17,9 @@ public:
 	
 	void UpdateMovementTimestamp();
 
+	void SetFollowTarget(std::shared_ptr<Spawn> spawn) { m_followTarget = spawn; }
+	void ClearFollowTarget() { m_followTarget.reset(); }
+
 private:
 	// Actual movement calculations are here
 	void CalculateChange(std::shared_ptr<Spawn> spawn);
@@ -25,4 +28,5 @@ private:
 	uint32_t m_lastMovementUpdateTimestamp;
 	uint32_t m_movementLoopIndex;
 	uint32_t m_delayMovementUntilServerTime;
+	std::weak_ptr<Spawn> m_followTarget;
 };

@@ -20,8 +20,43 @@ void NPCMovement::RemoveLocations() {
 
 void NPCMovement::Process(std::shared_ptr<Spawn> spawn) {
 
+	// Follow target
+	std::shared_ptr<Spawn> FollowTarget = m_followTarget.lock();
+	if (FollowTarget) {
+		// Get distance between the points
+		float distance = spawn->GetDistance(FollowTarget);
+		if (distance > 2.0f) {
+
+			// Calculate a direction vector
+			float dx = spawn->GetX() - FollowTarget->GetX();
+			float dy = spawn->GetY() - FollowTarget->GetY();
+			float dz = spawn->GetZ() - FollowTarget->GetZ();
+
+			// normalize the direction vector
+			dx = dx / distance;
+			dy = dy / distance;
+			dz = dz / distance;
+
+			float follow_distance = 2.0f;
+			float destX = FollowTarget->GetX() + (dx * follow_distance);
+			float destY = FollowTarget->GetY() + (dy * follow_distance);
+			float destZ = FollowTarget->GetZ() + (dz * follow_distance);
+
+			// set default speed
+			if (spawn->GetSpeed() <= 0.0f)
+				spawn->SetSpeed(2.0f, false);
+
+			// Add more checks to see if an update is even still needed, as of now will constantly update and that is bad for performance.
+			spawn->SetDestLocation(destX, destY, destZ, Timer::GetServerTime());
+
+			CalculateChange(spawn);
+		}
+	}
+
+	// MoveTo
+
 	// movement loop
-	if (m_locations.size() > 0) {
+	else if (m_locations.size() > 0) {
 		// Get the target location
 		std::shared_ptr<MovementLocationInfo> targetLocation = m_locations.at(m_movementLoopIndex);
 
