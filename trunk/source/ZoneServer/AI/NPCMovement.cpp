@@ -25,9 +25,21 @@ void NPCMovement::Process(std::shared_ptr<Spawn> spawn) {
 	if (FollowTarget) {
 		// Get distance between the points
 		float distance = spawn->GetDistance(FollowTarget);
-		if (distance > 2.0f) {
 
-			// Calculate a direction vector
+		// Get distance between spawns destination (if set) and the follow target
+		float distance2 = 0.0f;
+		if (spawn->GetDestinationX() != 0 || spawn->GetDestinationY() != 0 || spawn->GetDestinationZ() != 0) {
+			distance2 = FollowTarget->GetDistance(spawn->GetDestinationX(), spawn->GetDestinationY(), spawn->GetDestinationZ());
+		}
+
+		// Maybe make follow distance a variable on spawn so we can adjust it for larger spawns?
+		float follow_distance = 2.0f;
+
+		// if distance is greater then follow distance and distance2 is not set or if set is greater then follow distance
+		// then calculate a destination location for the spawn to run to
+		if (distance > follow_distance && (distance2 == 0.0f || distance2 > follow_distance)) {
+
+			// Calculate a direction vector (direction is from the follow target to the spawn)
 			float dx = spawn->GetX() - FollowTarget->GetX();
 			float dy = spawn->GetY() - FollowTarget->GetY();
 			float dz = spawn->GetZ() - FollowTarget->GetZ();
@@ -37,7 +49,9 @@ void NPCMovement::Process(std::shared_ptr<Spawn> spawn) {
 			dy = dy / distance;
 			dz = dz / distance;
 
-			float follow_distance = 2.0f;
+			// calculate destination by multipling the normalized direction vector by distance we want to be from the follow target
+			// then add that result to the location of the follow target, this gives us a point a set amount of distance away from
+			// follow target but inbetween follow target and spawn
 			float destX = FollowTarget->GetX() + (dx * follow_distance);
 			float destY = FollowTarget->GetY() + (dy * follow_distance);
 			float destZ = FollowTarget->GetZ() + (dz * follow_distance);
@@ -46,9 +60,12 @@ void NPCMovement::Process(std::shared_ptr<Spawn> spawn) {
 			if (spawn->GetSpeed() <= 0.0f)
 				spawn->SetSpeed(2.0f, false);
 
-			// Add more checks to see if an update is even still needed, as of now will constantly update and that is bad for performance.
+			// Set the spawns destination
 			spawn->SetDestLocation(destX, destY, destZ, Timer::GetServerTime());
+		}
 
+		// if spawn has a destination then do the math to move it on the server
+		if (spawn->GetDestinationX() != 0 || spawn->GetDestinationY() != 0 || spawn->GetDestinationZ() != 0) {
 			CalculateChange(spawn);
 		}
 	}
