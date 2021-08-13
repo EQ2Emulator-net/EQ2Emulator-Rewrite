@@ -10,19 +10,23 @@ int32_t NetUtil::SocketErrno() {
 #endif
 }
 
-std::string NetUtil::SocketError() {
+std::string NetUtil::SocketError(int32_t err) {
 	char errbuf[512];
 
+	if (err == 0) {
+		err = SocketErrno();
+	}
+
 #ifdef _WIN32
-	if (strerror_s(errbuf, sizeof(errbuf), SocketErrno()) != 0) {
+	if (strerror_s(errbuf, sizeof(errbuf), err) != 0) {
 		return "appStrError : strerror_s unsuccessful!";
 	}
 #elif (_POSIX_C_SOURCE >= 200112L || _XOPEN_SOURCE >= 600) && ! _GNU_SOURCE
-	if (strerror_r(SocketErrno(), errbuf, sizeof(errbuf)) != 0) {
+	if (strerror_r(err, errbuf, sizeof(errbuf)) != 0) {
 		return "appStrError : strerror_s unsuccessful!";
 	}
 #else
-	return strerror_r(SocketErrno(), errbuf, sizeof(errbuf));
+	return strerror_r(err, errbuf, sizeof(errbuf));
 #endif
 
 	return errbuf;

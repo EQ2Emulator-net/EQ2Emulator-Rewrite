@@ -53,6 +53,7 @@
 #include "OP_DressingRoom_Packet.h"
 #include "OP_PopulateSkillMapsMsg.h"
 #include "OP_EqUpdateMerchantCmd_Packet.h"
+#include "OP_EqStateCmd_Packet.h"
 
 // Server to Client
 RegisterZoneStruct("OP_ZoneInfoMsg", OP_ZoneInfoMsg_Packet, 283, 284, 942, 957, 959, 1067, 1096, 1142, 1193, 63119, 63182, 67650, 69239);
@@ -91,6 +92,7 @@ RegisterZoneStruct("OP_UpdateRaidMsg", OP_UpdateRaidMsg_Packet, 1);
 RegisterZoneStruct("OP_DressingRoom", OP_DressingRoom_Packet, 67650);
 RegisterZoneStruct("OP_PopulateSkillMapsMsg", OP_PopulateSkillMapsMsg_Packet, 1);
 RegisterZoneStruct("OP_EqUpdateMerchantCmd", OP_EqUpdateMerchantCmd_Packet, 67650);
+RegisterZoneStruct("OP_EqStateCmd", OP_EqStateCmd_Packet, 1, 547, 865, 57048);
 
 // Client to Server
 RegisterZoneStruct("OP_LoginByNumRequestMsg", OP_LoginByNumRequestMsg_Packet, 1, 1212);
