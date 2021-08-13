@@ -197,12 +197,17 @@ void CommandProcess::CommandMove(const std::shared_ptr<Client>& client, Separato
 
 #include "../Packets/Substruct_ExamineDescItem.h"
 #include "../Packets/ItemPackets.h"
+#include "../Controllers/NPCController.h"
 
 void CommandProcess::CommandTest(const std::shared_ptr<Client>& client, Separator& sep) {
 	auto target = client->GetController()->GetTarget();
 	if (!target) return;
 
-	target->SetVisualState(506);
+	std::shared_ptr<NPCController> controller = std::dynamic_pointer_cast<NPCController>(target->GetController());
+	if (controller) {
+		controller->SetFollowTarget(client->GetController()->GetControlled());
+	}
+	//target->SetVisualState(506);
 
 	//if (!sep.IsNumber(0)) {
 	//	return;
