@@ -1,31 +1,36 @@
 #include "stdafx.h"
 
 #include "Server.h"
-
-unsigned int Server::InitializeCount = 0;
+#include "NetUtil.h"
+#include "log.h"
 
 Server::Server() {
 	Sock = INVALID_SOCKET;
 	Port = 0;
 	Host = 0;
 
-	Server::InitializeCount++;
 #ifdef _WIN32
-	if (Server::InitializeCount == 1) {
-		WORD version = MAKEWORD(1, 1);
+	class WSAInitializer {
 		WSADATA wsadata;
-		WSAStartup(version, &wsadata);
-	}
+
+	public:
+		WSAInitializer() {
+			WORD version = MAKEWORD(2, 2);
+			if (int32_t err = WSAStartup(version, &wsadata)) {
+				LogError(LOG_NET, 0, "Error initializing sockets with WSAStartup! (%s)", NetUtil::SocketError(err).c_str());
+			}
+		}
+
+		~WSAInitializer() {
+			WSACleanup();
+		}
+	};
+
+	static WSAInitializer g_WSAInitializer;
 #endif
 }
 
 Server::~Server() {
-	Server::InitializeCount--;
-#ifdef _WIN32
-	if (Server::InitializeCount == 0)
-		WSACleanup();
-#endif
-
 	if (Sock != INVALID_SOCKET) {
 		SOCKET_CLOSE(Sock);
 	}

@@ -39,6 +39,5 @@ protected:
 	unsigned int Host;
 
 private:
-	static unsigned int InitializeCount;
 
 };
