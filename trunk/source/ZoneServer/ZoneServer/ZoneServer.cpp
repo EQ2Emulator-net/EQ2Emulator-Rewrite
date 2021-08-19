@@ -410,7 +410,7 @@ void ZoneServer::SendDestroyGhost(std::shared_ptr<Client> client, std::shared_pt
 	if (!client->WasSentSpawn(spawn))
 		return;
 
-	uint32_t index = client->GetIndexForSpawn(spawn);
+	uint16_t index = client->GetIndexForSpawn(spawn);
 	OP_EqDestroyGhostCmd_Packet* p = new OP_EqDestroyGhostCmd_Packet(client->GetVersion());
 	p->spawn_index = index;
 	//This value doesn't actually do anything anymore (not sure if it has since the emu started)

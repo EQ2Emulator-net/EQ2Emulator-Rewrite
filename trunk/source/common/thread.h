@@ -5,7 +5,11 @@
 #include <atomic>
 #include <stdint.h>
 #include <future>
-#include <functional>
+
+#if (__cplusplus >= 201703L)
+ //c++17 or higher
+#define __CPPSTD17PLUS
+#endif
 
 class ThreadManager {
 private:
@@ -13,7 +17,12 @@ private:
 	static void EmuThreadEnd();
 
 	template<typename T>
-	static typename std::result_of<T()>::type ThreadStartHelper(const char* ThreadLabel, T func) {
+#ifdef __CPPSTD17PLUS
+	static std::invoke_result_t<T>
+#else
+	static typename std::result_of<T()>::type
+#endif
+		ThreadStartHelper(const char* ThreadLabel, T func) {
 		//We can't return a variable if the return type is void due to a compilation error
 		//So we need to return from the function call directly, use ThreadInit's destructor to call EmuThreadEnd
 		class ThreadInit {
@@ -42,8 +51,13 @@ public:
 	}
 
 	template <typename T>
-	static std::future<typename std::result_of<T()>::type> ThreadStartWithFuture(const char* ThreadLabel, T func) {
-		static_assert(std::is_bind_expression_v<T>, "ThreadManager::ThreadStartWithFuture must use a std::bind object as \"func\"");
+#ifdef __CPPSTD17PLUS
+	static std::future<std::invoke_result_t<T>>
+#else
+	static std::future<typename std::result_of_t<T()>>
+#endif
+		ThreadStartWithFuture(const char* ThreadLabel, T func) {
+		static_assert(std::is_bind_expression<T>::value, "ThreadManager::ThreadStartWithFuture must use a std::bind object as \"func\"");
 		return std::async(std::launch::async, &ThreadManager::ThreadStartHelper<T>, ThreadLabel, func);
 	}
 

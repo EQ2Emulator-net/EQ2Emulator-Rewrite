@@ -4,6 +4,31 @@
 #include "../../common/Packets/PacketElements/PacketElements.h"
 #include "../../common/Packets/PacketElements/PacketEncodedData.h"
 
+struct InventoryItem {
+	uint32_t uniqueID;
+	int32_t bagID;
+	int32_t parentBagID; //This can be the base inventory slots for example, or equipment slots
+	uint64_t flags;
+	uint16_t index;
+	uint16_t icon;
+	uint8_t slotID;
+	uint16_t quantity;
+	uint8_t unknown4b;
+	uint8_t unknown4c;
+	uint8_t itemLevel;
+	uint8_t tier;
+	uint8_t numSlots;
+	uint8_t numEmptySlots;
+	uint8_t unknown5;
+	uint32_t itemID;
+	uint64_t brokerID;
+	char itemName[81];
+
+	InventoryItem() {
+		memset(this, 0, sizeof(*this));
+	}
+};
+
 class OP_UpdateInventoryMsg_Packet : public EQ2Packet {
 public:
 	OP_UpdateInventoryMsg_Packet(uint32_t version) : EQ2Packet(version), packedItems(GetVersion() <= 283), itemArray(version) {
@@ -11,28 +36,9 @@ public:
 		RegisterElements();
 	}
 
-	struct Substruct_InventoryItem : public PacketSubstruct {
-		uint32_t uniqueID;
-		int32_t bagID;
-		int32_t parentBagID; //This can be the base inventory slots for example, or equipment slots
-		uint64_t flags;
-		uint16_t index;
-		uint16_t icon;
-		uint8_t slotID;
-		uint16_t count;
-		uint8_t unknown4b;
-		uint8_t unknown4c;
-		uint8_t itemLevel;
-		uint8_t tier;
-		uint8_t numSlots;
-		uint8_t numEmptySlots;
-		uint8_t unknown5;
-		uint32_t itemID;
-		uint64_t brokerID;
-		char itemName[81];
-
+	struct Substruct_InventoryItem : public PacketSubstruct, public InventoryItem {
 		Substruct_InventoryItem(uint32_t ver = 0) : PacketSubstruct(ver, true) {
-			memset(&uniqueID, 0, (itemName + 81) - reinterpret_cast<char*>(&uniqueID));
+			bDumpOffsets = true;
 			RegisterElements();
 		}
 
@@ -51,11 +57,11 @@ public:
 			RegisterUInt16(icon);
 			RegisterUInt8(slotID);
 			if (GetVersion() >= 1208) {
-				RegisterUInt16(count);
+				RegisterUInt16(quantity);
 			}
 			else {
-				RescopeToReference(count, uint8_t);
-				RegisterUInt8(count);
+				RescopeToReference(quantity, uint8_t);
+				RegisterUInt8(quantity);
 			}
 			RegisterUInt8(unknown4b);
 			if (GetVersion() >= 57048) {
