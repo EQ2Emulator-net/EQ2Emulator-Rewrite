@@ -82,7 +82,7 @@ void NPCMovement::Process(std::shared_ptr<Spawn> spawn) {
 
 			// if destination has a delay but dely timestamp is not set then we just arrived so set the timestamp now
 			if (targetLocation->delay != 0.0f && m_delayMovementUntilServerTime == 0) {
-				m_delayMovementUntilServerTime = Timer::GetServerTime() + (targetLocation->delay * 1000);
+				m_delayMovementUntilServerTime = Timer::GetServerTime() + static_cast<uint32_t>(targetLocation->delay * 1000.f);
 			}
 
 			// if there is no delay (timestamp == 0) or we have delayed long enough get the next location

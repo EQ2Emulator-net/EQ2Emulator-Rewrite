@@ -570,10 +570,10 @@ void Substruct_SpawnInfo::RegisterElements() {
 	}
 	RegisterEQ2Color(hair_type_highlight_color);
 	RegisterEQ2Color(hair_face_highlight_color);
+	RegisterEQ2Color(wing_color2);
 	if (version >= 67804) {
 		RegisterEQ2Color(tail_color2);
 	}
-	RegisterEQ2Color(wing_color2);
 
 	RegisterEQ2Color(chest_type_highlight);
 	RegisterEQ2Color(legs_type_highlight);

@@ -1667,8 +1667,8 @@
 		<Data ElementName="textures_slot_highlight" Type="EQ2_Color" Size="1"/>
 		<Data ElementName="hair_type_highlight_color" Type="EQ2_Color" Size="1"/>
 		<Data ElementName="hair_face_highlight_color" Type="EQ2_Color" Size="1"/>
-		<Data ElementName="tail_color2" Type="EQ2_Color" Size="1"/>
 		<Data ElementName="wing_color2" Type="EQ2_Color" Size="1"/>
+		<Data ElementName="tail_color2" Type="EQ2_Color" Size="1"/>
 		<Data ElementName="chest_type_highlight" Type="EQ2_Color" Size="1"/>
 		<Data ElementName="legs_type_highlight" Type="EQ2_Color" Size="1"/>
 		<Data ElementName="back_slot_type_highlight" Type="EQ2_Color" Size="1"/>
@@ -7269,6 +7269,7 @@
 		<Data ElementName="levelB" Type="int8" Size="1"/>
 		<Data ElementName="zone_flags" Type="int32" Size="1"/>
 		<Data ElementName="unknown10c" Type="sint32" Size="1"/>
+		<Data ElementName="unk69239a" Type="sint32" Size="1"/>
 		<Data ElementName="permission_level" Type="int8" Size="1"/>
 		<Data ElementName="num_adv" Type="int32" Size="1"/>
 		<Data ElementName="adv_array" Type="Array" ArraySizeVariable="num_adv">
@@ -7279,7 +7280,6 @@
 		<Data ElementName="client_cmd_array" Type="Array" ArraySizeVariable="num_client_setup">
 			<Data ElementName="client_cmd" Type="EQ2_8Bit_String" Size="1"/>
 		</Data>
-		<Data ElementName="unk69239" Type="int8" Size="1"/>
 		<Data ElementName="unknown11" Type="sint32" Size="1"/>
 		<Data ElementName="unknown67650Count" Type="int32" Size="1"/>
 		<Data ElementName="unknown_mj" Type="int8" Size="1"/>
@@ -7725,7 +7725,7 @@
 				<Data ElementName="index" Type="int16" Size="1"/>
 				<Data ElementName="icon" Type="int16" Size="1"/>
 				<Data ElementName="slotID" Type="int8" Size="1"/>
-				<Data ElementName="count" Type="int8" Size="1"/>
+				<Data ElementName="quantity" Type="int8" Size="1"/>
 				<Data ElementName="unknown4b" Type="int8" Size="1"/>
 				<Data ElementName="tier" Type="int8" Size="1"/>
 				<Data ElementName="numSlots" Type="int8" Size="1"/>
@@ -7746,7 +7746,7 @@
 				<Data ElementName="index" Type="int16" Size="1"/>
 				<Data ElementName="icon" Type="int16" Size="1"/>
 				<Data ElementName="slotID" Type="int8" Size="1"/>
-				<Data ElementName="count" Type="int8" Size="1"/>
+				<Data ElementName="quantity" Type="int8" Size="1"/>
 				<Data ElementName="unknown4b" Type="int8" Size="1"/>
 				<Data ElementName="tier" Type="int8" Size="1"/>
 				<Data ElementName="numSlots" Type="int8" Size="1"/>
@@ -7767,7 +7767,7 @@
 				<Data ElementName="index" Type="int16" Size="1"/>
 				<Data ElementName="icon" Type="int16" Size="1"/>
 				<Data ElementName="slotID" Type="int8" Size="1"/>
-				<Data ElementName="count" Type="int8" Size="1"/>
+				<Data ElementName="quantity" Type="int8" Size="1"/>
 				<Data ElementName="unknown4b" Type="int8" Size="1"/>
 				<Data ElementName="tier" Type="int8" Size="1"/>
 				<Data ElementName="numSlots" Type="int8" Size="1"/>
@@ -7789,7 +7789,7 @@
 				<Data ElementName="index" Type="int16" Size="1"/>
 				<Data ElementName="icon" Type="int16" Size="1"/>
 				<Data ElementName="slotID" Type="int8" Size="1"/>
-				<Data ElementName="count" Type="int16" Size="1"/>
+				<Data ElementName="quantity" Type="int16" Size="1"/>
 				<Data ElementName="unknown4b" Type="int8" Size="1"/>
 				<Data ElementName="tier" Type="int8" Size="1"/>
 				<Data ElementName="numSlots" Type="int8" Size="1"/>
@@ -7812,7 +7812,7 @@
 				<Data ElementName="index" Type="int16" Size="1"/>
 				<Data ElementName="icon" Type="int16" Size="1"/>
 				<Data ElementName="slotID" Type="int8" Size="1"/>
-				<Data ElementName="count" Type="int16" Size="1"/>
+				<Data ElementName="quantity" Type="int16" Size="1"/>
 				<Data ElementName="unknown4b" Type="int8" Size="1"/>
 				<Data ElementName="unknown4c" Type="int8" Size="1"/>
 				<Data ElementName="itemLevel" Type="int8" Size="1"/>
@@ -7837,7 +7837,7 @@
 				<Data ElementName="index" Type="int16" Size="1"/>
 				<Data ElementName="icon" Type="int16" Size="1"/>
 				<Data ElementName="slotID" Type="int8" Size="1"/>
-				<Data ElementName="count" Type="int16" Size="1"/>
+				<Data ElementName="quantity" Type="int16" Size="1"/>
 				<Data ElementName="unknown4b" Type="int8" Size="1"/>
 				<Data ElementName="unknown4c" Type="int8" Size="1"/>
 				<Data ElementName="itemLevel" Type="int8" Size="1"/>
@@ -7863,7 +7863,7 @@
 				<Data ElementName="index" Type="int16" Size="1"/>
 				<Data ElementName="icon" Type="int16" Size="1"/>
 				<Data ElementName="slotID" Type="int8" Size="1"/>
-				<Data ElementName="count" Type="int16" Size="1"/>
+				<Data ElementName="quantity" Type="int16" Size="1"/>
 				<Data ElementName="unknown4b" Type="int8" Size="1"/>
 				<Data ElementName="unknown4c" Type="int8" Size="1"/>
 				<Data ElementName="itemLevel" Type="int8" Size="1"/>
@@ -7929,6 +7929,27 @@
 			<Data ElementName="unk4" Type="EQ2_16Bit_String" Size="1"/>
 			<Data ElementName="unk5" Type="EQ2_16Bit_String" Size="1"/>
 		</Data>
+	</Struct>
+	<Struct Name="WS_EqStateCmd" ClientVersion="1" OpcodeName="OP_ClientCmdMsg" OpcodeType="OP_EqStateCmd">
+		<Data ElementName="spawnID" Type="int32" Size="1"/>
+		<Data ElementName="stateID" Type="int16" Size="1"/>
+	</Struct>
+	<Struct Name="WS_EqStateCmd" ClientVersion="547" OpcodeName="OP_ClientCmdMsg" OpcodeType="OP_EqStateCmd">
+		<Data ElementName="spawnID" Type="int32" Size="1"/>
+		<Data ElementName="stateID" Type="int16" Size="1"/>
+		<Data ElementName="unknown1" Type="int8" Size="1"/>
+	</Struct>
+	<Struct Name="WS_EqStateCmd" ClientVersion="865" OpcodeName="OP_ClientCmdMsg" OpcodeType="OP_EqStateCmd">
+		<Data ElementName="spawnID" Type="int32" Size="1"/>
+		<Data ElementName="stateID" Type="int16" Size="1"/>
+		<Data ElementName="unknown1" Type="int8" Size="1"/>
+		<Data ElementName="unknown2" Type="int8" Size="1"/>
+	</Struct>
+	<Struct Name="WS_EqStateCmd" ClientVersion="57048" OpcodeName="OP_ClientCmdMsg" OpcodeType="OP_EqStateCmd">
+		<Data ElementName="spawnID" Type="int32" Size="1"/>
+		<Data ElementName="stateID" Type="int32" Size="1"/>
+		<Data ElementName="unknown1" Type="int8" Size="1"/>
+		<Data ElementName="unknown2" Type="int8" Size="1"/>
 	</Struct>
 	<Struct Name="WS_LoginByNumRequestMsg" ClientVersion="1" OpcodeName="OP_LoginByNumRequestMsg">
 		<Data ElementName="account_id" Type="int32" Size="1"/>
