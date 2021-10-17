@@ -333,8 +333,12 @@ void CommandProcess::CommandSpawnCamp(const std::shared_ptr<Client>& client, Sep
 			std::shared_ptr<Spawn> target = controller->GetTarget();
 			if (target && target->IsSpawnCampSpawn()) {
 				std::shared_ptr<SpawnCamp> camp = dynamic_pointer_cast<SpawnCampSpawn>(target)->GetSpawnCamp();
-				if (camp)
-					scd->ShowSpawnCampRadius(camp);
+				if (camp) {
+					if (camp->GetRadius() > 0)
+						scd->ShowSpawnCampRadius(camp);
+					else
+						client->chat.DisplayText("Error Text", "Selected spawn camp does not have a radius");
+				}
 			}
 		}
 		else {
