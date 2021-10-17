@@ -1162,7 +1162,10 @@ void UpdateCharacterSheetMsgData::RegisterElements67650() {
 	RegisterUInt16(recruit_friend_bonus);
 
 	//if false xp bar hover at level 90 gives message about needing 280 aas and a certain xpac to level past 90
-	RegisterBool(bCanLevelPast90);
+	if (ver < 69283) {
+		//This was removed
+		RegisterBool(bCanLevelPast90);
+	}
 
 	RegisterUInt16(adventure_vitality);
 	RegisterUInt16(adventure_vitality_yellow_arrow);
