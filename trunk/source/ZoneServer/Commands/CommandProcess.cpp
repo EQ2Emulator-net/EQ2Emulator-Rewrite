@@ -286,11 +286,18 @@ void CommandProcess::CommandFlymode(const std::shared_ptr<Client>& client, Separ
 	}
 
 	OP_ChangeServerControlFlagMsg_Packet p(client->GetVersion());
-	p.positionState = POS_STATE_FLYMODE | POS_STATE_FLYMODE_NO_COLLIDE;
+	if (client->GetVersion() >= 1096) {
+		//TODO: Maybe add a ghost command to use the classic flymode with no collision?
+		p.positionState2 = POS_STATE2_MOUNT_FLYMODE;
+	}
+	else {
+		p.positionState = POS_STATE_FLYMODE | POS_STATE_FLYMODE_NO_COLLIDE;
+	}
+
 	p.value = sep.GetUInt32(0) != 0;
 	client->QueuePacket(p);
 
-	client->chat.DisplayText("MOTD", "FlyMode set to " + to_string(p.value), 0xff, false, "");
+	client->chat.DisplayText("MOTD", "FlyMode set to " + to_string(p.value));
 }
 
 void CommandProcess::CommandSay(const std::shared_ptr<Client>& client, Separator& sep) {

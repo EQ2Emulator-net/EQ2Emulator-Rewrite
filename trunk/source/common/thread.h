@@ -63,3 +63,8 @@ public:
 
 	static std::atomic<uint32_t> global_thread_count;
 };
+
+//Finished with this define, don't need to pass it to other files that included this
+#ifdef __CPPSTD17PLUS
+#undef __CPPSTD17PLUS
+#endif

@@ -79,6 +79,9 @@
     <Filter Include="source\Skills">
       <UniqueIdentifier>{d94509c1-60b8-4bca-b57f-8b9274c17721}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lua\Headers">
+      <UniqueIdentifier>{45225a83-247f-47df-8abc-340603521a41}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\ZoneServer\main.cpp">
@@ -962,84 +965,6 @@
     <ClInclude Include="..\..\source\ZoneServer\Spawns\EntityCommands.h">
       <Filter>source\Spawns</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\Lua\lapi.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Lua\lauxlib.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Lua\lcode.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Lua\lctype.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Lua\ldebug.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Lua\ldo.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Lua\lfunc.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Lua\lgc.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Lua\llex.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Lua\llimits.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Lua\lmem.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Lua\lobject.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Lua\lopcodes.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Lua\lparser.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Lua\lprefix.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Lua\lstate.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Lua\lstring.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Lua\ltable.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Lua\ltm.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Lua\lua.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Lua\lua.hpp">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Lua\luaconf.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Lua\lualib.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Lua\lundump.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Lua\lvm.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\Lua\lzio.h">
-      <Filter>Lua</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\ZoneServer\Lua\LuaUserData.h">
       <Filter>source\Lua</Filter>
     </ClInclude>
@@ -1219,6 +1144,84 @@
     </ClInclude>
     <ClInclude Include="C:\Users\Chris\Documents\EQ2Emulator-Rewrite\trunk\source\ZoneServer\Packets\OP_EqStateCmd_Packet.h">
       <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Lua\lapi.h">
+      <Filter>Lua\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Lua\lauxlib.h">
+      <Filter>Lua\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Lua\lcode.h">
+      <Filter>Lua\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Lua\lctype.h">
+      <Filter>Lua\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Lua\ldebug.h">
+      <Filter>Lua\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Lua\ldo.h">
+      <Filter>Lua\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Lua\lfunc.h">
+      <Filter>Lua\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Lua\lgc.h">
+      <Filter>Lua\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Lua\llex.h">
+      <Filter>Lua\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Lua\llimits.h">
+      <Filter>Lua\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Lua\lmem.h">
+      <Filter>Lua\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Lua\lobject.h">
+      <Filter>Lua\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Lua\lopcodes.h">
+      <Filter>Lua\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Lua\lparser.h">
+      <Filter>Lua\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Lua\lprefix.h">
+      <Filter>Lua\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Lua\lstate.h">
+      <Filter>Lua\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Lua\lstring.h">
+      <Filter>Lua\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Lua\ltable.h">
+      <Filter>Lua\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Lua\ltm.h">
+      <Filter>Lua\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Lua\lua.h">
+      <Filter>Lua\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Lua\lua.hpp">
+      <Filter>Lua\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Lua\luaconf.h">
+      <Filter>Lua\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Lua\lualib.h">
+      <Filter>Lua\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Lua\lundump.h">
+      <Filter>Lua\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Lua\lvm.h">
+      <Filter>Lua\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\Lua\lzio.h">
+      <Filter>Lua\Headers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

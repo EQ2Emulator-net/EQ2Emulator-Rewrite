@@ -157,7 +157,7 @@ std::string Classes::GetClassName(uint8_t class_id) {
 		}
 	}
 	//LogWrite(WORLD__WARNING, 0, "World", "Could not find class name in function: %s (return 0)", __FUNCTION__);
-	return 0;
+	return std::string();
 }
 
 std::string Classes::GetClassNameCase(uint8_t class_id) {
