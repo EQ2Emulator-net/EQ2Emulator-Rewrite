@@ -51,6 +51,7 @@ void CommandProcess::RegisterCommands() {
 	RegisterCommandHandler(523, CommandPath);
 	RegisterCommandHandler(524, CommandSpawnCamp);
 	RegisterCommandHandler(220, CommandSpawnRemove);
+	RegisterCommandHandler(226, CommandGoto);
 }
 
 void CommandProcess::RegisterCommandHandler(uint32_t handler_id, CommandHandler_t handler) {
@@ -610,4 +611,29 @@ void CommandProcess::CommandSetCombatVoice(const std::shared_ptr<Client>& client
 	if (auto player = client->GetController()->GetCharacterSheet()->entity) {
 		player->SetCombatVoice(sep.GetUInt32(0));
 	}
+}
+
+void CommandProcess::CommandGoto(const std::shared_ptr<Client>& client, Separator& sep) {
+	std::shared_ptr<Spawn> gotoTarget;
+
+	//if (sep.GetSize() >= 1) {
+	//	//TODO
+	//	std::string name = sep.GetString(0);
+	//}
+	//else {
+		gotoTarget = client->GetController()->GetTarget();
+
+		if (!gotoTarget) {
+			client->chat.SendSimpleGameMessage("\\#FF0000 syntax error: Provide a target.");
+			return;
+		}
+	//}
+
+	OP_TeleportWithinZoneNoReloadMsg_Packet p(client->GetVersion());
+	p.x = gotoTarget->GetX();
+	p.y = gotoTarget->GetY();
+	p.z = gotoTarget->GetZ();
+	
+	p.heading = gotoTarget->GetHeading();
+	client->QueuePacket(p);
 }

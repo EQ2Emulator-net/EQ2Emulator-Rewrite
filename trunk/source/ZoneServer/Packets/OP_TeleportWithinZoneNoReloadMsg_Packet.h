@@ -19,6 +19,15 @@ public:
 	uint32_t location;
 	bool bForceRender;
 
+	void PreWrite() override {
+		//This packet seems to want heading on a -180 to 180 scale, flipped if I just send it normal
+		heading -= 180.f;
+	}
+
+	void PostWrite() override {
+		heading += 180.f;
+	}
+
 private:
 	void RegisterElements() {
 		RegisterFloat(x);

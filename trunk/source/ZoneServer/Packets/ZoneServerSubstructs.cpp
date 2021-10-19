@@ -41,7 +41,7 @@ RegisterZoneSubstruct(Substruct_GroupSheet, 1, 1188, 67650);
 RegisterZoneSubstruct(Substruct_RaidSheet, 1);
 RegisterZoneSubstruct(Substruct_SpellProps, 843, 844, 1199, 60114, 67650, 67804);
 RegisterZoneSubstruct(Substruct_TsSpellProps, 1199, 60114);
-RegisterZoneSubstruct(UpdateCharacterSheetMsgData, 1, 843, 865, 1208, 60114, 67650, 67730, 67804, 69195);
+RegisterZoneSubstruct(UpdateCharacterSheetMsgData, 1, 843, 865, 1208, 60114, 67650, 67730, 67804, 69195, 69283);
 RegisterZoneSubstruct(Substruct_SpawnInfoUpdate, 1);
 RegisterZoneSubstruct(Substruct_SpawnPosUpdate, 1, 1188);
 RegisterZoneSubstruct(Substruct_SpawnVisUpdate, 1);
