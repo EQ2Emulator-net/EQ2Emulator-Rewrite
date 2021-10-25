@@ -187,3 +187,6 @@ ALTER TABLE `spawn_npcs`
 	
 /* This table was replaced */
 DROP TABLE IF EXISTS map_data;
+
+ALTER TABLE `spawn_location_entry`
+	ADD COLUMN `spawn_camp_id` INT(10) UNSIGNED NOT NULL DEFAULT '0' AFTER `script_id`;
