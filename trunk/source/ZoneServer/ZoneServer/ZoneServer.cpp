@@ -167,8 +167,8 @@ void ZoneServer::Process() {
 			}
 
 			// Process spawn camps
-			for (std::shared_ptr<SpawnCamp> camp : m_spawnCamps) {
-				camp->Process();
+			for (std::pair<uint32_t, std::shared_ptr<SpawnCamp> > camp : m_spawnCamps) {
+				camp.second->Process();
 			}
 		}
 
@@ -798,6 +798,10 @@ std::shared_ptr<Spawn> ZoneServer::ProcessSpawnLocation(std::shared_ptr<SpawnLoc
 		if (entry->spawn_percentage == 0)
 			continue;
 
+		// If spawn was merged into a camp then skip
+		if (entry->spawn_camp_id != 0)
+			continue;
+
 		if (entry->condition > 0) {
 			// TODO: Check conditions
 		}
@@ -1383,6 +1387,9 @@ void ZoneServer::Depop() {
 	m_signList.clear();
 	m_widgetList.clear();
 	m_groundspawnList.clear();
+
+	for (std::pair<uint32_t, std::shared_ptr<SpawnCamp> > sc : m_spawnCamps)
+		sc.second->Reset();
 }
 
 void ZoneServer::LoadSpawns() {
@@ -1584,8 +1591,16 @@ void ZoneServer::SaveCharactersInZone() {
 	ThreadManager::ThreadStart("ZoneServer::SaveCharactersInZone", std::bind(saveHelper, std::move(updates), count)).detach();
 }
 
+std::shared_ptr<SpawnCamp> ZoneServer::GetSpawnCamp(uint32_t id) {
+	std::map<uint32_t, std::shared_ptr<SpawnCamp> >::iterator itr = m_spawnCamps.find(id);
+	if (itr != m_spawnCamps.end())
+		return itr->second;
+
+	return nullptr;
+}
+
 void ZoneServer::AddSpawnCamp(std::shared_ptr<SpawnCamp> camp) {
-	m_spawnCamps.push_back(camp);
+	m_spawnCamps[camp->GetID()] = camp;
 
 	//std::map<uint32_t, std::weak_ptr<Client> > Clients;
 	for (std::pair<uint32_t, std::weak_ptr<Client> > kvp : Clients) {

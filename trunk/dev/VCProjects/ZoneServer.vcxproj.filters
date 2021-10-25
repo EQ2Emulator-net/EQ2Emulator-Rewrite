@@ -477,6 +477,9 @@
     <ClCompile Include="..\..\source\ZoneServer\Controllers\NPCController.cpp">
       <Filter>source\Controllers</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\ZoneServer\ZoneServer\SpawnCampGroup.cpp">
+      <Filter>source\ZoneServer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h">
