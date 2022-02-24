@@ -4889,6 +4889,210 @@
 		<Data ElementName="bind_zone" Type="char" Size="32" Offset="0x3f52"/>
 		<Data ElementName="unknown3ed3" Type="int8" Size="60" Offset="0x3f72"/>
 	</Struct>
+	<Struct Name="UpdateCharacterSheetMsgData" ClientVersion="70704" ByteSize="0x3fbe">
+		<Data ElementName="char_name" Type="char" Size="42" Offset="0x0"/>
+		<Data ElementName="race" Type="int8" Size="1" Offset="0x2a"/>
+		<Data ElementName="gender" Type="int8" Size="1" Offset="0x2b"/>
+		<Data ElementName="alignment" Type="int8" Size="1" Offset="0x2c"/>
+		<Data ElementName="advArchetype" Type="int32" Size="1" Offset="0x2d"/>
+		<Data ElementName="advBaseClass" Type="int32" Size="1" Offset="0x31"/>
+		<Data ElementName="advClass" Type="int32" Size="1" Offset="0x35"/>
+		<Data ElementName="tsArchetype" Type="int32" Size="1" Offset="0x39"/>
+		<Data ElementName="tsBaseClass" Type="int32" Size="1" Offset="0x3d"/>
+		<Data ElementName="tsClass" Type="int32" Size="1" Offset="0x41"/>
+		<Data ElementName="level" Type="int16" Size="1" Offset="0x45"/>
+		<Data ElementName="effective_level" Type="int16" Size="1" Offset="0x47"/>
+		<Data ElementName="tsLevel" Type="int16" Size="1" Offset="0x49"/>
+		<Data ElementName="account_age_base" Type="int16" Size="1" Offset="0x4b"/>
+		<Data ElementName="gmLevel" Type="sint32" Size="1" Offset="0x4d"/>
+		<Data ElementName="account_flags" Type="int32" Size="1" Offset="0x51"/>
+		<Data ElementName="deity" Type="char" Size="32" Offset="0x55"/>
+		<Data ElementName="ascension_class" Type="char" Size="32" Offset="0x75"/>
+		<Data ElementName="ascension_level" Type="sint16" Size="1" Offset="0x95"/>
+		<Data ElementName="ascension_unknown" Type="sint16" Size="1" Offset="0x97"/>
+		<Data ElementName="last_name" Type="char" Size="21" Offset="0x99"/>
+		<Data ElementName="twitter_prepend" Type="char" Size="42" Offset="0xae"/>
+		<Data ElementName="facebook_prepend" Type="char" Size="42" Offset="0xd8"/>
+		<Data ElementName="hp" Type="sint64" Size="1" Offset="0x102"/>
+		<Data ElementName="maxHp" Type="sint64" Size="1" Offset="0x10a"/>
+		<Data ElementName="maxHpBase" Type="sint64" Size="1" Offset="0x112"/>
+		<Data ElementName="current_power" Type="sint64" Size="1" Offset="0x11a"/>
+		<Data ElementName="max_power" Type="sint64" Size="1" Offset="0x122"/>
+		<Data ElementName="base_power" Type="sint64" Size="1" Offset="0x12a"/>
+		<Data ElementName="conc_used" Type="int8" Size="1" Offset="0x132"/>
+		<Data ElementName="conc_max" Type="int8" Size="1" Offset="0x133"/>
+		<Data ElementName="savagery" Type="sint32" Size="1" Offset="0x134"/>
+		<Data ElementName="max_savagery" Type="sint32" Size="1" Offset="0x138"/>
+		<Data ElementName="base_savagery" Type="sint32" Size="1" Offset="0x13c"/>
+		<Data ElementName="savagery_level" Type="sint32" Size="1" Offset="0x140"/>
+		<Data ElementName="max_savagery_level" Type="sint32" Size="1" Offset="0x144"/>
+		<Data ElementName="base_savagery_level" Type="sint32" Size="1" Offset="0x148"/>
+		<Data ElementName="dissonance" Type="sint32" Size="1" Offset="0x14c"/>
+		<Data ElementName="max_dissonance" Type="sint32" Size="1" Offset="0x150"/>
+		<Data ElementName="base_dissonance" Type="sint32" Size="1" Offset="0x154"/>
+		<Data ElementName="hp_regen" Type="sint64" Size="1" Offset="0x158"/>
+		<Data ElementName="power_regen" Type="sint64" Size="1" Offset="0x160"/>
+		<Data ElementName="savagery_regen_per_sec" Type="sint32" Size="1" Offset="0x168"/>
+		<Data ElementName="dissipation" Type="sint32" Size="1" Offset="0x16c"/>
+		<Data ElementName="ranged_attack_min_distance" Type="float" Size="1" Offset="0x170"/>
+		<Data ElementName="ranged_attack_max_distance" Type="float" Size="1" Offset="0x174"/>
+		<Data ElementName="stat_bonus_health" Type="float" Size="1" Offset="0x178"/>
+		<Data ElementName="stat_bonus_power" Type="float" Size="1" Offset="0x17c"/>
+		<Data ElementName="bonus_health" Type="sint64" Size="1" Offset="0x180"/>
+		<Data ElementName="bonus_power" Type="sint64" Size="1" Offset="0x188"/>
+		<Data ElementName="stat_bonus_damage" Type="float" Size="1" Offset="0x190"/>
+		<Data ElementName="mitigation_pct_pve" Type="int16" Size="1" Offset="0x194"/>
+		<Data ElementName="mitigation_pct_pvp" Type="int16" Size="1" Offset="0x196"/>
+		<Data ElementName="toughness" Type="int16" Size="1" Offset="0x198"/>
+		<Data ElementName="toughness_resist_dmg_pvp" Type="float" Size="1" Offset="0x19a"/>
+		<Data ElementName="lethality" Type="int16" Size="1" Offset="0x19e"/>
+		<Data ElementName="lethality_pct" Type="float" Size="1" Offset="0x1a0"/>
+		<Data ElementName="avoidance_overall_chance" Type="sint16" Size="1" Offset="0x1a4"/>
+		<Data ElementName="avoidance_base" Type="sint16" Size="1" Offset="0x1a6"/>
+		<Data ElementName="avoidance_riposte_chance" Type="sint16" Size="1" Offset="0x1a8"/>
+		<Data ElementName="avoidance_riposte_chance_base" Type="sint16" Size="1" Offset="0x1aa"/>
+		<Data ElementName="avoidance_base_chance" Type="sint16" Size="1" Offset="0x1ac"/>
+		<Data ElementName="avoidance_base_chance_base" Type="sint16" Size="1" Offset="0x1ae"/>
+		<Data ElementName="avoidance_parry_chance" Type="sint16" Size="1" Offset="0x1b0"/>
+		<Data ElementName="avoidance_parry_chance_base" Type="sint16" Size="1" Offset="0x1b2"/>
+		<Data ElementName="avoidance_block_chance" Type="sint16" Size="1" Offset="0x1b4"/>
+		<Data ElementName="avoidance_block_chance_base" Type="sint16" Size="1" Offset="0x1b6"/>
+		<Data ElementName="avoidance_block_uncontested" Type="sint16" Size="1" Offset="0x1b8"/>
+		<Data ElementName="avoidance_deflection_uncontested" Type="sint16" Size="1" Offset="0x1ba"/>
+		<Data ElementName="avoidance_riposte_uncontested" Type="sint16" Size="1" Offset="0x1bc"/>
+		<Data ElementName="avoidance_dodge_uncontested" Type="sint16" Size="1" Offset="0x1be"/>
+		<Data ElementName="avoidance_parry_uncontested" Type="sint16" Size="1" Offset="0x1c0"/>
+		<Data ElementName="str" Type="sint32" Size="1" Offset="0x1c2"/>
+		<Data ElementName="sta" Type="sint32" Size="1" Offset="0x1c6"/>
+		<Data ElementName="agi" Type="sint32" Size="1" Offset="0x1ca"/>
+		<Data ElementName="wis" Type="sint32" Size="1" Offset="0x1ce"/>
+		<Data ElementName="intel" Type="sint32" Size="1" Offset="0x1d2"/>
+		<Data ElementName="str_base" Type="sint32" Size="1" Offset="0x1d6"/>
+		<Data ElementName="sta_base" Type="sint32" Size="1" Offset="0x1da"/>
+		<Data ElementName="agi_base" Type="sint32" Size="1" Offset="0x1de"/>
+		<Data ElementName="wis_base" Type="sint32" Size="1" Offset="0x1e2"/>
+		<Data ElementName="intel_base" Type="sint32" Size="1" Offset="0x1e6"/>
+		<Data ElementName="mitigation_cur" Type="sint32" Size="1" Offset="0x1ea"/>
+		<Data ElementName="elemental" Type="sint32" Size="1" Offset="0x1ee"/>
+		<Data ElementName="noxious" Type="sint32" Size="1" Offset="0x1f2"/>
+		<Data ElementName="arcane" Type="sint32" Size="1" Offset="0x1f6"/>
+		<Data ElementName="mitigation_base" Type="sint32" Size="1" Offset="0x1fa"/>
+		<Data ElementName="elemental_base" Type="sint32" Size="1" Offset="0x1fe"/>
+		<Data ElementName="noxious_base" Type="sint32" Size="1" Offset="0x202"/>
+		<Data ElementName="arcane_base" Type="sint32" Size="1" Offset="0x206"/>
+		<Data ElementName="physical_absorb_pve" Type="int16" Size="1" Offset="0x20a"/>
+		<Data ElementName="elemental_absorb_pve" Type="int16" Size="1" Offset="0x20c"/>
+		<Data ElementName="noxious_absorb_pve" Type="int16" Size="1" Offset="0x20e"/>
+		<Data ElementName="arcane_absorb_pve" Type="int16" Size="1" Offset="0x210"/>
+		<Data ElementName="physical_absorb_pvp" Type="int16" Size="1" Offset="0x212"/>
+		<Data ElementName="elemental_absorb_pvp" Type="int16" Size="1" Offset="0x214"/>
+		<Data ElementName="noxious_absorb_pvp" Type="int16" Size="1" Offset="0x216"/>
+		<Data ElementName="arcane_absorb_pvp" Type="int16" Size="1" Offset="0x218"/>
+		<Data ElementName="physical_dmg_reduction" Type="int16" Size="1" Offset="0x21a"/>
+		<Data ElementName="elemental_dmg_reduction" Type="int16" Size="1" Offset="0x21c"/>
+		<Data ElementName="noxious_dmg_reduction" Type="int16" Size="1" Offset="0x21e"/>
+		<Data ElementName="arcane_dmg_reduction" Type="int16" Size="1" Offset="0x220"/>
+		<Data ElementName="physical_dmg_reduction_pct" Type="int16" Size="1" Offset="0x222"/>
+		<Data ElementName="elemental_dmg_reduction_pct" Type="int16" Size="1" Offset="0x224"/>
+		<Data ElementName="noxious_dmg_reduction_pct" Type="int16" Size="1" Offset="0x226"/>
+		<Data ElementName="arcane_dmg_reduction_pct" Type="int16" Size="1" Offset="0x228"/>
+		<Data ElementName="advExp" Type="double" Size="1" Offset="0x22a"/>
+		<Data ElementName="advExpNextLevel" Type="double" Size="1" Offset="0x232"/>
+		<Data ElementName="advExpDebt" Type="float" Size="1" Offset="0x23a"/>
+		<Data ElementName="tsExp" Type="double" Size="1" Offset="0x23e"/>
+		<Data ElementName="tsExpNextLevel" Type="double" Size="1" Offset="0x246"/>
+		<Data ElementName="tsExpDebt" Type="float" Size="1" Offset="0x24e"/>
+		<Data ElementName="titheExp" Type="double" Size="1" Offset="0x252"/>
+		<Data ElementName="titheExpNextLevel" Type="double" Size="1" Offset="0x25a"/>
+		<Data ElementName="titheExpDebt" Type="float" Size="1" Offset="0x262"/>
+		<Data ElementName="ascensionExp" Type="double" Size="1" Offset="0x266"/>
+		<Data ElementName="ascensionExpNextLevel" Type="double" Size="1" Offset="0x26e"/>
+		<Data ElementName="ascensionUnk" Type="int8" Size="1" Offset="0x276"/>
+		<Data ElementName="ascensionExpDebt" Type="float" Size="1" Offset="0x277"/>
+		<Data ElementName="unknownBOLc" Type="float" Size="1" Offset="0x27b"/>
+		<Data ElementName="server_bonus" Type="int16" Size="1" Offset="0x27f"/>
+		<Data ElementName="adventure_vet_bonus" Type="int16" Size="1" Offset="0x281"/>
+		<Data ElementName="tradeskill_vet_bonus" Type="int16" Size="1" Offset="0x283"/>
+		<Data ElementName="dungeon_finder_bonus" Type="int16" Size="1" Offset="0x285"/>
+		<Data ElementName="recruit_friend_count" Type="int16" Size="1" Offset="0x287"/>
+		<Data ElementName="recruit_friend_bonus" Type="int16" Size="1" Offset="0x289"/>
+		<Data ElementName="adventure_vitality" Type="int16" Size="1" Offset="0x28b"/>
+		<Data ElementName="adventure_vitality_yellow_arrow" Type="int16" Size="1" Offset="0x28d"/>
+		<Data ElementName="adventure_vitality_blue_arrow" Type="int16" Size="1" Offset="0x28f"/>
+		<Data ElementName="tradeskill_vitality" Type="int16" Size="1" Offset="0x291"/>
+		<Data ElementName="tradeskill_vitality_purple_arrow" Type="int16" Size="1" Offset="0x293"/>
+		<Data ElementName="tradeskill_vitality_blue_arrow" Type="int16" Size="1" Offset="0x295"/>
+		<Data ElementName="mentor_bonus" Type="float" Size="1" Offset="0x297"/>
+		<Data ElementName="earned_aa" Type="int16" Size="1" Offset="0x29b"/>
+		<Data ElementName="max_aa" Type="int16" Size="1" Offset="0x29d"/>
+		<Data ElementName="unassigned_aa" Type="int16" Size="1" Offset="0x29f"/>
+		<Data ElementName="aa_green_bar" Type="int16" Size="1" Offset="0x2a1"/>
+		<Data ElementName="adv_xp_to_aa_xp_slider" Type="int16" Size="1" Offset="0x2a3"/>
+		<Data ElementName="aa_blue_bar" Type="int16" Size="1" Offset="0x2a5"/>
+		<Data ElementName="aa_next_level" Type="int16" Size="1" Offset="0x2a7"/>
+		<Data ElementName="aa_bonus_xp" Type="int16" Size="1" Offset="0x2a9"/>
+		<Data ElementName="aa_level_up_events" Type="int32" Size="1" Offset="0x2ab"/>
+		<Data ElementName="aa_items_found" Type="int32" Size="1" Offset="0x2af"/>
+		<Data ElementName="aa_named_npcs_killed" Type="int32" Size="1" Offset="0x2b3"/>
+		<Data ElementName="aa_quests_completed" Type="int32" Size="1" Offset="0x2b7"/>
+		<Data ElementName="aa_exploration_events" Type="int32" Size="1" Offset="0x2bb"/>
+		<Data ElementName="aa_completed_collections" Type="int32" Size="1" Offset="0x2bf"/>
+		<Data ElementName="unknown251" Type="int8" Size="21" Offset="0x2c3"/>
+		<Data ElementName="prestige_earned_points" Type="int16" Size="1" Offset="0x2d8"/>
+		<Data ElementName="prestige_max_points" Type="int16" Size="1" Offset="0x2da"/>
+		<Data ElementName="prestige_xp_current" Type="float" Size="1" Offset="0x2dc"/>
+		<Data ElementName="ts_aa_earned_points" Type="int16" Size="1" Offset="0x2e0"/>
+		<Data ElementName="ts_aa_max_points" Type="int16" Size="1" Offset="0x2e2"/>
+		<Data ElementName="ts_aa_experience_current" Type="float" Size="1" Offset="0x2e4"/>
+		<Data ElementName="ts_prestige_earned_points" Type="int16" Size="1" Offset="0x2e8"/>
+		<Data ElementName="ts_prestige_max_points" Type="int16" Size="1" Offset="0x2ea"/>
+		<Data ElementName="ts_prestige_experience_current" Type="float" Size="1" Offset="0x2ec"/>
+		<Data ElementName="pet_experience_current" Type="float" Size="1" Offset="0x2f0"/>
+		<Data ElementName="coins_copper" Type="int64" Size="1" Offset="0x2f4"/>
+		<Data ElementName="coins_silver" Type="int64" Size="1" Offset="0x2fc"/>
+		<Data ElementName="coins_gold" Type="int64" Size="1" Offset="0x304"/>
+		<Data ElementName="coins_plat" Type="int64" Size="1" Offset="0x30c"/>
+		<Data ElementName="unknown2c9" Type="int8" Size="20" Offset="0x314"/>
+		<Data ElementName="spell_effects" Substruct="Substruct_SpellEffects" Size="45" Offset="0x328"/>
+		<Data ElementName="detrimental_spell_effects" Substruct="Substruct_SpellEffects" Size="45" Offset="0xa03"/>
+		<Data ElementName="passive_spell_effects" Substruct="Substruct_PassiveEffects" Size="100" Offset="0x10de"/>
+		<Data ElementName="passive_unk_bool" Type="bool" Size="128" Offset="0x201a"/>
+		<Data ElementName="passive_last_index" Type="sint32" Size="1" Offset="0x209a"/>
+		<Data ElementName="unknown2053" Type="int8" Size="354" Offset="0x209e"/>
+		<Data ElementName="trauma_count" Type="int8" Size="1" Offset="0x2200"/>
+		<Data ElementName="arcane_count" Type="int8" Size="1" Offset="0x2201"/>
+		<Data ElementName="noxious_count" Type="int8" Size="1" Offset="0x2202"/>
+		<Data ElementName="elemental_count" Type="int8" Size="1" Offset="0x2203"/>
+		<Data ElementName="curse_count" Type="int8" Size="1" Offset="0x2204"/>
+		<Data ElementName="maintained_effects" Substruct="Substruct_MaintainedEffects" Size="30" Offset="0x2205"/>
+		<Data ElementName="breath" Type="float" Size="1" Offset="0x2ceb"/>
+		<Data ElementName="breathable_environment_flags" Type="int32" Size="1" Offset="0x2cef"/>
+		<Data ElementName="unknown36" Type="int8" Size="1" Offset="0x2cf3"/>
+		<Data ElementName="unknown2ca9" Type="int8" Size="92" Offset="0x2cf4"/>
+		<Data ElementName="flags" Type="int32" Size="1" Offset="0x2d50"/>
+		<Data ElementName="flags2" Type="int32" Size="1" Offset="0x2d54"/>
+		<Data ElementName="afk_message" Type="char" Size="256" Offset="0x2d58"/>
+		<Data ElementName="pve_props" Substruct="Substruct_SpellProps" Size="1" Offset="0x2e58"/>
+		<Data ElementName="gear_cap_props" Substruct="Substruct_SpellProps" Size="1" Offset="0x3048"/>
+		<Data ElementName="hard_cap_props" Substruct="Substruct_SpellProps" Size="1" Offset="0x3238"/>
+		<Data ElementName="pvp_props" Substruct="Substruct_SpellProps" Size="1" Offset="0x3428"/>
+		<Data ElementName="ts_props" Substruct="Substruct_TsSpellProps" Size="1" Offset="0x3618"/>
+		<Data ElementName="base_props" Substruct="Substruct_SpellProps" Size="1" Offset="0x3664"/>
+		<Data ElementName="unknown37cd" Type="int8" Size="48" Offset="0x3854"/>
+		<Data ElementName="spell_state_flags" Type="int64" Size="1" Offset="0x3884"/>
+		<Data ElementName="unknown3805" Type="int8" Size="10" Offset="0x388c"/>
+		<Data ElementName="groupSheet" Substruct="Substruct_GroupSheet" Size="1" Offset="0x3896"/>
+		<Data ElementName="humidity" Type="float" Size="1" Offset="0x3e82"/>
+		<Data ElementName="wind_direction" Type="float" Size="1" Offset="0x3e86"/>
+		<Data ElementName="statusPoints" Type="int64" Size="1" Offset="0x3e8a"/>
+		<Data ElementName="guild_status" Type="int64" Size="1" Offset="0x3e92"/>
+		<Data ElementName="unknownCOEa" Type="int8" Size="1" Offset="0x3e9a"/>
+		<Data ElementName="house_zone" Type="char" Size="48" Offset="0x3e9b"/>
+		<Data ElementName="unknown3e1c" Type="int8" Size="150" Offset="0x3ecb"/>
+		<Data ElementName="subscriptionLevel" Type="int8" Size="1" Offset="0x3f61"/>
+		<Data ElementName="bind_zone" Type="char" Size="32" Offset="0x3f62"/>
+		<Data ElementName="unknown3ed3" Type="int8" Size="60" Offset="0x3f82"/>
+	</Struct>
 	<Struct Name="Substruct_SpawnInfoUpdate" ClientVersion="1">
 		<Data ElementName="spawnIndex" Type="int16" Size="1" OversizedValue="255" IfVariableSet="spawnIndex"/>
 		<Data ElementName="packedInfo" Type="PackedData" IncludeSize="false" IfVariableSet="spawnIndex">
@@ -7445,6 +7649,62 @@
 		<Data ElementName="server1" Type="EQ2_8Bit_String" Size="1"/>
 		<Data ElementName="server2" Type="EQ2_8Bit_String" Size="1"/>
 		<Data ElementName="Unknown1" Type="int8" Size="2"/>
+		<Data ElementName="account_flags_1" Type="EQ2_32Bit_String" Size="1"/>
+		<Data ElementName="account_flags_2" Type="EQ2_32Bit_String" Size="1"/>
+		<Data ElementName="upload_key" Type="EQ2_8Bit_String" Size="1"/>
+		<Data ElementName="upload_key2" Type="EQ2_8Bit_String" Size="1"/>
+		<Data ElementName="zone" Type="EQ2_8Bit_String" Size="1"/>
+		<Data ElementName="zone2" Type="EQ2_8Bit_String" Size="1"/>
+		<Data ElementName="parent_zone" Type="EQ2_8Bit_String" Size="1"/>
+		<Data ElementName="zone_unknown2" Type="EQ2_8Bit_String" Size="1"/>
+		<Data ElementName="zone_desc" Type="EQ2_8Bit_String" Size="1"/>
+		<Data ElementName="char_name" Type="EQ2_8Bit_String" Size="1"/>
+		<Data ElementName="x" Type="float" Size="1"/>
+		<Data ElementName="y" Type="float" Size="1"/>
+		<Data ElementName="z" Type="float" Size="1"/>
+		<Data ElementName="year" Type="int16" Size="1"/>
+		<Data ElementName="month" Type="int8" Size="1"/>
+		<Data ElementName="day" Type="int8" Size="1"/>
+		<Data ElementName="hour" Type="int8" Size="1"/>
+		<Data ElementName="minute" Type="int8" Size="1"/>
+		<Data ElementName="seconds" Type="int8" Size="1"/>
+		<Data ElementName="Unknown7" Type="float" Size="2"/>
+		<Data ElementName="unknown8ArraySize" Type="int8" Size="1"/>
+		<Data ElementName="bHasFlythrough" Type="bool" Size="1"/>
+		<Data ElementName="flythrough" Substruct="Substruct_FlythroughDesc" Size="1" IfVariableSet="bHasFlythrough"/>
+		<Data ElementName="unknown9" Type="float" Size="1"/>
+		<Data ElementName="levelA" Type="int8" Size="1"/>
+		<Data ElementName="levelB" Type="int8" Size="1"/>
+		<Data ElementName="zone_flags" Type="int32" Size="1"/>
+		<Data ElementName="unknown10c" Type="sint32" Size="1"/>
+		<Data ElementName="unk69239a" Type="sint32" Size="1"/>
+		<Data ElementName="permission_level" Type="int8" Size="1"/>
+		<Data ElementName="num_adv" Type="int32" Size="1"/>
+		<Data ElementName="adv_array" Type="Array" ArraySizeVariable="num_adv">
+			<Data ElementName="adv_name" Type="EQ2_16Bit_String" Size="1"/>
+			<Data ElementName="adv_id" Type="int16" Size="1"/>
+		</Data>
+		<Data ElementName="num_client_setup" Type="int32" Size="1"/>
+		<Data ElementName="client_cmd_array" Type="Array" ArraySizeVariable="num_client_setup">
+			<Data ElementName="client_cmd" Type="EQ2_8Bit_String" Size="1"/>
+		</Data>
+		<Data ElementName="unknown11" Type="sint32" Size="1"/>
+		<Data ElementName="unknown67650Count" Type="int32" Size="1"/>
+		<Data ElementName="unknown_mj" Type="int8" Size="1"/>
+		<Data ElementName="unkArrayCount" Type="int32" Size="1"/>
+		<Data ElementName="unkArray" Type="Array" ArraySizeVariable="unkArrayCount">
+			<Data ElementName="unkArr1" Type="sint32" Size="1"/>
+			<Data ElementName="unkArr2" Type="sint32" Size="1"/>
+			<Data ElementName="unkArr3" Type="sint32" Size="1"/>
+			<Data ElementName="unkArr4" Type="sint32" Size="1"/>
+			<Data ElementName="unkArr5" Type="sint32" Size="1"/>
+		</Data>
+	</Struct>
+	<Struct Name="WS_ZoneInfoMsg" ClientVersion="70704" OpcodeName="OP_ZoneInfoMsg">
+		<Data ElementName="server1" Type="EQ2_8Bit_String" Size="1"/>
+		<Data ElementName="server2" Type="EQ2_8Bit_String" Size="1"/>
+		<Data ElementName="Unknown1" Type="int8" Size="2"/>
+		<Data ElementName="unknown70704" Type="int8" Size="1"/>
 		<Data ElementName="account_flags_1" Type="EQ2_32Bit_String" Size="1"/>
 		<Data ElementName="account_flags_2" Type="EQ2_32Bit_String" Size="1"/>
 		<Data ElementName="upload_key" Type="EQ2_8Bit_String" Size="1"/>

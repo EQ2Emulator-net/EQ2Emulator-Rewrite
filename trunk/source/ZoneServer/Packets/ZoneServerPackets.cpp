@@ -56,7 +56,7 @@
 #include "OP_EqStateCmd_Packet.h"
 
 // Server to Client
-RegisterZoneStruct("OP_ZoneInfoMsg", OP_ZoneInfoMsg_Packet, 283, 284, 942, 957, 959, 1067, 1096, 1142, 1193, 63119, 63182, 67650, 69239);
+RegisterZoneStruct("OP_ZoneInfoMsg", OP_ZoneInfoMsg_Packet, 283, 284, 942, 957, 959, 1067, 1096, 1142, 1193, 63119, 63182, 67650, 69239, 70704);
 RegisterZoneStruct("OP_DoneSendingInitialEntitiesMsg", OP_DoneSendingInitialEntitiesMsg_Packet, 1);
 RegisterZoneStruct("OP_ClientCmdMsg", OP_ClientCmdMsg_Packet, 283, 284);
 RegisterZoneStruct("OP_EqSetPOVGhostCmd", OP_EqSetPOVGhostCmd_Packet, 1);

@@ -4,8 +4,8 @@ CXX			= g++
 LINKER		= g++
 
 # World flags
-C_Flags		= `mysql_config --cflags` -march=x86-64 -pipe -pthread -std=c++17
-CPPFLAGS    = -Idev/VCProjects/
+C_Flags		= -march=x86-64 -pipe -pthread
+CPPFLAGS    = -std=c++17 `mysql_config --cxxflags` -Idev/VCProjects/
 LD_Flags	= `mysql_config --libs` -rdynamic -lm -Wl,-E -ldl
 W_Flags		= -Wall -Wno-reorder -Wno-unused-value -Wno-strict-aliasing
 D_Flags		= 

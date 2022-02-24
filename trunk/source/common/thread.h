@@ -6,10 +6,18 @@
 #include <stdint.h>
 #include <future>
 
-#if (__cplusplus >= 201703L)
+#ifdef _MSVC_LANG
+#define MSVCHACK (_MSVC_LANG >= 201703L)
+#else 
+#define MSVCHACK 0
+#endif
+
+#if (__cplusplus >= 201703L) || MSVCHACK
  //c++17 or higher
 #define __CPPSTD17PLUS
 #endif
+
+#undef MSVCHACK
 
 class ThreadManager {
 private:
