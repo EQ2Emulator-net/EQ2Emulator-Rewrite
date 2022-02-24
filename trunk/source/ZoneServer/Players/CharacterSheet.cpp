@@ -510,10 +510,10 @@ void UpdateCharacterSheetMsgData::RegisterElements() {
 	RegisterFloat(ts_prestige_experience_current);
 	RegisterFloat(pet_experience_current);
 
-	uint32_t& coins_copper = currency.copper;
-	uint32_t& coins_silver = currency.silver;
-	uint32_t& coins_gold = currency.gold;
-	uint32_t& coins_plat = currency.platinum;
+	auto& coins_copper = reinterpret_cast<uint32_t&>(currency.copper);
+	auto& coins_silver = reinterpret_cast<uint32_t&>(currency.silver);
+	auto& coins_gold = reinterpret_cast<uint32_t&>(currency.gold);
+	auto& coins_plat = reinterpret_cast<uint32_t&>(currency.platinum);
 	RegisterUInt32(coins_copper);
 	RegisterUInt32(coins_silver);
 	RegisterUInt32(coins_gold);
@@ -826,10 +826,10 @@ void UpdateCharacterSheetMsgData::RegisterElementsLegacy() {
 	uint8_t& Unknown24 = unknown24[0];
 	RegisterUInt8(Unknown24)->SetCount(6);
 
-	uint32_t& coins_copper = currency.copper;
-	uint32_t& coins_silver = currency.silver;
-	uint32_t& coins_gold = currency.gold;
-	uint32_t& coins_plat = currency.platinum;
+	auto& coins_copper = reinterpret_cast<uint32_t&>(currency.copper);
+	auto& coins_silver = reinterpret_cast<uint32_t&>(currency.silver);
+	auto& coins_gold = reinterpret_cast<uint32_t&>(currency.gold);
+	auto& coins_plat = reinterpret_cast<uint32_t&>(currency.platinum);
 	RegisterUInt32(coins_copper);
 	RegisterUInt32(coins_silver);
 	RegisterUInt32(coins_gold);
@@ -1205,14 +1205,26 @@ void UpdateCharacterSheetMsgData::RegisterElements67650() {
 	RegisterFloat(ts_prestige_experience_current);
 	RegisterFloat(pet_experience_current);
 
-	uint32_t& coins_copper = currency.copper;
-	uint32_t& coins_silver = currency.silver;
-	uint32_t& coins_gold = currency.gold;
-	uint32_t& coins_plat = currency.platinum;
-	RegisterUInt32(coins_copper);
-	RegisterUInt32(coins_silver);
-	RegisterUInt32(coins_gold);
-	RegisterUInt32(coins_plat);
+	if (ver < 70704) {
+		auto& coins_copper = reinterpret_cast<uint32_t&>(currency.copper);
+		auto& coins_silver = reinterpret_cast<uint32_t&>(currency.silver);
+		auto& coins_gold = reinterpret_cast<uint32_t&>(currency.gold);
+		auto& coins_plat = reinterpret_cast<uint32_t&>(currency.platinum);
+		RegisterUInt32(coins_copper);
+		RegisterUInt32(coins_silver);
+		RegisterUInt32(coins_gold);
+		RegisterUInt32(coins_plat);
+	}
+	else {
+		auto& coins_copper = currency.copper;
+		auto& coins_silver = currency.silver;
+		auto& coins_gold = currency.gold;
+		auto& coins_plat = currency.platinum;
+		RegisterUInt64(coins_copper);
+		RegisterUInt64(coins_silver);
+		RegisterUInt64(coins_gold);
+		RegisterUInt64(coins_plat);
+	}
 
 	static uint8_t g_unknown2c9[0x2dd - 0x2c9];
 	uint8_t& unknown2c9 = g_unknown2c9[0];

@@ -13,10 +13,10 @@ struct CharacterCurrency {
 		return copper + silver * 100 + gold * 10000ull + platinum * 1000000ull;
 	}
 
-	uint32_t copper;
-	uint32_t silver;
-	uint32_t gold;
-	uint32_t platinum;
+	uint64_t copper;
+	uint64_t silver;
+	uint64_t gold;
+	uint64_t platinum;
 
 	//Maybe move this to a separate banking handler?
 	uint32_t bankCopper;

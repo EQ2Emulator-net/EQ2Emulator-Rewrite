@@ -14,6 +14,7 @@ public:
 		//server2 = "";
 		unknown1[0] = 0;
 		unknown1[1] = 0;
+		unknown70704 = 0;
 		account_flags_1 = 0;
 		account_flags_2 = 0;
 		unknown2b = 0;
@@ -53,6 +54,7 @@ public:
 	std::string server1;
 	std::string server2;
 	uint8_t unknown1[2];
+	uint8_t unknown70704;
 	std::string account_flags_1_string;
 	std::string account_flags_2_string;
 	uint64_t account_flags_1;
@@ -208,6 +210,9 @@ private:
 			Register8String(server2);
 			uint8_t& Unknown1 = unknown1[0];
 			RegisterUInt8(Unknown1)->SetCount(2);
+			if (version >= 70704) {
+				RegisterUInt8(unknown70704);
+			}
 			if (version >= 63182) {
 				std::string& account_flags_1 = account_flags_1_string;
 				std::string& account_flags_2 = account_flags_2_string;

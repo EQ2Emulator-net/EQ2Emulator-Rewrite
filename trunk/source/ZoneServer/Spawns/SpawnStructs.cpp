@@ -791,7 +791,8 @@ void Substruct_SpawnInfo::RegisterElements() {
 				if (version >= 1096) {
 					RescopeArrayElement(unknown20a);
 					if (version >= 57080) {
-						RegisterUInt32(unknown20a)->SetCount(5);
+						RegisterUInt8(show_archtype_icon);
+						RegisterUInt32(unknown20a)->SetCount(4);
 					}
 					else if (version >= 1188) {
 						RegisterUInt32(unknown20a)->SetCount(3);
