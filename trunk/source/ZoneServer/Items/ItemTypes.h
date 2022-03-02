@@ -135,6 +135,7 @@ struct ItemHouseContainerData {
 struct ItemAdornmentData {
 	std::string description;
 	std::string description2;
+	std::string unkString99;
 	float duration;
 	uint8_t slotColor;
 	uint8_t spiritLevel;

@@ -49,7 +49,7 @@ RegisterZoneSubstruct(Substruct_ItemDescHeader, 1191, 60114, 67650);
 RegisterZoneSubstruct(Substruct_ItemDescFooter, 1191, 60114, 67650, 67727);
 RegisterZoneSubstruct(Substruct_ExamineDescItem_Generic, 1191, 60114, 67650);
 RegisterZoneSubstruct(Substruct_ExamineDescItem_AchievementProfile, 1191, 60114, 67650);
-RegisterZoneSubstruct(Substruct_ExamineDescItem_Adornment, 1191, 60114, 67650);
+RegisterZoneSubstruct(Substruct_ExamineDescItem_Adornment, 1191, 60114, 67650, 70704);
 RegisterZoneSubstruct(Substruct_ExamineDescItem_Ammo, 1191, 60114, 67650);
 RegisterZoneSubstruct(Substruct_ExamineDescItem_Armor, 1191, 60114, 67650);
 RegisterZoneSubstruct(Substruct_ExamineDescItem_Bag, 1191, 60114, 67650);
