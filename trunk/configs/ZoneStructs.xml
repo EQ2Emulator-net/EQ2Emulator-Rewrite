@@ -5866,6 +5866,23 @@
 		<Data ElementName="unknown" Type="int32" Size="1"/>
 		<Data ElementName="footer" Substruct="Substruct_ItemDescFooter" Size="1"/>
 	</Struct>
+	<Struct Name="Substruct_ExamineDescItem_Adornment" ClientVersion="70704">
+		<Data ElementName="examineType" Type="int8" Size="1"/>
+		<Data ElementName="subVersion" Type="int8" Size="1" Criteria="examineType=254"/>
+		<Data ElementName="examineTypeOverride" Type="int8" Size="1" Criteria="examineType=254"/>
+		<Data ElementName="noExamineInfo" Type="int8" Size="3" Criteria="examineType=255"/>
+		<Data ElementName="header" Substruct="Substruct_ItemDescHeader" Size="1"/>
+		<Data ElementName="description" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="duration" Type="float" Size="1"/>
+		<Data ElementName="slotColor" Type="int8" Size="1"/>
+		<Data ElementName="itemTypes" Type="int64" Size="1"/>
+		<Data ElementName="unknown2" Type="int32" Size="1"/>
+		<Data ElementName="description2" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="spiritLevel" Type="int8" Size="1"/>
+		<Data ElementName="unknown" Type="int32" Size="1"/>
+		<Data ElementName="unkString99" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="footer" Substruct="Substruct_ItemDescFooter" Size="1"/>
+	</Struct>
 	<Struct Name="Substruct_ExamineDescItem_Ammo" ClientVersion="1191">
 		<Data ElementName="examineType" Type="int8" Size="1"/>
 		<Data ElementName="subVersion" Type="int8" Size="1" Criteria="examineType=254"/>

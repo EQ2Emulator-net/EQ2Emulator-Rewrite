@@ -473,6 +473,9 @@ public:
 				RegisterUInt8(spiritLevel);
 				RegisterUInt32(unknown);
 			}
+			if (subVersion >= 99) {
+				Register16String(unkString99);
+			}
 		}
 		RegisterSubstruct(footer);
 	}

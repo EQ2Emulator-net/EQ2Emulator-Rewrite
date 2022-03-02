@@ -5,7 +5,9 @@
 inline uint8_t GetDescriptionVersion(uint32_t version) {
 	uint8_t subVersion;
 
-	if (version >= 69195)
+	if (version >= 70704)
+		subVersion = 99;
+	else if (version >= 69195)
 		subVersion = 98;
 	else if (version >= 67727)
 		subVersion = 97;
