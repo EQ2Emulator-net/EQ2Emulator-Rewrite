@@ -66,7 +66,7 @@ public:
 		return ret;
 	}
 
-	bool TransformPackets();
+	bool TransformPackets(bool bStopAtVersion = false);
 
 	std::string filename;
 	uint32_t logVersion;

@@ -14,6 +14,7 @@ protected:
 	class ParserDatabase& database;
 
 	std::optional<PacketLog> PopNextLog();
+	void PrintLogVersions();
 
 	std::vector<std::string> options;
 	std::vector<std::string> log_names;

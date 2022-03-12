@@ -7,6 +7,8 @@
 #include "../util.h"
 #include <regex>
 #include <filesystem>
+#include <set>
+#include <map>
 
 extern CommonDatabase* dbFieldTrackerDB;
 
@@ -48,6 +50,31 @@ Parser::Parser(int argc, char** argv) : database(*ParserDatabase::GetGlobal()) {
 			options.emplace_back(std::move(arg));
 		}
 	}
+}
+
+void Parser::PrintLogVersions() {
+	std::map<uint32_t, std::string> vers;
+
+	for (auto & itr : log_names) {
+		PacketLog l(itr);
+		if (l.TransformPackets(true)) {
+			if (vers.count(l.logVersion) == 0) {
+				vers[l.logVersion] = itr;
+			}
+		}
+		else {
+			LogDebug(LOG_PARSER, 0, "Unable to find log version: \"%s\"", itr.c_str());
+		}
+	}
+
+	std::ostringstream ss;
+	ss << "Versions:";
+
+	for (auto& itr : vers) {
+		ss << "\n\t" << itr.first << " : " << itr.second;
+	}
+
+	LogDebug(LOG_PARSER, 0, ss.str().c_str());
 }
 
 void Parser::InitDatabase() {

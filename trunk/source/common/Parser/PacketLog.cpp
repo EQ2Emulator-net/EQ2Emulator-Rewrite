@@ -5,6 +5,8 @@
 #include "../../ZoneServer/Packets/OP_LoginByNumRequestMsg_Packet.h"
 #include "../../WorldServer/Packets/OP_LoginRequestMsg_Packet.h"
 
+extern bool g_bParser;
+
 PacketLog::PacketLog(const std::string& file) : filename(file), logVersion(0), log_id(0) {
 
 }
@@ -43,7 +45,7 @@ inline char HexTextToByte(const char* text) {
 	return ret;
 }
 
-bool PacketLog::TransformPackets() {
+bool PacketLog::TransformPackets(bool bStopAtVersion) {
 	std::ifstream f(filename);
 	if (!f) {
 		return false;
@@ -70,11 +72,13 @@ bool PacketLog::TransformPackets() {
 					bLoginByNum = false;
 					std::string p = currentPacket.str();
 					logVersion = ReadLoginByNumRequest(reinterpret_cast<const unsigned char*>(p.c_str()), static_cast<uint32_t>(p.size()));
+					if (bStopAtVersion) return true;
 				}
 				else if (bLoginRequest) {
 					bLoginRequest = false;
 					std::string p = currentPacket.str();
 					logVersion = ReadLoginRequest(reinterpret_cast<const unsigned char*>(p.c_str()), static_cast<uint32_t>(p.size()));
+					if (bStopAtVersion) return true;
 				}
 				else {
 					AddPacket(currentPacket, bServerPacket, packetLine);
@@ -186,7 +190,7 @@ void PacketLog::AddPacket(const std::ostringstream& ss, bool bServerPacket, uint
 
 	if (bytes[0] == 0) {
 		//Skip the SOE protocol op/sequence
-		if (bytes[1] == 9) start = 4;
+		if (bytes[1] == 9 && bytes.size() > 2) start = 4;
 		else if (!bServerPacket) start = 1;
 	}
 
@@ -237,7 +241,14 @@ uint32_t PacketLog::ReadLoginRequest(const unsigned char* data, uint32_t size) {
 	for (;;) {
 		uint32_t pver = OP_LoginRequestMsg_Packet::DetermineStructVersion(data, size, offset);
 		OP_LoginRequestMsg_Packet p(pver);
-		if (!p.Read(data, offset, size) && offset == 1) offset = 2;
+		if (g_bParser && pver >= 283 && pver < 1212) {
+			//This should be the correct version, we don't care about anything else here
+			version = pver;
+			break;
+		}
+		else if (!p.Read(data, offset, size) && offset == 1) {
+			offset = 2;
+		}
 		else {
 			version = static_cast<uint32_t>(p.Version);
 			break;

@@ -22,6 +22,13 @@ ParserZone::ParserZone(int argc, char** argv) : Parser(argc, argv) {
 }
 
 void ParserZone::ProcessLogs() {
+	for (auto& opt : options) {
+		if (opt == "-versions") {
+			PrintLogVersions();
+			return;
+		}
+	}
+
 	while (std::optional<PacketLog> log = PopNextLog()) {
 		log->log_id = database.CreateLogEntry(log->filename, log->logVersion);
 		for (const std::string& opt : options) {
