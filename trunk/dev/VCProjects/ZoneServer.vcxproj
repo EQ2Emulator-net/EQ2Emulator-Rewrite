@@ -385,6 +385,7 @@
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\Client.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\MasterZoneLookup.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\SpawnCamp.cpp" />
+    <ClCompile Include="..\..\source\ZoneServer\ZoneServer\SpawnCampGroup.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\ZoneOperator.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\ZoneServer.cpp" />
     <ClCompile Include="E:\Projects\EQ2Emu\EQ2Emulator-Rewrite\trunk\source\common\DBRowBatcher.cpp" />

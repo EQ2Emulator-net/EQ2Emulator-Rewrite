@@ -876,7 +876,7 @@ bool ZoneDatabase::LoadSpawnLocationGroupAssociations(ZoneServer* z) {
 constexpr const char* GetSpawnLocationFields() {
 	return "sln.id, sln.name,\n"
 		"slp.id, slp.x, slp.y, slp.z, slp.x_offset, slp.y_offset, slp.z_offset, slp.heading, slp.pitch, slp.roll, slp.respawn, slp.expire_timer, slp.expire_offset, slp.grid_id,"
-		"sle.id, sle.spawn_id, sle.spawnpercentage, sle.condition, sle.script_id, sln.script_id\n";
+		"sle.id, sle.spawn_id, sle.spawnpercentage, sle.condition, sle.script_id, sle.spawn_camp_id, sln.script_id\n";
 }
 
 uint32_t ZoneDatabase::LoadSpawnLocation(std::string query, ZoneServer* z, SpawnEntryType type) {
@@ -939,7 +939,7 @@ uint32_t ZoneDatabase::LoadSpawnLocation(std::string query, ZoneServer* z, Spawn
 		spawn_location->expire_time = result.GetUInt32(13);
 		spawn_location->expire_offset = result.GetUInt32(14);
 		spawn_location->grid_id = result.GetUInt32(15);
-		spawn_location->scriptID = result.GetUInt32(21);
+		spawn_location->scriptID = result.GetUInt32(22);
 
 		// spawn_location_entry
 		entry->spawn_location_id = location_id;
@@ -948,6 +948,7 @@ uint32_t ZoneDatabase::LoadSpawnLocation(std::string query, ZoneServer* z, Spawn
 		entry->spawn_percentage = result.GetFloat(18);
 		entry->condition = result.GetUInt32(19);
 		entry->scriptID = result.GetUInt32(20);
+		entry->spawn_camp_id = result.GetUInt32(21);
 		entry->spawn_type = type;
 
 		spawn_location->total_percentage += entry->spawn_percentage;
@@ -1368,27 +1369,128 @@ bool ZoneDatabase::LoadSpawnCampsForZone(std::shared_ptr<ZoneServer> z) {
 		return ret;
 
 	uint32_t count = 0;
+	uint32_t spawn_count = 0;
+	uint32_t location_count = 0;
 	while (result.Next()) {
 		uint32_t id = result.GetUInt32(0);
-		std::shared_ptr<SpawnCamp> camp = std::make_shared<SpawnCamp>(z, result.GetFloat(3), result.GetFloat(4), result.GetFloat(5), result.GetUInt32(6));
+		std::string type = result.GetString(1);
+		std::shared_ptr<SpawnCamp> camp = nullptr;
+		if (type == "Single")
+			camp = std::make_shared<SpawnCamp>(z, result.GetFloat(4), result.GetFloat(5), result.GetFloat(6), result.GetUInt32(7));
+		else if (type == "Area") {
+			std::shared_ptr<SpawnCampArea> area = std::make_shared<SpawnCampArea>(z, result.GetFloat(4), result.GetFloat(5), result.GetFloat(6), result.GetUInt32(7));
+
+			area->SetRadius(result.GetFloat(8));
+			area->SetNumRadiusEncounter(result.GetUInt16(9));
+
+			camp = area;
+		}
+		else if (type == "Group") {
+			std::shared_ptr<SpawnCampGroup> group = std::make_shared<SpawnCampGroup>(z, result.GetFloat(4), result.GetFloat(5), result.GetFloat(6), result.GetUInt32(7));
+
+			group->SetMinSpawns(result.GetUInt16(9));
+			group->SetMaxSpawns(result.GetUInt16(10));
+
+			camp = group;
+		}
+		else if (type == "Boss")
+			camp = std::make_shared<SpawnCampBoss>(z, result.GetFloat(4), result.GetFloat(5), result.GetFloat(6), result.GetUInt32(7));
+		else if (type == "Event")
+			camp = std::make_shared<SpawnCampEvent>(z, result.GetFloat(4), result.GetFloat(5), result.GetFloat(6), result.GetUInt32(7));
+
 		camp->SetID(id);
-		camp->SetName(result.GetString(1));
-		camp->SetRadius(result.GetFloat(7));
-		camp->SetNumRadiusEncounter(result.GetUInt16(8));
+		camp->SetName(result.GetString(2));
+
 		count++;
+		spawn_count += LoadSpawnsForSpawnCamp(camp);
+		location_count += LoadLocationsForSpawnCamp(camp);
 
 		z->AddSpawnCamp(camp);
 		LogDebug(LOG_NPC, 5, "---Loading Spawn Camp: '%s' (%u)", camp->GetName().c_str(), id);
 	}
 
 	LogInfo(LOG_NPC, 0, "--Loaded %u Spawn Camp(s).", count);
+	LogInfo(LOG_NPC, 0, "---Loaded %u Spawn Camp spawns.", spawn_count);
+	LogInfo(LOG_NPC, 0, "---Loaded %u Spawn Camp locations.", location_count);
+	return ret;
+}
+
+uint32_t ZoneDatabase::LoadSpawnsForSpawnCamp(std::shared_ptr<SpawnCamp> camp) {
+	uint32_t ret = 0;
+	DatabaseResult result;
+	bool select = Select(&result, "SELECT * FROM spawn_camp_spawns WHERE spawn_camp_id = %u", camp->GetID());
+
+	if (!select)
+		return ret;
+
+	while (result.Next()) {
+		std::shared_ptr<SpawnCampSpawnEntry> se = std::make_shared<SpawnCampSpawnEntry>();
+		se->id = result.GetUInt32(0);
+		se->spawnDBID = result.GetUInt32(2);
+		se->respawn_time = result.GetUInt32(3);
+		se->expire_time = result.GetUInt32(4);
+		se->expire_offset = result.GetUInt32(5);
+		se->minLevel = result.GetUInt8(6);
+		se->maxLevel = result.GetUInt8(7);
+		se->minEncounterLevel = result.GetUInt8(8);
+		se->maxEncounterLevel = result.GetUInt32(9);
+		se->conditional = result.GetUInt64(10);
+		se->weight = result.GetUInt32(11);
+
+		camp->AddSpawn(se);
+		ret++;
+	}
+
+	return ret;
+}
+
+uint32_t ZoneDatabase::LoadLocationsForSpawnCamp(std::shared_ptr<SpawnCamp> camp) {
+	uint32_t ret = 0;
+	DatabaseResult result;
+	bool select = Select(&result, "SELECT * FROM spawn_camp_locations WHERE spawn_camp_id = %u", camp->GetID());
+
+	if (!select)
+		return ret;
+
+	while (result.Next()) {
+		std::shared_ptr<SpawnCampLocationEntry> sl = std::make_shared<SpawnCampLocationEntry>();
+		sl->id = result.GetUInt32(0);
+		sl->x = result.GetFloat(3);
+		sl->y = result.GetFloat(4);
+		sl->z = result.GetFloat(5);
+		sl->x_offset = result.GetFloat(6);
+		sl->y_offset = result.GetFloat(7);
+		sl->z_offset = result.GetFloat(8);
+		sl->heading = result.GetFloat(9);
+		sl->pitch = result.GetFloat(10);
+		sl->roll = result.GetFloat(11);
+		sl->grid = result.GetUInt32(12);
+		sl->visual_state_override = result.GetUInt32(13);
+		sl->action_state_override = result.GetUInt32(14);		
+
+		camp->AddSpawnCampLocationEntry(sl);
+		ret++;
+	}
+
 	return ret;
 }
 
 uint32_t ZoneDatabase::InsertNewSpawnCamp(std::shared_ptr<SpawnCamp> camp) {
 	uint32_t ret = 0;
 
-	bool result = Query("INSERT INTO spawn_camp (zone_id, x, y, z, grid) VALUES (%u, %f, %f, %f, %u)", camp->GetZone()->GetID(), camp->GetX(), camp->GetY(), camp->GetZ(), camp->GetGridID());
+	std::string type = "";
+	if (camp->IsAreaCamp())
+		type = "Area";
+	else if (camp->IsGroupCamp())
+		type = "Group";
+	else if (camp->IsBossCamp())
+		type = "Boss";
+	else if (camp->IsEventCamp())
+		type = "Event";
+	else
+		type = "Single";
+
+	bool result = Query("INSERT INTO spawn_camp (type, name, zone_id, x, y, z, grid) VALUES ('%s', '%s', %u, %f, %f, %f, %u)", type.c_str(), camp->GetName().c_str(), camp->GetZone()->GetID(), camp->GetX(), camp->GetY(), camp->GetZ(), camp->GetGridID());
 	if (result) {
 		DatabaseResult dbResult;
 		bool select = Select(&dbResult, "SELECT LAST_INSERT_ID()");
@@ -1401,7 +1503,57 @@ uint32_t ZoneDatabase::InsertNewSpawnCamp(std::shared_ptr<SpawnCamp> camp) {
 }
 
 bool ZoneDatabase::SaveSpawnCamp(std::shared_ptr<SpawnCamp> camp) {
-	return Query("UPDATE spawn_camp SET name = '%s', x = %f, y = %f, z = %f, grid = %u, radius = %f, num_radius_encounters = %u WHERE id = %u", camp->GetName().c_str(), camp->GetX(), camp->GetY(), camp->GetZ(), camp->GetGridID(), camp->GetRadius(), camp->GetNumRadiusEncounters(), camp->GetID());
+	float radius = 0.f;
+	uint16_t min_spawns = 0;
+	uint16_t max_spawns = 0;
+	if (camp->IsAreaCamp()) {
+		std::shared_ptr<SpawnCampArea> area = std::dynamic_pointer_cast<SpawnCampArea>(camp);
+		if (area) {
+			radius = area->GetRadius();
+			min_spawns = area->GetNumRadiusEncounters();
+		}
+	}
+	else if (camp->IsGroupCamp()) {
+		std::shared_ptr<SpawnCampGroup> group = std::dynamic_pointer_cast<SpawnCampGroup>(camp);
+		if (group) {
+			min_spawns = group->GetMinSpawns();
+			max_spawns = group->GetMaxSpawns();
+		}
+	}
+
+	return Query("UPDATE spawn_camp SET name = '%s', x = %f, y = %f, z = %f, grid = %u, radius = %f, min_spawns = %u, max_spawns = %u WHERE id = %u", camp->GetName().c_str(), camp->GetX(), camp->GetY(), camp->GetZ(), camp->GetGridID(), radius, min_spawns, max_spawns, camp->GetID());
+}
+
+uint32_t ZoneDatabase::InsertNewSpawnCampLocation(uint32_t campID, std::shared_ptr<SpawnCampLocationEntry> scle) {
+	uint32_t ret = 0;
+
+	bool result = Query("INSERT INTO spawn_camp_locations (spawn_camp_id, x, y, z, x_offset, y_offset, z_offset, heading, pitch, roll, grid_id, visual_state_override, action_state_override) VALUES (%u, %f, %f, %f, %f, %f, %f, %f, %f, %f, %u, %u, %u)", campID, scle->x, scle->y, scle->z, scle->x_offset, scle->y_offset, scle->z_offset, scle->heading, scle->pitch, scle->roll, scle->grid, scle->visual_state_override, scle->action_state_override);
+	if (result) {
+		DatabaseResult dbResult;
+		bool select = Select(&dbResult, "SELECT LAST_INSERT_ID()");
+		if (select && dbResult.Next())
+			ret = dbResult.GetUInt32(0);
+	}
+
+	return ret;
+}
+
+uint32_t ZoneDatabase::InsertNewSpawnCampSpawn(uint32_t campID, std::shared_ptr<SpawnCampSpawnEntry> scse) {
+	uint32_t ret = 0;
+
+	bool result = Query("INSERT INTO spawn_camp_spawns (spawn_camp_id, spawn_id, respawn_timer, expire_timer, expire_offset, min_level, max_level, min_encounter_level, max_encounter_level, `condition`, weight) VALUES (%u, %u, %u, %u, %u, %u, %u, %u, %u, %u, %u)", campID, scse->spawnDBID, scse->respawn_time, scse->expire_time, scse->expire_offset, scse->minLevel, scse->maxLevel, scse->minEncounterLevel, scse->maxEncounterLevel, scse->conditional, scse->weight);
+	if (result) {
+		DatabaseResult dbResult;
+		bool select = Select(&dbResult, "SELECT LAST_INSERT_ID()");
+		if (select && dbResult.Next())
+			ret = dbResult.GetUInt32(0);
+	}
+
+	return ret;
+}
+
+bool ZoneDatabase::MergeSpawnIntoSpawnCamp(uint32_t spawnID, uint32_t locID, uint32_t campID) {
+	return Query("UPDATE spawn_location_entry SET spawn_camp_id = %u WHERE spawn_id = %u AND spawn_location_id = %u", campID, spawnID, locID);
 }
 
 uint32_t ZoneDatabase::GetSpawnLocationCount(uint32_t locationID, std::shared_ptr<Spawn> spawn) {

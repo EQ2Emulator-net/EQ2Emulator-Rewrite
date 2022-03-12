@@ -117,7 +117,8 @@ public:
 
 	ZoneChat chat;
 
-	std::vector<std::shared_ptr<SpawnCamp> >* GetSpawnCamps() { return &m_spawnCamps; }
+	std::map<uint32_t, std::shared_ptr<SpawnCamp> >* GetSpawnCamps() { return &m_spawnCamps; }
+	std::shared_ptr<SpawnCamp> GetSpawnCamp(uint32_t id);
 	void AddSpawnCamp(std::shared_ptr<SpawnCamp> camp);
 
 	void DeleteSpawnFromLocation(std::shared_ptr<Spawn> spawn, bool remove);
@@ -168,7 +169,7 @@ private:
 	std::map<uint32_t, float> m_spawnGroupChances;								// group_id, chance
 	std::map<uint32_t, std::set<uint32_t> > m_spawnGroupAssociations;			// group_id1, set<group_id2>
 
-	std::vector<std::shared_ptr<SpawnCamp> > m_spawnCamps;
+	std::map<uint32_t, std::shared_ptr<SpawnCamp> > m_spawnCamps;
 
 	// following is info from `zones` table in the DB
 	uint32_t id;

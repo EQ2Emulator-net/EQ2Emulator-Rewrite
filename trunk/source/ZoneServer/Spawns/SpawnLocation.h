@@ -21,6 +21,7 @@ struct SpawnEntry {
 	float			spawn_percentage;
 	uint32_t		condition;
 	uint32_t        scriptID;
+	uint32_t		spawn_camp_id;
 };
 
 class SpawnLocation {

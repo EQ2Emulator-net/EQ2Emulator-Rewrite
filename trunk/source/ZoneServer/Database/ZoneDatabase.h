@@ -15,6 +15,9 @@ class CharacterSheet;
 class Item;
 class SpawnCamp;
 
+struct SpawnCampLocationEntry;
+struct SpawnCampSpawnEntry;
+
 class ZoneDatabase : public CommonDatabase {
 public:
 	ZoneDatabase();
@@ -82,7 +85,11 @@ public:
 	bool LoadSpawnCampsForZone(std::shared_ptr<ZoneServer> z);
 	uint32_t InsertNewSpawnCamp(std::shared_ptr<SpawnCamp> camp);
 	bool SaveSpawnCamp(std::shared_ptr<SpawnCamp> camp);
-
+	uint32_t InsertNewSpawnCampLocation(uint32_t campID, std::shared_ptr<SpawnCampLocationEntry> scle);
+	uint32_t InsertNewSpawnCampSpawn(uint32_t campID, std::shared_ptr<SpawnCampSpawnEntry> scse);
+	uint32_t LoadSpawnsForSpawnCamp(std::shared_ptr<SpawnCamp> camp);
+	uint32_t LoadLocationsForSpawnCamp(std::shared_ptr<SpawnCamp> camp);
+	bool MergeSpawnIntoSpawnCamp(uint32_t spawnID, uint32_t locID, uint32_t campID);
 
 	uint32_t GetSpawnLocationCount(uint32_t locationID, std::shared_ptr<Spawn> spawn);
 	bool RemoveSpawnFromSpawnLocation(std::shared_ptr<Spawn> spawn);
