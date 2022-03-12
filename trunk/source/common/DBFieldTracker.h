@@ -5,6 +5,7 @@
 #include <type_traits>
 #include <sstream>
 #include "EmuAssert.h"
+#include "CommonDatabase.h"
 
 extern CommonDatabase* dbFieldTrackerDB;
 

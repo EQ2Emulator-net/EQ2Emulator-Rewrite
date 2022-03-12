@@ -160,6 +160,36 @@ QueryResult Database::QueryWithFetchedResult(uint32_t result_flags, const char* 
 	return QueryResult(success, affected_rows, last_insert_id);
 }
 
+bool Database::QuerySimple(const char* query) {
+	return QuerySimple(query, strlen(query));
+}
+
+bool Database::QuerySimple(const char* query, unsigned long length) {
+	bool success = true;
+
+	LogDebug(LOG_DATABASE, 5, "Query:\n%s", query);
+
+	DatabaseConnection* connection = GetPooledConnection();
+	MYSQL* mysql = connection->mysql_con;
+	if (mysql_real_query(mysql, query, length) != 0) {
+		LogError(LOG_DATABASE, 0, "Error running MySQL query (%d): %s\n%s", mysql_errno(mysql), mysql_error(mysql), query);
+		success = false;
+	}
+	else if (MYSQL_RES* res = mysql_use_result(mysql)) {
+		mysql_free_result(res);
+	}
+
+	while (mysql_next_result(mysql) == 0) {
+		if (MYSQL_RES* res = mysql_use_result(mysql)) {
+			mysql_free_result(res);
+		}
+	}
+
+	AddConnectionToPool(connection);
+
+	return success;
+}
+
 bool Database::Query(const char* fmt, ...) {
 	bool success = true;
 	int count;
@@ -184,27 +214,7 @@ bool Database::Query(const char* fmt, ...) {
 		return false;
 	}
 
-	LogDebug(LOG_DATABASE, 5, "Query:\n%s", query);
-
-	DatabaseConnection* connection = GetPooledConnection();
-	MYSQL* mysql = connection->mysql_con;
-	if (mysql_real_query(mysql, query, (unsigned long)count) != 0) {
-		LogError(LOG_DATABASE, 0, "Error running MySQL query (%d): %s\n%s", mysql_errno(mysql), mysql_error(mysql), query);
-		success = false;
-	}
-	else if (MYSQL_RES* res = mysql_use_result(mysql)) {
-		mysql_free_result(res);
-	}
-
-	while (mysql_next_result(mysql) == 0) {
-		if (MYSQL_RES* res = mysql_use_result(mysql)) {
-			mysql_free_result(res);
-		}
-	}
-
-	AddConnectionToPool(connection);
-
-	return success;
+	return QuerySimple(query, count);
 }
 
 bool Database::Select(DatabaseResult* result, const char* fmt, ...) {

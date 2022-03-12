@@ -477,6 +477,11 @@
     <ClCompile Include="..\..\source\ZoneServer\Controllers\NPCController.cpp">
       <Filter>source\Controllers</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\common\BinaryStream.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Projects\EQ2Emu\EQ2Emulator-Rewrite\trunk\source\common\DBRowBatcher.cpp">
+      <Filter>common</Filter>
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\SpawnCampGroup.cpp">
       <Filter>source\ZoneServer</Filter>
     </ClCompile>
@@ -1225,6 +1230,12 @@
     </ClInclude>
     <ClInclude Include="..\..\source\Lua\lzio.h">
       <Filter>Lua\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\common\BinaryStream.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Projects\EQ2Emu\EQ2Emulator-Rewrite\trunk\source\common\DBRowBatcher.h">
+      <Filter>common</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

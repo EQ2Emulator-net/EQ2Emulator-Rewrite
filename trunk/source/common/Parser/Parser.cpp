@@ -5,10 +5,13 @@
 #include "../ConfigReader.h"
 #include "../log.h"
 #include "../util.h"
+#include "../DBRowBatcher.h"
+
 #include <regex>
 #include <filesystem>
-#include <set>
 #include <map>
+#include <vector>
+#include <fstream>
 
 extern CommonDatabase* dbFieldTrackerDB;
 
@@ -53,14 +56,12 @@ Parser::Parser(int argc, char** argv) : database(*ParserDatabase::GetGlobal()) {
 }
 
 void Parser::PrintLogVersions() {
-	std::map<uint32_t, std::string> vers;
+	std::map<uint32_t, std::vector<std::string> > vers;
 
 	for (auto & itr : log_names) {
 		PacketLog l(itr);
 		if (l.TransformPackets(true)) {
-			if (vers.count(l.logVersion) == 0) {
-				vers[l.logVersion] = itr;
-			}
+			vers[l.logVersion].emplace_back(itr);
 		}
 		else {
 			LogDebug(LOG_PARSER, 0, "Unable to find log version: \"%s\"", itr.c_str());
@@ -71,10 +72,34 @@ void Parser::PrintLogVersions() {
 	ss << "Versions:";
 
 	for (auto& itr : vers) {
-		ss << "\n\t" << itr.first << " : " << itr.second;
+		ss << "\n\t" << itr.first << " : " << itr.second[0];
 	}
 
 	LogDebug(LOG_PARSER, 0, ss.str().c_str());
+
+	//Dump all of these to a sql file
+	DBRowBatcher batcher;
+
+	for (auto& itr : vers) {
+		uint32_t ver = itr.first;
+		auto& logs = itr.second;
+
+		for (auto& itr : logs) {
+			DatabaseRow row;
+			row.m_tableName = "eq2log_versions";
+			row.RegisterField("version", ver);
+			row.RegisterField("log", itr);
+			batcher.QueueRowInsert(row);
+		}
+	}
+
+	auto queries = batcher.ProduceInsertsForTable("eq2log_versions", 250, false);
+
+	std::ofstream fullDump("eq2logVersions.sql", std::ios::trunc);
+
+	for (auto& itr : queries) {
+		fullDump << itr << "\n";
+	}
 }
 
 void Parser::InitDatabase() {
