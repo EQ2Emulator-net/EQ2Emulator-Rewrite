@@ -26,6 +26,7 @@ ZoneTalk zoneTalk;
 RuleManager g_ruleManager;
 CharacterList g_characterList;
 CommonDatabase* dbFieldTrackerDB = nullptr;
+bool g_bParser = false;
 
 int main(int argc, char **argv)
 {

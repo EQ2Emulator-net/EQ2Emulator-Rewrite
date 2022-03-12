@@ -31,6 +31,7 @@ LuaGlobals g_luaGlobals;
 MasterItemList g_masterItemList;
 MasterSkillList g_masterSkillList;
 CommonDatabase* dbFieldTrackerDB = nullptr;
+bool g_bParser = false;
 
 int main(int argc, char** argv) {
 	bool looping = true;
@@ -40,6 +41,7 @@ int main(int argc, char** argv) {
 
 	if (argc > 1 && strcmp(argv[1], "--parse") == 0) {
 		//Transfer control to the parser
+		g_bParser = true;
 		ParserZone(argc, argv);
 		return 0;
 	}

@@ -26,7 +26,7 @@ RegisterLoginStruct("OP_CreateCharacterReplyMsg", OP_CreateCharacterReplyMsg_Pac
 
 // Client -> Server
 RegisterLoginStruct("OP_AllCharactersDescRequestMsg", OP_AllCharactersDescRequestMsg_Packet, 1);
-RegisterLoginStruct("OP_LoginRequestMsg", OP_LoginRequestMsg_Packet, 283, 284, 1212);
+RegisterLoginStruct("OP_LoginRequestMsg", OP_LoginRequestMsg_Packet, 283, 284, 1169, 1212);
 RegisterLoginStruct("OP_DeleteCharacterRequestMsg", OP_DeleteCharacterRequestMsg_Packet, 1);
 RegisterLoginStruct("OP_PlayCharacterRequestMsg", OP_PlayCharacterRequestMsg_Packet, 283, 284);
 RegisterLoginStruct("OP_LsClientBaselogReplyMsg", OP_LsClientBaselogReplyMsg_Packet, 1);

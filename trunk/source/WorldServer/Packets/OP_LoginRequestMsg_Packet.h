@@ -41,22 +41,40 @@ public:
 
 		uint32_t remaining_size = size - tmp_offset;
 
+		tmp = string(reinterpret_cast<const char*>(data), size);
+
+		size_t stationPos = tmp.find("STATION");
+		bool bSTATIONString = stationPos != string::npos;
+
 		//Factor out the STATION string16 that gets sent for most client versions except really early ones
-		if (remaining_size >= 9) {
+		if (remaining_size >= 9 && bSTATIONString) {
 			//7 char bytes + the 2 byte size
 			remaining_size -= 9;
 		}
+
+		//Skip to where the version should be
+		tmp_offset += 8;
 
 		//21 Bytes is the remaining size for the 1208 client, I'm assuming the largest struct before the change
 		uint32_t struct_version;
 		if (remaining_size == 1) {
 			struct_version = 283;
 		}
-		else if (remaining_size > 21) {
+		else if (bSTATIONString && stationPos + 7 == size) {
+			//Seeing some odd login packets for a few collects (dov beta i think)
+			//For clients with this string at the end we can work backwards from STATION
+			tmp_offset = stationPos - 15;
+			//2 for station string size, 2 soebuild, 1 bfullscreen, 4 unknown1, 
+			//4 the 2 unknown strings that are empty pretty much always, 2 the version (-15 total)
+			struct_version = *reinterpret_cast<const uint16_t*>(data + tmp_offset);
+		}
+		else if (remaining_size > 21 && bSTATIONString) {
+			tmp_offset = stationPos - 21;
 			struct_version = 1212;
 		}
 		else {
-			struct_version = 284;
+			//This should be a normal older 2 byte version client
+			struct_version = *reinterpret_cast<const uint16_t*>(data + tmp_offset);
 		}
 
 		return struct_version;
@@ -99,7 +117,7 @@ public:
 	int32_t Unknown5;
 	bool bFullscreen;
 	uint16_t SOEBuild;
-	std::string Unknown7;
+	std::string Station;
 	std::string Unknown8[2];
 	uint64_t Unknown9;
 	std::string ComputerName;
@@ -155,7 +173,10 @@ private:
 		RegisterInt32(Unknown5);
 		RegisterBool(bFullscreen);
 		RegisterUInt16(SOEBuild);
-		Register16String(Unknown7);
+
+		if (GetVersion() > 1168) {
+			Register16String(Station);
+		}
 
 		if (GetVersion() >= 1212) {
 			std::string& Unknown8 = this->Unknown8[0];
