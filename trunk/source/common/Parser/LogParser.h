@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ParserDatabase.h"
-#include "../DatabaseRow.h"
+#include "../DBRowBatcher.h"
 #include "PacketLog.h"
 #include <unordered_map>
 #include <string>
@@ -15,8 +15,7 @@ public:
 	void DoInsertsForTable(const char* table, int maxPerQuery, bool bInsertIgnore = false);
 
 private:
-	//map<tableName, pair<fields, vector<values> > >
-	std::unordered_map<std::string, std::pair<std::string, std::vector<std::string>>> queued_inserts;
+	DBRowBatcher batcher;
 
 protected:
 	class ParserDatabase& database;

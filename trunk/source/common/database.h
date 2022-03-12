@@ -47,6 +47,8 @@ public:
 	void PingDatabase();
 
 	bool Query(const char* fmt, ...);
+	bool QuerySimple(const char* query);
+	bool QuerySimple(const char* query, unsigned long length);
 
 #define QUERY_RESULT_FLAG_AFFECTED_ROWS 1
 #define	QUERY_RESULT_FLAG_LAST_INSERT_ID 2
