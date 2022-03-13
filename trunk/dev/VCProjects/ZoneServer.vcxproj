@@ -388,7 +388,7 @@
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\SpawnCampGroup.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\ZoneOperator.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\ZoneServer.cpp" />
-    <ClCompile Include="E:\Projects\EQ2Emu\EQ2Emulator-Rewrite\trunk\source\common\DBRowBatcher.cpp" />
+    <ClCompile Include="..\..\source\common\DBRowBatcher.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -644,7 +644,7 @@
     <ClInclude Include="..\..\source\ZoneServer\ZoneServer\ZoneServer.h" />
     <ClInclude Include="..\..\source\ZoneServer\ZoneServer\ZoneOperator.h" />
     <ClInclude Include="C:\Users\Chris\Documents\EQ2Emulator-Rewrite\trunk\source\ZoneServer\Packets\OP_EqStateCmd_Packet.h" />
-    <ClInclude Include="E:\Projects\EQ2Emu\EQ2Emulator-Rewrite\trunk\source\common\DBRowBatcher.h" />
+    <ClInclude Include="..\..\source\common\DBRowBatcher.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
