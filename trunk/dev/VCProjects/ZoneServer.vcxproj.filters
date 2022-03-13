@@ -480,8 +480,9 @@
     <ClCompile Include="..\..\source\common\BinaryStream.cpp">
       <Filter>common</Filter>
     </ClCompile>
-    <ClCompile Include="E:\Projects\EQ2Emu\EQ2Emulator-Rewrite\trunk\source\common\DBRowBatcher.cpp">
+    <ClCompile Include="..\..\source\common\DBRowBatcher.cpp">
       <Filter>common</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\SpawnCampGroup.cpp">
       <Filter>source\ZoneServer</Filter>
     </ClCompile>
@@ -1234,7 +1235,7 @@
     <ClInclude Include="..\..\source\common\BinaryStream.h">
       <Filter>common</Filter>
     </ClInclude>
-    <ClInclude Include="E:\Projects\EQ2Emu\EQ2Emulator-Rewrite\trunk\source\common\DBRowBatcher.h">
+    <ClInclude Include="..\..\source\common\DBRowBatcher.h">
       <Filter>common</Filter>
     </ClInclude>
   </ItemGroup>
