@@ -332,7 +332,7 @@ void CommandProcess::CommandSpawnCamp(const std::shared_ptr<Client>& client, Sep
 		if (cmd2 == "radius") {
 			std::shared_ptr<Spawn> target = controller->GetTarget();
 			if (target && target->IsSpawnCampSpawn()) {
-				std::shared_ptr<SpawnCamp> camp = dynamic_pointer_cast<SpawnCampSpawn>(target)->GetSpawnCamp();
+				std::shared_ptr<SpawnCampArea> camp = dynamic_pointer_cast<SpawnCampArea>(dynamic_pointer_cast<SpawnCampSpawn>(target)->GetSpawnCamp());
 				if (camp) {
 					if (camp->GetRadius() > 0)
 						scd->ShowSpawnCampRadius(camp);
@@ -341,6 +341,9 @@ void CommandProcess::CommandSpawnCamp(const std::shared_ptr<Client>& client, Sep
 				}
 			}
 		}
+		else if (cmd2 == "locations") {
+			client->chat.DisplayText("MOTD", "TODO: /spaw camp show locations");
+		}
 		else {
 			scd->Show();
 			client->chat.DisplayText("MOTD", "Showing all spawn camps in the zone", 0xff, false, "");
@@ -348,13 +351,60 @@ void CommandProcess::CommandSpawnCamp(const std::shared_ptr<Client>& client, Sep
 		return;
 	}
 
-	if (cmd == "new") {
-		std::shared_ptr<SpawnCamp> sc = std::make_shared<SpawnCamp>(zone, player->GetX(), player->GetY(), player->GetZ(), player->GetGridID());
+	if (cmd == "create") {
+		std::string cmd2 = sep.GetString(1);
+		std::transform(cmd2.begin(), cmd2.end(), cmd2.begin(), ::tolower);
+
+		std::shared_ptr<SpawnCamp> sc = nullptr;
+		if (cmd2 == "single")
+			sc = std::make_shared<SpawnCamp>(zone, player->GetX(), player->GetY(), player->GetZ(), player->GetGridID());
+		else if (cmd2 == "area")
+			sc = std::make_shared<SpawnCampArea>(zone, player->GetX(), player->GetY(), player->GetZ(), player->GetGridID());
+		else if (cmd2 == "group")
+			sc = std::make_shared<SpawnCampGroup>(zone, player->GetX(), player->GetY(), player->GetZ(), player->GetGridID());
+		else if (cmd2 == "boss")
+			sc = std::make_shared<SpawnCampBoss>(zone, player->GetX(), player->GetY(), player->GetZ(), player->GetGridID());
+		else if (cmd2 == "event")
+			sc = std::make_shared<SpawnCampEvent>(zone, player->GetX(), player->GetY(), player->GetZ(), player->GetGridID());
+		else {
+			client->chat.DisplayText("Error Text", "Invalid camp type specified, valid types are Single, Area, Group, Boss, or Event");
+			return;
+		}
+
+		sc->SetName(sep.GetString(2));
+
 		uint32_t id = database.InsertNewSpawnCamp(sc);
 		if (id > 0) {
 			sc->SetID(id);
 			zone->AddSpawnCamp(sc);
-			client->chat.DisplayText("MOTD", "Created a new spawn camp", 0xff, false, "");
+			client->chat.DisplayText("MOTD", "Created a new spawn camp");
+
+			if (sc->IsSingleCamp()) {
+				std::shared_ptr<SpawnCampLocationEntry> scle = std::make_shared<SpawnCampLocationEntry>();
+				scle->x = player->GetX();
+				scle->y = player->GetY();
+				scle->z = player->GetZ();
+				scle->x_offset = 0;
+				scle->y_offset = 0;
+				scle->z_offset = 0;
+				scle->heading = player->GetHeading();;
+				scle->pitch = 0;
+				scle->roll = 0;
+				scle->grid = player->GetGridID();
+				scle->visual_state_override = 0;
+				scle->action_state_override = 0;
+
+				uint32_t id2 = database.InsertNewSpawnCampLocation(sc->GetID(), scle);
+				if (id2 > 0) {
+					scle->id = id2;
+					sc->AddSpawnCampLocationEntry(scle);
+					return;
+				}
+				else {
+					client->chat.DisplayText("Error Text", "Failed to save location for a new spawn camp single");
+					return;
+				}
+			}
 		}
 		else
 			client->chat.DisplayText("Error Text", "Failed to save the new spawn camp to the DB", 0xff, false, "");
@@ -362,19 +412,90 @@ void CommandProcess::CommandSpawnCamp(const std::shared_ptr<Client>& client, Sep
 		return;
 	}
 
-	if (cmd == "add" && sep.IsNumber(1)) {
-		uint32_t id = sep.GetUInt32(1);
+	if (cmd == "add") {
 		std::shared_ptr<Spawn> target = controller->GetTarget();
 		if (target && target->IsSpawnCampSpawn()) {
+
+			std::string cmd2 = sep.GetString(1);
+			std::transform(cmd2.begin(), cmd2.end(), cmd2.begin(), ::tolower);
 			std::shared_ptr<SpawnCamp> camp = dynamic_pointer_cast<SpawnCampSpawn>(target)->GetSpawnCamp();
 			if (camp) {
-				camp->AddSpawnID(id);
-				client->chat.DisplayText("MOTD", "Added spawn id " + to_string(id) + " to the spawn camps list", 0xff, false, "");
+				if (cmd2 == "spawn" && sep.IsNumber(2)) {
+					uint32_t id = sep.GetUInt32(2);
+					std::shared_ptr<Spawn> spawn = zone->GetSpawnFromMasterList(id);
+					if (spawn) {
+						std::shared_ptr<SpawnCampSpawnEntry> scse = std::make_shared<SpawnCampSpawnEntry>();
+						scse->spawnDBID = id;
+						scse->respawn_time = spawn->GetRespawnTime();
+						scse->expire_time = spawn->GetExpireTime();
+						scse->expire_offset = 0;
+						scse->minLevel = spawn->GetMinLevel();
+						scse->maxLevel = spawn->GetMaxLevel();
+						scse->minEncounterLevel = spawn->GetDifficulty();
+						scse->maxEncounterLevel = spawn->GetDifficulty() + spawn->GetDifficultyOffset();
+						scse->conditional = 0;
+						scse->weight = 1;
+
+						uint32_t id2 = database.InsertNewSpawnCampSpawn(camp->GetID(), scse);
+						if (id2 > 0) {
+							scse->id = id2;
+							camp->AddSpawn(scse);
+							client->chat.DisplayText("MOTD", "Added spawn id " + to_string(id) + " to the spawn camps list");
+							return;
+						}
+						else {
+							client->chat.DisplayText("Error Text", "Failed to save new spawn camp spawn entry to the database.");
+							return;
+						}
+					}
+					else {
+						client->chat.DisplayText("Error Text", "Unable to find a spawn with the given id (" + to_string(id) + ")");
+						return;
+					}
+
+				}
+				else if (cmd2 == "location") {
+					if (camp->IsGroupCamp() || camp->IsBossCamp() || camp->IsEventCamp()) {
+						std::shared_ptr<SpawnCampLocationEntry> scle = std::make_shared<SpawnCampLocationEntry>();
+						scle->x = player->GetX();
+						scle->y = player->GetY();
+						scle->z = player->GetZ();
+						scle->grid = player->GetGridID();
+						scle->heading = player->GetHeading();
+
+						uint32_t id = database.InsertNewSpawnCampLocation(camp->GetID(), scle);
+						if (id > 0) {
+							scle->id = id;
+							camp->AddSpawnCampLocationEntry(scle);
+							client->chat.DisplayText("MOTD", "location added to the spawn camp");
+							return;
+						}
+						else {
+							client->chat.DisplayText("Error Text", "Failed to save new location to the DB");
+							return;
+						}
+					}
+					else {
+						client->chat.DisplayText("Error Text", "Can only assign locations to group, boss, or event spawn camps.");
+						return;
+					}
+				}
+				else {
+					client->chat.DisplayText("MOTD", "/spawn camp add spawn id\n/spawn camp add location");
+					return;
+				}
+			}
+			else {
+				client->chat.DisplayText("Error Text", "Unable to get a spawn camp for the target.");
 				return;
-			}		
+			}
+		}
+		else {
+			client->chat.DisplayText("Error Text", "Target must be a spawn camp for the '/spawn camp add' command", 0xff, false, "");
+			return;
 		}
 	}
-
+	
 	if (cmd == "reset") {
 		std::shared_ptr<Spawn> target = controller->GetTarget();
 		if (target && target->IsSpawnCampSpawn()) {
@@ -401,21 +522,6 @@ void CommandProcess::CommandSpawnCamp(const std::shared_ptr<Client>& client, Sep
 		}
 
 		bool success = false;
-		
-		if (cmd2 == "radius" && sep.IsNumber(2)) {
-			float radius = sep.GetFloat(2);
-			camp->SetRadius(radius);
-			client->chat.DisplayText("MOTD", "Setting the spawn camps radius to " + to_string(radius), 0xff, false, "");
-			scd->UpdateSpawnCampRadius(camp);
-			success = true;
-		}
-
-		if (cmd2 == "density" && sep.IsNumber(2)) {
-			uint16_t numEncounters = sep.GetUInt32(2);
-			camp->SetNumRadiusEncounter(numEncounters);
-			client->chat.DisplayText("MOTD", "Setting spawn camps density to " + to_string(numEncounters), 0xff, false, "");
-			success = true;
-		}
 
 		if (cmd2 == "name") {
 			std::string name = sep.GetString(2);
@@ -423,6 +529,56 @@ void CommandProcess::CommandSpawnCamp(const std::shared_ptr<Client>& client, Sep
 			target->SetGuild(camp->GetName() + " (" + ::to_string(camp->GetID()) + ")");
 			client->chat.DisplayText("MOTD", "Setting the spawn camp name to " + name, 0xff, false, "");
 			success = true;
+		}
+		else if (cmd2 == "min_spawns" && sep.IsNumber(2)) {
+			std::shared_ptr<SpawnCampGroup> group = std::dynamic_pointer_cast<SpawnCampGroup>(camp);
+			if (group) {
+				uint32_t min = sep.GetUInt32(2);
+				group->SetMinSpawns(min);
+				client->chat.DisplayText("MOTD", "Setting the spawn camps min_spawns to " + to_string(min));
+				success = true;
+			}
+			else {
+				client->chat.DisplayText("Error Text", "Can only set min_spawns on a Group spawn camp");
+			}
+		}
+		else if (cmd2 == "max_spawns" && sep.IsNumber(2)) {
+			std::shared_ptr<SpawnCampGroup> group = std::dynamic_pointer_cast<SpawnCampGroup>(camp);
+			if (group) {
+				uint32_t max = sep.GetUInt32(2);
+				group->SetMaxSpawns(max);
+				client->chat.DisplayText("MOTD", "Setting the spawn camps max_spawns to " + to_string(max));
+				success = true;
+			}
+			else {
+				client->chat.DisplayText("Error Text", "Can only set max_spawns on a Group spawn camp");
+			}
+		}
+		else if (cmd2 == "radius" && sep.IsNumber(2)) {
+			std::shared_ptr<SpawnCampArea> area = std::dynamic_pointer_cast<SpawnCampArea>(camp);
+			if (area) {
+				float radius = sep.GetFloat(2);
+				area->SetRadius(radius);
+				client->chat.DisplayText("MOTD", "Setting the spawn camps radius to " + to_string(radius));
+				scd->UpdateSpawnCampRadius(camp);
+				success = true;
+			}
+			else {
+				client->chat.DisplayText("Error Text", "Can only set radius on an Area spawn camp");
+			}
+		}
+		else if (cmd2 == "density" && sep.IsNumber(2)) {
+			std::shared_ptr<SpawnCampArea> area = std::dynamic_pointer_cast<SpawnCampArea>(camp);
+			if (area) {
+				float density = sep.GetFloat(2);
+				area->SetNumRadiusEncounter(density);
+				client->chat.DisplayText("MOTD", "Setting spawn camps density to " + to_string(density));
+				scd->UpdateSpawnCampRadius(camp);
+				success = true;
+			}
+			else {
+				client->chat.DisplayText("Error Text", "Can only set density on an Area spawn camp");
+			}
 		}
 
 		if (success) {
@@ -435,6 +591,78 @@ void CommandProcess::CommandSpawnCamp(const std::shared_ptr<Client>& client, Sep
 		}
 	}
 
+	if (cmd == "merge") {
+		// /spawn camp merge id group
+		if (!sep.IsNumber(1)) {
+			client->chat.DisplayText("Error Text", "Must give the spawn camp id to merge the target into");
+			return;
+		}
+
+		std::shared_ptr<Spawn> target = controller->GetTarget();
+		if (!target || target->IsPlayer()) {
+			client->chat.DisplayText("Error Text", "Invalid target");
+			return;
+		}
+
+		std::shared_ptr<SpawnCamp> camp = zone->GetSpawnCamp(sep.GetUInt32(1));
+		if (!camp) {
+			client->chat.DisplayText("Error Text", "Spawn Camp with the id () not found");
+			return;
+		}
+
+		uint32_t spawnID = target->GetDatabaseID();
+		std::shared_ptr<SpawnCampSpawnEntry> scse = std::make_shared<SpawnCampSpawnEntry>();
+		scse->spawnDBID = spawnID;
+		scse->respawn_time = target->GetRespawnTime();
+		scse->expire_time = target->GetExpireTime();
+		scse->expire_offset = 0;
+		scse->minLevel = target->GetMinLevel();
+		scse->maxLevel = target->GetMaxLevel();
+		scse->minEncounterLevel = target->GetDifficulty();
+		scse->maxEncounterLevel = target->GetDifficulty() + target->GetDifficultyOffset();
+		scse->conditional = 0;
+		scse->weight = 1;
+
+		uint32_t id = database.InsertNewSpawnCampSpawn(camp->GetID(), scse);
+		if (id > 0) {
+			scse->id = id;
+			camp->AddSpawn(scse);
+			client->chat.DisplayText("MOTD", "Added spawn id " + to_string(spawnID) + " to the spawn camps list");
+
+			uint32_t locID = target->GetSpawnLocationID();
+			database.MergeSpawnIntoSpawnCamp(spawnID, locID, camp->GetID());
+
+			SpawnEntryType type;
+			if (target->IsNPC())
+				type = SpawnEntryType::ENPC;
+			else if (target->IsObject())
+				type = SpawnEntryType::EOBJECT;
+			else if (target->IsSign())
+				type = SpawnEntryType::ESIGN;
+			else if (target->IsWidget())
+				type = SpawnEntryType::EWIDGET;
+			else if (target->IsGroundSpawn())
+				type = SpawnEntryType::EGROUNDSPAWN;
+
+			std::map<uint32_t, std::shared_ptr<SpawnLocation> >* list = zone->GetSpawnLocationList(type);
+			for (std::pair <uint32_t, std::shared_ptr<SpawnLocation> > kvp : *list) {
+				for (std::shared_ptr<SpawnEntry> se : kvp.second->entries) {
+					if (se->spawn_id == spawnID) {
+						se->spawn_camp_id = camp->GetID();
+					}
+				}
+			}
+
+			zone->RemoveSpawn(target);
+			return;
+		}
+		else {
+			client->chat.DisplayText("Error Text", "Failed to save new spawn camp spawn entry to the database.");
+			return;
+		}
+	}
+
+	/*
 	if (cmd == "details") {
 		std::shared_ptr<Spawn> target = controller->GetTarget();
 		if (target && target->IsSpawnCampSpawn()) {
@@ -451,6 +679,7 @@ void CommandProcess::CommandSpawnCamp(const std::shared_ptr<Client>& client, Sep
 
 		}
 	}
+	*/
 }
 
 void CommandProcess::CommandSpawnRemove(const std::shared_ptr<Client>& client, Separator& sep) {

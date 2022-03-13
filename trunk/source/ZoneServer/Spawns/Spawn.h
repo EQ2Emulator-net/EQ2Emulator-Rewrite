@@ -64,6 +64,7 @@ enum class EConsiderDifficulty : uint8_t {
 class ZoneServer;
 class Client;
 class BaseController;
+class SpawnCamp;
 
 class Spawn : public std::enable_shared_from_this<Spawn> {
 	friend struct SpawnVisualizationStruct;
@@ -159,10 +160,14 @@ public:
 	void RemoveController() { m_controller.reset(); }
 	std::shared_ptr<BaseController> GetController() { return m_controller; }
 
+	std::shared_ptr<SpawnCamp> GetSpawnCamp() { return m_spawnCamp.lock(); }
+	void SetSpawnCamp(std::shared_ptr<SpawnCamp> camp) { m_spawnCamp = camp; }
+
 private:
 	static uint32_t GetNextID();
 
 	std::weak_ptr<ZoneServer> m_zone;
+	std::weak_ptr<SpawnCamp> m_spawnCamp;
 
 	SpawnPositionStruct m_posStruct;
 	SpawnInfoStruct m_infoStruct;

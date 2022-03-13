@@ -11,78 +11,65 @@ SpawnCamp::SpawnCamp(std::shared_ptr<ZoneServer> zone, float x, float y, float z
 	m_y = y;
 	m_z = z;
 	m_grid = grid;
-	bInitialized = false;
-	m_radius = 0.0f;
-	m_numRadiusEncounters = 0;
-}
-
-void SpawnCamp::Initialize() {
-	std::shared_ptr<ZoneServer> zone = m_zone.lock();
-	if (!zone) {
-		LogError(LOG_ZONE, 0, "SpawnCamp::Initialize() failed to get a valid zone...");
-		return;
-	}
-
-	// Process the radius spawns
-	if (m_spawnIDs.size() > 0) {
-		for (uint16_t count = 0; count < m_numRadiusEncounters; ) {
-			// maybe this will work?
-			// r1, r2 was extracted for debugging
-			float r1 = MakeRandom(0, 1);
-			float r2 = MakeRandom(0, 1);
-			float a = static_cast<float>(r1 * 2 * 3.1415926535897932384626433832795);
-			float r = m_radius * sqrtf(r2);
-			float x = m_x + (r * cos(a));
-			float z = m_z + (r * sin(a));
-			//LogDebug(LOG_ZONE, 0, "Random r1 = %f, r2 = %f)", r1, r2);
-			
-
-			//float x = MakeRandom(m_x - m_radius, m_x + m_radius);
-			//float z = MakeRandom(m_z - m_radius, m_z + m_radius);
-			uint32_t id = m_spawnIDs.at(MakeRandomInt(0, static_cast<int32_t>(m_spawnIDs.size() - 1)));
-
-			std::shared_ptr<Spawn> spawn = zone->GetNewSpawnFromMasterList(id);
-			if (spawn) {
-
-				spawn->SetX(x, false);
-				spawn->SetY(m_y, false);
-				spawn->SetZ(z, false);
-				spawn->SetGridID(m_grid, false);
-
-				// maybe turn this type if into a function on spawn?
-				SpawnEntryType type;
-				if (spawn->IsSign())
-					type = SpawnEntryType::ESIGN;
-				else if (spawn->IsWidget())
-					type = SpawnEntryType::EWIDGET;
-				else if (spawn->IsGroundSpawn())
-					type = SpawnEntryType::EGROUNDSPAWN;
-				else if (spawn->IsObject())
-					type = SpawnEntryType::EOBJECT;
-				else
-					type = SpawnEntryType::ENPC;
-
-				// Add the spawn to the world
-				zone->AddSpawn(spawn, type);
-				m_spawns.push_back(spawn);
-
-				count++;
-			}
-		}
-	}
-
-	// Process the location spawns
-
-	bInitialized = true;
+	m_totalWeight = 0;
 }
 
 void SpawnCamp::Process() {
-	if (!bInitialized) {
-		Initialize();
+	// no spawn entires, nothing to do
+	if (m_spawnEntries.size() == 0)
 		return;
+
+	std::shared_ptr<SpawnCampLocationEntry> scle;
+	if (m_locationEntries.size() == 0) {
+		scle = std::make_shared<SpawnCampLocationEntry>();
+		scle->x = m_x;
+		scle->y = m_y;
+		scle->z = m_z;
+		scle->x_offset = 0;
+		scle->y_offset = 0;
+		scle->z_offset = 0;
+		scle->heading = 0;
+		scle->pitch = 0;
+		scle->roll = 0;
+		scle->grid = m_grid;
+		scle->visual_state_override = 0;
+		scle->action_state_override = 0;
+
+		m_locationEntries.push_back(scle);
+	}
+	else {
+		scle = m_locationEntries[0];
 	}
 
-	// Do what spawn camps need to do like respawns, expire timers, and so on
+	// no spawns in the zone
+	if (m_spawns.size() == 0) {
+		// TODO respawn check
+
+		if (m_spawnEntries.size() > 1) {
+			uint32_t roll = MakeRandomInt(1, m_totalWeight);
+			LogWarn(LOG_NPC, 0, "roll = %u, total weight = %u", roll, m_totalWeight);
+			uint32_t spawnID = 0;
+
+			std::map<uint32_t, std::shared_ptr<SpawnCampSpawnEntry> >::iterator itr;
+			for (itr = m_spawnEntries.begin(); itr != m_spawnEntries.end(); itr++) {
+				if (roll <= itr->second->weight) {
+					spawnID = itr->first;
+					break;
+				}
+
+				roll -= itr->second->weight;
+			}
+
+			if (spawnID > 0) {
+				std::shared_ptr<Spawn> spawn = CreateSpawn(spawnID, scle);
+				AddSpawnToZone(spawn);
+			}
+		}
+		else {
+			std::shared_ptr<Spawn> spawn = CreateSpawn(m_spawnEntries.begin()->first, scle);
+			AddSpawnToZone(spawn);
+		}
+	}
 }
 
 void SpawnCamp::Destroy() {
@@ -102,5 +89,61 @@ void SpawnCamp::Destroy() {
 
 void SpawnCamp::Reset() {
 	Destroy();
-	bInitialized = false;
+}
+
+void SpawnCamp::AddSpawn(std::shared_ptr<SpawnCampSpawnEntry> scse) {
+	m_spawnEntries[scse->spawnDBID] = scse;
+	m_totalWeight += scse->weight;
+}
+
+std::shared_ptr<Spawn> SpawnCamp::CreateSpawn(uint32_t id, std::shared_ptr<SpawnCampLocationEntry> scle) {
+	std::shared_ptr<ZoneServer> zone = GetZone();
+	if (zone) {
+		std::shared_ptr<Spawn> spawn = zone->GetNewSpawnFromMasterList(id);
+		if (spawn) {
+			// TODO: x/y/z offset
+			spawn->SetLocation(scle->x, scle->y, scle->z, false);
+			spawn->SetHeading(scle->heading, false);
+			spawn->SetPitch(scle->pitch, false);
+			spawn->SetRoll(scle->roll, false);
+			spawn->SetGridID(scle->grid, false);
+
+			if (scle->visual_state_override > 0)
+				spawn->SetVisualState(scle->visual_state_override, false);
+			
+			if (scle->action_state_override > 0)
+				spawn->SetActionState(scle->action_state_override, false);
+
+			spawn->SetSpawnCamp(shared_from_this());
+			spawn->SetSpawnLocationID(scle->id);
+			
+			m_spawns.push_back(spawn);
+			return spawn;
+		}
+	}
+
+	return nullptr;
+}
+
+void SpawnCamp::AddSpawnToZone(std::shared_ptr<Spawn> spawn) {
+	if (!spawn)
+		return;
+
+	std::shared_ptr<ZoneServer> zone = GetZone();
+	if (!zone)
+		return;
+
+	SpawnEntryType type;
+	if (spawn->IsSign())
+		type = SpawnEntryType::ESIGN;
+	else if (spawn->IsWidget())
+		type = SpawnEntryType::EWIDGET;
+	else if (spawn->IsGroundSpawn())
+		type = SpawnEntryType::EGROUNDSPAWN;
+	else if (spawn->IsObject())
+		type = SpawnEntryType::EOBJECT;
+	else
+		type = SpawnEntryType::ENPC;
+
+	zone->AddSpawn(spawn, type);
 }

@@ -32,9 +32,9 @@ bool SpawnCampDebug::GenerateSpawns() {
 		return false;
 	}
 
-	std::vector<std::shared_ptr<SpawnCamp> >* camps = zone->GetSpawnCamps();
-	for (std::shared_ptr<SpawnCamp> camp : *camps) {
-		std::shared_ptr<SpawnCampSpawn> spawn = CreateSpawnCampSpawn(camp);
+	std::map<uint32_t, std::shared_ptr<SpawnCamp> >* camps = zone->GetSpawnCamps();
+	for (std::pair<uint32_t, std::shared_ptr<SpawnCamp> > camp : *camps) {
+		std::shared_ptr<SpawnCampSpawn> spawn = CreateSpawnCampSpawn(camp.second);
 		m_spawnCampSpawns.push_back(spawn);
 	}
 
@@ -122,7 +122,7 @@ void SpawnCampDebug::ShowSpawnCampRadius(std::shared_ptr<SpawnCamp> camp) {
 
 	std::string name = "Spawn Camp Radius";
 	m_radiusSpawn->SetName(name, false);
-	m_radiusSpawn->SetSize(camp->GetRadius() / 20.0f, false); // divide by 20 as the duel flag ring has a radius of 20 at size 1.0
+	//m_radiusSpawn->SetSize(camp->GetRadius() / 20.0f, false); // divide by 20 as the duel flag ring has a radius of 20 at size 1.0
 	m_radiusSpawn->SetSizeRatio(1.0f, false);
 	m_radiusSpawn->SetCollisionRadius(1.0f, false);
 	m_radiusSpawn->SetState(16384, false);
@@ -135,5 +135,5 @@ void SpawnCampDebug::UpdateSpawnCampRadius(std::shared_ptr<SpawnCamp> camp) {
 	if (!EmuWeakCmp(m_radiusSpawnCamp, camp))
 		return;
 
-	m_radiusSpawn->SetSize(camp->GetRadius() / 20.0f);
+	//m_radiusSpawn->SetSize(camp->GetRadius() / 20.0f);
 }

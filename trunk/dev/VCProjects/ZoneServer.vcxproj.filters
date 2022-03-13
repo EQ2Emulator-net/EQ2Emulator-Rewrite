@@ -482,6 +482,8 @@
     </ClCompile>
     <ClCompile Include="E:\Projects\EQ2Emu\EQ2Emulator-Rewrite\trunk\source\common\DBRowBatcher.cpp">
       <Filter>common</Filter>
+    <ClCompile Include="..\..\source\ZoneServer\ZoneServer\SpawnCampGroup.cpp">
+      <Filter>source\ZoneServer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
