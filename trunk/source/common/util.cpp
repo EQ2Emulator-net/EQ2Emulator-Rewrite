@@ -328,3 +328,8 @@ bool StringEndsWith(const std::string& s, const std::string& ending) {
 	if (ending.size() > s.size()) return false;
 	return std::equal(ending.rbegin(), ending.rend(), s.rbegin());
 }
+
+size_t CalculateMaxZlibSize(uint32_t in) {
+	int n16kBlocks = (in + 16383) / 16384;
+	return in + 6 + (n16kBlocks * 5);
+}

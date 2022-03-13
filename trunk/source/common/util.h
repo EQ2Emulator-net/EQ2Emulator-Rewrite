@@ -65,3 +65,5 @@ void CombineHash(uint32_t& seed, const T& v) {
 }
 
 bool StringEndsWith(const std::string& s, const std::string& ending);
+
+size_t CalculateMaxZlibSize(uint32_t in);
