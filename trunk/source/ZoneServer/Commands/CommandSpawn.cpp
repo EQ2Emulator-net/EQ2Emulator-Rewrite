@@ -109,6 +109,15 @@ void CommandProcess::CommandSpawnSet(const std::shared_ptr<Client>& client, Sepa
 		client->chat.DisplayText("MOTD", "Setting spawns skin_color to " + to_string(color.Red) + ", " + to_string(color.Green) + ", " + to_string(color.Blue), 0xff, false, "");
 	}
 
+	if (cmd == "eye_color" && sep.IsNumber(1) && sep.IsNumber(2) && sep.IsNumber(3)) {
+		EQ2Color color;
+		color.Red = static_cast<uint8_t>(sep.GetUInt32(1));
+		color.Green = static_cast<uint8_t>(sep.GetUInt32(2));
+		color.Blue = static_cast<uint8_t>(sep.GetUInt32(3));
+		SpawnSet(target, masterSpawn, SetEyeColor(color));
+		client->chat.DisplayText("MOTD", "Setting spawns eye_color to " + to_string(color.Red) + ", " + to_string(color.Green) + ", " + to_string(color.Blue), 0xff, false, "");
+	}
+
 	// Vis struct
 
 	// Pos struct
@@ -707,4 +716,30 @@ void CommandProcess::CommandSpawnRemove(const std::shared_ptr<Client>& client, S
 
 	bool remove = sep.IsNumber(0) && sep.GetUInt32(0) == 1;
 	client->GetZone()->DeleteSpawnFromLocation(target, remove);
+}
+
+void CommandProcess::CommandSpawnSet_EyeColor(const std::shared_ptr<Client>& client, Separator& sep) {
+	std::shared_ptr<PlayerController> controller = client->GetController();
+	if (!controller)
+		return;
+
+	std::shared_ptr<Spawn> target = controller->GetTarget();
+	if (!target)
+		return;
+
+	std::shared_ptr<Spawn> masterSpawn = client->GetZone()->GetSpawnFromMasterList(target->GetDatabaseID());
+	if (!masterSpawn)
+		return;
+
+	if (sep.IsNumber(0) && sep.IsNumber(1) && sep.IsNumber(2)) {
+		EQ2Color color;
+		color.Red = static_cast<uint8_t>(sep.GetUInt32(0));
+		color.Green = static_cast<uint8_t>(sep.GetUInt32(1));
+		color.Blue = static_cast<uint8_t>(sep.GetUInt32(2));
+		SpawnSet(target, masterSpawn, SetEyeColor(color));
+		client->chat.DisplayText("MOTD", "Setting spawns eye_color to " + to_string(color.Red) + ", " + to_string(color.Green) + ", " + to_string(color.Blue), 0xff, false, "");
+	}
+	else
+		client->chat.DisplayText("MOTD", "Syntax: /spawn set eye_color RGB Min: 0 Max: 255");
+
 }
