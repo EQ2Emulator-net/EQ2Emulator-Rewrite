@@ -54,9 +54,12 @@
 #include "OP_PopulateSkillMapsMsg.h"
 #include "OP_EqUpdateMerchantCmd_Packet.h"
 #include "OP_EqStateCmd_Packet.h"
+#include "OP_PlayVoiceCmd_Packet.h"
+#include "OP_PlaySound3DCmd_Packet.h"
+#include "OP_PlaySoundCmd_Packet.h"
 
 // Server to Client
-RegisterZoneStruct("OP_ZoneInfoMsg", OP_ZoneInfoMsg_Packet, 283, 284, 942, 957, 959, 1067, 1096, 1142, 1193, 63119, 63182, 67650, 69239, 70704);
+RegisterZoneStruct("OP_ZoneInfoMsg", OP_ZoneInfoMsg_Packet, 283, 284, 864, 894, 957, 959, 988, 1067, 1142, 1193, 63119, 63182, 67650, 69239, 70704);
 RegisterZoneStruct("OP_DoneSendingInitialEntitiesMsg", OP_DoneSendingInitialEntitiesMsg_Packet, 1);
 RegisterZoneStruct("OP_ClientCmdMsg", OP_ClientCmdMsg_Packet, 283, 284);
 RegisterZoneStruct("OP_EqSetPOVGhostCmd", OP_EqSetPOVGhostCmd_Packet, 1);
@@ -77,7 +80,7 @@ RegisterZoneStruct("OP_ChangeServerControlFlagMsg", OP_ChangeServerControlFlagMs
 RegisterZoneStruct("OP_EqDisplayTextCmd", OP_DisplayTextCmd_Packet, 1, 284);
 RegisterZoneStruct("OP_EqHearChatCmd", OP_HearChatCmd_Packet, 1, 284, 57080, 67650);
 RegisterZoneStruct("OP_OnscreenMsgMsg", OP_OnscreenMsgMsg_Packet, 1, 284);
-RegisterZoneStruct("OP_EqDialogOpenCmd", OP_DialogOpenCmd_Packet, 1, 1096);
+RegisterZoneStruct("OP_EqDialogOpenCmd", OP_DialogOpenCmd_Packet, 1, 864, 1096);
 RegisterZoneStruct("OP_CampStartedMsg", OP_CampStartedMsg_Packet, 1, 284, 1153);
 RegisterZoneStruct("OP_CampAbortedMsg", OP_CampAbortedMsg_Packet, 1);
 RegisterZoneStruct("OP_UpdateTitleCmd", OP_UpdateTitleCmd_Packet, 1, 1153);
@@ -85,7 +88,7 @@ RegisterZoneStruct("OP_EqCannedEmoteCmd", OP_EqCannedEmoteCmd_Packet, 1, 57080);
 RegisterZoneStruct("OP_DialogCloseMsg", OP_DialogCloseMsg_Packet, 1);
 RegisterZoneStruct("OP_EqHearPlayFlavorCmd", OP_HearPlayFlavorCmd_Packet, 1);
 RegisterZoneStruct("OP_MapFogDataInitMsg", OP_MapFogDataInitMsg_Packet, 1188);
-RegisterZoneStruct("OP_EqExamineInfoCmd", OP_EqExamineInfoCmd_Packet, 1, 1193);
+RegisterZoneStruct("OP_EqExamineInfoCmd", OP_EqExamineInfoCmd_Packet, 1, 1119, 1193);
 RegisterZoneStruct("OP_UpdateInventoryMsg", OP_UpdateInventoryMsg_Packet, 1, 893, 1193, 1208, 57048, 57107, 67650);
 RegisterZoneStruct("OP_PlayFlythroughCmd", OP_PlayFlythroughCmd_Packet, 1);
 RegisterZoneStruct("OP_UpdateRaidMsg", OP_UpdateRaidMsg_Packet, 1);
@@ -93,6 +96,9 @@ RegisterZoneStruct("OP_DressingRoom", OP_DressingRoom_Packet, 67650);
 RegisterZoneStruct("OP_PopulateSkillMapsMsg", OP_PopulateSkillMapsMsg_Packet, 1);
 RegisterZoneStruct("OP_EqUpdateMerchantCmd", OP_EqUpdateMerchantCmd_Packet, 67650);
 RegisterZoneStruct("OP_EqStateCmd", OP_EqStateCmd_Packet, 1, 547, 865, 57048);
+RegisterZoneStruct("OP_EqPlayVoiceCmd", OP_PlayVoiceCmd_Packet, 1);
+RegisterZoneStruct("OP_EqPlaySound3DCmd", OP_PlaySound3DCmd_Packet, 1, 67650);
+RegisterZoneStruct("OP_EqPlaySoundCmd", OP_PlaySoundCmd_Packet, 1, 845);
 
 // Client to Server
 RegisterZoneStruct("OP_LoginByNumRequestMsg", OP_LoginByNumRequestMsg_Packet, 1, 1212);

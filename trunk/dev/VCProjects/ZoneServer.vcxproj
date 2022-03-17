@@ -389,6 +389,7 @@
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\ZoneOperator.cpp" />
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\ZoneServer.cpp" />
     <ClCompile Include="..\..\source\common\DBRowBatcher.cpp" />
+    <ClCompile Include="C:\Users\Chris\Documents\EQ2Emulator-Rewrite\trunk\source\ZoneServer\Parser\LogDialogsParser.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -645,6 +646,10 @@
     <ClInclude Include="..\..\source\ZoneServer\ZoneServer\ZoneOperator.h" />
     <ClInclude Include="C:\Users\Chris\Documents\EQ2Emulator-Rewrite\trunk\source\ZoneServer\Packets\OP_EqStateCmd_Packet.h" />
     <ClInclude Include="..\..\source\common\DBRowBatcher.h" />
+    <ClInclude Include="C:\Users\Chris\Documents\EQ2Emulator-Rewrite\trunk\source\ZoneServer\Packets\OP_PlaySound3DCmd_Packet.h" />
+    <ClInclude Include="C:\Users\Chris\Documents\EQ2Emulator-Rewrite\trunk\source\ZoneServer\Packets\OP_PlaySoundCmd_Packet.h" />
+    <ClInclude Include="C:\Users\Chris\Documents\EQ2Emulator-Rewrite\trunk\source\ZoneServer\Packets\OP_PlayVoiceCmd_Packet.h" />
+    <ClInclude Include="C:\Users\Chris\Documents\EQ2Emulator-Rewrite\trunk\source\ZoneServer\Parser\LogDialogsParser.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

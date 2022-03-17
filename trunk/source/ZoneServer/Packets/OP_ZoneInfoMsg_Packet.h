@@ -202,6 +202,8 @@ public:
 
 	}
 
+	static bool bBaseInfoOnly;
+
 private:
 	void RegisterElements() {
 		const uint32_t version = GetVersion();
@@ -245,6 +247,9 @@ private:
 		Register8String(zone_unknown2);
 		Register8String(zone_desc);
 		Register8String(char_name);
+		if (bBaseInfoOnly) {
+			return;
+		}
 		if (version >= 957 && version < 959)
 			Register16String(motd);
 		RegisterFloat(x);
@@ -260,11 +265,13 @@ private:
 			float& Unknown7 = unknown7[0];
 			RegisterFloat(Unknown7)->SetCount(2);
 			RegisterUInt8(unknown8ArraySize);
-			auto e = RegisterBool(bHasFlythrough);
-			RegisterSubstruct(flythrough)->SetIsVariableSet(e);
+			if (version >= 864) {
+				auto e = RegisterBool(bHasFlythrough);
+				RegisterSubstruct(flythrough)->SetIsVariableSet(e);
+			}
 			RegisterFloat(unknown9);
 		}
-		if (version >= 942) {
+		if (version >= 894) {
 			RegisterUInt8(levelA);
 			RegisterUInt8(levelB);
 		}
@@ -289,7 +296,7 @@ private:
 
 		RegisterInt32(unknown11);
 
-		if (version >= 959 && version < 1096) {
+		if (version >= 959 && version < 988) {
 			PacketUInt16* asize16 = RegisterUInt16(num_news_items);
 			asize16->SetMyArray(RegisterArray(news_item_array, NewsItem));
 		}

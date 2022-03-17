@@ -12,17 +12,23 @@
 class OP_CreateGhostCmd_Packet : public OP_ClientCmdMsg_Packet {
 public:
 	OP_CreateGhostCmd_Packet(uint32_t version) : OP_ClientCmdMsg_Packet(version),
-		header(version), pos(version), vis(version), info(version), footer(version), packedData(version <= 283) {
+		header(version), pos(version), vis(version), info(version), 
+		footer(version), packedData(version <= 283) {
+		packedData.LinkSubstruct(pos, "pos");
+		packedData.LinkSubstruct(vis, "vis");
+		packedData.LinkSubstruct(info, "info");
 		RegisterElements();
 	}
 	~OP_CreateGhostCmd_Packet() = default;
 
 	void RegisterElements() {
 		RegisterSubstruct(header);
-		packedData.LinkSubstruct(pos, "pos");
-		packedData.LinkSubstruct(vis, "vis");
-		packedData.LinkSubstruct(info, "info");
-		RegisterSubstruct(packedData);
+		if (bUnpackData) {
+			RegisterSubstruct(packedData);
+		}
+		else {
+			Register32String(packedDataBuf);
+		}
 		if (GetVersion() > 283) {
 			RegisterSubstruct(footer);
 		}
@@ -113,6 +119,29 @@ public:
 		vis.SetEncodedBuffer(client->encoded_packets.GetBuffer(EEncoded_UpdateSpawnVis, spawnIndex));
 	}
 
+	//Most XOR'd packets actually use default values for a base instead of all 00's (just mostly 00)
+	// This is why we have needed to set some values oddly, like hp XOR'd with 100 which is default
+	//void SetXORDefaults() {
+	//	memset(&static_cast<SpawnInfoStruct&>(info), 0, sizeof(SpawnInfoStruct));
+	//	memset(&static_cast<SpawnVisualizationStruct&>(vis), 0, sizeof(SpawnVisualizationStruct));
+	//	memset(&static_cast<SpawnPositionStruct&>(pos), 0, sizeof(SpawnPositionStruct));
+
+	//	//After we set this up to XOR properly change to 100
+	//	info.hp_percent = 0;//100;
+
+	//	info.size_mod = 1.0f;
+	//	info.show_archtype_icon = 0xff;
+
+	//	//These are all probably IDs, cast maybe spell id. one more in the unknown3b unknown
+	//	info.target_id = -1;
+	//	info.follow_target = -1;
+	//	info.size_unknown = -1;
+	//	info.cast_unknown = -1;
+	//	info.visual_flag = 2;
+	//	info.interaction_flag = 2;
+	//	memset(info.unknown3b, 0xff, 4);
+	//}
+
 	PacketPackedData packedData;
 
 	Substruct_SpawnHeader header;
@@ -120,4 +149,7 @@ public:
 	Substruct_SpawnVisualization vis;
 	Substruct_SpawnInfo info;
 	Substruct_SpawnFooter footer;
+	static bool bUnpackData;
+	//This is for the parser where we only want headers/footers in certain cases
+	std::string packedDataBuf;
 };

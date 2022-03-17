@@ -1872,7 +1872,7 @@
 		<Data ElementName="pvp_title" Type="EQ2_16Bit_String" Size="1"/>
 		<Data ElementName="guild" Type="EQ2_16Bit_String" Size="1"/>
 	</Struct>
-	<Struct Name="Substruct_SpawnTitleStruct" ClientVersion="865">
+	<Struct Name="Substruct_SpawnTitleStruct" ClientVersion="872">
 		<Data ElementName="name" Type="EQ2_16Bit_String" Size="1"/>
 		<Data ElementName="unknown1" Type="int8" Size="1"/>
 		<Data ElementName="isPlayer" Type="bool" Size="1"/>
@@ -1888,7 +1888,7 @@
 		<Data ElementName="lerp1" Substruct="Substruct_Lerp" Size="1" IfVariableSet="has_lerp"/>
 		<Data ElementName="lerp2" Substruct="Substruct_Lerp" Size="1" IfVariableSet="has_lerp"/>
 	</Struct>
-	<Struct Name="Substruct_SpawnFooter" ClientVersion="865">
+	<Struct Name="Substruct_SpawnFooter" ClientVersion="872">
 		<Data ElementName="titleStruct" Substruct="Substruct_SpawnTitleStruct" Size="1"/>
 		<Data ElementName="has_lerp" Type="bool" Size="1"/>
 		<Data ElementName="lerp1" Substruct="Substruct_Lerp" Size="1" IfVariableSet="has_lerp"/>
@@ -7160,6 +7160,46 @@
 		<Data ElementName="seconds" Type="int8" Size="1"/>
 		<Data ElementName="Unknown7" Type="float" Size="2"/>
 		<Data ElementName="unknown8ArraySize" Type="int8" Size="1"/>
+		<Data ElementName="unknown9" Type="float" Size="1"/>
+		<Data ElementName="zone_flags" Type="int32" Size="1"/>
+		<Data ElementName="num_adv" Type="int32" Size="1"/>
+		<Data ElementName="adv_array" Type="Array" ArraySizeVariable="num_adv">
+			<Data ElementName="adv_name" Type="EQ2_16Bit_String" Size="1"/>
+			<Data ElementName="adv_id" Type="int16" Size="1"/>
+		</Data>
+		<Data ElementName="num_client_setup" Type="int32" Size="1"/>
+		<Data ElementName="client_cmd_array" Type="Array" ArraySizeVariable="num_client_setup">
+			<Data ElementName="client_cmd" Type="EQ2_8Bit_String" Size="1"/>
+		</Data>
+		<Data ElementName="unknown11" Type="sint32" Size="1"/>
+	</Struct>
+	<Struct Name="WS_ZoneInfoMsg" ClientVersion="864" OpcodeName="OP_ZoneInfoMsg">
+		<Data ElementName="server1" Type="EQ2_8Bit_String" Size="1"/>
+		<Data ElementName="server2" Type="EQ2_8Bit_String" Size="1"/>
+		<Data ElementName="Unknown1" Type="int8" Size="2"/>
+		<Data ElementName="account_flags_1" Type="int32" Size="1"/>
+		<Data ElementName="account_flags_2" Type="int32" Size="1"/>
+		<Data ElementName="auction_website" Type="EQ2_8Bit_String" Size="1"/>
+		<Data ElementName="auction_port" Type="int32" Size="1"/>
+		<Data ElementName="upload_page" Type="EQ2_8Bit_String" Size="1"/>
+		<Data ElementName="upload_key" Type="EQ2_8Bit_String" Size="1"/>
+		<Data ElementName="zone" Type="EQ2_8Bit_String" Size="1"/>
+		<Data ElementName="zone2" Type="EQ2_8Bit_String" Size="1"/>
+		<Data ElementName="parent_zone" Type="EQ2_8Bit_String" Size="1"/>
+		<Data ElementName="zone_unknown2" Type="EQ2_8Bit_String" Size="1"/>
+		<Data ElementName="zone_desc" Type="EQ2_8Bit_String" Size="1"/>
+		<Data ElementName="char_name" Type="EQ2_8Bit_String" Size="1"/>
+		<Data ElementName="x" Type="float" Size="1"/>
+		<Data ElementName="y" Type="float" Size="1"/>
+		<Data ElementName="z" Type="float" Size="1"/>
+		<Data ElementName="year" Type="int16" Size="1"/>
+		<Data ElementName="month" Type="int8" Size="1"/>
+		<Data ElementName="day" Type="int8" Size="1"/>
+		<Data ElementName="hour" Type="int8" Size="1"/>
+		<Data ElementName="minute" Type="int8" Size="1"/>
+		<Data ElementName="seconds" Type="int8" Size="1"/>
+		<Data ElementName="Unknown7" Type="float" Size="2"/>
+		<Data ElementName="unknown8ArraySize" Type="int8" Size="1"/>
 		<Data ElementName="bHasFlythrough" Type="bool" Size="1"/>
 		<Data ElementName="flythrough" Substruct="Substruct_FlythroughDesc" Size="1" IfVariableSet="bHasFlythrough"/>
 		<Data ElementName="unknown9" Type="float" Size="1"/>
@@ -7175,7 +7215,7 @@
 		</Data>
 		<Data ElementName="unknown11" Type="sint32" Size="1"/>
 	</Struct>
-	<Struct Name="WS_ZoneInfoMsg" ClientVersion="942" OpcodeName="OP_ZoneInfoMsg">
+	<Struct Name="WS_ZoneInfoMsg" ClientVersion="894" OpcodeName="OP_ZoneInfoMsg">
 		<Data ElementName="server1" Type="EQ2_8Bit_String" Size="1"/>
 		<Data ElementName="server2" Type="EQ2_8Bit_String" Size="1"/>
 		<Data ElementName="Unknown1" Type="int8" Size="2"/>
@@ -7313,7 +7353,7 @@
 			<Data ElementName="news" Type="EQ2_16Bit_String" Size="1"/>
 		</Data>
 	</Struct>
-	<Struct Name="WS_ZoneInfoMsg" ClientVersion="1067" OpcodeName="OP_ZoneInfoMsg">
+	<Struct Name="WS_ZoneInfoMsg" ClientVersion="988" OpcodeName="OP_ZoneInfoMsg">
 		<Data ElementName="server1" Type="EQ2_8Bit_String" Size="1"/>
 		<Data ElementName="server2" Type="EQ2_8Bit_String" Size="1"/>
 		<Data ElementName="Unknown1" Type="int8" Size="2"/>
@@ -7323,7 +7363,6 @@
 		<Data ElementName="auction_port" Type="int32" Size="1"/>
 		<Data ElementName="upload_page" Type="EQ2_8Bit_String" Size="1"/>
 		<Data ElementName="upload_key" Type="EQ2_8Bit_String" Size="1"/>
-		<Data ElementName="upload_key2" Type="EQ2_8Bit_String" Size="1"/>
 		<Data ElementName="zone" Type="EQ2_8Bit_String" Size="1"/>
 		<Data ElementName="zone2" Type="EQ2_8Bit_String" Size="1"/>
 		<Data ElementName="parent_zone" Type="EQ2_8Bit_String" Size="1"/>
@@ -7357,13 +7396,8 @@
 			<Data ElementName="client_cmd" Type="EQ2_8Bit_String" Size="1"/>
 		</Data>
 		<Data ElementName="unknown11" Type="sint32" Size="1"/>
-		<Data ElementName="num_news_items" Type="int16" Size="1"/>
-		<Data ElementName="news_item_array" Type="Array" ArraySizeVariable="num_news_items">
-			<Data ElementName="news_id" Type="int32" Size="1"/>
-			<Data ElementName="news" Type="EQ2_16Bit_String" Size="1"/>
-		</Data>
 	</Struct>
-	<Struct Name="WS_ZoneInfoMsg" ClientVersion="1096" OpcodeName="OP_ZoneInfoMsg">
+	<Struct Name="WS_ZoneInfoMsg" ClientVersion="1067" OpcodeName="OP_ZoneInfoMsg">
 		<Data ElementName="server1" Type="EQ2_8Bit_String" Size="1"/>
 		<Data ElementName="server2" Type="EQ2_8Bit_String" Size="1"/>
 		<Data ElementName="Unknown1" Type="int8" Size="2"/>
@@ -8054,12 +8088,26 @@
 		<Data ElementName="message" Type="EQ2_16Bit_String" Size="1"/>
 		<Data ElementName="numResponses" Type="int16" Size="1"/>
 		<Data ElementName="responseArray" Type="Array" ArraySizeVariable="numResponses">
-			<Data ElementName="response" Type="EQ2_16Bit_String" Size="1"/>
+			<Data ElementName="responseArray_data" Type="EQ2_16Bit_String" Size="1"/>
 		</Data>
 		<Data ElementName="bCloseable" Type="bool" Size="1"/>
 		<Data ElementName="spawnID" Type="int32" Size="1"/>
 		<Data ElementName="voiceFile" Type="EQ2_16Bit_String" Size="1"/>
-		<Data ElementName="unknown2" Type="int8" Size="1"/>
+		<Data ElementName="key1" Type="int32" Size="1"/>
+		<Data ElementName="key2" Type="int32" Size="1"/>
+	</Struct>
+	<Struct Name="WS_EqDialogOpenCmd" ClientVersion="864" OpcodeName="OP_ClientCmdMsg" OpcodeType="OP_EqDialogOpenCmd">
+		<Data ElementName="conversationID" Type="int32" Size="1"/>
+		<Data ElementName="title" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="message" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="numResponses" Type="int16" Size="1"/>
+		<Data ElementName="responseArray" Type="Array" ArraySizeVariable="numResponses">
+			<Data ElementName="responseArray_data" Type="EQ2_16Bit_String" Size="1"/>
+		</Data>
+		<Data ElementName="bCloseable" Type="bool" Size="1"/>
+		<Data ElementName="spawnID" Type="int32" Size="1"/>
+		<Data ElementName="voiceFile" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="unknown" Type="int8" Size="1"/>
 		<Data ElementName="key1" Type="int32" Size="1"/>
 		<Data ElementName="key2" Type="int32" Size="1"/>
 	</Struct>
@@ -8069,13 +8117,13 @@
 		<Data ElementName="message" Type="EQ2_16Bit_String" Size="1"/>
 		<Data ElementName="numResponses" Type="int16" Size="1"/>
 		<Data ElementName="responseArray" Type="Array" ArraySizeVariable="numResponses">
-			<Data ElementName="response" Type="EQ2_16Bit_String" Size="1"/>
+			<Data ElementName="responseArray_data" Type="EQ2_16Bit_String" Size="1"/>
 		</Data>
-		<Data ElementName="unknown" Type="int8" Size="1"/>
+		<Data ElementName="responseColor" Type="int8" Size="1"/>
 		<Data ElementName="bCloseable" Type="bool" Size="1"/>
 		<Data ElementName="spawnID" Type="int32" Size="1"/>
 		<Data ElementName="voiceFile" Type="EQ2_16Bit_String" Size="1"/>
-		<Data ElementName="unknown2" Type="int8" Size="1"/>
+		<Data ElementName="unknown" Type="int8" Size="1"/>
 		<Data ElementName="key1" Type="int32" Size="1"/>
 		<Data ElementName="key2" Type="int32" Size="1"/>
 	</Struct>
@@ -8177,6 +8225,15 @@
 		</Data>
 	</Struct>
 	<Struct Name="WS_EqExamineInfoCmd" ClientVersion="1" OpcodeName="OP_ClientCmdMsg" OpcodeType="OP_EqExamineInfoCmd">
+		<Data ElementName="bShowName" Type="bool" Size="1"/>
+		<Data ElementName="unknown" Type="int8" Size="2"/>
+		<Data ElementName="bShowPopup" Type="bool" Size="1"/>
+		<Data ElementName="examineType" Type="int8" Size="1"/>
+		<Data ElementName="subVersion" Type="int8" Size="1" Criteria="examineType=254"/>
+		<Data ElementName="examineTypeOverride" Type="int8" Size="1" Criteria="examineType=254"/>
+		<Data ElementName="noExamineInfo" Type="int8" Size="3" Criteria="examineType=255"/>
+	</Struct>
+	<Struct Name="WS_EqExamineInfoCmd" ClientVersion="1119" OpcodeName="OP_ClientCmdMsg" OpcodeType="OP_EqExamineInfoCmd">
 		<Data ElementName="bShowName" Type="bool" Size="1"/>
 		<Data ElementName="unknown" Type="int8" Size="3"/>
 		<Data ElementName="bShowPopup" Type="bool" Size="1"/>
@@ -8431,6 +8488,41 @@
 		<Data ElementName="stateID" Type="int32" Size="1"/>
 		<Data ElementName="unknown1" Type="int8" Size="1"/>
 		<Data ElementName="unknown2" Type="int8" Size="1"/>
+	</Struct>
+	<Struct Name="WS_EqPlayVoiceCmd" ClientVersion="1" OpcodeName="OP_ClientCmdMsg" OpcodeType="OP_EqPlayVoiceCmd">
+		<Data ElementName="spawnID" Type="int32" Size="1"/>
+		<Data ElementName="voiceFile" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="language" Type="int8" Size="1"/>
+		<Data ElementName="garbled" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="key1" Type="int32" Size="1"/>
+		<Data ElementName="key2" Type="int32" Size="1"/>
+		<Data ElementName="bMuffled" Type="bool" Size="1"/>
+	</Struct>
+	<Struct Name="WS_EqPlaySound3DCmd" ClientVersion="1" OpcodeName="OP_ClientCmdMsg" OpcodeType="OP_EqPlaySound3DCmd">
+		<Data ElementName="sound" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="x" Type="float" Size="1"/>
+		<Data ElementName="y" Type="float" Size="1"/>
+		<Data ElementName="z" Type="float" Size="1"/>
+		<Data ElementName="unk1" Type="float" Size="1"/>
+		<Data ElementName="unk2" Type="float" Size="1"/>
+		<Data ElementName="unk3" Type="float" Size="1"/>
+	</Struct>
+	<Struct Name="WS_EqPlaySound3DCmd" ClientVersion="67650" OpcodeName="OP_ClientCmdMsg" OpcodeType="OP_EqPlaySound3DCmd">
+		<Data ElementName="sound" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="x" Type="float" Size="1"/>
+		<Data ElementName="y" Type="float" Size="1"/>
+		<Data ElementName="z" Type="float" Size="1"/>
+		<Data ElementName="unk1" Type="float" Size="1"/>
+		<Data ElementName="unk4" Type="float" Size="1"/>
+		<Data ElementName="unk2" Type="float" Size="1"/>
+		<Data ElementName="unk3" Type="float" Size="1"/>
+	</Struct>
+	<Struct Name="WS_EqPlaySoundCmd" ClientVersion="1" OpcodeName="OP_ClientCmdMsg" OpcodeType="OP_EqPlaySoundCmd">
+		<Data ElementName="sound" Type="EQ2_16Bit_String" Size="1"/>
+	</Struct>
+	<Struct Name="WS_EqPlaySoundCmd" ClientVersion="845" OpcodeName="OP_ClientCmdMsg" OpcodeType="OP_EqPlaySoundCmd">
+		<Data ElementName="sound" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="unk" Type="float" Size="1"/>
 	</Struct>
 	<Struct Name="WS_LoginByNumRequestMsg" ClientVersion="1" OpcodeName="OP_LoginByNumRequestMsg">
 		<Data ElementName="account_id" Type="int32" Size="1"/>
