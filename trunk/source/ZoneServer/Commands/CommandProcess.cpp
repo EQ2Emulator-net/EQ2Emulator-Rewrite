@@ -52,6 +52,7 @@ void CommandProcess::RegisterCommands() {
 	RegisterCommandHandler(524, CommandSpawnCamp);
 	RegisterCommandHandler(220, CommandSpawnRemove);
 	RegisterCommandHandler(226, CommandGoto);
+	RegisterCommandHandler(225, CommandSpawnSet_EyeColor);
 }
 
 void CommandProcess::RegisterCommandHandler(uint32_t handler_id, CommandHandler_t handler) {
