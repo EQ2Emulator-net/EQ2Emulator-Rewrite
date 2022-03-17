@@ -44,22 +44,19 @@ public:
 			if (!p->Read(bytes, 0, static_cast<uint32_t>(data.size()))) {
 				DumpBytes(bytes, static_cast<uint32_t>(data.size()), "Packet read out of bounds");
 			}
-			else {
-				//Check for sub packets (specialized item packets for example)
-				while (EQ2Packet* tmp = p->GetSubPacket()) {
-					if (!tmp->Read(bytes, 0, static_cast<uint32_t>(data.size()))) {
-						DumpBytes(bytes, static_cast<uint32_t>(data.size()), "Packet read out of bounds");
-						p.reset();
-						break;
-					}
-					p.reset(tmp);
+			//Check for sub packets (specialized item packets for example)
+			while (EQ2Packet* tmp = p->GetSubPacket()) {
+				p.reset(tmp);
+				if (!tmp->Read(bytes, 0, static_cast<uint32_t>(data.size()))) {
+					DumpBytes(bytes, static_cast<uint32_t>(data.size()), "Packet read out of bounds");				
+					break;
 				}
+			}
 
-				SubT* subp = dynamic_cast<SubT*>(p.get());
-				if (subp) {
-					p.release();
-					ret.emplace_back(std::make_pair(line, subp));
-				}
+			SubT* subp = dynamic_cast<SubT*>(p.get());
+			if (subp) {
+				p.release();
+				ret.emplace_back(std::make_pair(line, subp));
 			}
 		}
 

@@ -332,7 +332,7 @@ struct SpawnInfoStruct {
 	uint32_t                        unknown20a[3];
 	uint8_t                         unknown13b;
 	uint8_t                         body_age;
-	float                           size_mod; // if set from 1.0 to -1.0 you shrink so small you can't see yourself
+	float                           size_mod;
 	uint32_t                        unknown67633;
 	uint8_t                         unknown67633b;
 	union {
@@ -422,6 +422,7 @@ public:
 	void PreWrite() override;
 
 	void PostWrite() override {
+		//TODO: Just xor this with a defaulted value instead packet, see OP_CreateGhostCmd::SetXORDefaults
 		hp_percent ^= 100;
 		
 		if (version < 1188) {
@@ -460,7 +461,7 @@ public:
 		std::string& name = SpawnTitleStruct::name;
 		Register16String(name);		
 		RegisterUInt8(unknown1);
-		if (GetVersion() > 864) {
+		if (GetVersion() > 871) {
 			RegisterBool(isPlayer);
 		}
 		Register16String(last_name);
@@ -570,7 +571,7 @@ public:
 		auto e = RegisterBool(has_lerp);
 		RegisterSubstruct(lerp1)->SetIsVariableSet(e);
 		RegisterSubstruct(lerp2)->SetIsVariableSet(e);
-		if (GetVersion() > 864) {
+		if (GetVersion() > 871) {
 			RegisterUInt8(spawn_type);
 		}
 	}

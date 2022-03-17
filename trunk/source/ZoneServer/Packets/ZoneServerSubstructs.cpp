@@ -27,8 +27,8 @@ RegisterZoneSubstruct(Substruct_SpawnVisualization, 1, 843, 936, 955, 1008, 1142
 RegisterZoneSubstruct(Substruct_Lerp, 1);
 RegisterZoneSubstruct(Substruct_Matrix3, 1);
 RegisterZoneSubstruct(Substruct_Position, 1);
-RegisterZoneSubstruct(Substruct_SpawnTitleStruct, 1, 865);
-RegisterZoneSubstruct(Substruct_SpawnFooter, 1, 865);
+RegisterZoneSubstruct(Substruct_SpawnTitleStruct, 1, 872);
+RegisterZoneSubstruct(Substruct_SpawnFooter, 1, 872);
 RegisterZoneSubstruct(Substruct_WidgetFooter, 1);
 RegisterZoneSubstruct(Substruct_SignFooter, 283, 284, 60070);
 RegisterZoneSubstruct(Substruct_SpellEffects, 1, 843, 1193);

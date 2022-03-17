@@ -41,7 +41,7 @@ private:
 	void RegisterElements(bool bStructDump) {
 		RegisterBool(bShowName);
 		RescopeArrayElement(unknown);
-		RegisterUInt8(unknown)->SetCount(3);
+		RegisterUInt8(unknown)->SetCount(GetVersion() >= 1119 ? 3 : 2);
 		RegisterBool(bShowPopup);
 		if (GetVersion() >= 1193)
 			RegisterBool(bTradeskillExamine);

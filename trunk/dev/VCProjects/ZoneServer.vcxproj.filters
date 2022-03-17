@@ -486,6 +486,9 @@
     <ClCompile Include="..\..\source\ZoneServer\ZoneServer\SpawnCampGroup.cpp">
       <Filter>source\ZoneServer</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\Chris\Documents\EQ2Emulator-Rewrite\trunk\source\ZoneServer\Parser\LogDialogsParser.cpp">
+      <Filter>source\Parser</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ZoneServer\WorldTalk\WorldTalk.h">
@@ -1237,6 +1240,18 @@
     </ClInclude>
     <ClInclude Include="..\..\source\common\DBRowBatcher.h">
       <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Chris\Documents\EQ2Emulator-Rewrite\trunk\source\ZoneServer\Packets\OP_PlayVoiceCmd_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Chris\Documents\EQ2Emulator-Rewrite\trunk\source\ZoneServer\Packets\OP_PlaySound3DCmd_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Chris\Documents\EQ2Emulator-Rewrite\trunk\source\ZoneServer\Packets\OP_PlaySoundCmd_Packet.h">
+      <Filter>source\Packets\Server-&gt;Client</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Chris\Documents\EQ2Emulator-Rewrite\trunk\source\ZoneServer\Parser\LogDialogsParser.h">
+      <Filter>source\Parser</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

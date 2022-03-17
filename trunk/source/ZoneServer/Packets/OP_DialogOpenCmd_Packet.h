@@ -9,9 +9,9 @@ public:
 		RegisterElements();
 
 		conversationID = 0;
-		unknown2 = 0xFF;
+		unknown = 0xFF;
 		bCloseable = true;
-		unknown = 0;
+		responseColor = 0;
 		spawnID = 0xFFFFFFFF;
 		key1 = 0;
 		key2 = 0;
@@ -34,14 +34,16 @@ public:
 		Register16String(title);
 		Register16String(message);
 		auto e = RegisterUInt16(numResponses);
-		e->SetMyArray(RegisterArray(responseArray, Substruct_Response));
+		e->SetMyArray(RegisterElementArray(responseArray, std::string, Packet16String));
 		if (GetVersion() >= 1096) {
-			RegisterUInt8(unknown);
+			RegisterUInt8(responseColor);
 		}
 		RegisterBool(bCloseable);
 		RegisterUInt32(spawnID);
 		Register16String(voiceFile);
-		RegisterUInt8(unknown2);
+		if (GetVersion() >= 864) {
+			RegisterUInt8(unknown);
+		}
 		RegisterUInt32(key1);
 		RegisterUInt32(key2);
 	}
@@ -51,11 +53,12 @@ public:
 	std::string message;
 	uint16_t numResponses;
 	bool bCloseable;
-	uint8_t unknown;
-	std::vector<Substruct_Response> responseArray;
+	//Not sure if this is a bool or it can have multiple values besides true/false
+	uint8_t responseColor;
+	std::vector<std::string> responseArray;
 	uint32_t spawnID;
 	std::string voiceFile;
 	uint32_t key1;
 	uint32_t key2;
-	uint8_t unknown2;
+	uint8_t unknown;
 };

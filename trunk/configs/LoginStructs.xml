@@ -468,9 +468,22 @@
 		<Data ElementName="Unknown5" Type="sint32" Size="1"/>
 		<Data ElementName="bFullscreen" Type="bool" Size="1"/>
 		<Data ElementName="SOEBuild" Type="int16" Size="1"/>
-		<Data ElementName="Unknown7" Type="EQ2_16Bit_String" Size="1"/>
 	</Struct>
-	<Struct Name="LS_LoginRequestMsg" ClientVersion="1212" OpcodeName="OP_LoginRequestMsg">
+	<Struct Name="LS_LoginRequestMsg" ClientVersion="1169" OpcodeName="OP_LoginRequestMsg">
+		<Data ElementName="AccessCode" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Unknown1" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Username" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Password" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Unknown2" Type="sint32" Size="1"/>
+		<Data ElementName="Unknown3" Type="sint32" Size="1"/>
+		<Data ElementName="Version" Type="int16" Size="1"/>
+		<Data ElementName="Unknown4" Type="EQ2_16Bit_String" Size="2"/>
+		<Data ElementName="Unknown5" Type="sint32" Size="1"/>
+		<Data ElementName="bFullscreen" Type="bool" Size="1"/>
+		<Data ElementName="SOEBuild" Type="int16" Size="1"/>
+		<Data ElementName="Station" Type="EQ2_16Bit_String" Size="1"/>
+	</Struct>
+	<Struct Name="LS_LoginRequestMsg" ClientVersion="57000" OpcodeName="OP_LoginRequestMsg">
 		<Data ElementName="AccessCode" Type="EQ2_16Bit_String" Size="1"/>
 		<Data ElementName="Unknown1" Type="EQ2_16Bit_String" Size="1"/>
 		<Data ElementName="Username" Type="EQ2_16Bit_String" Size="1"/>
@@ -482,7 +495,21 @@
 		<Data ElementName="Unknown5" Type="sint32" Size="1"/>
 		<Data ElementName="bFullscreen" Type="bool" Size="1"/>
 		<Data ElementName="SOEBuild" Type="int16" Size="1"/>
-		<Data ElementName="Unknown7" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Station" Type="EQ2_16Bit_String" Size="1"/>
+	</Struct>
+	<Struct Name="LS_LoginRequestMsg" ClientVersion="57015" OpcodeName="OP_LoginRequestMsg">
+		<Data ElementName="AccessCode" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Unknown1" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Username" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Password" Type="EQ2_16Bit_String" Size="1"/>
+		<Data ElementName="Unknown2" Type="sint32" Size="1"/>
+		<Data ElementName="Unknown3" Type="sint32" Size="1"/>
+		<Data ElementName="Version" Type="int64" Size="1"/>
+		<Data ElementName="Unknown4" Type="EQ2_16Bit_String" Size="2"/>
+		<Data ElementName="Unknown5" Type="sint32" Size="1"/>
+		<Data ElementName="bFullscreen" Type="bool" Size="1"/>
+		<Data ElementName="SOEBuild" Type="int16" Size="1"/>
+		<Data ElementName="Station" Type="EQ2_16Bit_String" Size="1"/>
 		<Data ElementName="Unknown8" Type="EQ2_16Bit_String" Size="2"/>
 		<Data ElementName="Unknown9" Type="int64" Size="1"/>
 		<Data ElementName="ComputerName" Type="EQ2_16Bit_String" Size="1"/>

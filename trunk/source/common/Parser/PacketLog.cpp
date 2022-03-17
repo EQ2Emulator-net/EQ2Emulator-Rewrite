@@ -161,6 +161,11 @@ void PacketLog::AddPacket(const std::ostringstream& ss, bool bServerPacket, uint
 	size_t start = 0;
 	std::string bytes = ss.str();
 
+	if (bytes.empty()) {
+		//I've seen a couple logs with totally empty packets, maybe someone manually deleted them
+		return;
+	}
+
 	//Find the opcode
 
 			//Collector bug? some packets have an extra 0 on the front? Skip the first 0 and hope for the best...
@@ -201,8 +206,15 @@ void PacketLog::AddPacket(const std::ostringstream& ss, bool bServerPacket, uint
 		}
 	}
 
+	if (start >= bytes.size()) {
+		return;
+	}
+
 	uint16_t opcode = static_cast<unsigned char>(bytes[start++]);
 	if (opcode == 0xFF) {
+		if (start + 1 >= bytes.size()) {
+			return;
+		}
 		opcode = static_cast<unsigned char>(bytes[start++]);
 		opcode += static_cast<unsigned char>(bytes[start++]) << 8;
 	}

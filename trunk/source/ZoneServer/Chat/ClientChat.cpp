@@ -150,9 +150,7 @@ void ClientChat::DisplaySpawnDialog(const OpenDialogParams& params, uint8_t type
 		p.responseArray.reserve(params.options.size());
 		//Set the options if any
 		for (auto& itr : params.options) {
-			p.responseArray.emplace_back(client.GetVersion());
-			auto& option = p.responseArray.back();
-			option.response = itr.option;
+			p.responseArray.emplace_back(itr.option);
 			dialog.choiceFunctions.push_back(itr.function);
 		}
 	}

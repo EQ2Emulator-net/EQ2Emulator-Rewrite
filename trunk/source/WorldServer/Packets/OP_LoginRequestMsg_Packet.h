@@ -67,10 +67,14 @@ public:
 			//2 for station string size, 2 soebuild, 1 bfullscreen, 4 unknown1, 
 			//4 the 2 unknown strings that are empty pretty much always, 2 the version (-15 total)
 			struct_version = *reinterpret_cast<const uint16_t*>(data + tmp_offset);
+
+			if (struct_version == 0) {
+				struct_version = 57000;
+			}
 		}
 		else if (remaining_size > 21 && bSTATIONString) {
 			tmp_offset = stationPos - 21;
-			struct_version = 1212;
+			struct_version = 57015;
 		}
 		else {
 			//This should be a normal older 2 byte version client
@@ -178,7 +182,7 @@ private:
 			Register16String(Station);
 		}
 
-		if (GetVersion() >= 1212) {
+		if (GetVersion() >= 57015) {
 			std::string& Unknown8 = this->Unknown8[0];
 			Register16String(Unknown8)->SetCount(2);
 			RegisterUInt64(Unknown9);

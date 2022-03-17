@@ -5,6 +5,7 @@
 #include "LogItemsParser.h"
 #include "LogAppearancesParser.h"
 #include "LogSpawnsParser.h"
+#include "LogDialogsParser.h"
 
 #include "../Packets/OP_EqUpdateMerchantCmd_Packet.h"
 
@@ -43,6 +44,9 @@ void ParserZone::ProcessLogs() {
 			}
 			else if (opt == "-spawns") {
 				ProcessSpawns(*log);
+			}
+			else if (opt == "-dialogs") {
+				ProcessDialogs(*log);
 			}
 		}
 	}
@@ -84,4 +88,8 @@ void ParserZone::ProcessMerchantPrices(PacketLog& log) {
 
 void ParserZone::ProcessSpawns(PacketLog& log) {
 	LogSpawnsParser processor(log, database);
+}
+
+void ParserZone::ProcessDialogs(PacketLog& log) {
+	LogDialogsParser processor(log, database);
 }
