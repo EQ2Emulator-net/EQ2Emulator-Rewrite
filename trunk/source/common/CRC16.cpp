@@ -19,8 +19,9 @@
 */
 
 #include "stdafx.h"
+#include "CRC16.h"
 
-unsigned long IntArray[]={ 
+uint32_t IntArray[] = { 
 0x00000000, 
 0x77073096, 
 0xEE0E612C, 
@@ -277,7 +278,9 @@ unsigned long IntArray[]={
 0xC30C8EA1, 
 0x5A05DF1B, 
 0x2D02EF8D, 
-}; 
+};
+
+const uint32_t* EQ2CRCTable::WordTable = IntArray;
  
 unsigned long CRC16(const unsigned char *buf, int size, int key) 
 {

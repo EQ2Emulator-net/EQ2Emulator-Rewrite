@@ -218,7 +218,7 @@ public:
 class Substruct_TargetSpellInfo : public PacketSubstruct {
 public:
 	Substruct_TargetSpellInfo(uint32_t ver = 0) : PacketSubstruct(ver), 
-		spell_id(-1), spell_icon(0), spell_triggercount(0), spell_icon_backdrop(0), unknown(0) {}
+		spell_id(-1), spell_icon(-1), spell_triggercount(0), spell_icon_backdrop(0), unknown(0) {}
 
 	void RegisterElements() override {
 		RegisterInt32(spell_id);
@@ -404,6 +404,7 @@ public:
 			spell_effects[i].ResetVersion(version);
 		}
 
+		bDumpOffsets = true;
 		RegisterElements();
 	}
 
@@ -422,8 +423,6 @@ public:
 	void PreWrite() override;
 
 	void PostWrite() override {
-		//TODO: Just xor this with a defaulted value instead packet, see OP_CreateGhostCmd::SetXORDefaults
-		hp_percent ^= 100;
 		
 		if (version < 1188) {
 			entityFlags = entity_flags_pre_write;

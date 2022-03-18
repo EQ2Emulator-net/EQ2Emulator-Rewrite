@@ -20,6 +20,15 @@
 #ifndef _CRC16_H
 #define _CRC16_H
 
+#include <cstdint>
+
+class EQ2CRCTable {
+private:
+    EQ2CRCTable() {}
+public:
+    static const uint32_t* WordTable;
+};
+
 unsigned long CRC16(const unsigned char *buf, int size, int key);
 
 #endif

@@ -4,6 +4,7 @@
 #include "../../log.h"
 #include <type_traits>
 #include "../../EmuAssert.h"
+#include <optional>
 
 //You may choose to either inherit from this class or simply use PacketPackedData::LinkSubstruct in the desired order of your packed data
 class PacketPackedData : public PacketSubstruct {
@@ -42,14 +43,17 @@ public:
 		memcpy(tmpSrc.data(), srcbuf + offset, lastPackedSize);
 		offset += lastPackedSize;
 
-		std::vector<unsigned char> tmpDst(32768);
+		unpackedData.emplace(32768);
 
 		int32_t outsize = 0;
 
-		if (!DoUnpack(lastPackedSize, tmpSrc.data(), outsize, tmpDst.data(), static_cast<uint32_t>(tmpDst.size()), !bClassic)) {
+		if (!DoUnpack(lastPackedSize, tmpSrc.data(), outsize, unpackedData->data(), static_cast<uint32_t>(unpackedData->size()), !bClassic)) {
 			LogDebug(LOG_PACKET, 0, "PacketPackedData::ReadElement unable to unpack data!");
+			unpackedData.reset();
 			return false;
 		}
+
+		unpackedData->resize(outsize);
 
 		tmpSrc.clear();
 
@@ -60,7 +64,7 @@ public:
 				continue;
 			}
 
-			if (!itr->ReadElement(tmpDst.data(), readOffset, outsize)) {
+			if (!itr->ReadElement(unpackedData->data(), readOffset, outsize)) {
 				return false;
 			}
 		}
@@ -263,6 +267,9 @@ public:
 		auto e = new PacketSubstructParent<T>(ps);
 		PushElementForRegistration(e, element_name, std::remove_pointer_t<decltype(e)>);
 	}
+
+	//Hold onto this data so we can look at it later if needed (mostly for the parser but doesn't hurt)
+	std::optional<std::vector<unsigned char>> unpackedData;
 
 private:
 	std::vector<unsigned char> buf;

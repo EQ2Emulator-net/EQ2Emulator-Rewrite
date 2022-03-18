@@ -820,6 +820,16 @@ SpawnInfoStruct::SpawnInfoStruct() {
 	power_percent = 100;
 	hp_percent = 100;
 	heatLevel = 0xff;//temp until we can set it properly
+	size_mod = 1.0f;
+
+	target_id = -1;
+	follow_target = -1;
+	size_unknown = -1;
+	memset(unknown3b, 0xff, 4);
+	cast_unknown = -1;
+	cast_percentage = -1;
+	unknown3c2 = -1;
+	show_archtype_icon = 0xff;
 }
 
 void Substruct_SpawnInfo::PreWrite() {
@@ -846,5 +856,4 @@ void Substruct_SpawnInfo::PreWrite() {
 		}
 	}
 
-	hp_percent ^= 100;
 }

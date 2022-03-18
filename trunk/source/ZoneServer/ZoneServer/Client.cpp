@@ -12,6 +12,8 @@
 #include "../WorldTalk/WorldStream.h"
 #include "../../common/Rules.h"
 #include "../../common/Packets/EmuPackets/Emu_NotifyCharacterLinkdead_Packet.h"
+#include "../Packets/OP_CreateGhostCmd_Packet.h"
+#include "../../common/EncodedBuffer.h"
 
 extern ZoneOperator g_zoneOperator;
 extern RuleManager g_ruleManager;
@@ -101,20 +103,21 @@ bool Client::WasSentSpawn(const std::shared_ptr<Spawn>& spawn) {
 
 uint16_t Client::AddSpawnToIndexMap(const std::shared_ptr<Spawn>& spawn) {
 	uint16_t index = 1;
-	if (m_nextSpawnIndex == 0xFFFF) {
+	if (m_nextSpawnIndex == 0xFFFE) {
 		//This client has exhausted the spawn indices available..find one that has opened back up
 		if (!m_spawnIndexLookupMap.empty()) {
 			//Should be impossible to be empty here but just incase
 			uint16_t tmp = 1;
-			uint16_t lowest = m_spawnIndexLookupMap.begin()->first;
+			auto itr = m_spawnIndexLookupMap.begin();
+			uint16_t lowest = itr->first;
 			if (tmp < lowest) {
 				index = tmp;
 			}
 			else {
 				tmp = lowest;
-				for (auto& itr : m_spawnIndexLookupMap) {
-					if (tmp++ < itr.first) {
-						index = tmp - 1;
+				for (++itr; itr != m_spawnIndexLookupMap.end(); ++itr) {
+					if (++tmp < itr->first) {
+						index = tmp;
 						break;
 					}
 				}
@@ -215,4 +218,41 @@ void Client::ConnectionTimeout() {
 	auto p = new Emu_NotifyCharacterLinkdead_Packet;
 	p->characterID = sheet->characterID;
 	g_zoneOperator.GetWorldStream()->QueuePacket(p);
+}
+
+void Client::InitSpawnBuffers(uint32_t spawnIndex) {
+	if (!defaultPosBuf) {
+		//We need to init our base buffers for this client/version
+		defaultPosBuf = std::make_shared<EncodedBuffer>();
+		defaultInfoBuf = std::make_shared<EncodedBuffer>();
+		defaultVisBuf = std::make_shared<EncodedBuffer>();
+
+		OP_CreateGhostCmd_Packet p(ClientVersion);
+		p.SetXORDefaults();
+		
+		p.pos.SetEncodedBuffer(defaultPosBuf);
+		p.info.SetEncodedBuffer(defaultInfoBuf);
+		p.vis.SetEncodedBuffer(defaultVisBuf);
+
+		//NOT proper but since we have been using this value sending it would flip some bits out
+		p.info.visual_flag = 0;
+		p.info.interaction_flag = 0;
+
+		unsigned char* buf = nullptr;
+		p.PreWrite();
+		p.Write(buf);
+		p.PostWrite();
+	}
+
+	//Check if these are fresh buffers, if so copy our default ones over
+	bool bNewBuf;
+	auto posBuf = encoded_packets.GetBuffer(EEncoded_UpdateSpawnPos, spawnIndex, &bNewBuf);
+	if (bNewBuf) {
+		auto infoBuf = encoded_packets.GetBuffer(EEncoded_UpdateSpawnInfo, spawnIndex);
+		auto visBuf = encoded_packets.GetBuffer(EEncoded_UpdateSpawnVis, spawnIndex);
+
+		*posBuf = *defaultPosBuf;
+		*visBuf = *defaultVisBuf;
+		*infoBuf = *defaultInfoBuf;
+	}
 }
