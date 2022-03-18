@@ -22,8 +22,14 @@ private:
 	void ProcessZones();
 	std::string FindZoneForLine(uint32_t line);
 
-	//map<line, std::pair<client conversation id, emu conversation hash> >
-	std::map<uint32_t, std::pair<uint32_t, uint32_t> > dialogLines;
+	//map<line, DialogCacheEntry >
+	struct DialogCacheEntry {
+		uint32_t clientConversationID;
+		uint32_t dialogID;
+		uint32_t npcID;
+	};
+
+	std::map<uint32_t, DialogCacheEntry > dialogLines;
 	void ProcessDialogs();
 
 	struct Voiceover {

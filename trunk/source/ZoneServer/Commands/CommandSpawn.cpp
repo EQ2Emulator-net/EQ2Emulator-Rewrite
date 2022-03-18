@@ -438,8 +438,8 @@ void CommandProcess::CommandSpawnCamp(const std::shared_ptr<Client>& client, Sep
 						scse->respawn_time = spawn->GetRespawnTime();
 						scse->expire_time = spawn->GetExpireTime();
 						scse->expire_offset = 0;
-						scse->minLevel = spawn->GetMinLevel();
-						scse->maxLevel = spawn->GetMaxLevel();
+						scse->minLevel = static_cast<uint8_t>(spawn->GetMinLevel());
+						scse->maxLevel = static_cast<uint8_t>(spawn->GetMaxLevel());
 						scse->minEncounterLevel = spawn->GetDifficulty();
 						scse->maxEncounterLevel = spawn->GetDifficulty() + spawn->GetDifficultyOffset();
 						scse->conditional = 0;
@@ -579,8 +579,8 @@ void CommandProcess::CommandSpawnCamp(const std::shared_ptr<Client>& client, Sep
 		else if (cmd2 == "density" && sep.IsNumber(2)) {
 			std::shared_ptr<SpawnCampArea> area = std::dynamic_pointer_cast<SpawnCampArea>(camp);
 			if (area) {
-				float density = sep.GetFloat(2);
-				area->SetNumRadiusEncounter(density);
+				uint32_t density = sep.GetUInt32(2);
+				area->SetNumRadiusEncounter(static_cast<uint32_t>(density));
 				client->chat.DisplayText("MOTD", "Setting spawn camps density to " + to_string(density));
 				scd->UpdateSpawnCampRadius(camp);
 				success = true;
@@ -625,8 +625,8 @@ void CommandProcess::CommandSpawnCamp(const std::shared_ptr<Client>& client, Sep
 		scse->respawn_time = target->GetRespawnTime();
 		scse->expire_time = target->GetExpireTime();
 		scse->expire_offset = 0;
-		scse->minLevel = target->GetMinLevel();
-		scse->maxLevel = target->GetMaxLevel();
+		scse->minLevel = static_cast<uint8_t>(target->GetMinLevel());
+		scse->maxLevel = static_cast<uint8_t>(target->GetMaxLevel());
 		scse->minEncounterLevel = target->GetDifficulty();
 		scse->maxEncounterLevel = target->GetDifficulty() + target->GetDifficultyOffset();
 		scse->conditional = 0;
