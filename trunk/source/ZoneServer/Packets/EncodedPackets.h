@@ -22,7 +22,7 @@ public:
 
 	~EncodedPackets() = default;
 
-	std::shared_ptr<EncodedBuffer> GetBuffer(EEncodedPackets t, uint32_t ref = 0);
+	std::shared_ptr<EncodedBuffer> GetBuffer(EEncodedPackets t, uint32_t ref = 0, bool* bNewOut = nullptr);
 	void RemoveBuffer(EEncodedPackets t, uint32_t ref = 0);
 
 private:

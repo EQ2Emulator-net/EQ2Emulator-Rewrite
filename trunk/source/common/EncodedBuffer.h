@@ -13,6 +13,17 @@ public:
 		bufLock.SetName("EncodedBuffer::bufLock");
 	}
 
+	EncodedBuffer(const EncodedBuffer& rhs) {
+		inputBuf = rhs.inputBuf;
+		buffer = rhs.buffer;
+	}
+
+	EncodedBuffer& operator=(const EncodedBuffer& rhs) {
+		inputBuf = rhs.inputBuf;
+		buffer = rhs.buffer;
+		return *this;
+	}
+
 	void Encode(uint8_t* data, uint32_t n) {
 		WriteLocker lock(bufLock);
 		if (inputBuf.size() < n) {

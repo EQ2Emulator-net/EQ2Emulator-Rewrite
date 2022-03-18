@@ -36,6 +36,9 @@ private:
 	std::map<uint16_t, std::weak_ptr<Spawn>> m_spawnIndexLookupMap;
 	std::map<std::weak_ptr<Spawn>, uint32_t, std::owner_less<std::weak_ptr<Spawn>> > m_spawnIDMap;
 	std::shared_ptr<PlayerController> m_controller;
+	std::shared_ptr<class EncodedBuffer> defaultPosBuf;
+	std::shared_ptr<class EncodedBuffer> defaultInfoBuf;
+	std::shared_ptr<class EncodedBuffer> defaultVisBuf;
 
 public:
 	void SetAccountID(uint32_t val) { account_id = val; }
@@ -56,6 +59,8 @@ public:
 	uint32_t GetIDForSpawn(const std::shared_ptr<Spawn>& spawn);
 	std::shared_ptr<Spawn> GetSpawnByID(uint32_t id);
 	std::shared_ptr<PlayerController> GetController();
+
+	void InitSpawnBuffers(uint32_t spawnIndex);
 
 	ClientChat chat;
 	bool bDevMode;

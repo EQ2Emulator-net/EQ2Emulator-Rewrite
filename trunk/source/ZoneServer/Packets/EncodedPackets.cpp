@@ -11,12 +11,14 @@ void EncodedPackets::TypeRefCheck(EEncodedPackets t, uint32_t ref) {
 	}
 }
 
-shared_ptr<EncodedBuffer> EncodedPackets::GetBuffer(EEncodedPackets t, uint32_t ref) {
+shared_ptr<EncodedBuffer> EncodedPackets::GetBuffer(EEncodedPackets t, uint32_t ref, bool* bNewOut) {
+	if (bNewOut) *bNewOut = false;
 	TypeRefCheck(t, ref);
 	WriteLocker lock(bufferLock);
 	shared_ptr<EncodedBuffer>& ret = buffers[t][ref];
 	if (!ret) {
 		ret = make_shared<EncodedBuffer>();
+		if (bNewOut) *bNewOut = true;
 	}
 	return ret;
 }

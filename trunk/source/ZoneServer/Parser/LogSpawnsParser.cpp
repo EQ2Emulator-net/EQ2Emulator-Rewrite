@@ -2,9 +2,10 @@
 
 #include "LogSpawnsParser.h"
 #include "../Packets/OP_CreateSignWidgetCmd_Packet.h"
-
+#include "../../common/CRC16.h"
 #include <string>
 
+bool OP_CreateGhostCmd_Packet::bUnpackData = true;
 
 LogSpawnsParser::LogSpawnsParser(PacketLog& log, ParserDatabase& db) : LogParser(log, db) {
 	uint32_t spawn_id = db.LoadNextSpawnID();
@@ -20,11 +21,73 @@ LogSpawnsParser::LogSpawnsParser(PacketLog& log, ParserDatabase& db) : LogParser
 		std::move(widgets.begin(), widgets.end(), std::back_inserter(spawns));
 		std::move(signs.begin(), signs.end(), std::back_inserter(spawns));
 	}
+
+	auto infoXOR = std::make_shared<EncodedBuffer>();
+	auto posXOR = std::make_shared<EncodedBuffer>();
+	auto visXOR = std::make_shared<EncodedBuffer>();
+
+	uint32_t infoSize, posSize, visSize;
+
+	{
+		//Setup our xor buffers
+		OP_CreateGhostCmd_Packet defaultGhost(log.logVersion);
+
+		defaultGhost.info.SetEncodedBuffer(infoXOR);
+		defaultGhost.pos.SetEncodedBuffer(posXOR);
+		defaultGhost.vis.SetEncodedBuffer(visXOR);
+
+		infoSize = defaultGhost.info.GetSize();
+		posSize = defaultGhost.pos.GetSize();
+		visSize = defaultGhost.vis.GetSize();
+
+		defaultGhost.SetXORDefaults();
+
+		defaultGhost.PreWrite();
+		unsigned char* buf = nullptr;
+		defaultGhost.Write(buf);
+		defaultGhost.PostWrite();
+	}
 	
 	for (auto& itr : spawns) {
 		auto& p = *itr.second;
 
-		if (p.packedData.lastPackedSize == 0) {
+		//The unpacked data can sometimes have extra bytes on the end we don't need
+		p.packedData.unpackedData->resize(posSize + visSize + infoSize);
+
+		//XOR this packet with the defaults
+		{
+			unsigned char* bytes = p.packedData.unpackedData->data();
+			//Make copies because the buffers are changed after xoring
+			EncodedBuffer pxor(*posXOR);
+			EncodedBuffer vxor(*visXOR);
+			EncodedBuffer ixor(*infoXOR);
+
+			pxor.Decode(bytes, posSize);
+			bytes += posSize;
+			vxor.Decode(bytes, visSize);
+			bytes += visSize;
+			ixor.Decode(bytes, infoSize);
+		}
+
+		auto ValidateCRC = [&p]() {
+			auto& data = p.packedData.unpackedData;
+
+			auto CRC32 = [](const unsigned char* data, int size, int key) -> uint32_t {
+				uint32_t crc = key;
+				if (size > 0) {
+					for (int i = 0; i < size; i++) {
+						unsigned char b = data[i];
+						crc = EQ2CRCTable::WordTable[static_cast<uint8_t>(crc ^ b)] ^ (crc >> 8);
+					}
+				}
+				return crc;
+			};
+
+			uint32_t crc = CRC32(data->data(), data->size(), -1);
+			return crc == p.header.crc;
+		};
+
+		if (p.packedData.lastPackedSize == 0 || !ValidateCRC()) {
 			//This is a spawn resend, garbage for us
 			continue;
 		}
@@ -150,6 +213,10 @@ LogSpawnsParser::LogSpawnsParser(PacketLog& log, ParserDatabase& db) : LogParser
 				row.m_tableName = "spawn_npcs";
 
 				auto& info = p.info;
+
+				//Flip these so they match what we were using before the default XOR buf fix
+				info.visual_flag ^= INFO_VIS_FLAG_HIDE_HOOD;
+				info.interaction_flag ^= INFO_INTERACTION_FLAG_HIDE_HEAD_COVER;
 
 				row.RegisterField("spawn_id", spawn_id);
 				row.RegisterField("min_level", info.level);
