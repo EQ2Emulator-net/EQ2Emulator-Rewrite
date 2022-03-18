@@ -43,7 +43,7 @@ LogDialogsParser::LogDialogsParser(PacketLog& log, ParserDatabase& db) : LogPars
 
 	std::string updates = ss.str();
 	if (!updates.empty()) {
-		database.QuerySimple(updates.c_str(), updates.size());
+		database.QuerySimple(updates.c_str(), (unsigned long)updates.size());
 	}
 }
 
@@ -91,7 +91,7 @@ void LogDialogsParser::ProcessDialogs() {
 }
 
 uint32_t LogDialogsParser::AddVoiceover(const Voiceover& vo) {
-	uint32_t hash = crc32('VOVR', reinterpret_cast<const Bytef*>(vo.file.c_str()), vo.file.length());
+	uint32_t hash = crc32('VOVR', reinterpret_cast<const Bytef*>(vo.file.c_str()), (uInt)vo.file.length());
 	
 	auto f = voiceovers.find(hash);
 	if (f == voiceovers.end()) {
@@ -181,7 +181,7 @@ void LogDialogsParser::AddDialog(uint32_t line, OP_DialogOpenCmd_Packet* p) {
 		}
 
 		std::string buf = ss.str();
-		dialogID = crc32('DLOG', reinterpret_cast<const Bytef*>(buf.c_str()), buf.length());
+		dialogID = crc32('DLOG', reinterpret_cast<const Bytef*>(buf.c_str()), (uInt)buf.length());
 	}
 	
 	d.title = title;
@@ -190,7 +190,11 @@ void LogDialogsParser::AddDialog(uint32_t line, OP_DialogOpenCmd_Packet* p) {
 	d.responseColor = p->responseColor;
 	d.unknown = p->unknown;
 	//Keep a reference of the line this came from for dialog selections
-	dialogLines[line] = std::make_pair(p->conversationID, dialogID);
+	DialogCacheEntry de;
+	de.clientConversationID = p->conversationID;
+	de.dialogID = dialogID;
+	de.npcID = npc;
+	dialogLines[line] = de;
 
 	if (dialogs.count(dialogID) == 0) {
 		DatabaseRow row;
@@ -222,7 +226,7 @@ void LogDialogsParser::AddDialog(uint32_t line, OP_DialogOpenCmd_Packet* p) {
 			ss << "DPAR:" << dialogID << "IND:" << i << "TEXT:" << itr;
 			std::string s = ss.str();
 
-			uint32_t hash = crc32('DRSP', reinterpret_cast<const Bytef*>(s.c_str()), s.size());
+			uint32_t hash = crc32('DRSP', reinterpret_cast<const Bytef*>(s.c_str()), (uInt)s.size());
 
 			DatabaseRow row;
 			row.m_tableName = "dialog_responses";
@@ -242,7 +246,7 @@ uint32_t LogDialogsParser::AddNPC(std::string name, std::string zone) {
 	ss << "NAME:" << name << "ZONE:" << zone;
 
 	std::string s = ss.str();
-	uint32_t hash = crc32('DNPC', reinterpret_cast<const Bytef*>(s.c_str()), s.size());
+	uint32_t hash = crc32('DNPC', reinterpret_cast<const Bytef*>(s.c_str()), (uInt)s.size());
 
 	if (npcs.count(hash) == 0) {
 		DatabaseRow row;
@@ -291,7 +295,7 @@ void LogDialogsParser::ProcessPlayVoiceCmd() {
 		ss << "NPC:" << npcID << "VO:" << voID << "GARB:" << p->garbled;
 
 		std::string s = ss.str();
-		uint32_t hash = crc32('PLYV', reinterpret_cast<const Bytef*>(s.c_str()), s.size());
+		uint32_t hash = crc32('PLYV', reinterpret_cast<const Bytef*>(s.c_str()), (uInt)s.size());
 		if (playVoiceList.count(hash) == 0) {
 			DatabaseRow row;
 			row.m_tableName = "dialog_play_voices";
@@ -319,7 +323,7 @@ uint32_t LogDialogsParser::AddText(std::string t) {
 		return 0;
 	}
 
-	uint32_t hash = crc32('DTXT', reinterpret_cast<const Bytef*>(t.c_str()), t.size());
+	uint32_t hash = crc32('DTXT', reinterpret_cast<const Bytef*>(t.c_str()), (uInt)t.size());
 	if (textList.count(hash) == 0) {
 		DatabaseRow row;
 		row.m_tableName = "dialog_text";
@@ -356,18 +360,21 @@ void LogDialogsParser::ProcessSelections() {
 
 		uint32_t parentDialogID = 0;
 		uint32_t parentDialogLine = 0;
+		uint32_t parentDialogNpc = 0;
 
 		//Find the previous dialog open for this conversation
 		for (auto& itr : dialogLines) {
 			uint32_t openLine = itr.first;
-			uint32_t openConvoID = itr.second.first;
-			uint32_t openDialogID = itr.second.second;
+			DialogCacheEntry& de = itr.second;
+			uint32_t openConvoID = de.clientConversationID;
+			uint32_t openDialogID = de.dialogID;
 
 			if (openLine > selLine) break;
 
 			if (openConvoID == convoID) {
 				parentDialogID = openDialogID;
 				parentDialogLine = openLine;
+				parentDialogNpc = de.npcID;
 			}
 		}
 
@@ -377,14 +384,15 @@ void LogDialogsParser::ProcessSelections() {
 			auto f = dialogLines.find(parentDialogLine);
 			while (++f != dialogLines.end()) {
 				uint32_t nextOpenLine = f->first;
-				uint32_t nextOpenConvoID = f->second.first;
-				uint32_t nextOpenDialogID = f->second.second;
+				DialogCacheEntry& de = f->second;
+				uint32_t nextOpenConvoID = de.clientConversationID;
+				uint32_t nextOpenDialogID = de.dialogID;
 
 				if (nextOpenLine > closeLine) {
 					break;
 				}
 
-				if (nextOpenConvoID == convoID) {
+				if (nextOpenConvoID == convoID && de.npcID == parentDialogNpc) {
 					selections[std::make_pair(parentDialogID, selectedIndex)] = nextOpenDialogID;
 					break;
 				}
@@ -417,7 +425,7 @@ void LogDialogsParser::ProcessPlayFlavorCmd() {
 
 		//make a hash/id
 		std::string s = ss.str();
-		uint32_t flavorID = crc32('FLAV', reinterpret_cast<const Bytef*>(s.c_str()), s.size());
+		uint32_t flavorID = crc32('FLAV', reinterpret_cast<const Bytef*>(s.c_str()), (uInt)s.size());
 
 		if (flavorList.count(flavorID) == 0) {
 			DatabaseRow row;
@@ -458,7 +466,7 @@ void LogDialogsParser::ProcessPlayFlavorCmd() {
 		ss << "NPC:" << npc << "FLAV:" << flavorID;
 		s = ss.str();
 
-		uint32_t playID = crc32('PLYF', reinterpret_cast<const Bytef*>(s.c_str()), s.size());
+		uint32_t playID = crc32('PLYF', reinterpret_cast<const Bytef*>(s.c_str()), (uInt)s.size());
 
 		if (playFlavorList.count(playID) == 0) {
 			DatabaseRow row;
