@@ -57,6 +57,7 @@
 #include "OP_PlayVoiceCmd_Packet.h"
 #include "OP_PlaySound3DCmd_Packet.h"
 #include "OP_PlaySoundCmd_Packet.h"
+#include "OP_DialogCloseCmd_Packet.h"
 
 // Server to Client
 RegisterZoneStruct("OP_ZoneInfoMsg", OP_ZoneInfoMsg_Packet, 283, 284, 864, 894, 957, 959, 988, 1067, 1142, 1193, 63119, 63182, 67650, 69239, 70704);
@@ -99,6 +100,8 @@ RegisterZoneStruct("OP_EqStateCmd", OP_EqStateCmd_Packet, 1, 547, 865, 57048);
 RegisterZoneStruct("OP_EqPlayVoiceCmd", OP_PlayVoiceCmd_Packet, 1);
 RegisterZoneStruct("OP_EqPlaySound3DCmd", OP_PlaySound3DCmd_Packet, 1, 67650);
 RegisterZoneStruct("OP_EqPlaySoundCmd", OP_PlaySoundCmd_Packet, 1, 845);
+RegisterZoneStruct("OP_EqDialogCloseCmd", OP_DialogCloseCmd_Packet, 1);
+
 
 // Client to Server
 RegisterZoneStruct("OP_LoginByNumRequestMsg", OP_LoginByNumRequestMsg_Packet, 1, 1212);

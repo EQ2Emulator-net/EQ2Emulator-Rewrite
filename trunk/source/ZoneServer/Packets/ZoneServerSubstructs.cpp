@@ -30,7 +30,7 @@ RegisterZoneSubstruct(Substruct_Position, 1);
 RegisterZoneSubstruct(Substruct_SpawnTitleStruct, 1, 872);
 RegisterZoneSubstruct(Substruct_SpawnFooter, 1, 872);
 RegisterZoneSubstruct(Substruct_WidgetFooter, 1);
-RegisterZoneSubstruct(Substruct_SignFooter, 283, 284, 60070);
+RegisterZoneSubstruct(Substruct_SignFooter, 283, 284, 60115);
 RegisterZoneSubstruct(Substruct_SpellEffects, 1, 843, 1193);
 RegisterZoneSubstruct(Substruct_PassiveEffects, 1, 1188);
 RegisterZoneSubstruct(Substruct_MaintainedEffects, 1, 1193, 57048);
