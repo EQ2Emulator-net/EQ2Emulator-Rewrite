@@ -9,6 +9,9 @@
 #include "../Packets/OP_DialogSelectMsg_Packet.h"
 #include "../Packets/OP_DialogCloseMsg_Packet.h"
 #include "../Packets/OP_HearPlayFlavorCmd_Packet.h"
+#include "../Packets/OP_DialogCloseCmd_Packet.h"
+
+#include <regex>
 
 bool OP_ZoneInfoMsg_Packet::bBaseInfoOnly = false;
 
@@ -91,6 +94,10 @@ void LogDialogsParser::ProcessDialogs() {
 }
 
 uint32_t LogDialogsParser::AddVoiceover(const Voiceover& vo) {
+	if (vo.file.empty()) {
+		return 0;
+	}
+
 	uint32_t hash = crc32('VOVR', reinterpret_cast<const Bytef*>(vo.file.c_str()), (uInt)vo.file.length());
 	
 	auto f = voiceovers.find(hash);
@@ -120,6 +127,12 @@ void LogDialogsParser::ProcessZones() {
 			if (end != string::npos) {
 				zoneName = zoneName.substr(end + 1);
 			}
+		}
+		//Check for zone overflow instances
+		std::regex pat(" [0-9]$");
+		std::smatch match;
+		if (std::regex_search(zoneName, match, pat)) {
+			zoneName = match.prefix();
 		}
 		zoneList[itr.first] = zoneName;
 	}
@@ -187,8 +200,8 @@ void LogDialogsParser::AddDialog(uint32_t line, OP_DialogOpenCmd_Packet* p) {
 	d.title = title;
 	d.msg = msg;
 	d.bCloseable = p->bCloseable;
-	d.responseColor = p->responseColor;
-	d.unknown = p->unknown;
+	d.bSignature = p->bSignatureDialog;
+	d.language = p->language;
 	//Keep a reference of the line this came from for dialog selections
 	DialogCacheEntry de;
 	de.clientConversationID = p->conversationID;
@@ -201,7 +214,12 @@ void LogDialogsParser::AddDialog(uint32_t line, OP_DialogOpenCmd_Packet* p) {
 		row.m_tableName = "dialogs";
 		row.RegisterField("id", dialogID);
 		row.RegisterField("npc_id", d.npcID);
-		row.RegisterField("voiceover_id", d.voiceoverID);
+		if (d.voiceoverID != 0) {
+			row.RegisterField("voiceover_id", d.voiceoverID);
+		}
+		else {
+			row.RegisterField("voiceover_id", SQLNull());
+		}
 		if (d.title == 0) {
 			row.RegisterField("title_text_id", SQLNull());
 		}
@@ -215,8 +233,8 @@ void LogDialogsParser::AddDialog(uint32_t line, OP_DialogOpenCmd_Packet* p) {
 			row.RegisterField("msg_text_id", d.msg);
 		}
 		row.RegisterField("closeable", d.bCloseable);
-		row.RegisterField("unknown", d.unknown);
-		row.RegisterField("response_color", d.responseColor);
+		row.RegisterField("language", d.language);
+		row.RegisterField("signature", d.bSignature);
 		row.RegisterField("log_id", log.log_id);
 		QueueRowInsert(row);
 
@@ -276,6 +294,8 @@ void LogDialogsParser::ProcessPlayVoiceCmd() {
 
 		uint32_t voID = AddVoiceover(vo);
 
+		if (voID == 0) continue;
+
 		if (p->spawnID == -1) {
 			//only seen this in one packet out of a ton of logs, just save the key/file
 			continue;
@@ -302,7 +322,12 @@ void LogDialogsParser::ProcessPlayVoiceCmd() {
 
 			row.RegisterField("id", hash);
 			row.RegisterField("npc_id", npcID);
-			row.RegisterField("voiceover_id", voID);
+			if (voID != 0) {
+				row.RegisterField("voiceover_id", voID);
+			}
+			else {
+				row.RegisterField("voiceover_id", SQLNull());
+			}
 			row.RegisterField("language", p->language);
 			if (garb == 0) {
 				row.RegisterField("garbled_text_id", SQLNull());
@@ -336,21 +361,27 @@ uint32_t LogDialogsParser::AddText(std::string t) {
 }
 
 void LogDialogsParser::ProcessSelections() {
-	auto sels = log.FindPackets<OP_DialogSelectMsg_Packet>();
-	auto closes = log.FindPackets<OP_DialogCloseMsg_Packet>();
+	//find close packets
+	std::map<uint32_t, uint32_t> closes;
+	auto closeCmd = log.FindPackets<OP_DialogCloseCmd_Packet>();
+	for (auto& itr : closeCmd) {
+		closes[itr.first] = itr.second->conversationID;
+	}
 
 	auto FindCloseForConversation = [&closes](uint32_t openLine, uint32_t id) -> uint32_t {
 		for (auto& itr : closes) {
 			uint32_t closeLine = itr.first;
 			if (closeLine < openLine) continue;
 
-			if (itr.second->conversationID == id) {
+			if (itr.second == id) {
 				return closeLine;
 			}
 		}
 
 		return 0xFFFFFFFF;
 	};
+
+	auto sels = log.FindPackets<OP_DialogSelectMsg_Packet>();
 
 	for (auto& itr : sels) {
 		uint32_t selLine = itr.first;

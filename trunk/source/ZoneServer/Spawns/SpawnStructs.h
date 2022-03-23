@@ -624,7 +624,7 @@ public:
 		RegisterBool(show);
 		if (GetVersion() > 283) {
 			RegisterUInt8(language);
-			if (GetVersion() > 60069) {
+			if (GetVersion() > 60114) {
 				auto arrSize = RegisterUInt8(unkStringArrayCount);
 				arrSize->SetMyArray(RegisterArray(unkStringArray, Substruct_SignFooterArray));
 			}

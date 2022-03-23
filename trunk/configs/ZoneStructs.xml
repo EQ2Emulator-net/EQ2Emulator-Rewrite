@@ -1914,7 +1914,7 @@
 		<Data ElementName="show" Type="bool" Size="1"/>
 		<Data ElementName="language" Type="int8" Size="1"/>
 	</Struct>
-	<Struct Name="Substruct_SignFooter" ClientVersion="60070">
+	<Struct Name="Substruct_SignFooter" ClientVersion="60115">
 		<Data ElementName="title" Type="EQ2_16Bit_String" Size="1"/>
 		<Data ElementName="description" Type="EQ2_16Bit_String" Size="1"/>
 		<Data ElementName="distance" Type="float" Size="1"/>
@@ -8107,7 +8107,7 @@
 		<Data ElementName="bCloseable" Type="bool" Size="1"/>
 		<Data ElementName="spawnID" Type="int32" Size="1"/>
 		<Data ElementName="voiceFile" Type="EQ2_16Bit_String" Size="1"/>
-		<Data ElementName="unknown" Type="int8" Size="1"/>
+		<Data ElementName="language" Type="int8" Size="1"/>
 		<Data ElementName="key1" Type="int32" Size="1"/>
 		<Data ElementName="key2" Type="int32" Size="1"/>
 	</Struct>
@@ -8119,11 +8119,11 @@
 		<Data ElementName="responseArray" Type="Array" ArraySizeVariable="numResponses">
 			<Data ElementName="responseArray_data" Type="EQ2_16Bit_String" Size="1"/>
 		</Data>
-		<Data ElementName="responseColor" Type="int8" Size="1"/>
+		<Data ElementName="bSignatureDialog" Type="bool" Size="1"/>
 		<Data ElementName="bCloseable" Type="bool" Size="1"/>
 		<Data ElementName="spawnID" Type="int32" Size="1"/>
 		<Data ElementName="voiceFile" Type="EQ2_16Bit_String" Size="1"/>
-		<Data ElementName="unknown" Type="int8" Size="1"/>
+		<Data ElementName="language" Type="int8" Size="1"/>
 		<Data ElementName="key1" Type="int32" Size="1"/>
 		<Data ElementName="key2" Type="int32" Size="1"/>
 	</Struct>
@@ -8523,6 +8523,9 @@
 	<Struct Name="WS_EqPlaySoundCmd" ClientVersion="845" OpcodeName="OP_ClientCmdMsg" OpcodeType="OP_EqPlaySoundCmd">
 		<Data ElementName="sound" Type="EQ2_16Bit_String" Size="1"/>
 		<Data ElementName="unk" Type="float" Size="1"/>
+	</Struct>
+	<Struct Name="WS_EqDialogCloseCmd" ClientVersion="1" OpcodeName="OP_ClientCmdMsg" OpcodeType="OP_EqDialogCloseCmd">
+		<Data ElementName="conversationID" Type="int32" Size="1"/>
 	</Struct>
 	<Struct Name="WS_LoginByNumRequestMsg" ClientVersion="1" OpcodeName="OP_LoginByNumRequestMsg">
 		<Data ElementName="account_id" Type="int32" Size="1"/>

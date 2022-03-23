@@ -48,8 +48,8 @@ private:
 		uint32_t msg;
 		std::vector<uint32_t> responses;
 		bool bCloseable;
-		uint8_t responseColor;
-		uint8_t unknown;
+		bool bSignature;
+		uint8_t language;
 	};
 
 	//set<id>
