@@ -61,27 +61,32 @@ void SpawnVisualizationStruct::DetermineForClient(const std::shared_ptr<Client>&
 }
 
 void Substruct_SpawnVisualization::RegisterElements() {
-	if (version >= 60055) {
+	if (version >= 60038) {
 		RegisterUInt32(unknown);
 	}
 	RegisterUInt8(considerDifficulty);
 	RegisterUInt8(locked_no_loot);
 	RegisterInt8(factionCon);
 	RegisterUInt8(quest_flag);
-	if (version >= 1188) {
+	if (version >= 1119) {
 		RegisterUInt8(merc_icon);
 	}
-	if (version >= 936) {
+	if (version >= 864) {
 		RegisterBool(bShowAggro);
 	}
-	if (version >= 1142) {
+	if (version >= 1096 || version < 1142) {
 		RegisterUInt8(pet_threat);
 	}
-	if (version >= 1188) {
+	if ((version >= 1119 && version < 1142) || version >= 1188) {
 		RegisterUInt8(name_quest_icon);
+	}
+	if (version >= 1188) {
 		RegisterUInt32(unknowna2);
 	}
 	RegisterUInt16(vis_flags);
+	if (version >= 1142 && version < 1188) {
+		RegisterUInt8(name_quest_icon);
+	}
 	uint8_t& unknownb = this->unknownb[0];
 	if (version < 1142) {
 		RegisterUInt8(unknownb)->SetCount(3);
@@ -98,20 +103,17 @@ void Substruct_SpawnVisualization::RegisterElements() {
 
 	RescopeArrayElement(unknown2);
 
-	if (version < 60055 && (version == 936 || version >= 1188)) {
+	if (version < 60038 && ((version >= 864 && version < 936) || version >= 1188)) {
 		RegisterUInt8(unknown2)->SetCount(4);
 	}
-	else if (version == 1008) {
+	else if (version >= 936 && version < 1142) {
 		RegisterUInt8(unknown2);
 	}
-	else if (version == 955) {
+	else if (version > 1142 && version < 1188) {
 		RegisterUInt8(unknown2)->SetCount(3);
 	}
-	else if (version < 1188 && version > 864) {
-		RegisterUInt8(unknown2)->SetCount(6);
-	}
 
-	if (version >= 1188) {
+	if (version >= 1096) {
 		RegisterUInt8(tag_icon);
 		RegisterUInt8(tag_number);
 		RegisterUInt8(unknown3);
@@ -234,7 +236,7 @@ void Substruct_SpawnPosition::RegisterElements() {
 	RegisterUInt32(positionState);
 	if (GetVersion() > 283) {
 		RegisterUInt32(positionState2);
-		if (GetVersion() < 910) {
+		if (GetVersion() < 936) {
 			RegisterUInt8(movementMode);
 			RegisterUInt8(unkByte);
 		}
@@ -244,7 +246,7 @@ void Substruct_SpawnPosition::RegisterElements() {
 		RegisterFloat(destLocX2);
 		RegisterFloat(destLocY2);
 		RegisterFloat(destLocZ2);
-		if (GetVersion() >= 910) {
+		if (GetVersion() >= 936) {
 			RegisterUInt8(movementMode);
 			RegisterUInt8(unkByte);
 		}
@@ -258,7 +260,7 @@ void Substruct_SpawnPosition::RegisterElements() {
 		RegisterInt16(destY2_compressed);
 		RegisterInt16(destZ2_compressed);
 	}
-	if (GetVersion() >= 1096) {
+	if (GetVersion() >= 1119) {
 		RegisterInt16(desiredHeadingVelocity_compressed);
 	}
 	RegisterInt16(speedModifier_compressed);
@@ -267,7 +269,7 @@ void Substruct_SpawnPosition::RegisterElements() {
 	}
 	RegisterInt16(swimmingSpeedMultiplier_compressed);
 	RegisterInt16(desiredStrafeSpeed_compressed);
-	if (GetVersion() >= 1096) {
+	if (GetVersion() >= 1119) {
 		RegisterInt16(desiredVertSpeed_compressed);
 		RegisterInt16(unkSpeed3_compressed);
 	}
@@ -290,7 +292,7 @@ void Substruct_SpawnPosition::RegisterElements() {
 	RegisterInt16(pitch_compressed);
 	RegisterInt16(collisionRadius_compressed);
 
-	if (GetVersion() >= 910) {
+	if (GetVersion() >= 936) {
 		RegisterInt16(sizeUnknown_compressed);
 	}
 	else {
@@ -298,7 +300,7 @@ void Substruct_SpawnPosition::RegisterElements() {
 	}
 
 	if (GetVersion() > 283) {
-		if (GetVersion() < 910) {
+		if (GetVersion() < 918) {
 			RegisterInt16(size_ratio_compressed);
 			RegisterInt16(sizeUnknown_compressed);
 		}
@@ -311,7 +313,7 @@ void Substruct_SpawnPosition::RegisterElements() {
 	RegisterInt16(actorStopRange_compressed);
 	RegisterInt16(roll_compressed);
 	RegisterInt16(unk70_compressed);
-	if (GetVersion() >= 910)
+	if ((GetVersion() >= 936 && GetVersion() < 1096) || GetVersion() >= 1142)
 		RegisterInt16(unk72);
 }
 
@@ -342,39 +344,18 @@ void Substruct_SpawnInfo::RegisterElements() {
 	auto& orig_level = reinterpret_cast<uint8_t&>(this->orig_level);
 	auto& level = reinterpret_cast<uint8_t&>(this->level);
 
-	if (version < 60055) {
+	if (version < 60038) {
 		RegisterUInt32(hp_percent);
 		RegisterUInt32(power_percent);
 
 		RescopeArrayElement(unknown3);
-		if (version < 936) {
-			RescopeArrayElement(spell_effects);
-			RegisterSubstruct(spell_effects)->SetCount(30);
-			RegisterUInt32(target_id);
-			RegisterUInt32(follow_target);
-			RescopeArrayElement(unknown3b);
-			RegisterUInt8(unknown3b)->SetCount(8);
-		}
-		else if (version < 1096) {
-			RegisterUInt8(unknown3)->SetCount(256);
-		}
-		else {
-			if (version < 1188) {
-				RegisterUInt8(unknown3)->SetCount(240);
-			}
-			else {
-				RescopeArrayElement(spell_effects);
-				RegisterSubstruct(spell_effects)->SetCount(30);
-			}
-			RegisterUInt32(target_id);
-			RegisterUInt32(follow_target);
-			RescopeArrayElement(unknown3b);
-			RegisterUInt8(unknown3b)->SetCount(version >= 1198 ? 8 : 7);
-			if (version < 1198) {
-				RescopeToReference(heroic_flag, uint8_t);
-				RegisterUInt8(heroic_flag);
-			}
-		}
+		RescopeArrayElement(spell_effects);
+		RegisterSubstruct(spell_effects)->SetCount(30);
+		RegisterUInt32(target_id);
+		RegisterUInt32(follow_target);
+		RegisterUInt32(id_unknown);
+		RegisterUInt32(pet_owner_id);
+
 		if (version < 936) {
 			//These were all moved further in the packet
 			RegisterUInt8(adv_class);
@@ -386,34 +367,23 @@ void Substruct_SpawnInfo::RegisterElements() {
 			RegisterUInt8(heroic_flag);
 		}
 		RegisterUInt32(entityFlags);
-		RegisterUInt16(unknownpkShort);
-		if (version >= 57080) {
-			RegisterUInt16(unknownz5);
-		}
+		RegisterUInt32(entityFlags2);
 		RescopeArrayElement(unknown6);
 		if (version < 936) {
-			RegisterUInt8(unknown6)->SetCount(6);
+			RegisterUInt8(archetype);
+			RegisterUInt8(unknown6)->SetCount(3);
 			RegisterUInt8(heatLevel);
 		}
 		else {
-			if (version >= 955) {
-				RegisterUInt8(unknown6)->SetCount(3);
-			}
-			else {
-				RegisterUInt8(unknown6)->SetCount(2);
+			if (version >= 954) {
+				RegisterUInt8(archetype);
 			}
 			RegisterUInt8(orig_level);
 			RegisterUInt8(level);
 			RegisterUInt8(unknown5);
-			if (version < 1096 || version >= 1188) {
-				//Thinking this got moved by accident at some point then moved to the correct location again
-				RegisterUInt8(heroic_flag);
-				RegisterUInt32(activity_timer);
-				RegisterUInt8(heatLevel);
-			}
-			else {
-				RegisterUInt32(activity_timer);
-			}
+			RegisterUInt8(heroic_flag);
+			RegisterUInt32(activity_timer);
+			RegisterUInt8(heatLevel);
 		}
 		RegisterEQ2Color(torch_color);
 	}
@@ -429,16 +399,16 @@ void Substruct_SpawnInfo::RegisterElements() {
 		RegisterUInt32(model_type);
 		RegisterUInt32(soga_model_type);
 	}
-	if (version < 60055) {
+	if (version < 60038) {
 		RegisterEQ2Color(skin_color);
 		RegisterEQ2Color(eye_color);
-		if (version > 864) {
+		if (version >= 864) {
 			RegisterEQ2Color(model_color);
 		}
 		if (version > 283) {
 			RegisterEQ2Color(soga_eye_color);
 			RegisterEQ2Color(soga_skin_color);
-			if (version > 864) {	
+			if (version >= 864) {	
 				RegisterEQ2Color(soga_model_color);
 			}
 		}
@@ -452,7 +422,7 @@ void Substruct_SpawnInfo::RegisterElements() {
 		RegisterUInt32(equipment_types)->SetCount(24);
 	}
 
-	if (version >= 1188) {
+	if (version >= 1161) {
 		if (version >= 57080) {
 			RegisterUInt32(mount_adornment_type);
 			RegisterUInt32(mount_armor_type);
@@ -515,12 +485,11 @@ void Substruct_SpawnInfo::RegisterElements() {
 		RegisterUInt16(soga_facial_hair_type_id);
 	}
 
-	if (version >= 60055) {
+	if (version >= 60038) {
 		RegisterUInt32(mount_type);
 		RegisterUInt32(combat_voice);
 		RegisterUInt32(emote_voice);
-		RescopeArrayElement(unknown17);
-		RegisterUInt8(unknown17)->SetCount(4);
+		RegisterUInt32(ammo_type);
 		RegisterUInt8(visual_flag);
 		RegisterUInt8(interaction_flag);
 		RegisterUInt8(flag3);
@@ -536,7 +505,7 @@ void Substruct_SpawnInfo::RegisterElements() {
 	int32_t colorCount = (version > 283 ? 24 : 21);
 	RescopeArrayElement(equipment_colors);
 	RegisterEQ2Color(equipment_colors)->SetCount(colorCount);
-	if (version >= 1188) {
+	if (version >= 1161) {
 		RegisterEQ2Color(mount_adornment_color);
 		RegisterEQ2Color(mount_armor_color);
 	}
@@ -561,7 +530,7 @@ void Substruct_SpawnInfo::RegisterElements() {
 
 	RescopeArrayElement(equipment_highlights);
 	RegisterEQ2Color(equipment_highlights)->SetCount(24);
-	if (version >= 1188) {
+	if (version >= 1161) {
 		RegisterEQ2Color(mount_adornment_highlight);
 		RegisterEQ2Color(mount_armor_highlight);
 	}
@@ -588,7 +557,7 @@ void Substruct_SpawnInfo::RegisterElements() {
 		RegisterEQ2Color(soga_hair_face_color);
 		RegisterEQ2Color(soga_hair_face_highlight_color);
 
-		if (version >= 60055) {
+		if (version >= 60038) {
 			RegisterEQ2Color(skin_color);
 			RegisterEQ2Color(eye_color);
 			RegisterEQ2Color(model_color);
@@ -606,34 +575,35 @@ void Substruct_SpawnInfo::RegisterElements() {
 		RegisterInt8(sogaSliderBytes)->SetCount(26);
 	}
 
-	if (version < 1188) {
-		if (version <= 864) {
-			RescopeArrayElement(heraldry);
-			RegisterUInt8(heraldry)->SetCount(7);
+	if (version < 60038) {
+		RescopeArrayElement(heraldry);
+		RegisterUInt8(heraldry)->SetCount(7);
+		if (version < 1119) {
 			static uint8_t alignFiller = 0;
 			RegisterUInt8(alignFiller);
 		}
-		uint16_t& mount_type = reinterpret_cast<uint16_t&>(this->mount_type);
-		RegisterUInt16(mount_type);
-		RegisterEQ2Color(mount_color);
-		RegisterEQ2Color(mount_saddle_color);
-	}
-	else {
-		if (version < 60055) {
-			RescopeArrayElement(heraldry);
-			RegisterUInt8(heraldry)->SetCount(7);
+		else {
 			RescopeArrayElement(soga_heraldry);
 			RegisterUInt8(soga_heraldry)->SetCount(7);
-			if (version < 57080) {
-				RescopeToReference(mount_type, uint16_t);
-				RegisterUInt16(mount_type);
-			}
-			else {
-				RegisterUInt32(mount_type);
-			}
 		}
-		RegisterEQ2Color(mount_color);
-		RegisterEQ2Color(mount_saddle_color);
+
+		if (version < 57080) {
+			RescopeToReference(mount_type, uint16_t);
+			RegisterUInt16(mount_type);
+		}
+		else {
+			RegisterUInt32(mount_type);
+		}
+	}
+
+	RegisterEQ2Color(mount_color);
+	RegisterEQ2Color(mount_saddle_color);
+
+	//8 bytes popped up here, since the soga heraldry also popped up recently before this
+	//thinking it was probably soga mount stuff..but not needed so didn't last long before removal
+	if (version >= 1161 && version < 1188) {
+		static uint64_t soga_mount_info = 0;
+		RegisterUInt64(soga_mount_info);
 	}
 
 	RegisterEQ2Color(hair_color1);
@@ -650,43 +620,39 @@ void Substruct_SpawnInfo::RegisterElements() {
 			RegisterUInt8(alignFiller)->SetCount(2);
 		}
 	}
-	if (version < 60055) {
+	if (version < 60038) {
 		if (version < 57080) {
 			uint16_t& combat_voice = reinterpret_cast<uint16_t&>(this->combat_voice);
 			RegisterUInt16(combat_voice);
 			uint16_t& emote_voice = reinterpret_cast<uint16_t&>(this->emote_voice);
 			RegisterUInt16(emote_voice);
+			if (version >= 839) {
+				uint16_t& ammo_type = reinterpret_cast<uint16_t&>(this->ammo_type);
+				RegisterUInt16(ammo_type);
+			}
+			if (version >= 864 && version < 1119) {
+				uint16_t& unknown17 = reinterpret_cast<uint16_t&>(this->unknown17);
+				RegisterUInt16(unknown17);
+			}
 		}
 		else {
 			RegisterUInt32(combat_voice);
 			RegisterUInt32(emote_voice);
+			RegisterUInt32(ammo_type);
 		}
-		RescopeArrayElement(unknown17);
-		if (version < 864 || (version >= 1188 && version < 57080)) {
-			RegisterUInt8(unknown17)->SetCount(2);
-		}
-		else if ((version >= 1096 && version < 1188) || version >= 57080) {
-			RegisterUInt8(unknown17)->SetCount(4);
-		}
-		else if (version == 1008) {
-			uint8_t g_sfunk[12] = { 0 };
-			uint8_t& sfunk = g_sfunk[0];
-			RegisterUInt8(sfunk)->SetCount(12);
-		}
+
 		RegisterUInt8(visual_flag);
 		RegisterUInt8(interaction_flag);
 
-		if (version >= 843) {
+		if (version >= 839) {
 			RegisterUInt8(flag3);
 			RegisterUInt8(flag4);
+			RegisterFloat(size_mod);
 
-			RescopeToReference(primary_slot_state, uint16_t);
-			RescopeToReference(secondary_slot_state, uint16_t);
-			RescopeToReference(ranged_slot_state, uint16_t);
-
-			RegisterUInt16(primary_slot_state);
-			RegisterUInt16(secondary_slot_state);
-			RegisterUInt16(ranged_slot_state);
+			if (version > 1096 && version < 1119) {
+				static uint16_t zalignFiller = 0;
+				RegisterUInt16(zalignFiller);
+			}
 
 			if (version >= 57080) {
 				RescopeArrayElement(spell_visuals);
@@ -714,13 +680,9 @@ void Substruct_SpawnInfo::RegisterElements() {
 		RegisterUInt16(visual_state);
 		uint16_t& mood_state = reinterpret_cast<uint16_t&>(this->mood_state);
 		RegisterUInt16(mood_state);
-		if (version >= 860) {
+		if (version >= 839) {
 			uint16_t& emote_state = reinterpret_cast<uint16_t&>(this->emote_state);
 			RegisterUInt16(emote_state);
-			if (version < 864) {
-				RescopeArrayElement(unknown19);
-				RegisterUInt8(unknown19)->SetCount(2);
-			}
 		}
 	}
 	else {
@@ -730,7 +692,7 @@ void Substruct_SpawnInfo::RegisterElements() {
 		RegisterUInt32(emote_state);
 	}
 
-	if (version >= 60055) {
+	if (version >= 60038) {
 		RegisterUInt32(primary_slot_state);
 		RegisterUInt32(secondary_slot_state);
 		RegisterUInt32(ranged_slot_state);
@@ -742,11 +704,10 @@ void Substruct_SpawnInfo::RegisterElements() {
 		RegisterSubstruct(spell_effects)->SetCount(30);
 		RegisterUInt32(target_id);
 		RegisterUInt32(follow_target);
-		RegisterUInt32(size_unknown);
-		RescopeArrayElement(unknown3b);
-		RegisterUInt8(unknown3b)->SetCount(4);
+		RegisterUInt32(id_unknown);
+		RegisterUInt32(pet_owner_id);
 		RegisterUInt32(entityFlags);
-		RegisterUInt32(unknownpk1);
+		RegisterUInt32(entityFlags2);
 		RegisterUInt32(activity_timer);
 		RegisterUInt32(cast_unknown);
 		RegisterUInt32(hp_percent);
@@ -773,7 +734,7 @@ void Substruct_SpawnInfo::RegisterElements() {
 		RegisterUInt8(adv_class);
 		RegisterUInt8(difficulty);
 
-		if (version >= 60055) {
+		if (version >= 60038) {
 			RegisterUInt8(show_archtype_icon);
 			RescopeArrayElement(unknown21);
 			RegisterUInt8(unknown21)->SetCount(2);
@@ -783,7 +744,7 @@ void Substruct_SpawnInfo::RegisterElements() {
 		}
 		else {
 			RescopeArrayElement(unknown20);
-			if (version == 945) {
+			if (version >= 945 && version < 953) {
 				//One of these bytes appears to have moved higher in the packet after this version
 				RegisterUInt8(unknown20)->SetCount(4);
 			}
@@ -792,19 +753,27 @@ void Substruct_SpawnInfo::RegisterElements() {
 					RescopeArrayElement(unknown20a);
 					if (version >= 57080) {
 						RegisterUInt8(show_archtype_icon);
-						RegisterUInt32(unknown20a)->SetCount(4);
+						RegisterUInt8(unknown20a)->SetCount(7);
+						RegisterUInt32(primary_slot_state);
+						RegisterUInt32(secondary_slot_state);
+						RegisterUInt32(ranged_slot_state);
 					}
 					else if (version >= 1188) {
-						RegisterUInt32(unknown20a)->SetCount(3);
+						RegisterUInt8(show_archtype_icon);
+						RegisterUInt8(unknown20a)->SetCount(7);
+						RescopeToReference(primary_slot_state, uint16_t);
+						RescopeToReference(secondary_slot_state, uint16_t);
+						RescopeToReference(ranged_slot_state, uint16_t);
+						RegisterUInt16(primary_slot_state);
+						RegisterUInt16(secondary_slot_state);
+						RegisterUInt16(ranged_slot_state);
 					}
 					else {
-						RegisterUInt32(unknown20a);
+						RegisterUInt8(show_archtype_icon);
+						RegisterUInt8(unknown20a)->SetCount(3);
 					}
 				}
-				if (version < 57080) {
-					RegisterUInt8(unknown20)->SetCount(3);
-				}
-				else if (version < 58618) {
+				if (version < 58618) {
 					RegisterUInt8(unknown20);
 				}
 				else {
@@ -824,8 +793,8 @@ SpawnInfoStruct::SpawnInfoStruct() {
 
 	target_id = -1;
 	follow_target = -1;
-	size_unknown = -1;
-	memset(unknown3b, 0xff, 4);
+	id_unknown = -1;
+	pet_owner_id = -1;
 	cast_unknown = -1;
 	cast_percentage = -1;
 	unknown3c2 = -1;

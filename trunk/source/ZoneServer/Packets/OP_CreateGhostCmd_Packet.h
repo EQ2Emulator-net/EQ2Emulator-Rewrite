@@ -135,13 +135,13 @@ public:
 		//These are all probably IDs, cast maybe spell id. one more in the unknown3b unknown
 		info.target_id = -1;
 		info.follow_target = -1;
-		info.size_unknown = -1;
+		info.id_unknown = -1;
+		info.pet_owner_id = -1;
 		info.cast_unknown = -1;
 		info.cast_percentage = -1;
 		info.unknown3c2 = -1;
 		info.visual_flag = 2;
 		info.interaction_flag = 2;
-		memset(info.unknown3b, 0xff, 4);
 
 		pos.heading = 180.f;
 		pos.desiredHeading = 180.f;
