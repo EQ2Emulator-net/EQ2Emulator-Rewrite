@@ -186,210 +186,297 @@
 		</Data>
 		<Data ElementName="time_stamp" Type="int32" Size="1"/>
 	</Struct>
-	<Struct Name="Substruct_SpawnPosition" ClientVersion="283">
-		<Data ElementName="grid_id" Type="int32" Size="1"/>
-		<Data ElementName="x_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="y_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="z_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="velocityX_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="velocityY_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="velocityZ_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="heading_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredHeading_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredForwardSpeed_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="positionState" Type="int32" Size="1"/>
-		<Data ElementName="movementMode" Type="int8" Size="1"/>
-		<Data ElementName="destX_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="destY_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="destZ_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="destX2_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="destY2_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="destZ2_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="speedModifier_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="swimmingSpeedMultiplier_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredStrafeSpeed_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredPitch_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredPitchVelocity_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="baseLocX" Type="float" Size="1"/>
-		<Data ElementName="baseLocY" Type="float" Size="1"/>
-		<Data ElementName="baseLocZ" Type="float" Size="1"/>
-		<Data ElementName="pitch_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="collisionRadius_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="size_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="faceActorID" Type="int32" Size="1"/>
-		<Data ElementName="actorStopRange_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="roll_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="unk70_compressed" Type="sint16" Size="1"/>
+	<Struct Name="Substruct_SpawnPosition" ClientVersion="283" ByteSize="0x4d">
+		<Data ElementName="grid_id" Type="int32" Size="1" Offset="0x0"/>
+		<Data ElementName="x_compressed" Type="sint16" Size="1" Offset="0x4"/>
+		<Data ElementName="y_compressed" Type="sint16" Size="1" Offset="0x6"/>
+		<Data ElementName="z_compressed" Type="sint16" Size="1" Offset="0x8"/>
+		<Data ElementName="velocityX_compressed" Type="sint16" Size="1" Offset="0xa"/>
+		<Data ElementName="velocityY_compressed" Type="sint16" Size="1" Offset="0xc"/>
+		<Data ElementName="velocityZ_compressed" Type="sint16" Size="1" Offset="0xe"/>
+		<Data ElementName="heading_compressed" Type="sint16" Size="1" Offset="0x10"/>
+		<Data ElementName="desiredHeading_compressed" Type="sint16" Size="1" Offset="0x12"/>
+		<Data ElementName="desiredForwardSpeed_compressed" Type="sint16" Size="1" Offset="0x14"/>
+		<Data ElementName="positionState" Type="int32" Size="1" Offset="0x16"/>
+		<Data ElementName="movementMode" Type="int8" Size="1" Offset="0x1a"/>
+		<Data ElementName="destX_compressed" Type="sint16" Size="1" Offset="0x1b"/>
+		<Data ElementName="destY_compressed" Type="sint16" Size="1" Offset="0x1d"/>
+		<Data ElementName="destZ_compressed" Type="sint16" Size="1" Offset="0x1f"/>
+		<Data ElementName="destX2_compressed" Type="sint16" Size="1" Offset="0x21"/>
+		<Data ElementName="destY2_compressed" Type="sint16" Size="1" Offset="0x23"/>
+		<Data ElementName="destZ2_compressed" Type="sint16" Size="1" Offset="0x25"/>
+		<Data ElementName="speedModifier_compressed" Type="sint16" Size="1" Offset="0x27"/>
+		<Data ElementName="swimmingSpeedMultiplier_compressed" Type="sint16" Size="1" Offset="0x29"/>
+		<Data ElementName="desiredStrafeSpeed_compressed" Type="sint16" Size="1" Offset="0x2b"/>
+		<Data ElementName="desiredPitch_compressed" Type="sint16" Size="1" Offset="0x2d"/>
+		<Data ElementName="desiredPitchVelocity_compressed" Type="sint16" Size="1" Offset="0x2f"/>
+		<Data ElementName="baseLocX" Type="float" Size="1" Offset="0x31"/>
+		<Data ElementName="baseLocY" Type="float" Size="1" Offset="0x35"/>
+		<Data ElementName="baseLocZ" Type="float" Size="1" Offset="0x39"/>
+		<Data ElementName="pitch_compressed" Type="sint16" Size="1" Offset="0x3d"/>
+		<Data ElementName="collisionRadius_compressed" Type="sint16" Size="1" Offset="0x3f"/>
+		<Data ElementName="size_compressed" Type="sint16" Size="1" Offset="0x41"/>
+		<Data ElementName="faceActorID" Type="int32" Size="1" Offset="0x43"/>
+		<Data ElementName="actorStopRange_compressed" Type="sint16" Size="1" Offset="0x47"/>
+		<Data ElementName="roll_compressed" Type="sint16" Size="1" Offset="0x49"/>
+		<Data ElementName="unk70_compressed" Type="sint16" Size="1" Offset="0x4b"/>
 	</Struct>
-	<Struct Name="Substruct_SpawnPosition" ClientVersion="284">
-		<Data ElementName="grid_id" Type="int32" Size="1"/>
-		<Data ElementName="x" Type="float" Size="1"/>
-		<Data ElementName="y" Type="float" Size="1"/>
-		<Data ElementName="z" Type="float" Size="1"/>
-		<Data ElementName="velocityX_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="velocityY_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="velocityZ_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="heading_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredHeading_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredForwardSpeed_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="positionState" Type="int32" Size="1"/>
-		<Data ElementName="positionState2" Type="int32" Size="1"/>
-		<Data ElementName="movementMode" Type="int8" Size="1"/>
-		<Data ElementName="unkByte" Type="int8" Size="1"/>
-		<Data ElementName="destLocX" Type="float" Size="1"/>
-		<Data ElementName="destLocY" Type="float" Size="1"/>
-		<Data ElementName="destLocZ" Type="float" Size="1"/>
-		<Data ElementName="destLocX2" Type="float" Size="1"/>
-		<Data ElementName="destLocY2" Type="float" Size="1"/>
-		<Data ElementName="destLocZ2" Type="float" Size="1"/>
-		<Data ElementName="speedModifier_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="swimmingSpeedMultiplier_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredStrafeSpeed_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredRoll_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredRollVelocity_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredPitch_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredPitchVelocity_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="baseLocX_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="baseLocY_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="baseLocZ_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="pitch_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="collisionRadius_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="size_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="size_ratio_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="sizeUnknown_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="faceActorID" Type="int32" Size="1"/>
-		<Data ElementName="actorStopRange_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="roll_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="unk70_compressed" Type="sint16" Size="1"/>
+	<Struct Name="Substruct_SpawnPosition" ClientVersion="284" ByteSize="0x66">
+		<Data ElementName="grid_id" Type="int32" Size="1" Offset="0x0"/>
+		<Data ElementName="x" Type="float" Size="1" Offset="0x4"/>
+		<Data ElementName="y" Type="float" Size="1" Offset="0x8"/>
+		<Data ElementName="z" Type="float" Size="1" Offset="0xc"/>
+		<Data ElementName="velocityX_compressed" Type="sint16" Size="1" Offset="0x10"/>
+		<Data ElementName="velocityY_compressed" Type="sint16" Size="1" Offset="0x12"/>
+		<Data ElementName="velocityZ_compressed" Type="sint16" Size="1" Offset="0x14"/>
+		<Data ElementName="heading_compressed" Type="sint16" Size="1" Offset="0x16"/>
+		<Data ElementName="desiredHeading_compressed" Type="sint16" Size="1" Offset="0x18"/>
+		<Data ElementName="desiredForwardSpeed_compressed" Type="sint16" Size="1" Offset="0x1a"/>
+		<Data ElementName="positionState" Type="int32" Size="1" Offset="0x1c"/>
+		<Data ElementName="positionState2" Type="int32" Size="1" Offset="0x20"/>
+		<Data ElementName="movementMode" Type="int8" Size="1" Offset="0x24"/>
+		<Data ElementName="unkByte" Type="int8" Size="1" Offset="0x25"/>
+		<Data ElementName="destLocX" Type="float" Size="1" Offset="0x26"/>
+		<Data ElementName="destLocY" Type="float" Size="1" Offset="0x2a"/>
+		<Data ElementName="destLocZ" Type="float" Size="1" Offset="0x2e"/>
+		<Data ElementName="destLocX2" Type="float" Size="1" Offset="0x32"/>
+		<Data ElementName="destLocY2" Type="float" Size="1" Offset="0x36"/>
+		<Data ElementName="destLocZ2" Type="float" Size="1" Offset="0x3a"/>
+		<Data ElementName="speedModifier_compressed" Type="sint16" Size="1" Offset="0x3e"/>
+		<Data ElementName="swimmingSpeedMultiplier_compressed" Type="sint16" Size="1" Offset="0x40"/>
+		<Data ElementName="desiredStrafeSpeed_compressed" Type="sint16" Size="1" Offset="0x42"/>
+		<Data ElementName="desiredRoll_compressed" Type="sint16" Size="1" Offset="0x44"/>
+		<Data ElementName="desiredRollVelocity_compressed" Type="sint16" Size="1" Offset="0x46"/>
+		<Data ElementName="desiredPitch_compressed" Type="sint16" Size="1" Offset="0x48"/>
+		<Data ElementName="desiredPitchVelocity_compressed" Type="sint16" Size="1" Offset="0x4a"/>
+		<Data ElementName="baseLocX_compressed" Type="sint16" Size="1" Offset="0x4c"/>
+		<Data ElementName="baseLocY_compressed" Type="sint16" Size="1" Offset="0x4e"/>
+		<Data ElementName="baseLocZ_compressed" Type="sint16" Size="1" Offset="0x50"/>
+		<Data ElementName="pitch_compressed" Type="sint16" Size="1" Offset="0x52"/>
+		<Data ElementName="collisionRadius_compressed" Type="sint16" Size="1" Offset="0x54"/>
+		<Data ElementName="size_compressed" Type="sint16" Size="1" Offset="0x56"/>
+		<Data ElementName="size_ratio_compressed" Type="sint16" Size="1" Offset="0x58"/>
+		<Data ElementName="sizeUnknown_compressed" Type="sint16" Size="1" Offset="0x5a"/>
+		<Data ElementName="faceActorID" Type="int32" Size="1" Offset="0x5c"/>
+		<Data ElementName="actorStopRange_compressed" Type="sint16" Size="1" Offset="0x60"/>
+		<Data ElementName="roll_compressed" Type="sint16" Size="1" Offset="0x62"/>
+		<Data ElementName="unk70_compressed" Type="sint16" Size="1" Offset="0x64"/>
 	</Struct>
-	<Struct Name="Substruct_SpawnPosition" ClientVersion="843">
-		<Data ElementName="grid_id" Type="int32" Size="1"/>
-		<Data ElementName="x" Type="float" Size="1"/>
-		<Data ElementName="y" Type="float" Size="1"/>
-		<Data ElementName="z" Type="float" Size="1"/>
-		<Data ElementName="velocityX_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="velocityY_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="velocityZ_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="heading_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredHeading_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredForwardSpeed_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="positionState" Type="int32" Size="1"/>
-		<Data ElementName="positionState2" Type="int32" Size="1"/>
-		<Data ElementName="movementMode" Type="int8" Size="1"/>
-		<Data ElementName="unkByte" Type="int8" Size="1"/>
-		<Data ElementName="destLocX" Type="float" Size="1"/>
-		<Data ElementName="destLocY" Type="float" Size="1"/>
-		<Data ElementName="destLocZ" Type="float" Size="1"/>
-		<Data ElementName="destLocX2" Type="float" Size="1"/>
-		<Data ElementName="destLocY2" Type="float" Size="1"/>
-		<Data ElementName="destLocZ2" Type="float" Size="1"/>
-		<Data ElementName="speedModifier_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="swimmingSpeedMultiplier_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredStrafeSpeed_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredRoll_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredRollVelocity_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredPitch_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredPitchVelocity_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="baseLocX_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="baseLocY_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="baseLocZ_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="pitch_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="collisionRadius_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="size_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="size_ratio_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="sizeUnknown_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="faceActorID" Type="int32" Size="1"/>
-		<Data ElementName="actorStopRange_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="roll_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="unk70_compressed" Type="sint16" Size="1"/>
+	<Struct Name="Substruct_SpawnPosition" ClientVersion="918" ByteSize="0x6a">
+		<Data ElementName="grid_id" Type="int32" Size="1" Offset="0x0"/>
+		<Data ElementName="x" Type="float" Size="1" Offset="0x4"/>
+		<Data ElementName="y" Type="float" Size="1" Offset="0x8"/>
+		<Data ElementName="z" Type="float" Size="1" Offset="0xc"/>
+		<Data ElementName="velocityX_compressed" Type="sint16" Size="1" Offset="0x10"/>
+		<Data ElementName="velocityY_compressed" Type="sint16" Size="1" Offset="0x12"/>
+		<Data ElementName="velocityZ_compressed" Type="sint16" Size="1" Offset="0x14"/>
+		<Data ElementName="heading_compressed" Type="sint16" Size="1" Offset="0x16"/>
+		<Data ElementName="desiredHeading_compressed" Type="sint16" Size="1" Offset="0x18"/>
+		<Data ElementName="desiredForwardSpeed_compressed" Type="sint16" Size="1" Offset="0x1a"/>
+		<Data ElementName="positionState" Type="int32" Size="1" Offset="0x1c"/>
+		<Data ElementName="positionState2" Type="int32" Size="1" Offset="0x20"/>
+		<Data ElementName="movementMode" Type="int8" Size="1" Offset="0x24"/>
+		<Data ElementName="unkByte" Type="int8" Size="1" Offset="0x25"/>
+		<Data ElementName="destLocX" Type="float" Size="1" Offset="0x26"/>
+		<Data ElementName="destLocY" Type="float" Size="1" Offset="0x2a"/>
+		<Data ElementName="destLocZ" Type="float" Size="1" Offset="0x2e"/>
+		<Data ElementName="destLocX2" Type="float" Size="1" Offset="0x32"/>
+		<Data ElementName="destLocY2" Type="float" Size="1" Offset="0x36"/>
+		<Data ElementName="destLocZ2" Type="float" Size="1" Offset="0x3a"/>
+		<Data ElementName="speedModifier_compressed" Type="sint16" Size="1" Offset="0x3e"/>
+		<Data ElementName="swimmingSpeedMultiplier_compressed" Type="sint16" Size="1" Offset="0x40"/>
+		<Data ElementName="desiredStrafeSpeed_compressed" Type="sint16" Size="1" Offset="0x42"/>
+		<Data ElementName="desiredRoll_compressed" Type="sint16" Size="1" Offset="0x44"/>
+		<Data ElementName="desiredRollVelocity_compressed" Type="sint16" Size="1" Offset="0x46"/>
+		<Data ElementName="desiredPitch_compressed" Type="sint16" Size="1" Offset="0x48"/>
+		<Data ElementName="desiredPitchVelocity_compressed" Type="sint16" Size="1" Offset="0x4a"/>
+		<Data ElementName="baseLocX_compressed" Type="sint16" Size="1" Offset="0x4c"/>
+		<Data ElementName="baseLocY_compressed" Type="sint16" Size="1" Offset="0x4e"/>
+		<Data ElementName="baseLocZ_compressed" Type="sint16" Size="1" Offset="0x50"/>
+		<Data ElementName="pitch_compressed" Type="sint16" Size="1" Offset="0x52"/>
+		<Data ElementName="collisionRadius_compressed" Type="sint16" Size="1" Offset="0x54"/>
+		<Data ElementName="size_compressed" Type="sint16" Size="1" Offset="0x56"/>
+		<Data ElementName="size" Type="float" Size="1" Offset="0x58"/>
+		<Data ElementName="sizeRatio" Type="float" Size="1" Offset="0x5c"/>
+		<Data ElementName="faceActorID" Type="int32" Size="1" Offset="0x60"/>
+		<Data ElementName="actorStopRange_compressed" Type="sint16" Size="1" Offset="0x64"/>
+		<Data ElementName="roll_compressed" Type="sint16" Size="1" Offset="0x66"/>
+		<Data ElementName="unk70_compressed" Type="sint16" Size="1" Offset="0x68"/>
 	</Struct>
-	<Struct Name="Substruct_SpawnPosition" ClientVersion="911">
-		<Data ElementName="grid_id" Type="int32" Size="1"/>
-		<Data ElementName="x" Type="float" Size="1"/>
-		<Data ElementName="y" Type="float" Size="1"/>
-		<Data ElementName="z" Type="float" Size="1"/>
-		<Data ElementName="velocityX_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="velocityY_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="velocityZ_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="heading_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredHeading_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredForwardSpeed_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="positionState" Type="int32" Size="1"/>
-		<Data ElementName="positionState2" Type="int32" Size="1"/>
-		<Data ElementName="destLocX" Type="float" Size="1"/>
-		<Data ElementName="destLocY" Type="float" Size="1"/>
-		<Data ElementName="destLocZ" Type="float" Size="1"/>
-		<Data ElementName="destLocX2" Type="float" Size="1"/>
-		<Data ElementName="destLocY2" Type="float" Size="1"/>
-		<Data ElementName="destLocZ2" Type="float" Size="1"/>
-		<Data ElementName="movementMode" Type="int8" Size="1"/>
-		<Data ElementName="unkByte" Type="int8" Size="1"/>
-		<Data ElementName="speedModifier_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="swimmingSpeedMultiplier_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredStrafeSpeed_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredRoll_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredRollVelocity_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredPitch_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredPitchVelocity_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="baseLocX_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="baseLocY_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="baseLocZ_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="pitch_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="collisionRadius_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="sizeUnknown_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="size" Type="float" Size="1"/>
-		<Data ElementName="sizeRatio" Type="float" Size="1"/>
-		<Data ElementName="faceActorID" Type="int32" Size="1"/>
-		<Data ElementName="actorStopRange_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="roll_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="unk70_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="unk72" Type="sint16" Size="1"/>
+	<Struct Name="Substruct_SpawnPosition" ClientVersion="936" ByteSize="0x6c">
+		<Data ElementName="grid_id" Type="int32" Size="1" Offset="0x0"/>
+		<Data ElementName="x" Type="float" Size="1" Offset="0x4"/>
+		<Data ElementName="y" Type="float" Size="1" Offset="0x8"/>
+		<Data ElementName="z" Type="float" Size="1" Offset="0xc"/>
+		<Data ElementName="velocityX_compressed" Type="sint16" Size="1" Offset="0x10"/>
+		<Data ElementName="velocityY_compressed" Type="sint16" Size="1" Offset="0x12"/>
+		<Data ElementName="velocityZ_compressed" Type="sint16" Size="1" Offset="0x14"/>
+		<Data ElementName="heading_compressed" Type="sint16" Size="1" Offset="0x16"/>
+		<Data ElementName="desiredHeading_compressed" Type="sint16" Size="1" Offset="0x18"/>
+		<Data ElementName="desiredForwardSpeed_compressed" Type="sint16" Size="1" Offset="0x1a"/>
+		<Data ElementName="positionState" Type="int32" Size="1" Offset="0x1c"/>
+		<Data ElementName="positionState2" Type="int32" Size="1" Offset="0x20"/>
+		<Data ElementName="destLocX" Type="float" Size="1" Offset="0x24"/>
+		<Data ElementName="destLocY" Type="float" Size="1" Offset="0x28"/>
+		<Data ElementName="destLocZ" Type="float" Size="1" Offset="0x2c"/>
+		<Data ElementName="destLocX2" Type="float" Size="1" Offset="0x30"/>
+		<Data ElementName="destLocY2" Type="float" Size="1" Offset="0x34"/>
+		<Data ElementName="destLocZ2" Type="float" Size="1" Offset="0x38"/>
+		<Data ElementName="movementMode" Type="int8" Size="1" Offset="0x3c"/>
+		<Data ElementName="unkByte" Type="int8" Size="1" Offset="0x3d"/>
+		<Data ElementName="speedModifier_compressed" Type="sint16" Size="1" Offset="0x3e"/>
+		<Data ElementName="swimmingSpeedMultiplier_compressed" Type="sint16" Size="1" Offset="0x40"/>
+		<Data ElementName="desiredStrafeSpeed_compressed" Type="sint16" Size="1" Offset="0x42"/>
+		<Data ElementName="desiredRoll_compressed" Type="sint16" Size="1" Offset="0x44"/>
+		<Data ElementName="desiredRollVelocity_compressed" Type="sint16" Size="1" Offset="0x46"/>
+		<Data ElementName="desiredPitch_compressed" Type="sint16" Size="1" Offset="0x48"/>
+		<Data ElementName="desiredPitchVelocity_compressed" Type="sint16" Size="1" Offset="0x4a"/>
+		<Data ElementName="baseLocX_compressed" Type="sint16" Size="1" Offset="0x4c"/>
+		<Data ElementName="baseLocY_compressed" Type="sint16" Size="1" Offset="0x4e"/>
+		<Data ElementName="baseLocZ_compressed" Type="sint16" Size="1" Offset="0x50"/>
+		<Data ElementName="pitch_compressed" Type="sint16" Size="1" Offset="0x52"/>
+		<Data ElementName="collisionRadius_compressed" Type="sint16" Size="1" Offset="0x54"/>
+		<Data ElementName="sizeUnknown_compressed" Type="sint16" Size="1" Offset="0x56"/>
+		<Data ElementName="size" Type="float" Size="1" Offset="0x58"/>
+		<Data ElementName="sizeRatio" Type="float" Size="1" Offset="0x5c"/>
+		<Data ElementName="faceActorID" Type="int32" Size="1" Offset="0x60"/>
+		<Data ElementName="actorStopRange_compressed" Type="sint16" Size="1" Offset="0x64"/>
+		<Data ElementName="roll_compressed" Type="sint16" Size="1" Offset="0x66"/>
+		<Data ElementName="unk70_compressed" Type="sint16" Size="1" Offset="0x68"/>
+		<Data ElementName="unk72" Type="sint16" Size="1" Offset="0x6a"/>
 	</Struct>
-	<Struct Name="Substruct_SpawnPosition" ClientVersion="1096">
-		<Data ElementName="grid_id" Type="int32" Size="1"/>
-		<Data ElementName="x" Type="float" Size="1"/>
-		<Data ElementName="y" Type="float" Size="1"/>
-		<Data ElementName="z" Type="float" Size="1"/>
-		<Data ElementName="velocityX_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="velocityY_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="velocityZ_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="heading_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredHeading_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredForwardSpeed_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="positionState" Type="int32" Size="1"/>
-		<Data ElementName="positionState2" Type="int32" Size="1"/>
-		<Data ElementName="destLocX" Type="float" Size="1"/>
-		<Data ElementName="destLocY" Type="float" Size="1"/>
-		<Data ElementName="destLocZ" Type="float" Size="1"/>
-		<Data ElementName="destLocX2" Type="float" Size="1"/>
-		<Data ElementName="destLocY2" Type="float" Size="1"/>
-		<Data ElementName="destLocZ2" Type="float" Size="1"/>
-		<Data ElementName="movementMode" Type="int8" Size="1"/>
-		<Data ElementName="unkByte" Type="int8" Size="1"/>
-		<Data ElementName="desiredHeadingVelocity_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="speedModifier_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="airSpeed_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="swimmingSpeedMultiplier_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredStrafeSpeed_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredVertSpeed_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="unkSpeed3_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredRoll_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredRollVelocity_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredPitch_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="desiredPitchVelocity_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="baseLocX_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="baseLocY_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="baseLocZ_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="pitch_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="collisionRadius_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="sizeUnknown_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="size" Type="float" Size="1"/>
-		<Data ElementName="sizeRatio" Type="float" Size="1"/>
-		<Data ElementName="faceActorID" Type="int32" Size="1"/>
-		<Data ElementName="actorStopRange_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="roll_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="unk70_compressed" Type="sint16" Size="1"/>
-		<Data ElementName="unk72" Type="sint16" Size="1"/>
+	<Struct Name="Substruct_SpawnPosition" ClientVersion="1096" ByteSize="0x6c">
+		<Data ElementName="grid_id" Type="int32" Size="1" Offset="0x0"/>
+		<Data ElementName="x" Type="float" Size="1" Offset="0x4"/>
+		<Data ElementName="y" Type="float" Size="1" Offset="0x8"/>
+		<Data ElementName="z" Type="float" Size="1" Offset="0xc"/>
+		<Data ElementName="velocityX_compressed" Type="sint16" Size="1" Offset="0x10"/>
+		<Data ElementName="velocityY_compressed" Type="sint16" Size="1" Offset="0x12"/>
+		<Data ElementName="velocityZ_compressed" Type="sint16" Size="1" Offset="0x14"/>
+		<Data ElementName="heading_compressed" Type="sint16" Size="1" Offset="0x16"/>
+		<Data ElementName="desiredHeading_compressed" Type="sint16" Size="1" Offset="0x18"/>
+		<Data ElementName="desiredForwardSpeed_compressed" Type="sint16" Size="1" Offset="0x1a"/>
+		<Data ElementName="positionState" Type="int32" Size="1" Offset="0x1c"/>
+		<Data ElementName="positionState2" Type="int32" Size="1" Offset="0x20"/>
+		<Data ElementName="destLocX" Type="float" Size="1" Offset="0x24"/>
+		<Data ElementName="destLocY" Type="float" Size="1" Offset="0x28"/>
+		<Data ElementName="destLocZ" Type="float" Size="1" Offset="0x2c"/>
+		<Data ElementName="destLocX2" Type="float" Size="1" Offset="0x30"/>
+		<Data ElementName="destLocY2" Type="float" Size="1" Offset="0x34"/>
+		<Data ElementName="destLocZ2" Type="float" Size="1" Offset="0x38"/>
+		<Data ElementName="movementMode" Type="int8" Size="1" Offset="0x3c"/>
+		<Data ElementName="unkByte" Type="int8" Size="1" Offset="0x3d"/>
+		<Data ElementName="speedModifier_compressed" Type="sint16" Size="1" Offset="0x3e"/>
+		<Data ElementName="airSpeed_compressed" Type="sint16" Size="1" Offset="0x40"/>
+		<Data ElementName="swimmingSpeedMultiplier_compressed" Type="sint16" Size="1" Offset="0x42"/>
+		<Data ElementName="desiredStrafeSpeed_compressed" Type="sint16" Size="1" Offset="0x44"/>
+		<Data ElementName="desiredRoll_compressed" Type="sint16" Size="1" Offset="0x46"/>
+		<Data ElementName="desiredRollVelocity_compressed" Type="sint16" Size="1" Offset="0x48"/>
+		<Data ElementName="desiredPitch_compressed" Type="sint16" Size="1" Offset="0x4a"/>
+		<Data ElementName="desiredPitchVelocity_compressed" Type="sint16" Size="1" Offset="0x4c"/>
+		<Data ElementName="baseLocX_compressed" Type="sint16" Size="1" Offset="0x4e"/>
+		<Data ElementName="baseLocY_compressed" Type="sint16" Size="1" Offset="0x50"/>
+		<Data ElementName="baseLocZ_compressed" Type="sint16" Size="1" Offset="0x52"/>
+		<Data ElementName="pitch_compressed" Type="sint16" Size="1" Offset="0x54"/>
+		<Data ElementName="collisionRadius_compressed" Type="sint16" Size="1" Offset="0x56"/>
+		<Data ElementName="sizeUnknown_compressed" Type="sint16" Size="1" Offset="0x58"/>
+		<Data ElementName="size" Type="float" Size="1" Offset="0x5a"/>
+		<Data ElementName="sizeRatio" Type="float" Size="1" Offset="0x5e"/>
+		<Data ElementName="faceActorID" Type="int32" Size="1" Offset="0x62"/>
+		<Data ElementName="actorStopRange_compressed" Type="sint16" Size="1" Offset="0x66"/>
+		<Data ElementName="roll_compressed" Type="sint16" Size="1" Offset="0x68"/>
+		<Data ElementName="unk70_compressed" Type="sint16" Size="1" Offset="0x6a"/>
+	</Struct>
+	<Struct Name="Substruct_SpawnPosition" ClientVersion="1119" ByteSize="0x72">
+		<Data ElementName="grid_id" Type="int32" Size="1" Offset="0x0"/>
+		<Data ElementName="x" Type="float" Size="1" Offset="0x4"/>
+		<Data ElementName="y" Type="float" Size="1" Offset="0x8"/>
+		<Data ElementName="z" Type="float" Size="1" Offset="0xc"/>
+		<Data ElementName="velocityX_compressed" Type="sint16" Size="1" Offset="0x10"/>
+		<Data ElementName="velocityY_compressed" Type="sint16" Size="1" Offset="0x12"/>
+		<Data ElementName="velocityZ_compressed" Type="sint16" Size="1" Offset="0x14"/>
+		<Data ElementName="heading_compressed" Type="sint16" Size="1" Offset="0x16"/>
+		<Data ElementName="desiredHeading_compressed" Type="sint16" Size="1" Offset="0x18"/>
+		<Data ElementName="desiredForwardSpeed_compressed" Type="sint16" Size="1" Offset="0x1a"/>
+		<Data ElementName="positionState" Type="int32" Size="1" Offset="0x1c"/>
+		<Data ElementName="positionState2" Type="int32" Size="1" Offset="0x20"/>
+		<Data ElementName="destLocX" Type="float" Size="1" Offset="0x24"/>
+		<Data ElementName="destLocY" Type="float" Size="1" Offset="0x28"/>
+		<Data ElementName="destLocZ" Type="float" Size="1" Offset="0x2c"/>
+		<Data ElementName="destLocX2" Type="float" Size="1" Offset="0x30"/>
+		<Data ElementName="destLocY2" Type="float" Size="1" Offset="0x34"/>
+		<Data ElementName="destLocZ2" Type="float" Size="1" Offset="0x38"/>
+		<Data ElementName="movementMode" Type="int8" Size="1" Offset="0x3c"/>
+		<Data ElementName="unkByte" Type="int8" Size="1" Offset="0x3d"/>
+		<Data ElementName="desiredHeadingVelocity_compressed" Type="sint16" Size="1" Offset="0x3e"/>
+		<Data ElementName="speedModifier_compressed" Type="sint16" Size="1" Offset="0x40"/>
+		<Data ElementName="airSpeed_compressed" Type="sint16" Size="1" Offset="0x42"/>
+		<Data ElementName="swimmingSpeedMultiplier_compressed" Type="sint16" Size="1" Offset="0x44"/>
+		<Data ElementName="desiredStrafeSpeed_compressed" Type="sint16" Size="1" Offset="0x46"/>
+		<Data ElementName="desiredVertSpeed_compressed" Type="sint16" Size="1" Offset="0x48"/>
+		<Data ElementName="unkSpeed3_compressed" Type="sint16" Size="1" Offset="0x4a"/>
+		<Data ElementName="desiredRoll_compressed" Type="sint16" Size="1" Offset="0x4c"/>
+		<Data ElementName="desiredRollVelocity_compressed" Type="sint16" Size="1" Offset="0x4e"/>
+		<Data ElementName="desiredPitch_compressed" Type="sint16" Size="1" Offset="0x50"/>
+		<Data ElementName="desiredPitchVelocity_compressed" Type="sint16" Size="1" Offset="0x52"/>
+		<Data ElementName="baseLocX_compressed" Type="sint16" Size="1" Offset="0x54"/>
+		<Data ElementName="baseLocY_compressed" Type="sint16" Size="1" Offset="0x56"/>
+		<Data ElementName="baseLocZ_compressed" Type="sint16" Size="1" Offset="0x58"/>
+		<Data ElementName="pitch_compressed" Type="sint16" Size="1" Offset="0x5a"/>
+		<Data ElementName="collisionRadius_compressed" Type="sint16" Size="1" Offset="0x5c"/>
+		<Data ElementName="sizeUnknown_compressed" Type="sint16" Size="1" Offset="0x5e"/>
+		<Data ElementName="size" Type="float" Size="1" Offset="0x60"/>
+		<Data ElementName="sizeRatio" Type="float" Size="1" Offset="0x64"/>
+		<Data ElementName="faceActorID" Type="int32" Size="1" Offset="0x68"/>
+		<Data ElementName="actorStopRange_compressed" Type="sint16" Size="1" Offset="0x6c"/>
+		<Data ElementName="roll_compressed" Type="sint16" Size="1" Offset="0x6e"/>
+		<Data ElementName="unk70_compressed" Type="sint16" Size="1" Offset="0x70"/>
+	</Struct>
+	<Struct Name="Substruct_SpawnPosition" ClientVersion="1142" ByteSize="0x74">
+		<Data ElementName="grid_id" Type="int32" Size="1" Offset="0x0"/>
+		<Data ElementName="x" Type="float" Size="1" Offset="0x4"/>
+		<Data ElementName="y" Type="float" Size="1" Offset="0x8"/>
+		<Data ElementName="z" Type="float" Size="1" Offset="0xc"/>
+		<Data ElementName="velocityX_compressed" Type="sint16" Size="1" Offset="0x10"/>
+		<Data ElementName="velocityY_compressed" Type="sint16" Size="1" Offset="0x12"/>
+		<Data ElementName="velocityZ_compressed" Type="sint16" Size="1" Offset="0x14"/>
+		<Data ElementName="heading_compressed" Type="sint16" Size="1" Offset="0x16"/>
+		<Data ElementName="desiredHeading_compressed" Type="sint16" Size="1" Offset="0x18"/>
+		<Data ElementName="desiredForwardSpeed_compressed" Type="sint16" Size="1" Offset="0x1a"/>
+		<Data ElementName="positionState" Type="int32" Size="1" Offset="0x1c"/>
+		<Data ElementName="positionState2" Type="int32" Size="1" Offset="0x20"/>
+		<Data ElementName="destLocX" Type="float" Size="1" Offset="0x24"/>
+		<Data ElementName="destLocY" Type="float" Size="1" Offset="0x28"/>
+		<Data ElementName="destLocZ" Type="float" Size="1" Offset="0x2c"/>
+		<Data ElementName="destLocX2" Type="float" Size="1" Offset="0x30"/>
+		<Data ElementName="destLocY2" Type="float" Size="1" Offset="0x34"/>
+		<Data ElementName="destLocZ2" Type="float" Size="1" Offset="0x38"/>
+		<Data ElementName="movementMode" Type="int8" Size="1" Offset="0x3c"/>
+		<Data ElementName="unkByte" Type="int8" Size="1" Offset="0x3d"/>
+		<Data ElementName="desiredHeadingVelocity_compressed" Type="sint16" Size="1" Offset="0x3e"/>
+		<Data ElementName="speedModifier_compressed" Type="sint16" Size="1" Offset="0x40"/>
+		<Data ElementName="airSpeed_compressed" Type="sint16" Size="1" Offset="0x42"/>
+		<Data ElementName="swimmingSpeedMultiplier_compressed" Type="sint16" Size="1" Offset="0x44"/>
+		<Data ElementName="desiredStrafeSpeed_compressed" Type="sint16" Size="1" Offset="0x46"/>
+		<Data ElementName="desiredVertSpeed_compressed" Type="sint16" Size="1" Offset="0x48"/>
+		<Data ElementName="unkSpeed3_compressed" Type="sint16" Size="1" Offset="0x4a"/>
+		<Data ElementName="desiredRoll_compressed" Type="sint16" Size="1" Offset="0x4c"/>
+		<Data ElementName="desiredRollVelocity_compressed" Type="sint16" Size="1" Offset="0x4e"/>
+		<Data ElementName="desiredPitch_compressed" Type="sint16" Size="1" Offset="0x50"/>
+		<Data ElementName="desiredPitchVelocity_compressed" Type="sint16" Size="1" Offset="0x52"/>
+		<Data ElementName="baseLocX_compressed" Type="sint16" Size="1" Offset="0x54"/>
+		<Data ElementName="baseLocY_compressed" Type="sint16" Size="1" Offset="0x56"/>
+		<Data ElementName="baseLocZ_compressed" Type="sint16" Size="1" Offset="0x58"/>
+		<Data ElementName="pitch_compressed" Type="sint16" Size="1" Offset="0x5a"/>
+		<Data ElementName="collisionRadius_compressed" Type="sint16" Size="1" Offset="0x5c"/>
+		<Data ElementName="sizeUnknown_compressed" Type="sint16" Size="1" Offset="0x5e"/>
+		<Data ElementName="size" Type="float" Size="1" Offset="0x60"/>
+		<Data ElementName="sizeRatio" Type="float" Size="1" Offset="0x64"/>
+		<Data ElementName="faceActorID" Type="int32" Size="1" Offset="0x68"/>
+		<Data ElementName="actorStopRange_compressed" Type="sint16" Size="1" Offset="0x6c"/>
+		<Data ElementName="roll_compressed" Type="sint16" Size="1" Offset="0x6e"/>
+		<Data ElementName="unk70_compressed" Type="sint16" Size="1" Offset="0x70"/>
+		<Data ElementName="unk72" Type="sint16" Size="1" Offset="0x72"/>
 	</Struct>
 	<Struct Name="Substruct_TargetSpellInfo" ClientVersion="1">
 		<Data ElementName="spell_id" Type="sint32" Size="1"/>
@@ -397,32 +484,38 @@
 		<Data ElementName="spell_icon_backdrop" Type="int16" Size="1"/>
 		<Data ElementName="spell_triggercount" Type="int8" Size="1"/>
 	</Struct>
-	<Struct Name="Substruct_TargetSpellInfo" ClientVersion="864">
-		<Data ElementName="spell_id" Type="sint32" Size="1"/>
-		<Data ElementName="spell_icon" Type="sint16" Size="1"/>
-		<Data ElementName="spell_icon_backdrop" Type="int16" Size="1"/>
-		<Data ElementName="spell_triggercount" Type="int8" Size="1"/>
-	</Struct>
-	<Struct Name="Substruct_TargetSpellInfo" ClientVersion="865">
+	<Struct Name="Substruct_TargetSpellInfo" ClientVersion="919">
 		<Data ElementName="spell_id" Type="sint32" Size="1"/>
 		<Data ElementName="spell_icon" Type="sint16" Size="1"/>
 		<Data ElementName="spell_triggercount" Type="sint16" Size="1"/>
 		<Data ElementName="spell_icon_backdrop" Type="int16" Size="1"/>
 	</Struct>
-	<Struct Name="Substruct_TargetSpellInfo" ClientVersion="60055">
+	<Struct Name="Substruct_TargetSpellInfo" ClientVersion="936">
+		<Data ElementName="spell_id" Type="sint32" Size="1"/>
+		<Data ElementName="spell_icon" Type="sint16" Size="1"/>
+		<Data ElementName="spell_icon_backdrop" Type="int16" Size="1"/>
+	</Struct>
+	<Struct Name="Substruct_TargetSpellInfo" ClientVersion="1188">
+		<Data ElementName="spell_id" Type="sint32" Size="1"/>
+		<Data ElementName="spell_icon" Type="sint16" Size="1"/>
+		<Data ElementName="spell_triggercount" Type="sint16" Size="1"/>
+		<Data ElementName="spell_icon_backdrop" Type="int16" Size="1"/>
+	</Struct>
+	<Struct Name="Substruct_TargetSpellInfo" ClientVersion="60038">
 		<Data ElementName="spell_id" Type="sint32" Size="1"/>
 		<Data ElementName="spell_icon" Type="sint16" Size="1"/>
 		<Data ElementName="spell_triggercount" Type="sint16" Size="1"/>
 		<Data ElementName="spell_icon_backdrop" Type="int16" Size="1"/>
 		<Data ElementName="unknown" Type="int16" Size="1"/>
 	</Struct>
-	<Struct Name="Substruct_SpawnInfo" ClientVersion="283" ByteSize="0x283">
+	<Struct Name="Substruct_SpawnInfo" ClientVersion="283" ByteSize="0x281">
 		<Data ElementName="hp_percent" Type="int32" Size="1" Offset="0x0"/>
 		<Data ElementName="power_percent" Type="int32" Size="1" Offset="0x4"/>
 		<Data ElementName="spell_effects" Substruct="Substruct_TargetSpellInfo" Size="30" Offset="0x8"/>
 		<Data ElementName="target_id" Type="int32" Size="1" Offset="0x116"/>
 		<Data ElementName="follow_target" Type="int32" Size="1" Offset="0x11a"/>
-		<Data ElementName="unknown3b" Type="int8" Size="8" Offset="0x11e"/>
+		<Data ElementName="id_unknown" Type="int32" Size="1" Offset="0x11e"/>
+		<Data ElementName="pet_owner_id" Type="int32" Size="1" Offset="0x122"/>
 		<Data ElementName="adv_class" Type="int8" Size="1" Offset="0x126"/>
 		<Data ElementName="orig_level" Type="int8" Size="1" Offset="0x127"/>
 		<Data ElementName="level" Type="int8" Size="1" Offset="0x128"/>
@@ -430,8 +523,9 @@
 		<Data ElementName="unknown5" Type="int8" Size="1" Offset="0x12a"/>
 		<Data ElementName="heroic_flag" Type="int8" Size="1" Offset="0x12b"/>
 		<Data ElementName="entityFlags" Type="int32" Size="1" Offset="0x12c"/>
-		<Data ElementName="unknownpkShort" Type="int16" Size="1" Offset="0x130"/>
-		<Data ElementName="unknown6" Type="int8" Size="6" Offset="0x132"/>
+		<Data ElementName="entityFlags2" Type="int32" Size="1" Offset="0x130"/>
+		<Data ElementName="archetype" Type="int8" Size="1" Offset="0x134"/>
+		<Data ElementName="unknown6" Type="int8" Size="3" Offset="0x135"/>
 		<Data ElementName="heatLevel" Type="int8" Size="1" Offset="0x138"/>
 		<Data ElementName="torch_color" Type="EQ2_Color" Size="1" Offset="0x139"/>
 		<Data ElementName="model_type" Type="int16" Size="1" Offset="0x13c"/>
@@ -465,23 +559,23 @@
 		<Data ElementName="hair_highlight" Type="EQ2_Color" Size="1" Offset="0x250"/>
 		<Data ElementName="combat_voice" Type="int16" Size="1" Offset="0x253"/>
 		<Data ElementName="emote_voice" Type="int16" Size="1" Offset="0x255"/>
-		<Data ElementName="unknown17" Type="int8" Size="2" Offset="0x257"/>
-		<Data ElementName="visual_flag" Type="int8" Size="1" Offset="0x259"/>
-		<Data ElementName="interaction_flag" Type="int8" Size="1" Offset="0x25a"/>
-		<Data ElementName="unknown18" Type="int8" Size="32" Offset="0x25b"/>
-		<Data ElementName="action_state" Type="int16" Size="1" Offset="0x27b"/>
-		<Data ElementName="visual_state" Type="int16" Size="1" Offset="0x27d"/>
-		<Data ElementName="mood_state" Type="int16" Size="1" Offset="0x27f"/>
-		<Data ElementName="race" Type="int8" Size="1" Offset="0x281"/>
-		<Data ElementName="gender" Type="int8" Size="1" Offset="0x282"/>
+		<Data ElementName="visual_flag" Type="int8" Size="1" Offset="0x257"/>
+		<Data ElementName="interaction_flag" Type="int8" Size="1" Offset="0x258"/>
+		<Data ElementName="unknown18" Type="int8" Size="32" Offset="0x259"/>
+		<Data ElementName="action_state" Type="int16" Size="1" Offset="0x279"/>
+		<Data ElementName="visual_state" Type="int16" Size="1" Offset="0x27b"/>
+		<Data ElementName="mood_state" Type="int16" Size="1" Offset="0x27d"/>
+		<Data ElementName="race" Type="int8" Size="1" Offset="0x27f"/>
+		<Data ElementName="gender" Type="int8" Size="1" Offset="0x280"/>
 	</Struct>
-	<Struct Name="Substruct_SpawnInfo" ClientVersion="284" ByteSize="0x2d2">
+	<Struct Name="Substruct_SpawnInfo" ClientVersion="284" ByteSize="0x2d0">
 		<Data ElementName="hp_percent" Type="int32" Size="1" Offset="0x0"/>
 		<Data ElementName="power_percent" Type="int32" Size="1" Offset="0x4"/>
 		<Data ElementName="spell_effects" Substruct="Substruct_TargetSpellInfo" Size="30" Offset="0x8"/>
 		<Data ElementName="target_id" Type="int32" Size="1" Offset="0x116"/>
 		<Data ElementName="follow_target" Type="int32" Size="1" Offset="0x11a"/>
-		<Data ElementName="unknown3b" Type="int8" Size="8" Offset="0x11e"/>
+		<Data ElementName="id_unknown" Type="int32" Size="1" Offset="0x11e"/>
+		<Data ElementName="pet_owner_id" Type="int32" Size="1" Offset="0x122"/>
 		<Data ElementName="adv_class" Type="int8" Size="1" Offset="0x126"/>
 		<Data ElementName="orig_level" Type="int8" Size="1" Offset="0x127"/>
 		<Data ElementName="level" Type="int8" Size="1" Offset="0x128"/>
@@ -489,334 +583,9 @@
 		<Data ElementName="unknown5" Type="int8" Size="1" Offset="0x12a"/>
 		<Data ElementName="heroic_flag" Type="int8" Size="1" Offset="0x12b"/>
 		<Data ElementName="entityFlags" Type="int32" Size="1" Offset="0x12c"/>
-		<Data ElementName="unknownpkShort" Type="int16" Size="1" Offset="0x130"/>
-		<Data ElementName="unknown6" Type="int8" Size="6" Offset="0x132"/>
-		<Data ElementName="heatLevel" Type="int8" Size="1" Offset="0x138"/>
-		<Data ElementName="torch_color" Type="EQ2_Color" Size="1" Offset="0x139"/>
-		<Data ElementName="model_type" Type="int16" Size="1" Offset="0x13c"/>
-		<Data ElementName="soga_model_type" Type="int16" Size="1" Offset="0x13e"/>
-		<Data ElementName="skin_color" Type="EQ2_Color" Size="1" Offset="0x140"/>
-		<Data ElementName="eye_color" Type="EQ2_Color" Size="1" Offset="0x143"/>
-		<Data ElementName="soga_eye_color" Type="EQ2_Color" Size="1" Offset="0x146"/>
-		<Data ElementName="soga_skin_color" Type="EQ2_Color" Size="1" Offset="0x149"/>
-		<Data ElementName="equipment_types" Type="int16" Size="24" Offset="0x14c"/>
-		<Data ElementName="textures_slot_type" Type="int16" Size="1" Offset="0x17c"/>
-		<Data ElementName="hair_type_id" Type="int16" Size="1" Offset="0x17e"/>
-		<Data ElementName="facial_hair_type_id" Type="int16" Size="1" Offset="0x180"/>
-		<Data ElementName="wing_type_id" Type="int16" Size="1" Offset="0x182"/>
-		<Data ElementName="chest_type_id" Type="int16" Size="1" Offset="0x184"/>
-		<Data ElementName="legs_type_id" Type="int16" Size="1" Offset="0x186"/>
-		<Data ElementName="soga_hair_type_id" Type="int16" Size="1" Offset="0x188"/>
-		<Data ElementName="soga_facial_hair_type_id" Type="int16" Size="1" Offset="0x18a"/>
-		<Data ElementName="equipment_colors" Type="EQ2_Color" Size="24" Offset="0x18c"/>
-		<Data ElementName="textures_slot_color" Type="EQ2_Color" Size="1" Offset="0x1d4"/>
-		<Data ElementName="hair_type_color" Type="EQ2_Color" Size="1" Offset="0x1d7"/>
-		<Data ElementName="hair_face_color" Type="EQ2_Color" Size="1" Offset="0x1da"/>
-		<Data ElementName="wing_color1" Type="EQ2_Color" Size="1" Offset="0x1dd"/>
-		<Data ElementName="chest_type_color" Type="EQ2_Color" Size="1" Offset="0x1e0"/>
-		<Data ElementName="legs_type_color" Type="EQ2_Color" Size="1" Offset="0x1e3"/>
-		<Data ElementName="equipment_highlights" Type="EQ2_Color" Size="24" Offset="0x1e6"/>
-		<Data ElementName="textures_slot_highlight" Type="EQ2_Color" Size="1" Offset="0x22e"/>
-		<Data ElementName="hair_type_highlight_color" Type="EQ2_Color" Size="1" Offset="0x231"/>
-		<Data ElementName="hair_face_highlight_color" Type="EQ2_Color" Size="1" Offset="0x234"/>
-		<Data ElementName="wing_color2" Type="EQ2_Color" Size="1" Offset="0x237"/>
-		<Data ElementName="chest_type_highlight" Type="EQ2_Color" Size="1" Offset="0x23a"/>
-		<Data ElementName="legs_type_highlight" Type="EQ2_Color" Size="1" Offset="0x23d"/>
-		<Data ElementName="soga_hair_type_color" Type="EQ2_Color" Size="1" Offset="0x240"/>
-		<Data ElementName="soga_hair_type_highlight_color" Type="EQ2_Color" Size="1" Offset="0x243"/>
-		<Data ElementName="soga_hair_face_color" Type="EQ2_Color" Size="1" Offset="0x246"/>
-		<Data ElementName="soga_hair_face_highlight_color" Type="EQ2_Color" Size="1" Offset="0x249"/>
-		<Data ElementName="sliderBytes" Type="sint8" Size="26" Offset="0x24c"/>
-		<Data ElementName="sogaSliderBytes" Type="sint8" Size="26" Offset="0x266"/>
-		<Data ElementName="heraldry" Type="int8" Size="7" Offset="0x280"/>
-		<Data ElementName="alignFiller" Type="int8" Size="1" Offset="0x287"/>
-		<Data ElementName="mount_type" Type="int16" Size="1" Offset="0x288"/>
-		<Data ElementName="mount_color" Type="EQ2_Color" Size="1" Offset="0x28a"/>
-		<Data ElementName="mount_saddle_color" Type="EQ2_Color" Size="1" Offset="0x28d"/>
-		<Data ElementName="hair_color1" Type="EQ2_Color" Size="1" Offset="0x290"/>
-		<Data ElementName="hair_color2" Type="EQ2_Color" Size="1" Offset="0x293"/>
-		<Data ElementName="hair_highlight" Type="EQ2_Color" Size="1" Offset="0x296"/>
-		<Data ElementName="soga_hair_color1" Type="EQ2_Color" Size="1" Offset="0x299"/>
-		<Data ElementName="soga_hair_color2" Type="EQ2_Color" Size="1" Offset="0x29c"/>
-		<Data ElementName="soga_hair_highlight" Type="EQ2_Color" Size="1" Offset="0x29f"/>
-		<Data ElementName="combat_voice" Type="int16" Size="1" Offset="0x2a2"/>
-		<Data ElementName="emote_voice" Type="int16" Size="1" Offset="0x2a4"/>
-		<Data ElementName="unknown17" Type="int8" Size="2" Offset="0x2a6"/>
-		<Data ElementName="visual_flag" Type="int8" Size="1" Offset="0x2a8"/>
-		<Data ElementName="interaction_flag" Type="int8" Size="1" Offset="0x2a9"/>
-		<Data ElementName="unknown18" Type="int8" Size="32" Offset="0x2aa"/>
-		<Data ElementName="action_state" Type="int16" Size="1" Offset="0x2ca"/>
-		<Data ElementName="visual_state" Type="int16" Size="1" Offset="0x2cc"/>
-		<Data ElementName="mood_state" Type="int16" Size="1" Offset="0x2ce"/>
-		<Data ElementName="race" Type="int8" Size="1" Offset="0x2d0"/>
-		<Data ElementName="gender" Type="int8" Size="1" Offset="0x2d1"/>
-	</Struct>
-	<Struct Name="Substruct_SpawnInfo" ClientVersion="843" ByteSize="0x2d2">
-		<Data ElementName="hp_percent" Type="int32" Size="1" Offset="0x0"/>
-		<Data ElementName="power_percent" Type="int32" Size="1" Offset="0x4"/>
-		<Data ElementName="spell_effects" Substruct="Substruct_TargetSpellInfo" Size="30" Offset="0x8"/>
-		<Data ElementName="target_id" Type="int32" Size="1" Offset="0x116"/>
-		<Data ElementName="follow_target" Type="int32" Size="1" Offset="0x11a"/>
-		<Data ElementName="unknown3b" Type="int8" Size="8" Offset="0x11e"/>
-		<Data ElementName="adv_class" Type="int8" Size="1" Offset="0x126"/>
-		<Data ElementName="orig_level" Type="int8" Size="1" Offset="0x127"/>
-		<Data ElementName="level" Type="int8" Size="1" Offset="0x128"/>
-		<Data ElementName="difficulty" Type="int8" Size="1" Offset="0x129"/>
-		<Data ElementName="unknown5" Type="int8" Size="1" Offset="0x12a"/>
-		<Data ElementName="heroic_flag" Type="int8" Size="1" Offset="0x12b"/>
-		<Data ElementName="entityFlags" Type="int32" Size="1" Offset="0x12c"/>
-		<Data ElementName="unknownpkShort" Type="int16" Size="1" Offset="0x130"/>
-		<Data ElementName="unknown6" Type="int8" Size="6" Offset="0x132"/>
-		<Data ElementName="heatLevel" Type="int8" Size="1" Offset="0x138"/>
-		<Data ElementName="torch_color" Type="EQ2_Color" Size="1" Offset="0x139"/>
-		<Data ElementName="model_type" Type="int16" Size="1" Offset="0x13c"/>
-		<Data ElementName="soga_model_type" Type="int16" Size="1" Offset="0x13e"/>
-		<Data ElementName="skin_color" Type="EQ2_Color" Size="1" Offset="0x140"/>
-		<Data ElementName="eye_color" Type="EQ2_Color" Size="1" Offset="0x143"/>
-		<Data ElementName="soga_eye_color" Type="EQ2_Color" Size="1" Offset="0x146"/>
-		<Data ElementName="soga_skin_color" Type="EQ2_Color" Size="1" Offset="0x149"/>
-		<Data ElementName="equipment_types" Type="int16" Size="24" Offset="0x14c"/>
-		<Data ElementName="textures_slot_type" Type="int16" Size="1" Offset="0x17c"/>
-		<Data ElementName="hair_type_id" Type="int16" Size="1" Offset="0x17e"/>
-		<Data ElementName="facial_hair_type_id" Type="int16" Size="1" Offset="0x180"/>
-		<Data ElementName="wing_type_id" Type="int16" Size="1" Offset="0x182"/>
-		<Data ElementName="chest_type_id" Type="int16" Size="1" Offset="0x184"/>
-		<Data ElementName="legs_type_id" Type="int16" Size="1" Offset="0x186"/>
-		<Data ElementName="soga_hair_type_id" Type="int16" Size="1" Offset="0x188"/>
-		<Data ElementName="soga_facial_hair_type_id" Type="int16" Size="1" Offset="0x18a"/>
-		<Data ElementName="equipment_colors" Type="EQ2_Color" Size="24" Offset="0x18c"/>
-		<Data ElementName="textures_slot_color" Type="EQ2_Color" Size="1" Offset="0x1d4"/>
-		<Data ElementName="hair_type_color" Type="EQ2_Color" Size="1" Offset="0x1d7"/>
-		<Data ElementName="hair_face_color" Type="EQ2_Color" Size="1" Offset="0x1da"/>
-		<Data ElementName="wing_color1" Type="EQ2_Color" Size="1" Offset="0x1dd"/>
-		<Data ElementName="chest_type_color" Type="EQ2_Color" Size="1" Offset="0x1e0"/>
-		<Data ElementName="legs_type_color" Type="EQ2_Color" Size="1" Offset="0x1e3"/>
-		<Data ElementName="equipment_highlights" Type="EQ2_Color" Size="24" Offset="0x1e6"/>
-		<Data ElementName="textures_slot_highlight" Type="EQ2_Color" Size="1" Offset="0x22e"/>
-		<Data ElementName="hair_type_highlight_color" Type="EQ2_Color" Size="1" Offset="0x231"/>
-		<Data ElementName="hair_face_highlight_color" Type="EQ2_Color" Size="1" Offset="0x234"/>
-		<Data ElementName="wing_color2" Type="EQ2_Color" Size="1" Offset="0x237"/>
-		<Data ElementName="chest_type_highlight" Type="EQ2_Color" Size="1" Offset="0x23a"/>
-		<Data ElementName="legs_type_highlight" Type="EQ2_Color" Size="1" Offset="0x23d"/>
-		<Data ElementName="soga_hair_type_color" Type="EQ2_Color" Size="1" Offset="0x240"/>
-		<Data ElementName="soga_hair_type_highlight_color" Type="EQ2_Color" Size="1" Offset="0x243"/>
-		<Data ElementName="soga_hair_face_color" Type="EQ2_Color" Size="1" Offset="0x246"/>
-		<Data ElementName="soga_hair_face_highlight_color" Type="EQ2_Color" Size="1" Offset="0x249"/>
-		<Data ElementName="sliderBytes" Type="sint8" Size="26" Offset="0x24c"/>
-		<Data ElementName="sogaSliderBytes" Type="sint8" Size="26" Offset="0x266"/>
-		<Data ElementName="heraldry" Type="int8" Size="7" Offset="0x280"/>
-		<Data ElementName="alignFiller" Type="int8" Size="1" Offset="0x287"/>
-		<Data ElementName="mount_type" Type="int16" Size="1" Offset="0x288"/>
-		<Data ElementName="mount_color" Type="EQ2_Color" Size="1" Offset="0x28a"/>
-		<Data ElementName="mount_saddle_color" Type="EQ2_Color" Size="1" Offset="0x28d"/>
-		<Data ElementName="hair_color1" Type="EQ2_Color" Size="1" Offset="0x290"/>
-		<Data ElementName="hair_color2" Type="EQ2_Color" Size="1" Offset="0x293"/>
-		<Data ElementName="hair_highlight" Type="EQ2_Color" Size="1" Offset="0x296"/>
-		<Data ElementName="soga_hair_color1" Type="EQ2_Color" Size="1" Offset="0x299"/>
-		<Data ElementName="soga_hair_color2" Type="EQ2_Color" Size="1" Offset="0x29c"/>
-		<Data ElementName="soga_hair_highlight" Type="EQ2_Color" Size="1" Offset="0x29f"/>
-		<Data ElementName="combat_voice" Type="int16" Size="1" Offset="0x2a2"/>
-		<Data ElementName="emote_voice" Type="int16" Size="1" Offset="0x2a4"/>
-		<Data ElementName="unknown17" Type="int8" Size="2" Offset="0x2a6"/>
-		<Data ElementName="visual_flag" Type="int8" Size="1" Offset="0x2a8"/>
-		<Data ElementName="interaction_flag" Type="int8" Size="1" Offset="0x2a9"/>
-		<Data ElementName="flag3" Type="int8" Size="1" Offset="0x2aa"/>
-		<Data ElementName="flag4" Type="int8" Size="1" Offset="0x2ab"/>
-		<Data ElementName="primary_slot_state" Type="int16" Size="1" Offset="0x2ac"/>
-		<Data ElementName="secondary_slot_state" Type="int16" Size="1" Offset="0x2ae"/>
-		<Data ElementName="ranged_slot_state" Type="int16" Size="1" Offset="0x2b0"/>
-		<Data ElementName="spell_visuals" Type="int16" Size="8" Offset="0x2b2"/>
-		<Data ElementName="spell_visual_levels" Type="int8" Size="8" Offset="0x2c2"/>
-		<Data ElementName="action_state" Type="int16" Size="1" Offset="0x2ca"/>
-		<Data ElementName="visual_state" Type="int16" Size="1" Offset="0x2cc"/>
-		<Data ElementName="mood_state" Type="int16" Size="1" Offset="0x2ce"/>
-		<Data ElementName="race" Type="int8" Size="1" Offset="0x2d0"/>
-		<Data ElementName="gender" Type="int8" Size="1" Offset="0x2d1"/>
-	</Struct>
-	<Struct Name="Substruct_SpawnInfo" ClientVersion="860" ByteSize="0x2d6">
-		<Data ElementName="hp_percent" Type="int32" Size="1" Offset="0x0"/>
-		<Data ElementName="power_percent" Type="int32" Size="1" Offset="0x4"/>
-		<Data ElementName="spell_effects" Substruct="Substruct_TargetSpellInfo" Size="30" Offset="0x8"/>
-		<Data ElementName="target_id" Type="int32" Size="1" Offset="0x116"/>
-		<Data ElementName="follow_target" Type="int32" Size="1" Offset="0x11a"/>
-		<Data ElementName="unknown3b" Type="int8" Size="8" Offset="0x11e"/>
-		<Data ElementName="adv_class" Type="int8" Size="1" Offset="0x126"/>
-		<Data ElementName="orig_level" Type="int8" Size="1" Offset="0x127"/>
-		<Data ElementName="level" Type="int8" Size="1" Offset="0x128"/>
-		<Data ElementName="difficulty" Type="int8" Size="1" Offset="0x129"/>
-		<Data ElementName="unknown5" Type="int8" Size="1" Offset="0x12a"/>
-		<Data ElementName="heroic_flag" Type="int8" Size="1" Offset="0x12b"/>
-		<Data ElementName="entityFlags" Type="int32" Size="1" Offset="0x12c"/>
-		<Data ElementName="unknownpkShort" Type="int16" Size="1" Offset="0x130"/>
-		<Data ElementName="unknown6" Type="int8" Size="6" Offset="0x132"/>
-		<Data ElementName="heatLevel" Type="int8" Size="1" Offset="0x138"/>
-		<Data ElementName="torch_color" Type="EQ2_Color" Size="1" Offset="0x139"/>
-		<Data ElementName="model_type" Type="int16" Size="1" Offset="0x13c"/>
-		<Data ElementName="soga_model_type" Type="int16" Size="1" Offset="0x13e"/>
-		<Data ElementName="skin_color" Type="EQ2_Color" Size="1" Offset="0x140"/>
-		<Data ElementName="eye_color" Type="EQ2_Color" Size="1" Offset="0x143"/>
-		<Data ElementName="soga_eye_color" Type="EQ2_Color" Size="1" Offset="0x146"/>
-		<Data ElementName="soga_skin_color" Type="EQ2_Color" Size="1" Offset="0x149"/>
-		<Data ElementName="equipment_types" Type="int16" Size="24" Offset="0x14c"/>
-		<Data ElementName="textures_slot_type" Type="int16" Size="1" Offset="0x17c"/>
-		<Data ElementName="hair_type_id" Type="int16" Size="1" Offset="0x17e"/>
-		<Data ElementName="facial_hair_type_id" Type="int16" Size="1" Offset="0x180"/>
-		<Data ElementName="wing_type_id" Type="int16" Size="1" Offset="0x182"/>
-		<Data ElementName="chest_type_id" Type="int16" Size="1" Offset="0x184"/>
-		<Data ElementName="legs_type_id" Type="int16" Size="1" Offset="0x186"/>
-		<Data ElementName="soga_hair_type_id" Type="int16" Size="1" Offset="0x188"/>
-		<Data ElementName="soga_facial_hair_type_id" Type="int16" Size="1" Offset="0x18a"/>
-		<Data ElementName="equipment_colors" Type="EQ2_Color" Size="24" Offset="0x18c"/>
-		<Data ElementName="textures_slot_color" Type="EQ2_Color" Size="1" Offset="0x1d4"/>
-		<Data ElementName="hair_type_color" Type="EQ2_Color" Size="1" Offset="0x1d7"/>
-		<Data ElementName="hair_face_color" Type="EQ2_Color" Size="1" Offset="0x1da"/>
-		<Data ElementName="wing_color1" Type="EQ2_Color" Size="1" Offset="0x1dd"/>
-		<Data ElementName="chest_type_color" Type="EQ2_Color" Size="1" Offset="0x1e0"/>
-		<Data ElementName="legs_type_color" Type="EQ2_Color" Size="1" Offset="0x1e3"/>
-		<Data ElementName="equipment_highlights" Type="EQ2_Color" Size="24" Offset="0x1e6"/>
-		<Data ElementName="textures_slot_highlight" Type="EQ2_Color" Size="1" Offset="0x22e"/>
-		<Data ElementName="hair_type_highlight_color" Type="EQ2_Color" Size="1" Offset="0x231"/>
-		<Data ElementName="hair_face_highlight_color" Type="EQ2_Color" Size="1" Offset="0x234"/>
-		<Data ElementName="wing_color2" Type="EQ2_Color" Size="1" Offset="0x237"/>
-		<Data ElementName="chest_type_highlight" Type="EQ2_Color" Size="1" Offset="0x23a"/>
-		<Data ElementName="legs_type_highlight" Type="EQ2_Color" Size="1" Offset="0x23d"/>
-		<Data ElementName="soga_hair_type_color" Type="EQ2_Color" Size="1" Offset="0x240"/>
-		<Data ElementName="soga_hair_type_highlight_color" Type="EQ2_Color" Size="1" Offset="0x243"/>
-		<Data ElementName="soga_hair_face_color" Type="EQ2_Color" Size="1" Offset="0x246"/>
-		<Data ElementName="soga_hair_face_highlight_color" Type="EQ2_Color" Size="1" Offset="0x249"/>
-		<Data ElementName="sliderBytes" Type="sint8" Size="26" Offset="0x24c"/>
-		<Data ElementName="sogaSliderBytes" Type="sint8" Size="26" Offset="0x266"/>
-		<Data ElementName="heraldry" Type="int8" Size="7" Offset="0x280"/>
-		<Data ElementName="alignFiller" Type="int8" Size="1" Offset="0x287"/>
-		<Data ElementName="mount_type" Type="int16" Size="1" Offset="0x288"/>
-		<Data ElementName="mount_color" Type="EQ2_Color" Size="1" Offset="0x28a"/>
-		<Data ElementName="mount_saddle_color" Type="EQ2_Color" Size="1" Offset="0x28d"/>
-		<Data ElementName="hair_color1" Type="EQ2_Color" Size="1" Offset="0x290"/>
-		<Data ElementName="hair_color2" Type="EQ2_Color" Size="1" Offset="0x293"/>
-		<Data ElementName="hair_highlight" Type="EQ2_Color" Size="1" Offset="0x296"/>
-		<Data ElementName="soga_hair_color1" Type="EQ2_Color" Size="1" Offset="0x299"/>
-		<Data ElementName="soga_hair_color2" Type="EQ2_Color" Size="1" Offset="0x29c"/>
-		<Data ElementName="soga_hair_highlight" Type="EQ2_Color" Size="1" Offset="0x29f"/>
-		<Data ElementName="combat_voice" Type="int16" Size="1" Offset="0x2a2"/>
-		<Data ElementName="emote_voice" Type="int16" Size="1" Offset="0x2a4"/>
-		<Data ElementName="unknown17" Type="int8" Size="2" Offset="0x2a6"/>
-		<Data ElementName="visual_flag" Type="int8" Size="1" Offset="0x2a8"/>
-		<Data ElementName="interaction_flag" Type="int8" Size="1" Offset="0x2a9"/>
-		<Data ElementName="flag3" Type="int8" Size="1" Offset="0x2aa"/>
-		<Data ElementName="flag4" Type="int8" Size="1" Offset="0x2ab"/>
-		<Data ElementName="primary_slot_state" Type="int16" Size="1" Offset="0x2ac"/>
-		<Data ElementName="secondary_slot_state" Type="int16" Size="1" Offset="0x2ae"/>
-		<Data ElementName="ranged_slot_state" Type="int16" Size="1" Offset="0x2b0"/>
-		<Data ElementName="spell_visuals" Type="int16" Size="8" Offset="0x2b2"/>
-		<Data ElementName="spell_visual_levels" Type="int8" Size="8" Offset="0x2c2"/>
-		<Data ElementName="action_state" Type="int16" Size="1" Offset="0x2ca"/>
-		<Data ElementName="visual_state" Type="int16" Size="1" Offset="0x2cc"/>
-		<Data ElementName="mood_state" Type="int16" Size="1" Offset="0x2ce"/>
-		<Data ElementName="emote_state" Type="int16" Size="1" Offset="0x2d0"/>
-		<Data ElementName="unknown19" Type="int8" Size="2" Offset="0x2d2"/>
-		<Data ElementName="race" Type="int8" Size="1" Offset="0x2d4"/>
-		<Data ElementName="gender" Type="int8" Size="1" Offset="0x2d5"/>
-	</Struct>
-	<Struct Name="Substruct_SpawnInfo" ClientVersion="861" ByteSize="0x2d6">
-		<Data ElementName="hp_percent" Type="int32" Size="1" Offset="0x0"/>
-		<Data ElementName="power_percent" Type="int32" Size="1" Offset="0x4"/>
-		<Data ElementName="spell_effects" Substruct="Substruct_TargetSpellInfo" Size="30" Offset="0x8"/>
-		<Data ElementName="target_id" Type="int32" Size="1" Offset="0x116"/>
-		<Data ElementName="follow_target" Type="int32" Size="1" Offset="0x11a"/>
-		<Data ElementName="unknown3b" Type="int8" Size="8" Offset="0x11e"/>
-		<Data ElementName="adv_class" Type="int8" Size="1" Offset="0x126"/>
-		<Data ElementName="orig_level" Type="int8" Size="1" Offset="0x127"/>
-		<Data ElementName="level" Type="int8" Size="1" Offset="0x128"/>
-		<Data ElementName="difficulty" Type="int8" Size="1" Offset="0x129"/>
-		<Data ElementName="unknown5" Type="int8" Size="1" Offset="0x12a"/>
-		<Data ElementName="heroic_flag" Type="int8" Size="1" Offset="0x12b"/>
-		<Data ElementName="entityFlags" Type="int32" Size="1" Offset="0x12c"/>
-		<Data ElementName="unknownpkShort" Type="int16" Size="1" Offset="0x130"/>
-		<Data ElementName="unknown6" Type="int8" Size="6" Offset="0x132"/>
-		<Data ElementName="heatLevel" Type="int8" Size="1" Offset="0x138"/>
-		<Data ElementName="torch_color" Type="EQ2_Color" Size="1" Offset="0x139"/>
-		<Data ElementName="model_type" Type="int16" Size="1" Offset="0x13c"/>
-		<Data ElementName="soga_model_type" Type="int16" Size="1" Offset="0x13e"/>
-		<Data ElementName="skin_color" Type="EQ2_Color" Size="1" Offset="0x140"/>
-		<Data ElementName="eye_color" Type="EQ2_Color" Size="1" Offset="0x143"/>
-		<Data ElementName="soga_eye_color" Type="EQ2_Color" Size="1" Offset="0x146"/>
-		<Data ElementName="soga_skin_color" Type="EQ2_Color" Size="1" Offset="0x149"/>
-		<Data ElementName="equipment_types" Type="int16" Size="24" Offset="0x14c"/>
-		<Data ElementName="textures_slot_type" Type="int16" Size="1" Offset="0x17c"/>
-		<Data ElementName="hair_type_id" Type="int16" Size="1" Offset="0x17e"/>
-		<Data ElementName="facial_hair_type_id" Type="int16" Size="1" Offset="0x180"/>
-		<Data ElementName="wing_type_id" Type="int16" Size="1" Offset="0x182"/>
-		<Data ElementName="chest_type_id" Type="int16" Size="1" Offset="0x184"/>
-		<Data ElementName="legs_type_id" Type="int16" Size="1" Offset="0x186"/>
-		<Data ElementName="soga_hair_type_id" Type="int16" Size="1" Offset="0x188"/>
-		<Data ElementName="soga_facial_hair_type_id" Type="int16" Size="1" Offset="0x18a"/>
-		<Data ElementName="equipment_colors" Type="EQ2_Color" Size="24" Offset="0x18c"/>
-		<Data ElementName="textures_slot_color" Type="EQ2_Color" Size="1" Offset="0x1d4"/>
-		<Data ElementName="hair_type_color" Type="EQ2_Color" Size="1" Offset="0x1d7"/>
-		<Data ElementName="hair_face_color" Type="EQ2_Color" Size="1" Offset="0x1da"/>
-		<Data ElementName="wing_color1" Type="EQ2_Color" Size="1" Offset="0x1dd"/>
-		<Data ElementName="chest_type_color" Type="EQ2_Color" Size="1" Offset="0x1e0"/>
-		<Data ElementName="legs_type_color" Type="EQ2_Color" Size="1" Offset="0x1e3"/>
-		<Data ElementName="equipment_highlights" Type="EQ2_Color" Size="24" Offset="0x1e6"/>
-		<Data ElementName="textures_slot_highlight" Type="EQ2_Color" Size="1" Offset="0x22e"/>
-		<Data ElementName="hair_type_highlight_color" Type="EQ2_Color" Size="1" Offset="0x231"/>
-		<Data ElementName="hair_face_highlight_color" Type="EQ2_Color" Size="1" Offset="0x234"/>
-		<Data ElementName="wing_color2" Type="EQ2_Color" Size="1" Offset="0x237"/>
-		<Data ElementName="chest_type_highlight" Type="EQ2_Color" Size="1" Offset="0x23a"/>
-		<Data ElementName="legs_type_highlight" Type="EQ2_Color" Size="1" Offset="0x23d"/>
-		<Data ElementName="soga_hair_type_color" Type="EQ2_Color" Size="1" Offset="0x240"/>
-		<Data ElementName="soga_hair_type_highlight_color" Type="EQ2_Color" Size="1" Offset="0x243"/>
-		<Data ElementName="soga_hair_face_color" Type="EQ2_Color" Size="1" Offset="0x246"/>
-		<Data ElementName="soga_hair_face_highlight_color" Type="EQ2_Color" Size="1" Offset="0x249"/>
-		<Data ElementName="sliderBytes" Type="sint8" Size="26" Offset="0x24c"/>
-		<Data ElementName="sogaSliderBytes" Type="sint8" Size="26" Offset="0x266"/>
-		<Data ElementName="heraldry" Type="int8" Size="7" Offset="0x280"/>
-		<Data ElementName="alignFiller" Type="int8" Size="1" Offset="0x287"/>
-		<Data ElementName="mount_type" Type="int16" Size="1" Offset="0x288"/>
-		<Data ElementName="mount_color" Type="EQ2_Color" Size="1" Offset="0x28a"/>
-		<Data ElementName="mount_saddle_color" Type="EQ2_Color" Size="1" Offset="0x28d"/>
-		<Data ElementName="hair_color1" Type="EQ2_Color" Size="1" Offset="0x290"/>
-		<Data ElementName="hair_color2" Type="EQ2_Color" Size="1" Offset="0x293"/>
-		<Data ElementName="hair_highlight" Type="EQ2_Color" Size="1" Offset="0x296"/>
-		<Data ElementName="soga_hair_color1" Type="EQ2_Color" Size="1" Offset="0x299"/>
-		<Data ElementName="soga_hair_color2" Type="EQ2_Color" Size="1" Offset="0x29c"/>
-		<Data ElementName="soga_hair_highlight" Type="EQ2_Color" Size="1" Offset="0x29f"/>
-		<Data ElementName="combat_voice" Type="int16" Size="1" Offset="0x2a2"/>
-		<Data ElementName="emote_voice" Type="int16" Size="1" Offset="0x2a4"/>
-		<Data ElementName="unknown17" Type="int8" Size="2" Offset="0x2a6"/>
-		<Data ElementName="visual_flag" Type="int8" Size="1" Offset="0x2a8"/>
-		<Data ElementName="interaction_flag" Type="int8" Size="1" Offset="0x2a9"/>
-		<Data ElementName="flag3" Type="int8" Size="1" Offset="0x2aa"/>
-		<Data ElementName="flag4" Type="int8" Size="1" Offset="0x2ab"/>
-		<Data ElementName="primary_slot_state" Type="int16" Size="1" Offset="0x2ac"/>
-		<Data ElementName="secondary_slot_state" Type="int16" Size="1" Offset="0x2ae"/>
-		<Data ElementName="ranged_slot_state" Type="int16" Size="1" Offset="0x2b0"/>
-		<Data ElementName="spell_visuals" Type="int16" Size="8" Offset="0x2b2"/>
-		<Data ElementName="spell_visual_levels" Type="int8" Size="8" Offset="0x2c2"/>
-		<Data ElementName="action_state" Type="int16" Size="1" Offset="0x2ca"/>
-		<Data ElementName="visual_state" Type="int16" Size="1" Offset="0x2cc"/>
-		<Data ElementName="mood_state" Type="int16" Size="1" Offset="0x2ce"/>
-		<Data ElementName="emote_state" Type="int16" Size="1" Offset="0x2d0"/>
-		<Data ElementName="unknown19" Type="int8" Size="2" Offset="0x2d2"/>
-		<Data ElementName="race" Type="int8" Size="1" Offset="0x2d4"/>
-		<Data ElementName="gender" Type="int8" Size="1" Offset="0x2d5"/>
-	</Struct>
-	<Struct Name="Substruct_SpawnInfo" ClientVersion="864" ByteSize="0x2d2">
-		<Data ElementName="hp_percent" Type="int32" Size="1" Offset="0x0"/>
-		<Data ElementName="power_percent" Type="int32" Size="1" Offset="0x4"/>
-		<Data ElementName="spell_effects" Substruct="Substruct_TargetSpellInfo" Size="30" Offset="0x8"/>
-		<Data ElementName="target_id" Type="int32" Size="1" Offset="0x116"/>
-		<Data ElementName="follow_target" Type="int32" Size="1" Offset="0x11a"/>
-		<Data ElementName="unknown3b" Type="int8" Size="8" Offset="0x11e"/>
-		<Data ElementName="adv_class" Type="int8" Size="1" Offset="0x126"/>
-		<Data ElementName="orig_level" Type="int8" Size="1" Offset="0x127"/>
-		<Data ElementName="level" Type="int8" Size="1" Offset="0x128"/>
-		<Data ElementName="difficulty" Type="int8" Size="1" Offset="0x129"/>
-		<Data ElementName="unknown5" Type="int8" Size="1" Offset="0x12a"/>
-		<Data ElementName="heroic_flag" Type="int8" Size="1" Offset="0x12b"/>
-		<Data ElementName="entityFlags" Type="int32" Size="1" Offset="0x12c"/>
-		<Data ElementName="unknownpkShort" Type="int16" Size="1" Offset="0x130"/>
-		<Data ElementName="unknown6" Type="int8" Size="6" Offset="0x132"/>
+		<Data ElementName="entityFlags2" Type="int32" Size="1" Offset="0x130"/>
+		<Data ElementName="archetype" Type="int8" Size="1" Offset="0x134"/>
+		<Data ElementName="unknown6" Type="int8" Size="3" Offset="0x135"/>
 		<Data ElementName="heatLevel" Type="int8" Size="1" Offset="0x138"/>
 		<Data ElementName="torch_color" Type="EQ2_Color" Size="1" Offset="0x139"/>
 		<Data ElementName="model_type" Type="int16" Size="1" Offset="0x13c"/>
@@ -869,11 +638,87 @@
 		<Data ElementName="emote_voice" Type="int16" Size="1" Offset="0x2a4"/>
 		<Data ElementName="visual_flag" Type="int8" Size="1" Offset="0x2a6"/>
 		<Data ElementName="interaction_flag" Type="int8" Size="1" Offset="0x2a7"/>
-		<Data ElementName="flag3" Type="int8" Size="1" Offset="0x2a8"/>
-		<Data ElementName="flag4" Type="int8" Size="1" Offset="0x2a9"/>
-		<Data ElementName="primary_slot_state" Type="int16" Size="1" Offset="0x2aa"/>
-		<Data ElementName="secondary_slot_state" Type="int16" Size="1" Offset="0x2ac"/>
-		<Data ElementName="ranged_slot_state" Type="int16" Size="1" Offset="0x2ae"/>
+		<Data ElementName="unknown18" Type="int8" Size="32" Offset="0x2a8"/>
+		<Data ElementName="action_state" Type="int16" Size="1" Offset="0x2c8"/>
+		<Data ElementName="visual_state" Type="int16" Size="1" Offset="0x2ca"/>
+		<Data ElementName="mood_state" Type="int16" Size="1" Offset="0x2cc"/>
+		<Data ElementName="race" Type="int8" Size="1" Offset="0x2ce"/>
+		<Data ElementName="gender" Type="int8" Size="1" Offset="0x2cf"/>
+	</Struct>
+	<Struct Name="Substruct_SpawnInfo" ClientVersion="839" ByteSize="0x2d2">
+		<Data ElementName="hp_percent" Type="int32" Size="1" Offset="0x0"/>
+		<Data ElementName="power_percent" Type="int32" Size="1" Offset="0x4"/>
+		<Data ElementName="spell_effects" Substruct="Substruct_TargetSpellInfo" Size="30" Offset="0x8"/>
+		<Data ElementName="target_id" Type="int32" Size="1" Offset="0x116"/>
+		<Data ElementName="follow_target" Type="int32" Size="1" Offset="0x11a"/>
+		<Data ElementName="id_unknown" Type="int32" Size="1" Offset="0x11e"/>
+		<Data ElementName="pet_owner_id" Type="int32" Size="1" Offset="0x122"/>
+		<Data ElementName="adv_class" Type="int8" Size="1" Offset="0x126"/>
+		<Data ElementName="orig_level" Type="int8" Size="1" Offset="0x127"/>
+		<Data ElementName="level" Type="int8" Size="1" Offset="0x128"/>
+		<Data ElementName="difficulty" Type="int8" Size="1" Offset="0x129"/>
+		<Data ElementName="unknown5" Type="int8" Size="1" Offset="0x12a"/>
+		<Data ElementName="heroic_flag" Type="int8" Size="1" Offset="0x12b"/>
+		<Data ElementName="entityFlags" Type="int32" Size="1" Offset="0x12c"/>
+		<Data ElementName="entityFlags2" Type="int32" Size="1" Offset="0x130"/>
+		<Data ElementName="archetype" Type="int8" Size="1" Offset="0x134"/>
+		<Data ElementName="unknown6" Type="int8" Size="3" Offset="0x135"/>
+		<Data ElementName="heatLevel" Type="int8" Size="1" Offset="0x138"/>
+		<Data ElementName="torch_color" Type="EQ2_Color" Size="1" Offset="0x139"/>
+		<Data ElementName="model_type" Type="int16" Size="1" Offset="0x13c"/>
+		<Data ElementName="soga_model_type" Type="int16" Size="1" Offset="0x13e"/>
+		<Data ElementName="skin_color" Type="EQ2_Color" Size="1" Offset="0x140"/>
+		<Data ElementName="eye_color" Type="EQ2_Color" Size="1" Offset="0x143"/>
+		<Data ElementName="soga_eye_color" Type="EQ2_Color" Size="1" Offset="0x146"/>
+		<Data ElementName="soga_skin_color" Type="EQ2_Color" Size="1" Offset="0x149"/>
+		<Data ElementName="equipment_types" Type="int16" Size="24" Offset="0x14c"/>
+		<Data ElementName="textures_slot_type" Type="int16" Size="1" Offset="0x17c"/>
+		<Data ElementName="hair_type_id" Type="int16" Size="1" Offset="0x17e"/>
+		<Data ElementName="facial_hair_type_id" Type="int16" Size="1" Offset="0x180"/>
+		<Data ElementName="wing_type_id" Type="int16" Size="1" Offset="0x182"/>
+		<Data ElementName="chest_type_id" Type="int16" Size="1" Offset="0x184"/>
+		<Data ElementName="legs_type_id" Type="int16" Size="1" Offset="0x186"/>
+		<Data ElementName="soga_hair_type_id" Type="int16" Size="1" Offset="0x188"/>
+		<Data ElementName="soga_facial_hair_type_id" Type="int16" Size="1" Offset="0x18a"/>
+		<Data ElementName="equipment_colors" Type="EQ2_Color" Size="24" Offset="0x18c"/>
+		<Data ElementName="textures_slot_color" Type="EQ2_Color" Size="1" Offset="0x1d4"/>
+		<Data ElementName="hair_type_color" Type="EQ2_Color" Size="1" Offset="0x1d7"/>
+		<Data ElementName="hair_face_color" Type="EQ2_Color" Size="1" Offset="0x1da"/>
+		<Data ElementName="wing_color1" Type="EQ2_Color" Size="1" Offset="0x1dd"/>
+		<Data ElementName="chest_type_color" Type="EQ2_Color" Size="1" Offset="0x1e0"/>
+		<Data ElementName="legs_type_color" Type="EQ2_Color" Size="1" Offset="0x1e3"/>
+		<Data ElementName="equipment_highlights" Type="EQ2_Color" Size="24" Offset="0x1e6"/>
+		<Data ElementName="textures_slot_highlight" Type="EQ2_Color" Size="1" Offset="0x22e"/>
+		<Data ElementName="hair_type_highlight_color" Type="EQ2_Color" Size="1" Offset="0x231"/>
+		<Data ElementName="hair_face_highlight_color" Type="EQ2_Color" Size="1" Offset="0x234"/>
+		<Data ElementName="wing_color2" Type="EQ2_Color" Size="1" Offset="0x237"/>
+		<Data ElementName="chest_type_highlight" Type="EQ2_Color" Size="1" Offset="0x23a"/>
+		<Data ElementName="legs_type_highlight" Type="EQ2_Color" Size="1" Offset="0x23d"/>
+		<Data ElementName="soga_hair_type_color" Type="EQ2_Color" Size="1" Offset="0x240"/>
+		<Data ElementName="soga_hair_type_highlight_color" Type="EQ2_Color" Size="1" Offset="0x243"/>
+		<Data ElementName="soga_hair_face_color" Type="EQ2_Color" Size="1" Offset="0x246"/>
+		<Data ElementName="soga_hair_face_highlight_color" Type="EQ2_Color" Size="1" Offset="0x249"/>
+		<Data ElementName="sliderBytes" Type="sint8" Size="26" Offset="0x24c"/>
+		<Data ElementName="sogaSliderBytes" Type="sint8" Size="26" Offset="0x266"/>
+		<Data ElementName="heraldry" Type="int8" Size="7" Offset="0x280"/>
+		<Data ElementName="alignFiller" Type="int8" Size="1" Offset="0x287"/>
+		<Data ElementName="mount_type" Type="int16" Size="1" Offset="0x288"/>
+		<Data ElementName="mount_color" Type="EQ2_Color" Size="1" Offset="0x28a"/>
+		<Data ElementName="mount_saddle_color" Type="EQ2_Color" Size="1" Offset="0x28d"/>
+		<Data ElementName="hair_color1" Type="EQ2_Color" Size="1" Offset="0x290"/>
+		<Data ElementName="hair_color2" Type="EQ2_Color" Size="1" Offset="0x293"/>
+		<Data ElementName="hair_highlight" Type="EQ2_Color" Size="1" Offset="0x296"/>
+		<Data ElementName="soga_hair_color1" Type="EQ2_Color" Size="1" Offset="0x299"/>
+		<Data ElementName="soga_hair_color2" Type="EQ2_Color" Size="1" Offset="0x29c"/>
+		<Data ElementName="soga_hair_highlight" Type="EQ2_Color" Size="1" Offset="0x29f"/>
+		<Data ElementName="combat_voice" Type="int16" Size="1" Offset="0x2a2"/>
+		<Data ElementName="emote_voice" Type="int16" Size="1" Offset="0x2a4"/>
+		<Data ElementName="ammo_type" Type="int16" Size="1" Offset="0x2a6"/>
+		<Data ElementName="visual_flag" Type="int8" Size="1" Offset="0x2a8"/>
+		<Data ElementName="interaction_flag" Type="int8" Size="1" Offset="0x2a9"/>
+		<Data ElementName="flag3" Type="int8" Size="1" Offset="0x2aa"/>
+		<Data ElementName="flag4" Type="int8" Size="1" Offset="0x2ab"/>
+		<Data ElementName="size_mod" Type="float" Size="1" Offset="0x2ac"/>
 		<Data ElementName="spell_visuals" Type="int16" Size="8" Offset="0x2b0"/>
 		<Data ElementName="spell_visual_levels" Type="int8" Size="8" Offset="0x2c0"/>
 		<Data ElementName="action_state" Type="int16" Size="1" Offset="0x2c8"/>
@@ -883,13 +728,102 @@
 		<Data ElementName="race" Type="int8" Size="1" Offset="0x2d0"/>
 		<Data ElementName="gender" Type="int8" Size="1" Offset="0x2d1"/>
 	</Struct>
-	<Struct Name="Substruct_SpawnInfo" ClientVersion="936" ByteSize="0x2b5">
+	<Struct Name="Substruct_SpawnInfo" ClientVersion="864" ByteSize="0x2da">
 		<Data ElementName="hp_percent" Type="int32" Size="1" Offset="0x0"/>
 		<Data ElementName="power_percent" Type="int32" Size="1" Offset="0x4"/>
-		<Data ElementName="unknown3" Type="int8" Size="256" Offset="0x8"/>
+		<Data ElementName="spell_effects" Substruct="Substruct_TargetSpellInfo" Size="30" Offset="0x8"/>
+		<Data ElementName="target_id" Type="int32" Size="1" Offset="0x116"/>
+		<Data ElementName="follow_target" Type="int32" Size="1" Offset="0x11a"/>
+		<Data ElementName="id_unknown" Type="int32" Size="1" Offset="0x11e"/>
+		<Data ElementName="pet_owner_id" Type="int32" Size="1" Offset="0x122"/>
+		<Data ElementName="adv_class" Type="int8" Size="1" Offset="0x126"/>
+		<Data ElementName="orig_level" Type="int8" Size="1" Offset="0x127"/>
+		<Data ElementName="level" Type="int8" Size="1" Offset="0x128"/>
+		<Data ElementName="difficulty" Type="int8" Size="1" Offset="0x129"/>
+		<Data ElementName="unknown5" Type="int8" Size="1" Offset="0x12a"/>
+		<Data ElementName="heroic_flag" Type="int8" Size="1" Offset="0x12b"/>
+		<Data ElementName="entityFlags" Type="int32" Size="1" Offset="0x12c"/>
+		<Data ElementName="entityFlags2" Type="int32" Size="1" Offset="0x130"/>
+		<Data ElementName="archetype" Type="int8" Size="1" Offset="0x134"/>
+		<Data ElementName="unknown6" Type="int8" Size="3" Offset="0x135"/>
+		<Data ElementName="heatLevel" Type="int8" Size="1" Offset="0x138"/>
+		<Data ElementName="torch_color" Type="EQ2_Color" Size="1" Offset="0x139"/>
+		<Data ElementName="model_type" Type="int16" Size="1" Offset="0x13c"/>
+		<Data ElementName="soga_model_type" Type="int16" Size="1" Offset="0x13e"/>
+		<Data ElementName="skin_color" Type="EQ2_Color" Size="1" Offset="0x140"/>
+		<Data ElementName="eye_color" Type="EQ2_Color" Size="1" Offset="0x143"/>
+		<Data ElementName="model_color" Type="EQ2_Color" Size="1" Offset="0x146"/>
+		<Data ElementName="soga_eye_color" Type="EQ2_Color" Size="1" Offset="0x149"/>
+		<Data ElementName="soga_skin_color" Type="EQ2_Color" Size="1" Offset="0x14c"/>
+		<Data ElementName="soga_model_color" Type="EQ2_Color" Size="1" Offset="0x14f"/>
+		<Data ElementName="equipment_types" Type="int16" Size="24" Offset="0x152"/>
+		<Data ElementName="textures_slot_type" Type="int16" Size="1" Offset="0x182"/>
+		<Data ElementName="hair_type_id" Type="int16" Size="1" Offset="0x184"/>
+		<Data ElementName="facial_hair_type_id" Type="int16" Size="1" Offset="0x186"/>
+		<Data ElementName="wing_type_id" Type="int16" Size="1" Offset="0x188"/>
+		<Data ElementName="chest_type_id" Type="int16" Size="1" Offset="0x18a"/>
+		<Data ElementName="legs_type_id" Type="int16" Size="1" Offset="0x18c"/>
+		<Data ElementName="soga_hair_type_id" Type="int16" Size="1" Offset="0x18e"/>
+		<Data ElementName="soga_facial_hair_type_id" Type="int16" Size="1" Offset="0x190"/>
+		<Data ElementName="equipment_colors" Type="EQ2_Color" Size="24" Offset="0x192"/>
+		<Data ElementName="textures_slot_color" Type="EQ2_Color" Size="1" Offset="0x1da"/>
+		<Data ElementName="hair_type_color" Type="EQ2_Color" Size="1" Offset="0x1dd"/>
+		<Data ElementName="hair_face_color" Type="EQ2_Color" Size="1" Offset="0x1e0"/>
+		<Data ElementName="wing_color1" Type="EQ2_Color" Size="1" Offset="0x1e3"/>
+		<Data ElementName="chest_type_color" Type="EQ2_Color" Size="1" Offset="0x1e6"/>
+		<Data ElementName="legs_type_color" Type="EQ2_Color" Size="1" Offset="0x1e9"/>
+		<Data ElementName="equipment_highlights" Type="EQ2_Color" Size="24" Offset="0x1ec"/>
+		<Data ElementName="textures_slot_highlight" Type="EQ2_Color" Size="1" Offset="0x234"/>
+		<Data ElementName="hair_type_highlight_color" Type="EQ2_Color" Size="1" Offset="0x237"/>
+		<Data ElementName="hair_face_highlight_color" Type="EQ2_Color" Size="1" Offset="0x23a"/>
+		<Data ElementName="wing_color2" Type="EQ2_Color" Size="1" Offset="0x23d"/>
+		<Data ElementName="chest_type_highlight" Type="EQ2_Color" Size="1" Offset="0x240"/>
+		<Data ElementName="legs_type_highlight" Type="EQ2_Color" Size="1" Offset="0x243"/>
+		<Data ElementName="soga_hair_type_color" Type="EQ2_Color" Size="1" Offset="0x246"/>
+		<Data ElementName="soga_hair_type_highlight_color" Type="EQ2_Color" Size="1" Offset="0x249"/>
+		<Data ElementName="soga_hair_face_color" Type="EQ2_Color" Size="1" Offset="0x24c"/>
+		<Data ElementName="soga_hair_face_highlight_color" Type="EQ2_Color" Size="1" Offset="0x24f"/>
+		<Data ElementName="sliderBytes" Type="sint8" Size="26" Offset="0x252"/>
+		<Data ElementName="sogaSliderBytes" Type="sint8" Size="26" Offset="0x26c"/>
+		<Data ElementName="heraldry" Type="int8" Size="7" Offset="0x286"/>
+		<Data ElementName="alignFiller" Type="int8" Size="1" Offset="0x28d"/>
+		<Data ElementName="mount_type" Type="int16" Size="1" Offset="0x28e"/>
+		<Data ElementName="mount_color" Type="EQ2_Color" Size="1" Offset="0x290"/>
+		<Data ElementName="mount_saddle_color" Type="EQ2_Color" Size="1" Offset="0x293"/>
+		<Data ElementName="hair_color1" Type="EQ2_Color" Size="1" Offset="0x296"/>
+		<Data ElementName="hair_color2" Type="EQ2_Color" Size="1" Offset="0x299"/>
+		<Data ElementName="hair_highlight" Type="EQ2_Color" Size="1" Offset="0x29c"/>
+		<Data ElementName="soga_hair_color1" Type="EQ2_Color" Size="1" Offset="0x29f"/>
+		<Data ElementName="soga_hair_color2" Type="EQ2_Color" Size="1" Offset="0x2a2"/>
+		<Data ElementName="soga_hair_highlight" Type="EQ2_Color" Size="1" Offset="0x2a5"/>
+		<Data ElementName="combat_voice" Type="int16" Size="1" Offset="0x2a8"/>
+		<Data ElementName="emote_voice" Type="int16" Size="1" Offset="0x2aa"/>
+		<Data ElementName="ammo_type" Type="int16" Size="1" Offset="0x2ac"/>
+		<Data ElementName="unknown17" Type="int16" Size="1" Offset="0x2ae"/>
+		<Data ElementName="visual_flag" Type="int8" Size="1" Offset="0x2b0"/>
+		<Data ElementName="interaction_flag" Type="int8" Size="1" Offset="0x2b1"/>
+		<Data ElementName="flag3" Type="int8" Size="1" Offset="0x2b2"/>
+		<Data ElementName="flag4" Type="int8" Size="1" Offset="0x2b3"/>
+		<Data ElementName="size_mod" Type="float" Size="1" Offset="0x2b4"/>
+		<Data ElementName="spell_visuals" Type="int16" Size="8" Offset="0x2b8"/>
+		<Data ElementName="spell_visual_levels" Type="int8" Size="8" Offset="0x2c8"/>
+		<Data ElementName="action_state" Type="int16" Size="1" Offset="0x2d0"/>
+		<Data ElementName="visual_state" Type="int16" Size="1" Offset="0x2d2"/>
+		<Data ElementName="mood_state" Type="int16" Size="1" Offset="0x2d4"/>
+		<Data ElementName="emote_state" Type="int16" Size="1" Offset="0x2d6"/>
+		<Data ElementName="race" Type="int8" Size="1" Offset="0x2d8"/>
+		<Data ElementName="gender" Type="int8" Size="1" Offset="0x2d9"/>
+	</Struct>
+	<Struct Name="Substruct_SpawnInfo" ClientVersion="936" ByteSize="0x2bd">
+		<Data ElementName="hp_percent" Type="int32" Size="1" Offset="0x0"/>
+		<Data ElementName="power_percent" Type="int32" Size="1" Offset="0x4"/>
+		<Data ElementName="spell_effects" Substruct="Substruct_TargetSpellInfo" Size="30" Offset="0x8"/>
+		<Data ElementName="target_id" Type="int32" Size="1" Offset="0xf8"/>
+		<Data ElementName="follow_target" Type="int32" Size="1" Offset="0xfc"/>
+		<Data ElementName="id_unknown" Type="int32" Size="1" Offset="0x100"/>
+		<Data ElementName="pet_owner_id" Type="int32" Size="1" Offset="0x104"/>
 		<Data ElementName="entityFlags" Type="int32" Size="1" Offset="0x108"/>
-		<Data ElementName="unknownpkShort" Type="int16" Size="1" Offset="0x10c"/>
-		<Data ElementName="unknown6" Type="int8" Size="2" Offset="0x10e"/>
+		<Data ElementName="entityFlags2" Type="int32" Size="1" Offset="0x10c"/>
 		<Data ElementName="orig_level" Type="int8" Size="1" Offset="0x110"/>
 		<Data ElementName="level" Type="int8" Size="1" Offset="0x111"/>
 		<Data ElementName="unknown5" Type="int8" Size="1" Offset="0x112"/>
@@ -934,43 +868,135 @@
 		<Data ElementName="soga_hair_face_highlight_color" Type="EQ2_Color" Size="1" Offset="0x22f"/>
 		<Data ElementName="sliderBytes" Type="sint8" Size="26" Offset="0x232"/>
 		<Data ElementName="sogaSliderBytes" Type="sint8" Size="26" Offset="0x24c"/>
-		<Data ElementName="mount_type" Type="int16" Size="1" Offset="0x266"/>
-		<Data ElementName="mount_color" Type="EQ2_Color" Size="1" Offset="0x268"/>
-		<Data ElementName="mount_saddle_color" Type="EQ2_Color" Size="1" Offset="0x26b"/>
-		<Data ElementName="hair_color1" Type="EQ2_Color" Size="1" Offset="0x26e"/>
-		<Data ElementName="hair_color2" Type="EQ2_Color" Size="1" Offset="0x271"/>
-		<Data ElementName="hair_highlight" Type="EQ2_Color" Size="1" Offset="0x274"/>
-		<Data ElementName="soga_hair_color1" Type="EQ2_Color" Size="1" Offset="0x277"/>
-		<Data ElementName="soga_hair_color2" Type="EQ2_Color" Size="1" Offset="0x27a"/>
-		<Data ElementName="soga_hair_highlight" Type="EQ2_Color" Size="1" Offset="0x27d"/>
-		<Data ElementName="combat_voice" Type="int16" Size="1" Offset="0x280"/>
-		<Data ElementName="emote_voice" Type="int16" Size="1" Offset="0x282"/>
-		<Data ElementName="visual_flag" Type="int8" Size="1" Offset="0x284"/>
-		<Data ElementName="interaction_flag" Type="int8" Size="1" Offset="0x285"/>
-		<Data ElementName="flag3" Type="int8" Size="1" Offset="0x286"/>
-		<Data ElementName="flag4" Type="int8" Size="1" Offset="0x287"/>
-		<Data ElementName="primary_slot_state" Type="int16" Size="1" Offset="0x288"/>
-		<Data ElementName="secondary_slot_state" Type="int16" Size="1" Offset="0x28a"/>
-		<Data ElementName="ranged_slot_state" Type="int16" Size="1" Offset="0x28c"/>
-		<Data ElementName="spell_visuals" Type="int16" Size="8" Offset="0x28e"/>
-		<Data ElementName="spell_visual_levels" Type="int8" Size="8" Offset="0x29e"/>
-		<Data ElementName="action_state" Type="int16" Size="1" Offset="0x2a6"/>
-		<Data ElementName="visual_state" Type="int16" Size="1" Offset="0x2a8"/>
-		<Data ElementName="mood_state" Type="int16" Size="1" Offset="0x2aa"/>
-		<Data ElementName="emote_state" Type="int16" Size="1" Offset="0x2ac"/>
-		<Data ElementName="race" Type="int8" Size="1" Offset="0x2ae"/>
-		<Data ElementName="gender" Type="int8" Size="1" Offset="0x2af"/>
-		<Data ElementName="adv_class" Type="int8" Size="1" Offset="0x2b0"/>
-		<Data ElementName="difficulty" Type="int8" Size="1" Offset="0x2b1"/>
-		<Data ElementName="unknown20" Type="int8" Size="3" Offset="0x2b2"/>
+		<Data ElementName="heraldry" Type="int8" Size="7" Offset="0x266"/>
+		<Data ElementName="alignFiller" Type="int8" Size="1" Offset="0x26d"/>
+		<Data ElementName="mount_type" Type="int16" Size="1" Offset="0x26e"/>
+		<Data ElementName="mount_color" Type="EQ2_Color" Size="1" Offset="0x270"/>
+		<Data ElementName="mount_saddle_color" Type="EQ2_Color" Size="1" Offset="0x273"/>
+		<Data ElementName="hair_color1" Type="EQ2_Color" Size="1" Offset="0x276"/>
+		<Data ElementName="hair_color2" Type="EQ2_Color" Size="1" Offset="0x279"/>
+		<Data ElementName="hair_highlight" Type="EQ2_Color" Size="1" Offset="0x27c"/>
+		<Data ElementName="soga_hair_color1" Type="EQ2_Color" Size="1" Offset="0x27f"/>
+		<Data ElementName="soga_hair_color2" Type="EQ2_Color" Size="1" Offset="0x282"/>
+		<Data ElementName="soga_hair_highlight" Type="EQ2_Color" Size="1" Offset="0x285"/>
+		<Data ElementName="combat_voice" Type="int16" Size="1" Offset="0x288"/>
+		<Data ElementName="emote_voice" Type="int16" Size="1" Offset="0x28a"/>
+		<Data ElementName="ammo_type" Type="int16" Size="1" Offset="0x28c"/>
+		<Data ElementName="unknown17" Type="int16" Size="1" Offset="0x28e"/>
+		<Data ElementName="visual_flag" Type="int8" Size="1" Offset="0x290"/>
+		<Data ElementName="interaction_flag" Type="int8" Size="1" Offset="0x291"/>
+		<Data ElementName="flag3" Type="int8" Size="1" Offset="0x292"/>
+		<Data ElementName="flag4" Type="int8" Size="1" Offset="0x293"/>
+		<Data ElementName="size_mod" Type="float" Size="1" Offset="0x294"/>
+		<Data ElementName="spell_visuals" Type="int16" Size="8" Offset="0x298"/>
+		<Data ElementName="spell_visual_levels" Type="int8" Size="8" Offset="0x2a8"/>
+		<Data ElementName="action_state" Type="int16" Size="1" Offset="0x2b0"/>
+		<Data ElementName="visual_state" Type="int16" Size="1" Offset="0x2b2"/>
+		<Data ElementName="mood_state" Type="int16" Size="1" Offset="0x2b4"/>
+		<Data ElementName="emote_state" Type="int16" Size="1" Offset="0x2b6"/>
+		<Data ElementName="race" Type="int8" Size="1" Offset="0x2b8"/>
+		<Data ElementName="gender" Type="int8" Size="1" Offset="0x2b9"/>
+		<Data ElementName="adv_class" Type="int8" Size="1" Offset="0x2ba"/>
+		<Data ElementName="difficulty" Type="int8" Size="1" Offset="0x2bb"/>
+		<Data ElementName="unknown20" Type="int8" Size="1" Offset="0x2bc"/>
 	</Struct>
-	<Struct Name="Substruct_SpawnInfo" ClientVersion="955" ByteSize="0x2b6">
+	<Struct Name="Substruct_SpawnInfo" ClientVersion="945" ByteSize="0x2c0">
 		<Data ElementName="hp_percent" Type="int32" Size="1" Offset="0x0"/>
 		<Data ElementName="power_percent" Type="int32" Size="1" Offset="0x4"/>
-		<Data ElementName="unknown3" Type="int8" Size="256" Offset="0x8"/>
+		<Data ElementName="spell_effects" Substruct="Substruct_TargetSpellInfo" Size="30" Offset="0x8"/>
+		<Data ElementName="target_id" Type="int32" Size="1" Offset="0xf8"/>
+		<Data ElementName="follow_target" Type="int32" Size="1" Offset="0xfc"/>
+		<Data ElementName="id_unknown" Type="int32" Size="1" Offset="0x100"/>
+		<Data ElementName="pet_owner_id" Type="int32" Size="1" Offset="0x104"/>
 		<Data ElementName="entityFlags" Type="int32" Size="1" Offset="0x108"/>
-		<Data ElementName="unknownpkShort" Type="int16" Size="1" Offset="0x10c"/>
-		<Data ElementName="unknown6" Type="int8" Size="3" Offset="0x10e"/>
+		<Data ElementName="entityFlags2" Type="int32" Size="1" Offset="0x10c"/>
+		<Data ElementName="orig_level" Type="int8" Size="1" Offset="0x110"/>
+		<Data ElementName="level" Type="int8" Size="1" Offset="0x111"/>
+		<Data ElementName="unknown5" Type="int8" Size="1" Offset="0x112"/>
+		<Data ElementName="heroic_flag" Type="int8" Size="1" Offset="0x113"/>
+		<Data ElementName="activity_timer" Type="int32" Size="1" Offset="0x114"/>
+		<Data ElementName="heatLevel" Type="int8" Size="1" Offset="0x118"/>
+		<Data ElementName="torch_color" Type="EQ2_Color" Size="1" Offset="0x119"/>
+		<Data ElementName="model_type" Type="int16" Size="1" Offset="0x11c"/>
+		<Data ElementName="soga_model_type" Type="int16" Size="1" Offset="0x11e"/>
+		<Data ElementName="skin_color" Type="EQ2_Color" Size="1" Offset="0x120"/>
+		<Data ElementName="eye_color" Type="EQ2_Color" Size="1" Offset="0x123"/>
+		<Data ElementName="model_color" Type="EQ2_Color" Size="1" Offset="0x126"/>
+		<Data ElementName="soga_eye_color" Type="EQ2_Color" Size="1" Offset="0x129"/>
+		<Data ElementName="soga_skin_color" Type="EQ2_Color" Size="1" Offset="0x12c"/>
+		<Data ElementName="soga_model_color" Type="EQ2_Color" Size="1" Offset="0x12f"/>
+		<Data ElementName="equipment_types" Type="int16" Size="24" Offset="0x132"/>
+		<Data ElementName="textures_slot_type" Type="int16" Size="1" Offset="0x162"/>
+		<Data ElementName="hair_type_id" Type="int16" Size="1" Offset="0x164"/>
+		<Data ElementName="facial_hair_type_id" Type="int16" Size="1" Offset="0x166"/>
+		<Data ElementName="wing_type_id" Type="int16" Size="1" Offset="0x168"/>
+		<Data ElementName="chest_type_id" Type="int16" Size="1" Offset="0x16a"/>
+		<Data ElementName="legs_type_id" Type="int16" Size="1" Offset="0x16c"/>
+		<Data ElementName="soga_hair_type_id" Type="int16" Size="1" Offset="0x16e"/>
+		<Data ElementName="soga_facial_hair_type_id" Type="int16" Size="1" Offset="0x170"/>
+		<Data ElementName="equipment_colors" Type="EQ2_Color" Size="24" Offset="0x172"/>
+		<Data ElementName="textures_slot_color" Type="EQ2_Color" Size="1" Offset="0x1ba"/>
+		<Data ElementName="hair_type_color" Type="EQ2_Color" Size="1" Offset="0x1bd"/>
+		<Data ElementName="hair_face_color" Type="EQ2_Color" Size="1" Offset="0x1c0"/>
+		<Data ElementName="wing_color1" Type="EQ2_Color" Size="1" Offset="0x1c3"/>
+		<Data ElementName="chest_type_color" Type="EQ2_Color" Size="1" Offset="0x1c6"/>
+		<Data ElementName="legs_type_color" Type="EQ2_Color" Size="1" Offset="0x1c9"/>
+		<Data ElementName="equipment_highlights" Type="EQ2_Color" Size="24" Offset="0x1cc"/>
+		<Data ElementName="textures_slot_highlight" Type="EQ2_Color" Size="1" Offset="0x214"/>
+		<Data ElementName="hair_type_highlight_color" Type="EQ2_Color" Size="1" Offset="0x217"/>
+		<Data ElementName="hair_face_highlight_color" Type="EQ2_Color" Size="1" Offset="0x21a"/>
+		<Data ElementName="wing_color2" Type="EQ2_Color" Size="1" Offset="0x21d"/>
+		<Data ElementName="chest_type_highlight" Type="EQ2_Color" Size="1" Offset="0x220"/>
+		<Data ElementName="legs_type_highlight" Type="EQ2_Color" Size="1" Offset="0x223"/>
+		<Data ElementName="soga_hair_type_color" Type="EQ2_Color" Size="1" Offset="0x226"/>
+		<Data ElementName="soga_hair_type_highlight_color" Type="EQ2_Color" Size="1" Offset="0x229"/>
+		<Data ElementName="soga_hair_face_color" Type="EQ2_Color" Size="1" Offset="0x22c"/>
+		<Data ElementName="soga_hair_face_highlight_color" Type="EQ2_Color" Size="1" Offset="0x22f"/>
+		<Data ElementName="sliderBytes" Type="sint8" Size="26" Offset="0x232"/>
+		<Data ElementName="sogaSliderBytes" Type="sint8" Size="26" Offset="0x24c"/>
+		<Data ElementName="heraldry" Type="int8" Size="7" Offset="0x266"/>
+		<Data ElementName="alignFiller" Type="int8" Size="1" Offset="0x26d"/>
+		<Data ElementName="mount_type" Type="int16" Size="1" Offset="0x26e"/>
+		<Data ElementName="mount_color" Type="EQ2_Color" Size="1" Offset="0x270"/>
+		<Data ElementName="mount_saddle_color" Type="EQ2_Color" Size="1" Offset="0x273"/>
+		<Data ElementName="hair_color1" Type="EQ2_Color" Size="1" Offset="0x276"/>
+		<Data ElementName="hair_color2" Type="EQ2_Color" Size="1" Offset="0x279"/>
+		<Data ElementName="hair_highlight" Type="EQ2_Color" Size="1" Offset="0x27c"/>
+		<Data ElementName="soga_hair_color1" Type="EQ2_Color" Size="1" Offset="0x27f"/>
+		<Data ElementName="soga_hair_color2" Type="EQ2_Color" Size="1" Offset="0x282"/>
+		<Data ElementName="soga_hair_highlight" Type="EQ2_Color" Size="1" Offset="0x285"/>
+		<Data ElementName="combat_voice" Type="int16" Size="1" Offset="0x288"/>
+		<Data ElementName="emote_voice" Type="int16" Size="1" Offset="0x28a"/>
+		<Data ElementName="ammo_type" Type="int16" Size="1" Offset="0x28c"/>
+		<Data ElementName="unknown17" Type="int16" Size="1" Offset="0x28e"/>
+		<Data ElementName="visual_flag" Type="int8" Size="1" Offset="0x290"/>
+		<Data ElementName="interaction_flag" Type="int8" Size="1" Offset="0x291"/>
+		<Data ElementName="flag3" Type="int8" Size="1" Offset="0x292"/>
+		<Data ElementName="flag4" Type="int8" Size="1" Offset="0x293"/>
+		<Data ElementName="size_mod" Type="float" Size="1" Offset="0x294"/>
+		<Data ElementName="spell_visuals" Type="int16" Size="8" Offset="0x298"/>
+		<Data ElementName="spell_visual_levels" Type="int8" Size="8" Offset="0x2a8"/>
+		<Data ElementName="action_state" Type="int16" Size="1" Offset="0x2b0"/>
+		<Data ElementName="visual_state" Type="int16" Size="1" Offset="0x2b2"/>
+		<Data ElementName="mood_state" Type="int16" Size="1" Offset="0x2b4"/>
+		<Data ElementName="emote_state" Type="int16" Size="1" Offset="0x2b6"/>
+		<Data ElementName="race" Type="int8" Size="1" Offset="0x2b8"/>
+		<Data ElementName="gender" Type="int8" Size="1" Offset="0x2b9"/>
+		<Data ElementName="adv_class" Type="int8" Size="1" Offset="0x2ba"/>
+		<Data ElementName="difficulty" Type="int8" Size="1" Offset="0x2bb"/>
+		<Data ElementName="unknown20" Type="int8" Size="4" Offset="0x2bc"/>
+	</Struct>
+	<Struct Name="Substruct_SpawnInfo" ClientVersion="954" ByteSize="0x2be">
+		<Data ElementName="hp_percent" Type="int32" Size="1" Offset="0x0"/>
+		<Data ElementName="power_percent" Type="int32" Size="1" Offset="0x4"/>
+		<Data ElementName="spell_effects" Substruct="Substruct_TargetSpellInfo" Size="30" Offset="0x8"/>
+		<Data ElementName="target_id" Type="int32" Size="1" Offset="0xf8"/>
+		<Data ElementName="follow_target" Type="int32" Size="1" Offset="0xfc"/>
+		<Data ElementName="id_unknown" Type="int32" Size="1" Offset="0x100"/>
+		<Data ElementName="pet_owner_id" Type="int32" Size="1" Offset="0x104"/>
+		<Data ElementName="entityFlags" Type="int32" Size="1" Offset="0x108"/>
+		<Data ElementName="entityFlags2" Type="int32" Size="1" Offset="0x10c"/>
+		<Data ElementName="archetype" Type="int8" Size="1" Offset="0x110"/>
 		<Data ElementName="orig_level" Type="int8" Size="1" Offset="0x111"/>
 		<Data ElementName="level" Type="int8" Size="1" Offset="0x112"/>
 		<Data ElementName="unknown5" Type="int8" Size="1" Offset="0x113"/>
@@ -1015,43 +1041,49 @@
 		<Data ElementName="soga_hair_face_highlight_color" Type="EQ2_Color" Size="1" Offset="0x230"/>
 		<Data ElementName="sliderBytes" Type="sint8" Size="26" Offset="0x233"/>
 		<Data ElementName="sogaSliderBytes" Type="sint8" Size="26" Offset="0x24d"/>
-		<Data ElementName="mount_type" Type="int16" Size="1" Offset="0x267"/>
-		<Data ElementName="mount_color" Type="EQ2_Color" Size="1" Offset="0x269"/>
-		<Data ElementName="mount_saddle_color" Type="EQ2_Color" Size="1" Offset="0x26c"/>
-		<Data ElementName="hair_color1" Type="EQ2_Color" Size="1" Offset="0x26f"/>
-		<Data ElementName="hair_color2" Type="EQ2_Color" Size="1" Offset="0x272"/>
-		<Data ElementName="hair_highlight" Type="EQ2_Color" Size="1" Offset="0x275"/>
-		<Data ElementName="soga_hair_color1" Type="EQ2_Color" Size="1" Offset="0x278"/>
-		<Data ElementName="soga_hair_color2" Type="EQ2_Color" Size="1" Offset="0x27b"/>
-		<Data ElementName="soga_hair_highlight" Type="EQ2_Color" Size="1" Offset="0x27e"/>
-		<Data ElementName="combat_voice" Type="int16" Size="1" Offset="0x281"/>
-		<Data ElementName="emote_voice" Type="int16" Size="1" Offset="0x283"/>
-		<Data ElementName="visual_flag" Type="int8" Size="1" Offset="0x285"/>
-		<Data ElementName="interaction_flag" Type="int8" Size="1" Offset="0x286"/>
-		<Data ElementName="flag3" Type="int8" Size="1" Offset="0x287"/>
-		<Data ElementName="flag4" Type="int8" Size="1" Offset="0x288"/>
-		<Data ElementName="primary_slot_state" Type="int16" Size="1" Offset="0x289"/>
-		<Data ElementName="secondary_slot_state" Type="int16" Size="1" Offset="0x28b"/>
-		<Data ElementName="ranged_slot_state" Type="int16" Size="1" Offset="0x28d"/>
-		<Data ElementName="spell_visuals" Type="int16" Size="8" Offset="0x28f"/>
-		<Data ElementName="spell_visual_levels" Type="int8" Size="8" Offset="0x29f"/>
-		<Data ElementName="action_state" Type="int16" Size="1" Offset="0x2a7"/>
-		<Data ElementName="visual_state" Type="int16" Size="1" Offset="0x2a9"/>
-		<Data ElementName="mood_state" Type="int16" Size="1" Offset="0x2ab"/>
-		<Data ElementName="emote_state" Type="int16" Size="1" Offset="0x2ad"/>
-		<Data ElementName="race" Type="int8" Size="1" Offset="0x2af"/>
-		<Data ElementName="gender" Type="int8" Size="1" Offset="0x2b0"/>
-		<Data ElementName="adv_class" Type="int8" Size="1" Offset="0x2b1"/>
-		<Data ElementName="difficulty" Type="int8" Size="1" Offset="0x2b2"/>
-		<Data ElementName="unknown20" Type="int8" Size="3" Offset="0x2b3"/>
+		<Data ElementName="heraldry" Type="int8" Size="7" Offset="0x267"/>
+		<Data ElementName="alignFiller" Type="int8" Size="1" Offset="0x26e"/>
+		<Data ElementName="mount_type" Type="int16" Size="1" Offset="0x26f"/>
+		<Data ElementName="mount_color" Type="EQ2_Color" Size="1" Offset="0x271"/>
+		<Data ElementName="mount_saddle_color" Type="EQ2_Color" Size="1" Offset="0x274"/>
+		<Data ElementName="hair_color1" Type="EQ2_Color" Size="1" Offset="0x277"/>
+		<Data ElementName="hair_color2" Type="EQ2_Color" Size="1" Offset="0x27a"/>
+		<Data ElementName="hair_highlight" Type="EQ2_Color" Size="1" Offset="0x27d"/>
+		<Data ElementName="soga_hair_color1" Type="EQ2_Color" Size="1" Offset="0x280"/>
+		<Data ElementName="soga_hair_color2" Type="EQ2_Color" Size="1" Offset="0x283"/>
+		<Data ElementName="soga_hair_highlight" Type="EQ2_Color" Size="1" Offset="0x286"/>
+		<Data ElementName="combat_voice" Type="int16" Size="1" Offset="0x289"/>
+		<Data ElementName="emote_voice" Type="int16" Size="1" Offset="0x28b"/>
+		<Data ElementName="ammo_type" Type="int16" Size="1" Offset="0x28d"/>
+		<Data ElementName="unknown17" Type="int16" Size="1" Offset="0x28f"/>
+		<Data ElementName="visual_flag" Type="int8" Size="1" Offset="0x291"/>
+		<Data ElementName="interaction_flag" Type="int8" Size="1" Offset="0x292"/>
+		<Data ElementName="flag3" Type="int8" Size="1" Offset="0x293"/>
+		<Data ElementName="flag4" Type="int8" Size="1" Offset="0x294"/>
+		<Data ElementName="size_mod" Type="float" Size="1" Offset="0x295"/>
+		<Data ElementName="spell_visuals" Type="int16" Size="8" Offset="0x299"/>
+		<Data ElementName="spell_visual_levels" Type="int8" Size="8" Offset="0x2a9"/>
+		<Data ElementName="action_state" Type="int16" Size="1" Offset="0x2b1"/>
+		<Data ElementName="visual_state" Type="int16" Size="1" Offset="0x2b3"/>
+		<Data ElementName="mood_state" Type="int16" Size="1" Offset="0x2b5"/>
+		<Data ElementName="emote_state" Type="int16" Size="1" Offset="0x2b7"/>
+		<Data ElementName="race" Type="int8" Size="1" Offset="0x2b9"/>
+		<Data ElementName="gender" Type="int8" Size="1" Offset="0x2ba"/>
+		<Data ElementName="adv_class" Type="int8" Size="1" Offset="0x2bb"/>
+		<Data ElementName="difficulty" Type="int8" Size="1" Offset="0x2bc"/>
+		<Data ElementName="unknown20" Type="int8" Size="1" Offset="0x2bd"/>
 	</Struct>
-	<Struct Name="Substruct_SpawnInfo" ClientVersion="1008" ByteSize="0x2ca">
+	<Struct Name="Substruct_SpawnInfo" ClientVersion="996" ByteSize="0x2c6">
 		<Data ElementName="hp_percent" Type="int32" Size="1" Offset="0x0"/>
 		<Data ElementName="power_percent" Type="int32" Size="1" Offset="0x4"/>
-		<Data ElementName="unknown3" Type="int8" Size="256" Offset="0x8"/>
+		<Data ElementName="spell_effects" Substruct="Substruct_TargetSpellInfo" Size="30" Offset="0x8"/>
+		<Data ElementName="target_id" Type="int32" Size="1" Offset="0xf8"/>
+		<Data ElementName="follow_target" Type="int32" Size="1" Offset="0xfc"/>
+		<Data ElementName="id_unknown" Type="int32" Size="1" Offset="0x100"/>
+		<Data ElementName="pet_owner_id" Type="int32" Size="1" Offset="0x104"/>
 		<Data ElementName="entityFlags" Type="int32" Size="1" Offset="0x108"/>
-		<Data ElementName="unknownpkShort" Type="int16" Size="1" Offset="0x10c"/>
-		<Data ElementName="unknown6" Type="int8" Size="3" Offset="0x10e"/>
+		<Data ElementName="entityFlags2" Type="int32" Size="1" Offset="0x10c"/>
+		<Data ElementName="archetype" Type="int8" Size="1" Offset="0x110"/>
 		<Data ElementName="orig_level" Type="int8" Size="1" Offset="0x111"/>
 		<Data ElementName="level" Type="int8" Size="1" Offset="0x112"/>
 		<Data ElementName="unknown5" Type="int8" Size="1" Offset="0x113"/>
@@ -1099,136 +1131,330 @@
 		<Data ElementName="soga_hair_face_highlight_color" Type="EQ2_Color" Size="1" Offset="0x238"/>
 		<Data ElementName="sliderBytes" Type="sint8" Size="26" Offset="0x23b"/>
 		<Data ElementName="sogaSliderBytes" Type="sint8" Size="26" Offset="0x255"/>
-		<Data ElementName="mount_type" Type="int16" Size="1" Offset="0x26f"/>
-		<Data ElementName="mount_color" Type="EQ2_Color" Size="1" Offset="0x271"/>
-		<Data ElementName="mount_saddle_color" Type="EQ2_Color" Size="1" Offset="0x274"/>
-		<Data ElementName="hair_color1" Type="EQ2_Color" Size="1" Offset="0x277"/>
-		<Data ElementName="hair_color2" Type="EQ2_Color" Size="1" Offset="0x27a"/>
-		<Data ElementName="hair_highlight" Type="EQ2_Color" Size="1" Offset="0x27d"/>
-		<Data ElementName="soga_hair_color1" Type="EQ2_Color" Size="1" Offset="0x280"/>
-		<Data ElementName="soga_hair_color2" Type="EQ2_Color" Size="1" Offset="0x283"/>
-		<Data ElementName="soga_hair_highlight" Type="EQ2_Color" Size="1" Offset="0x286"/>
-		<Data ElementName="combat_voice" Type="int16" Size="1" Offset="0x289"/>
-		<Data ElementName="emote_voice" Type="int16" Size="1" Offset="0x28b"/>
-		<Data ElementName="sfunk" Type="int8" Size="12" Offset="0x28d"/>
+		<Data ElementName="heraldry" Type="int8" Size="7" Offset="0x26f"/>
+		<Data ElementName="alignFiller" Type="int8" Size="1" Offset="0x276"/>
+		<Data ElementName="mount_type" Type="int16" Size="1" Offset="0x277"/>
+		<Data ElementName="mount_color" Type="EQ2_Color" Size="1" Offset="0x279"/>
+		<Data ElementName="mount_saddle_color" Type="EQ2_Color" Size="1" Offset="0x27c"/>
+		<Data ElementName="hair_color1" Type="EQ2_Color" Size="1" Offset="0x27f"/>
+		<Data ElementName="hair_color2" Type="EQ2_Color" Size="1" Offset="0x282"/>
+		<Data ElementName="hair_highlight" Type="EQ2_Color" Size="1" Offset="0x285"/>
+		<Data ElementName="soga_hair_color1" Type="EQ2_Color" Size="1" Offset="0x288"/>
+		<Data ElementName="soga_hair_color2" Type="EQ2_Color" Size="1" Offset="0x28b"/>
+		<Data ElementName="soga_hair_highlight" Type="EQ2_Color" Size="1" Offset="0x28e"/>
+		<Data ElementName="combat_voice" Type="int16" Size="1" Offset="0x291"/>
+		<Data ElementName="emote_voice" Type="int16" Size="1" Offset="0x293"/>
+		<Data ElementName="ammo_type" Type="int16" Size="1" Offset="0x295"/>
+		<Data ElementName="unknown17" Type="int16" Size="1" Offset="0x297"/>
 		<Data ElementName="visual_flag" Type="int8" Size="1" Offset="0x299"/>
 		<Data ElementName="interaction_flag" Type="int8" Size="1" Offset="0x29a"/>
 		<Data ElementName="flag3" Type="int8" Size="1" Offset="0x29b"/>
 		<Data ElementName="flag4" Type="int8" Size="1" Offset="0x29c"/>
-		<Data ElementName="primary_slot_state" Type="int16" Size="1" Offset="0x29d"/>
-		<Data ElementName="secondary_slot_state" Type="int16" Size="1" Offset="0x29f"/>
-		<Data ElementName="ranged_slot_state" Type="int16" Size="1" Offset="0x2a1"/>
-		<Data ElementName="spell_visuals" Type="int16" Size="8" Offset="0x2a3"/>
-		<Data ElementName="spell_visual_levels" Type="int8" Size="8" Offset="0x2b3"/>
-		<Data ElementName="action_state" Type="int16" Size="1" Offset="0x2bb"/>
-		<Data ElementName="visual_state" Type="int16" Size="1" Offset="0x2bd"/>
-		<Data ElementName="mood_state" Type="int16" Size="1" Offset="0x2bf"/>
-		<Data ElementName="emote_state" Type="int16" Size="1" Offset="0x2c1"/>
-		<Data ElementName="race" Type="int8" Size="1" Offset="0x2c3"/>
-		<Data ElementName="gender" Type="int8" Size="1" Offset="0x2c4"/>
-		<Data ElementName="adv_class" Type="int8" Size="1" Offset="0x2c5"/>
-		<Data ElementName="difficulty" Type="int8" Size="1" Offset="0x2c6"/>
-		<Data ElementName="unknown20" Type="int8" Size="3" Offset="0x2c7"/>
+		<Data ElementName="size_mod" Type="float" Size="1" Offset="0x29d"/>
+		<Data ElementName="spell_visuals" Type="int16" Size="8" Offset="0x2a1"/>
+		<Data ElementName="spell_visual_levels" Type="int8" Size="8" Offset="0x2b1"/>
+		<Data ElementName="action_state" Type="int16" Size="1" Offset="0x2b9"/>
+		<Data ElementName="visual_state" Type="int16" Size="1" Offset="0x2bb"/>
+		<Data ElementName="mood_state" Type="int16" Size="1" Offset="0x2bd"/>
+		<Data ElementName="emote_state" Type="int16" Size="1" Offset="0x2bf"/>
+		<Data ElementName="race" Type="int8" Size="1" Offset="0x2c1"/>
+		<Data ElementName="gender" Type="int8" Size="1" Offset="0x2c2"/>
+		<Data ElementName="adv_class" Type="int8" Size="1" Offset="0x2c3"/>
+		<Data ElementName="difficulty" Type="int8" Size="1" Offset="0x2c4"/>
+		<Data ElementName="unknown20" Type="int8" Size="1" Offset="0x2c5"/>
 	</Struct>
-	<Struct Name="Substruct_SpawnInfo" ClientVersion="1096" ByteSize="0x2c4">
+	<Struct Name="Substruct_SpawnInfo" ClientVersion="1096" ByteSize="0x2ca">
 		<Data ElementName="hp_percent" Type="int32" Size="1" Offset="0x0"/>
 		<Data ElementName="power_percent" Type="int32" Size="1" Offset="0x4"/>
-		<Data ElementName="unknown3" Type="int8" Size="240" Offset="0x8"/>
+		<Data ElementName="spell_effects" Substruct="Substruct_TargetSpellInfo" Size="30" Offset="0x8"/>
 		<Data ElementName="target_id" Type="int32" Size="1" Offset="0xf8"/>
 		<Data ElementName="follow_target" Type="int32" Size="1" Offset="0xfc"/>
-		<Data ElementName="unknown3b" Type="int8" Size="7" Offset="0x100"/>
-		<Data ElementName="heroic_flag" Type="int8" Size="1" Offset="0x107"/>
+		<Data ElementName="id_unknown" Type="int32" Size="1" Offset="0x100"/>
+		<Data ElementName="pet_owner_id" Type="int32" Size="1" Offset="0x104"/>
 		<Data ElementName="entityFlags" Type="int32" Size="1" Offset="0x108"/>
-		<Data ElementName="unknownpkShort" Type="int16" Size="1" Offset="0x10c"/>
-		<Data ElementName="unknown6" Type="int8" Size="3" Offset="0x10e"/>
+		<Data ElementName="entityFlags2" Type="int32" Size="1" Offset="0x10c"/>
+		<Data ElementName="archetype" Type="int8" Size="1" Offset="0x110"/>
 		<Data ElementName="orig_level" Type="int8" Size="1" Offset="0x111"/>
 		<Data ElementName="level" Type="int8" Size="1" Offset="0x112"/>
 		<Data ElementName="unknown5" Type="int8" Size="1" Offset="0x113"/>
-		<Data ElementName="activity_timer" Type="int32" Size="1" Offset="0x114"/>
-		<Data ElementName="torch_color" Type="EQ2_Color" Size="1" Offset="0x118"/>
-		<Data ElementName="model_type" Type="int16" Size="1" Offset="0x11b"/>
-		<Data ElementName="soga_model_type" Type="int16" Size="1" Offset="0x11d"/>
-		<Data ElementName="skin_color" Type="EQ2_Color" Size="1" Offset="0x11f"/>
-		<Data ElementName="eye_color" Type="EQ2_Color" Size="1" Offset="0x122"/>
-		<Data ElementName="model_color" Type="EQ2_Color" Size="1" Offset="0x125"/>
-		<Data ElementName="soga_eye_color" Type="EQ2_Color" Size="1" Offset="0x128"/>
-		<Data ElementName="soga_skin_color" Type="EQ2_Color" Size="1" Offset="0x12b"/>
-		<Data ElementName="soga_model_color" Type="EQ2_Color" Size="1" Offset="0x12e"/>
-		<Data ElementName="equipment_types" Type="int16" Size="24" Offset="0x131"/>
-		<Data ElementName="textures_slot_type" Type="int16" Size="1" Offset="0x161"/>
-		<Data ElementName="hair_type_id" Type="int16" Size="1" Offset="0x163"/>
-		<Data ElementName="facial_hair_type_id" Type="int16" Size="1" Offset="0x165"/>
-		<Data ElementName="wing_type_id" Type="int16" Size="1" Offset="0x167"/>
-		<Data ElementName="chest_type_id" Type="int16" Size="1" Offset="0x169"/>
-		<Data ElementName="legs_type_id" Type="int16" Size="1" Offset="0x16b"/>
-		<Data ElementName="back_slot_type_id" Type="int16" Size="1" Offset="0x16d"/>
-		<Data ElementName="soga_hair_type_id" Type="int16" Size="1" Offset="0x16f"/>
-		<Data ElementName="soga_facial_hair_type_id" Type="int16" Size="1" Offset="0x171"/>
-		<Data ElementName="equipment_colors" Type="EQ2_Color" Size="24" Offset="0x173"/>
-		<Data ElementName="textures_slot_color" Type="EQ2_Color" Size="1" Offset="0x1bb"/>
-		<Data ElementName="hair_type_color" Type="EQ2_Color" Size="1" Offset="0x1be"/>
-		<Data ElementName="hair_face_color" Type="EQ2_Color" Size="1" Offset="0x1c1"/>
-		<Data ElementName="wing_color1" Type="EQ2_Color" Size="1" Offset="0x1c4"/>
-		<Data ElementName="chest_type_color" Type="EQ2_Color" Size="1" Offset="0x1c7"/>
-		<Data ElementName="legs_type_color" Type="EQ2_Color" Size="1" Offset="0x1ca"/>
-		<Data ElementName="back_slot_type_color" Type="EQ2_Color" Size="1" Offset="0x1cd"/>
-		<Data ElementName="equipment_highlights" Type="EQ2_Color" Size="24" Offset="0x1d0"/>
-		<Data ElementName="textures_slot_highlight" Type="EQ2_Color" Size="1" Offset="0x218"/>
-		<Data ElementName="hair_type_highlight_color" Type="EQ2_Color" Size="1" Offset="0x21b"/>
-		<Data ElementName="hair_face_highlight_color" Type="EQ2_Color" Size="1" Offset="0x21e"/>
-		<Data ElementName="wing_color2" Type="EQ2_Color" Size="1" Offset="0x221"/>
-		<Data ElementName="chest_type_highlight" Type="EQ2_Color" Size="1" Offset="0x224"/>
-		<Data ElementName="legs_type_highlight" Type="EQ2_Color" Size="1" Offset="0x227"/>
-		<Data ElementName="back_slot_type_highlight" Type="EQ2_Color" Size="1" Offset="0x22a"/>
-		<Data ElementName="soga_hair_type_color" Type="EQ2_Color" Size="1" Offset="0x22d"/>
-		<Data ElementName="soga_hair_type_highlight_color" Type="EQ2_Color" Size="1" Offset="0x230"/>
-		<Data ElementName="soga_hair_face_color" Type="EQ2_Color" Size="1" Offset="0x233"/>
-		<Data ElementName="soga_hair_face_highlight_color" Type="EQ2_Color" Size="1" Offset="0x236"/>
-		<Data ElementName="sliderBytes" Type="sint8" Size="26" Offset="0x239"/>
-		<Data ElementName="sogaSliderBytes" Type="sint8" Size="26" Offset="0x253"/>
-		<Data ElementName="mount_type" Type="int16" Size="1" Offset="0x26d"/>
-		<Data ElementName="mount_color" Type="EQ2_Color" Size="1" Offset="0x26f"/>
-		<Data ElementName="mount_saddle_color" Type="EQ2_Color" Size="1" Offset="0x272"/>
-		<Data ElementName="hair_color1" Type="EQ2_Color" Size="1" Offset="0x275"/>
-		<Data ElementName="hair_color2" Type="EQ2_Color" Size="1" Offset="0x278"/>
-		<Data ElementName="hair_highlight" Type="EQ2_Color" Size="1" Offset="0x27b"/>
-		<Data ElementName="soga_hair_color1" Type="EQ2_Color" Size="1" Offset="0x27e"/>
-		<Data ElementName="soga_hair_color2" Type="EQ2_Color" Size="1" Offset="0x281"/>
-		<Data ElementName="soga_hair_highlight" Type="EQ2_Color" Size="1" Offset="0x284"/>
-		<Data ElementName="combat_voice" Type="int16" Size="1" Offset="0x287"/>
-		<Data ElementName="emote_voice" Type="int16" Size="1" Offset="0x289"/>
-		<Data ElementName="unknown17" Type="int8" Size="4" Offset="0x28b"/>
-		<Data ElementName="visual_flag" Type="int8" Size="1" Offset="0x28f"/>
-		<Data ElementName="interaction_flag" Type="int8" Size="1" Offset="0x290"/>
-		<Data ElementName="flag3" Type="int8" Size="1" Offset="0x291"/>
-		<Data ElementName="flag4" Type="int8" Size="1" Offset="0x292"/>
-		<Data ElementName="primary_slot_state" Type="int16" Size="1" Offset="0x293"/>
-		<Data ElementName="secondary_slot_state" Type="int16" Size="1" Offset="0x295"/>
-		<Data ElementName="ranged_slot_state" Type="int16" Size="1" Offset="0x297"/>
-		<Data ElementName="spell_visuals" Type="int16" Size="8" Offset="0x299"/>
-		<Data ElementName="spell_visual_levels" Type="int8" Size="8" Offset="0x2a9"/>
-		<Data ElementName="action_state" Type="int16" Size="1" Offset="0x2b1"/>
-		<Data ElementName="visual_state" Type="int16" Size="1" Offset="0x2b3"/>
-		<Data ElementName="mood_state" Type="int16" Size="1" Offset="0x2b5"/>
-		<Data ElementName="emote_state" Type="int16" Size="1" Offset="0x2b7"/>
-		<Data ElementName="race" Type="int8" Size="1" Offset="0x2b9"/>
-		<Data ElementName="gender" Type="int8" Size="1" Offset="0x2ba"/>
-		<Data ElementName="adv_class" Type="int8" Size="1" Offset="0x2bb"/>
-		<Data ElementName="difficulty" Type="int8" Size="1" Offset="0x2bc"/>
-		<Data ElementName="unknown20a" Type="int32" Size="1" Offset="0x2bd"/>
-		<Data ElementName="unknown20" Type="int8" Size="3" Offset="0x2c1"/>
+		<Data ElementName="heroic_flag" Type="int8" Size="1" Offset="0x114"/>
+		<Data ElementName="activity_timer" Type="int32" Size="1" Offset="0x115"/>
+		<Data ElementName="heatLevel" Type="int8" Size="1" Offset="0x119"/>
+		<Data ElementName="torch_color" Type="EQ2_Color" Size="1" Offset="0x11a"/>
+		<Data ElementName="model_type" Type="int16" Size="1" Offset="0x11d"/>
+		<Data ElementName="soga_model_type" Type="int16" Size="1" Offset="0x11f"/>
+		<Data ElementName="skin_color" Type="EQ2_Color" Size="1" Offset="0x121"/>
+		<Data ElementName="eye_color" Type="EQ2_Color" Size="1" Offset="0x124"/>
+		<Data ElementName="model_color" Type="EQ2_Color" Size="1" Offset="0x127"/>
+		<Data ElementName="soga_eye_color" Type="EQ2_Color" Size="1" Offset="0x12a"/>
+		<Data ElementName="soga_skin_color" Type="EQ2_Color" Size="1" Offset="0x12d"/>
+		<Data ElementName="soga_model_color" Type="EQ2_Color" Size="1" Offset="0x130"/>
+		<Data ElementName="equipment_types" Type="int16" Size="24" Offset="0x133"/>
+		<Data ElementName="textures_slot_type" Type="int16" Size="1" Offset="0x163"/>
+		<Data ElementName="hair_type_id" Type="int16" Size="1" Offset="0x165"/>
+		<Data ElementName="facial_hair_type_id" Type="int16" Size="1" Offset="0x167"/>
+		<Data ElementName="wing_type_id" Type="int16" Size="1" Offset="0x169"/>
+		<Data ElementName="chest_type_id" Type="int16" Size="1" Offset="0x16b"/>
+		<Data ElementName="legs_type_id" Type="int16" Size="1" Offset="0x16d"/>
+		<Data ElementName="back_slot_type_id" Type="int16" Size="1" Offset="0x16f"/>
+		<Data ElementName="soga_hair_type_id" Type="int16" Size="1" Offset="0x171"/>
+		<Data ElementName="soga_facial_hair_type_id" Type="int16" Size="1" Offset="0x173"/>
+		<Data ElementName="equipment_colors" Type="EQ2_Color" Size="24" Offset="0x175"/>
+		<Data ElementName="textures_slot_color" Type="EQ2_Color" Size="1" Offset="0x1bd"/>
+		<Data ElementName="hair_type_color" Type="EQ2_Color" Size="1" Offset="0x1c0"/>
+		<Data ElementName="hair_face_color" Type="EQ2_Color" Size="1" Offset="0x1c3"/>
+		<Data ElementName="wing_color1" Type="EQ2_Color" Size="1" Offset="0x1c6"/>
+		<Data ElementName="chest_type_color" Type="EQ2_Color" Size="1" Offset="0x1c9"/>
+		<Data ElementName="legs_type_color" Type="EQ2_Color" Size="1" Offset="0x1cc"/>
+		<Data ElementName="back_slot_type_color" Type="EQ2_Color" Size="1" Offset="0x1cf"/>
+		<Data ElementName="equipment_highlights" Type="EQ2_Color" Size="24" Offset="0x1d2"/>
+		<Data ElementName="textures_slot_highlight" Type="EQ2_Color" Size="1" Offset="0x21a"/>
+		<Data ElementName="hair_type_highlight_color" Type="EQ2_Color" Size="1" Offset="0x21d"/>
+		<Data ElementName="hair_face_highlight_color" Type="EQ2_Color" Size="1" Offset="0x220"/>
+		<Data ElementName="wing_color2" Type="EQ2_Color" Size="1" Offset="0x223"/>
+		<Data ElementName="chest_type_highlight" Type="EQ2_Color" Size="1" Offset="0x226"/>
+		<Data ElementName="legs_type_highlight" Type="EQ2_Color" Size="1" Offset="0x229"/>
+		<Data ElementName="back_slot_type_highlight" Type="EQ2_Color" Size="1" Offset="0x22c"/>
+		<Data ElementName="soga_hair_type_color" Type="EQ2_Color" Size="1" Offset="0x22f"/>
+		<Data ElementName="soga_hair_type_highlight_color" Type="EQ2_Color" Size="1" Offset="0x232"/>
+		<Data ElementName="soga_hair_face_color" Type="EQ2_Color" Size="1" Offset="0x235"/>
+		<Data ElementName="soga_hair_face_highlight_color" Type="EQ2_Color" Size="1" Offset="0x238"/>
+		<Data ElementName="sliderBytes" Type="sint8" Size="26" Offset="0x23b"/>
+		<Data ElementName="sogaSliderBytes" Type="sint8" Size="26" Offset="0x255"/>
+		<Data ElementName="heraldry" Type="int8" Size="7" Offset="0x26f"/>
+		<Data ElementName="alignFiller" Type="int8" Size="1" Offset="0x276"/>
+		<Data ElementName="mount_type" Type="int16" Size="1" Offset="0x277"/>
+		<Data ElementName="mount_color" Type="EQ2_Color" Size="1" Offset="0x279"/>
+		<Data ElementName="mount_saddle_color" Type="EQ2_Color" Size="1" Offset="0x27c"/>
+		<Data ElementName="hair_color1" Type="EQ2_Color" Size="1" Offset="0x27f"/>
+		<Data ElementName="hair_color2" Type="EQ2_Color" Size="1" Offset="0x282"/>
+		<Data ElementName="hair_highlight" Type="EQ2_Color" Size="1" Offset="0x285"/>
+		<Data ElementName="soga_hair_color1" Type="EQ2_Color" Size="1" Offset="0x288"/>
+		<Data ElementName="soga_hair_color2" Type="EQ2_Color" Size="1" Offset="0x28b"/>
+		<Data ElementName="soga_hair_highlight" Type="EQ2_Color" Size="1" Offset="0x28e"/>
+		<Data ElementName="combat_voice" Type="int16" Size="1" Offset="0x291"/>
+		<Data ElementName="emote_voice" Type="int16" Size="1" Offset="0x293"/>
+		<Data ElementName="ammo_type" Type="int16" Size="1" Offset="0x295"/>
+		<Data ElementName="unknown17" Type="int16" Size="1" Offset="0x297"/>
+		<Data ElementName="visual_flag" Type="int8" Size="1" Offset="0x299"/>
+		<Data ElementName="interaction_flag" Type="int8" Size="1" Offset="0x29a"/>
+		<Data ElementName="flag3" Type="int8" Size="1" Offset="0x29b"/>
+		<Data ElementName="flag4" Type="int8" Size="1" Offset="0x29c"/>
+		<Data ElementName="size_mod" Type="float" Size="1" Offset="0x29d"/>
+		<Data ElementName="spell_visuals" Type="int16" Size="8" Offset="0x2a1"/>
+		<Data ElementName="spell_visual_levels" Type="int8" Size="8" Offset="0x2b1"/>
+		<Data ElementName="action_state" Type="int16" Size="1" Offset="0x2b9"/>
+		<Data ElementName="visual_state" Type="int16" Size="1" Offset="0x2bb"/>
+		<Data ElementName="mood_state" Type="int16" Size="1" Offset="0x2bd"/>
+		<Data ElementName="emote_state" Type="int16" Size="1" Offset="0x2bf"/>
+		<Data ElementName="race" Type="int8" Size="1" Offset="0x2c1"/>
+		<Data ElementName="gender" Type="int8" Size="1" Offset="0x2c2"/>
+		<Data ElementName="adv_class" Type="int8" Size="1" Offset="0x2c3"/>
+		<Data ElementName="difficulty" Type="int8" Size="1" Offset="0x2c4"/>
+		<Data ElementName="show_archtype_icon" Type="int8" Size="1" Offset="0x2c5"/>
+		<Data ElementName="unknown20a" Type="int8" Size="3" Offset="0x2c6"/>
+		<Data ElementName="unknown20" Type="int8" Size="1" Offset="0x2c9"/>
 	</Struct>
-	<Struct Name="Substruct_SpawnInfo" ClientVersion="1188" ByteSize="0x326">
+	<Struct Name="Substruct_SpawnInfo" ClientVersion="1119" ByteSize="0x2ce">
+		<Data ElementName="hp_percent" Type="int32" Size="1" Offset="0x0"/>
+		<Data ElementName="power_percent" Type="int32" Size="1" Offset="0x4"/>
+		<Data ElementName="spell_effects" Substruct="Substruct_TargetSpellInfo" Size="30" Offset="0x8"/>
+		<Data ElementName="target_id" Type="int32" Size="1" Offset="0xf8"/>
+		<Data ElementName="follow_target" Type="int32" Size="1" Offset="0xfc"/>
+		<Data ElementName="id_unknown" Type="int32" Size="1" Offset="0x100"/>
+		<Data ElementName="pet_owner_id" Type="int32" Size="1" Offset="0x104"/>
+		<Data ElementName="entityFlags" Type="int32" Size="1" Offset="0x108"/>
+		<Data ElementName="entityFlags2" Type="int32" Size="1" Offset="0x10c"/>
+		<Data ElementName="archetype" Type="int8" Size="1" Offset="0x110"/>
+		<Data ElementName="orig_level" Type="int8" Size="1" Offset="0x111"/>
+		<Data ElementName="level" Type="int8" Size="1" Offset="0x112"/>
+		<Data ElementName="unknown5" Type="int8" Size="1" Offset="0x113"/>
+		<Data ElementName="heroic_flag" Type="int8" Size="1" Offset="0x114"/>
+		<Data ElementName="activity_timer" Type="int32" Size="1" Offset="0x115"/>
+		<Data ElementName="heatLevel" Type="int8" Size="1" Offset="0x119"/>
+		<Data ElementName="torch_color" Type="EQ2_Color" Size="1" Offset="0x11a"/>
+		<Data ElementName="model_type" Type="int16" Size="1" Offset="0x11d"/>
+		<Data ElementName="soga_model_type" Type="int16" Size="1" Offset="0x11f"/>
+		<Data ElementName="skin_color" Type="EQ2_Color" Size="1" Offset="0x121"/>
+		<Data ElementName="eye_color" Type="EQ2_Color" Size="1" Offset="0x124"/>
+		<Data ElementName="model_color" Type="EQ2_Color" Size="1" Offset="0x127"/>
+		<Data ElementName="soga_eye_color" Type="EQ2_Color" Size="1" Offset="0x12a"/>
+		<Data ElementName="soga_skin_color" Type="EQ2_Color" Size="1" Offset="0x12d"/>
+		<Data ElementName="soga_model_color" Type="EQ2_Color" Size="1" Offset="0x130"/>
+		<Data ElementName="equipment_types" Type="int16" Size="24" Offset="0x133"/>
+		<Data ElementName="textures_slot_type" Type="int16" Size="1" Offset="0x163"/>
+		<Data ElementName="hair_type_id" Type="int16" Size="1" Offset="0x165"/>
+		<Data ElementName="facial_hair_type_id" Type="int16" Size="1" Offset="0x167"/>
+		<Data ElementName="wing_type_id" Type="int16" Size="1" Offset="0x169"/>
+		<Data ElementName="chest_type_id" Type="int16" Size="1" Offset="0x16b"/>
+		<Data ElementName="legs_type_id" Type="int16" Size="1" Offset="0x16d"/>
+		<Data ElementName="back_slot_type_id" Type="int16" Size="1" Offset="0x16f"/>
+		<Data ElementName="soga_hair_type_id" Type="int16" Size="1" Offset="0x171"/>
+		<Data ElementName="soga_facial_hair_type_id" Type="int16" Size="1" Offset="0x173"/>
+		<Data ElementName="equipment_colors" Type="EQ2_Color" Size="24" Offset="0x175"/>
+		<Data ElementName="textures_slot_color" Type="EQ2_Color" Size="1" Offset="0x1bd"/>
+		<Data ElementName="hair_type_color" Type="EQ2_Color" Size="1" Offset="0x1c0"/>
+		<Data ElementName="hair_face_color" Type="EQ2_Color" Size="1" Offset="0x1c3"/>
+		<Data ElementName="wing_color1" Type="EQ2_Color" Size="1" Offset="0x1c6"/>
+		<Data ElementName="chest_type_color" Type="EQ2_Color" Size="1" Offset="0x1c9"/>
+		<Data ElementName="legs_type_color" Type="EQ2_Color" Size="1" Offset="0x1cc"/>
+		<Data ElementName="back_slot_type_color" Type="EQ2_Color" Size="1" Offset="0x1cf"/>
+		<Data ElementName="equipment_highlights" Type="EQ2_Color" Size="24" Offset="0x1d2"/>
+		<Data ElementName="textures_slot_highlight" Type="EQ2_Color" Size="1" Offset="0x21a"/>
+		<Data ElementName="hair_type_highlight_color" Type="EQ2_Color" Size="1" Offset="0x21d"/>
+		<Data ElementName="hair_face_highlight_color" Type="EQ2_Color" Size="1" Offset="0x220"/>
+		<Data ElementName="wing_color2" Type="EQ2_Color" Size="1" Offset="0x223"/>
+		<Data ElementName="chest_type_highlight" Type="EQ2_Color" Size="1" Offset="0x226"/>
+		<Data ElementName="legs_type_highlight" Type="EQ2_Color" Size="1" Offset="0x229"/>
+		<Data ElementName="back_slot_type_highlight" Type="EQ2_Color" Size="1" Offset="0x22c"/>
+		<Data ElementName="soga_hair_type_color" Type="EQ2_Color" Size="1" Offset="0x22f"/>
+		<Data ElementName="soga_hair_type_highlight_color" Type="EQ2_Color" Size="1" Offset="0x232"/>
+		<Data ElementName="soga_hair_face_color" Type="EQ2_Color" Size="1" Offset="0x235"/>
+		<Data ElementName="soga_hair_face_highlight_color" Type="EQ2_Color" Size="1" Offset="0x238"/>
+		<Data ElementName="sliderBytes" Type="sint8" Size="26" Offset="0x23b"/>
+		<Data ElementName="sogaSliderBytes" Type="sint8" Size="26" Offset="0x255"/>
+		<Data ElementName="heraldry" Type="int8" Size="7" Offset="0x26f"/>
+		<Data ElementName="soga_heraldry" Type="int8" Size="7" Offset="0x276"/>
+		<Data ElementName="mount_type" Type="int16" Size="1" Offset="0x27d"/>
+		<Data ElementName="mount_color" Type="EQ2_Color" Size="1" Offset="0x27f"/>
+		<Data ElementName="mount_saddle_color" Type="EQ2_Color" Size="1" Offset="0x282"/>
+		<Data ElementName="hair_color1" Type="EQ2_Color" Size="1" Offset="0x285"/>
+		<Data ElementName="hair_color2" Type="EQ2_Color" Size="1" Offset="0x288"/>
+		<Data ElementName="hair_highlight" Type="EQ2_Color" Size="1" Offset="0x28b"/>
+		<Data ElementName="soga_hair_color1" Type="EQ2_Color" Size="1" Offset="0x28e"/>
+		<Data ElementName="soga_hair_color2" Type="EQ2_Color" Size="1" Offset="0x291"/>
+		<Data ElementName="soga_hair_highlight" Type="EQ2_Color" Size="1" Offset="0x294"/>
+		<Data ElementName="combat_voice" Type="int16" Size="1" Offset="0x297"/>
+		<Data ElementName="emote_voice" Type="int16" Size="1" Offset="0x299"/>
+		<Data ElementName="ammo_type" Type="int16" Size="1" Offset="0x29b"/>
+		<Data ElementName="visual_flag" Type="int8" Size="1" Offset="0x29d"/>
+		<Data ElementName="interaction_flag" Type="int8" Size="1" Offset="0x29e"/>
+		<Data ElementName="flag3" Type="int8" Size="1" Offset="0x29f"/>
+		<Data ElementName="flag4" Type="int8" Size="1" Offset="0x2a0"/>
+		<Data ElementName="size_mod" Type="float" Size="1" Offset="0x2a1"/>
+		<Data ElementName="spell_visuals" Type="int16" Size="8" Offset="0x2a5"/>
+		<Data ElementName="spell_visual_levels" Type="int8" Size="8" Offset="0x2b5"/>
+		<Data ElementName="action_state" Type="int16" Size="1" Offset="0x2bd"/>
+		<Data ElementName="visual_state" Type="int16" Size="1" Offset="0x2bf"/>
+		<Data ElementName="mood_state" Type="int16" Size="1" Offset="0x2c1"/>
+		<Data ElementName="emote_state" Type="int16" Size="1" Offset="0x2c3"/>
+		<Data ElementName="race" Type="int8" Size="1" Offset="0x2c5"/>
+		<Data ElementName="gender" Type="int8" Size="1" Offset="0x2c6"/>
+		<Data ElementName="adv_class" Type="int8" Size="1" Offset="0x2c7"/>
+		<Data ElementName="difficulty" Type="int8" Size="1" Offset="0x2c8"/>
+		<Data ElementName="show_archtype_icon" Type="int8" Size="1" Offset="0x2c9"/>
+		<Data ElementName="unknown20a" Type="int8" Size="3" Offset="0x2ca"/>
+		<Data ElementName="unknown20" Type="int8" Size="1" Offset="0x2cd"/>
+	</Struct>
+	<Struct Name="Substruct_SpawnInfo" ClientVersion="1161" ByteSize="0x2e6">
+		<Data ElementName="hp_percent" Type="int32" Size="1" Offset="0x0"/>
+		<Data ElementName="power_percent" Type="int32" Size="1" Offset="0x4"/>
+		<Data ElementName="spell_effects" Substruct="Substruct_TargetSpellInfo" Size="30" Offset="0x8"/>
+		<Data ElementName="target_id" Type="int32" Size="1" Offset="0xf8"/>
+		<Data ElementName="follow_target" Type="int32" Size="1" Offset="0xfc"/>
+		<Data ElementName="id_unknown" Type="int32" Size="1" Offset="0x100"/>
+		<Data ElementName="pet_owner_id" Type="int32" Size="1" Offset="0x104"/>
+		<Data ElementName="entityFlags" Type="int32" Size="1" Offset="0x108"/>
+		<Data ElementName="entityFlags2" Type="int32" Size="1" Offset="0x10c"/>
+		<Data ElementName="archetype" Type="int8" Size="1" Offset="0x110"/>
+		<Data ElementName="orig_level" Type="int8" Size="1" Offset="0x111"/>
+		<Data ElementName="level" Type="int8" Size="1" Offset="0x112"/>
+		<Data ElementName="unknown5" Type="int8" Size="1" Offset="0x113"/>
+		<Data ElementName="heroic_flag" Type="int8" Size="1" Offset="0x114"/>
+		<Data ElementName="activity_timer" Type="int32" Size="1" Offset="0x115"/>
+		<Data ElementName="heatLevel" Type="int8" Size="1" Offset="0x119"/>
+		<Data ElementName="torch_color" Type="EQ2_Color" Size="1" Offset="0x11a"/>
+		<Data ElementName="model_type" Type="int16" Size="1" Offset="0x11d"/>
+		<Data ElementName="soga_model_type" Type="int16" Size="1" Offset="0x11f"/>
+		<Data ElementName="skin_color" Type="EQ2_Color" Size="1" Offset="0x121"/>
+		<Data ElementName="eye_color" Type="EQ2_Color" Size="1" Offset="0x124"/>
+		<Data ElementName="model_color" Type="EQ2_Color" Size="1" Offset="0x127"/>
+		<Data ElementName="soga_eye_color" Type="EQ2_Color" Size="1" Offset="0x12a"/>
+		<Data ElementName="soga_skin_color" Type="EQ2_Color" Size="1" Offset="0x12d"/>
+		<Data ElementName="soga_model_color" Type="EQ2_Color" Size="1" Offset="0x130"/>
+		<Data ElementName="equipment_types" Type="int16" Size="24" Offset="0x133"/>
+		<Data ElementName="mount_adornment_type" Type="int16" Size="1" Offset="0x163"/>
+		<Data ElementName="mount_armor_type" Type="int16" Size="1" Offset="0x165"/>
+		<Data ElementName="textures_slot_type" Type="int16" Size="1" Offset="0x167"/>
+		<Data ElementName="hair_type_id" Type="int16" Size="1" Offset="0x169"/>
+		<Data ElementName="facial_hair_type_id" Type="int16" Size="1" Offset="0x16b"/>
+		<Data ElementName="wing_type_id" Type="int16" Size="1" Offset="0x16d"/>
+		<Data ElementName="chest_type_id" Type="int16" Size="1" Offset="0x16f"/>
+		<Data ElementName="legs_type_id" Type="int16" Size="1" Offset="0x171"/>
+		<Data ElementName="back_slot_type_id" Type="int16" Size="1" Offset="0x173"/>
+		<Data ElementName="soga_hair_type_id" Type="int16" Size="1" Offset="0x175"/>
+		<Data ElementName="soga_facial_hair_type_id" Type="int16" Size="1" Offset="0x177"/>
+		<Data ElementName="equipment_colors" Type="EQ2_Color" Size="24" Offset="0x179"/>
+		<Data ElementName="mount_adornment_color" Type="EQ2_Color" Size="1" Offset="0x1c1"/>
+		<Data ElementName="mount_armor_color" Type="EQ2_Color" Size="1" Offset="0x1c4"/>
+		<Data ElementName="textures_slot_color" Type="EQ2_Color" Size="1" Offset="0x1c7"/>
+		<Data ElementName="hair_type_color" Type="EQ2_Color" Size="1" Offset="0x1ca"/>
+		<Data ElementName="hair_face_color" Type="EQ2_Color" Size="1" Offset="0x1cd"/>
+		<Data ElementName="wing_color1" Type="EQ2_Color" Size="1" Offset="0x1d0"/>
+		<Data ElementName="chest_type_color" Type="EQ2_Color" Size="1" Offset="0x1d3"/>
+		<Data ElementName="legs_type_color" Type="EQ2_Color" Size="1" Offset="0x1d6"/>
+		<Data ElementName="back_slot_type_color" Type="EQ2_Color" Size="1" Offset="0x1d9"/>
+		<Data ElementName="equipment_highlights" Type="EQ2_Color" Size="24" Offset="0x1dc"/>
+		<Data ElementName="mount_adornment_highlight" Type="EQ2_Color" Size="1" Offset="0x224"/>
+		<Data ElementName="mount_armor_highlight" Type="EQ2_Color" Size="1" Offset="0x227"/>
+		<Data ElementName="textures_slot_highlight" Type="EQ2_Color" Size="1" Offset="0x22a"/>
+		<Data ElementName="hair_type_highlight_color" Type="EQ2_Color" Size="1" Offset="0x22d"/>
+		<Data ElementName="hair_face_highlight_color" Type="EQ2_Color" Size="1" Offset="0x230"/>
+		<Data ElementName="wing_color2" Type="EQ2_Color" Size="1" Offset="0x233"/>
+		<Data ElementName="chest_type_highlight" Type="EQ2_Color" Size="1" Offset="0x236"/>
+		<Data ElementName="legs_type_highlight" Type="EQ2_Color" Size="1" Offset="0x239"/>
+		<Data ElementName="back_slot_type_highlight" Type="EQ2_Color" Size="1" Offset="0x23c"/>
+		<Data ElementName="soga_hair_type_color" Type="EQ2_Color" Size="1" Offset="0x23f"/>
+		<Data ElementName="soga_hair_type_highlight_color" Type="EQ2_Color" Size="1" Offset="0x242"/>
+		<Data ElementName="soga_hair_face_color" Type="EQ2_Color" Size="1" Offset="0x245"/>
+		<Data ElementName="soga_hair_face_highlight_color" Type="EQ2_Color" Size="1" Offset="0x248"/>
+		<Data ElementName="sliderBytes" Type="sint8" Size="26" Offset="0x24b"/>
+		<Data ElementName="sogaSliderBytes" Type="sint8" Size="26" Offset="0x265"/>
+		<Data ElementName="heraldry" Type="int8" Size="7" Offset="0x27f"/>
+		<Data ElementName="soga_heraldry" Type="int8" Size="7" Offset="0x286"/>
+		<Data ElementName="mount_type" Type="int16" Size="1" Offset="0x28d"/>
+		<Data ElementName="mount_color" Type="EQ2_Color" Size="1" Offset="0x28f"/>
+		<Data ElementName="mount_saddle_color" Type="EQ2_Color" Size="1" Offset="0x292"/>
+		<Data ElementName="soga_mount_info" Type="int64" Size="1" Offset="0x295"/>
+		<Data ElementName="hair_color1" Type="EQ2_Color" Size="1" Offset="0x29d"/>
+		<Data ElementName="hair_color2" Type="EQ2_Color" Size="1" Offset="0x2a0"/>
+		<Data ElementName="hair_highlight" Type="EQ2_Color" Size="1" Offset="0x2a3"/>
+		<Data ElementName="soga_hair_color1" Type="EQ2_Color" Size="1" Offset="0x2a6"/>
+		<Data ElementName="soga_hair_color2" Type="EQ2_Color" Size="1" Offset="0x2a9"/>
+		<Data ElementName="soga_hair_highlight" Type="EQ2_Color" Size="1" Offset="0x2ac"/>
+		<Data ElementName="combat_voice" Type="int16" Size="1" Offset="0x2af"/>
+		<Data ElementName="emote_voice" Type="int16" Size="1" Offset="0x2b1"/>
+		<Data ElementName="ammo_type" Type="int16" Size="1" Offset="0x2b3"/>
+		<Data ElementName="visual_flag" Type="int8" Size="1" Offset="0x2b5"/>
+		<Data ElementName="interaction_flag" Type="int8" Size="1" Offset="0x2b6"/>
+		<Data ElementName="flag3" Type="int8" Size="1" Offset="0x2b7"/>
+		<Data ElementName="flag4" Type="int8" Size="1" Offset="0x2b8"/>
+		<Data ElementName="size_mod" Type="float" Size="1" Offset="0x2b9"/>
+		<Data ElementName="spell_visuals" Type="int16" Size="8" Offset="0x2bd"/>
+		<Data ElementName="spell_visual_levels" Type="int8" Size="8" Offset="0x2cd"/>
+		<Data ElementName="action_state" Type="int16" Size="1" Offset="0x2d5"/>
+		<Data ElementName="visual_state" Type="int16" Size="1" Offset="0x2d7"/>
+		<Data ElementName="mood_state" Type="int16" Size="1" Offset="0x2d9"/>
+		<Data ElementName="emote_state" Type="int16" Size="1" Offset="0x2db"/>
+		<Data ElementName="race" Type="int8" Size="1" Offset="0x2dd"/>
+		<Data ElementName="gender" Type="int8" Size="1" Offset="0x2de"/>
+		<Data ElementName="adv_class" Type="int8" Size="1" Offset="0x2df"/>
+		<Data ElementName="difficulty" Type="int8" Size="1" Offset="0x2e0"/>
+		<Data ElementName="show_archtype_icon" Type="int8" Size="1" Offset="0x2e1"/>
+		<Data ElementName="unknown20a" Type="int8" Size="3" Offset="0x2e2"/>
+		<Data ElementName="unknown20" Type="int8" Size="1" Offset="0x2e5"/>
+	</Struct>
+	<Struct Name="Substruct_SpawnInfo" ClientVersion="1188" ByteSize="0x324">
 		<Data ElementName="hp_percent" Type="int32" Size="1" Offset="0x0"/>
 		<Data ElementName="power_percent" Type="int32" Size="1" Offset="0x4"/>
 		<Data ElementName="spell_effects" Substruct="Substruct_TargetSpellInfo" Size="30" Offset="0x8"/>
 		<Data ElementName="target_id" Type="int32" Size="1" Offset="0x134"/>
 		<Data ElementName="follow_target" Type="int32" Size="1" Offset="0x138"/>
-		<Data ElementName="unknown3b" Type="int8" Size="7" Offset="0x13c"/>
-		<Data ElementName="heroic_flag" Type="int8" Size="1" Offset="0x143"/>
+		<Data ElementName="id_unknown" Type="int32" Size="1" Offset="0x13c"/>
+		<Data ElementName="pet_owner_id" Type="int32" Size="1" Offset="0x140"/>
 		<Data ElementName="entityFlags" Type="int32" Size="1" Offset="0x144"/>
-		<Data ElementName="unknownpkShort" Type="int16" Size="1" Offset="0x148"/>
-		<Data ElementName="unknown6" Type="int8" Size="3" Offset="0x14a"/>
+		<Data ElementName="entityFlags2" Type="int32" Size="1" Offset="0x148"/>
+		<Data ElementName="archetype" Type="int8" Size="1" Offset="0x14c"/>
 		<Data ElementName="orig_level" Type="int8" Size="1" Offset="0x14d"/>
 		<Data ElementName="level" Type="int8" Size="1" Offset="0x14e"/>
 		<Data ElementName="unknown5" Type="int8" Size="1" Offset="0x14f"/>
@@ -1295,37 +1521,40 @@
 		<Data ElementName="soga_hair_highlight" Type="EQ2_Color" Size="1" Offset="0x2e0"/>
 		<Data ElementName="combat_voice" Type="int16" Size="1" Offset="0x2e3"/>
 		<Data ElementName="emote_voice" Type="int16" Size="1" Offset="0x2e5"/>
-		<Data ElementName="unknown17" Type="int8" Size="2" Offset="0x2e7"/>
+		<Data ElementName="ammo_type" Type="int16" Size="1" Offset="0x2e7"/>
 		<Data ElementName="visual_flag" Type="int8" Size="1" Offset="0x2e9"/>
 		<Data ElementName="interaction_flag" Type="int8" Size="1" Offset="0x2ea"/>
 		<Data ElementName="flag3" Type="int8" Size="1" Offset="0x2eb"/>
 		<Data ElementName="flag4" Type="int8" Size="1" Offset="0x2ec"/>
-		<Data ElementName="primary_slot_state" Type="int16" Size="1" Offset="0x2ed"/>
-		<Data ElementName="secondary_slot_state" Type="int16" Size="1" Offset="0x2ef"/>
-		<Data ElementName="ranged_slot_state" Type="int16" Size="1" Offset="0x2f1"/>
-		<Data ElementName="spell_visuals" Type="int16" Size="8" Offset="0x2f3"/>
-		<Data ElementName="spell_visual_levels" Type="int8" Size="8" Offset="0x303"/>
-		<Data ElementName="action_state" Type="int16" Size="1" Offset="0x30b"/>
-		<Data ElementName="visual_state" Type="int16" Size="1" Offset="0x30d"/>
-		<Data ElementName="mood_state" Type="int16" Size="1" Offset="0x30f"/>
-		<Data ElementName="emote_state" Type="int16" Size="1" Offset="0x311"/>
-		<Data ElementName="race" Type="int8" Size="1" Offset="0x313"/>
-		<Data ElementName="gender" Type="int8" Size="1" Offset="0x314"/>
-		<Data ElementName="adv_class" Type="int8" Size="1" Offset="0x315"/>
-		<Data ElementName="difficulty" Type="int8" Size="1" Offset="0x316"/>
-		<Data ElementName="unknown20a" Type="int32" Size="3" Offset="0x317"/>
-		<Data ElementName="unknown20" Type="int8" Size="3" Offset="0x323"/>
+		<Data ElementName="size_mod" Type="float" Size="1" Offset="0x2ed"/>
+		<Data ElementName="spell_visuals" Type="int16" Size="8" Offset="0x2f1"/>
+		<Data ElementName="spell_visual_levels" Type="int8" Size="8" Offset="0x301"/>
+		<Data ElementName="action_state" Type="int16" Size="1" Offset="0x309"/>
+		<Data ElementName="visual_state" Type="int16" Size="1" Offset="0x30b"/>
+		<Data ElementName="mood_state" Type="int16" Size="1" Offset="0x30d"/>
+		<Data ElementName="emote_state" Type="int16" Size="1" Offset="0x30f"/>
+		<Data ElementName="race" Type="int8" Size="1" Offset="0x311"/>
+		<Data ElementName="gender" Type="int8" Size="1" Offset="0x312"/>
+		<Data ElementName="adv_class" Type="int8" Size="1" Offset="0x313"/>
+		<Data ElementName="difficulty" Type="int8" Size="1" Offset="0x314"/>
+		<Data ElementName="show_archtype_icon" Type="int8" Size="1" Offset="0x315"/>
+		<Data ElementName="unknown20a" Type="int8" Size="7" Offset="0x316"/>
+		<Data ElementName="primary_slot_state" Type="int16" Size="1" Offset="0x31d"/>
+		<Data ElementName="secondary_slot_state" Type="int16" Size="1" Offset="0x31f"/>
+		<Data ElementName="ranged_slot_state" Type="int16" Size="1" Offset="0x321"/>
+		<Data ElementName="unknown20" Type="int8" Size="1" Offset="0x323"/>
 	</Struct>
-	<Struct Name="Substruct_SpawnInfo" ClientVersion="1198" ByteSize="0x326">
+	<Struct Name="Substruct_SpawnInfo" ClientVersion="1198" ByteSize="0x324">
 		<Data ElementName="hp_percent" Type="int32" Size="1" Offset="0x0"/>
 		<Data ElementName="power_percent" Type="int32" Size="1" Offset="0x4"/>
 		<Data ElementName="spell_effects" Substruct="Substruct_TargetSpellInfo" Size="30" Offset="0x8"/>
 		<Data ElementName="target_id" Type="int32" Size="1" Offset="0x134"/>
 		<Data ElementName="follow_target" Type="int32" Size="1" Offset="0x138"/>
-		<Data ElementName="unknown3b" Type="int8" Size="8" Offset="0x13c"/>
+		<Data ElementName="id_unknown" Type="int32" Size="1" Offset="0x13c"/>
+		<Data ElementName="pet_owner_id" Type="int32" Size="1" Offset="0x140"/>
 		<Data ElementName="entityFlags" Type="int32" Size="1" Offset="0x144"/>
-		<Data ElementName="unknownpkShort" Type="int16" Size="1" Offset="0x148"/>
-		<Data ElementName="unknown6" Type="int8" Size="3" Offset="0x14a"/>
+		<Data ElementName="entityFlags2" Type="int32" Size="1" Offset="0x148"/>
+		<Data ElementName="archetype" Type="int8" Size="1" Offset="0x14c"/>
 		<Data ElementName="orig_level" Type="int8" Size="1" Offset="0x14d"/>
 		<Data ElementName="level" Type="int8" Size="1" Offset="0x14e"/>
 		<Data ElementName="unknown5" Type="int8" Size="1" Offset="0x14f"/>
@@ -1392,28 +1621,130 @@
 		<Data ElementName="soga_hair_highlight" Type="EQ2_Color" Size="1" Offset="0x2e0"/>
 		<Data ElementName="combat_voice" Type="int16" Size="1" Offset="0x2e3"/>
 		<Data ElementName="emote_voice" Type="int16" Size="1" Offset="0x2e5"/>
-		<Data ElementName="unknown17" Type="int8" Size="2" Offset="0x2e7"/>
+		<Data ElementName="ammo_type" Type="int16" Size="1" Offset="0x2e7"/>
 		<Data ElementName="visual_flag" Type="int8" Size="1" Offset="0x2e9"/>
 		<Data ElementName="interaction_flag" Type="int8" Size="1" Offset="0x2ea"/>
 		<Data ElementName="flag3" Type="int8" Size="1" Offset="0x2eb"/>
 		<Data ElementName="flag4" Type="int8" Size="1" Offset="0x2ec"/>
-		<Data ElementName="primary_slot_state" Type="int16" Size="1" Offset="0x2ed"/>
-		<Data ElementName="secondary_slot_state" Type="int16" Size="1" Offset="0x2ef"/>
-		<Data ElementName="ranged_slot_state" Type="int16" Size="1" Offset="0x2f1"/>
-		<Data ElementName="spell_visuals" Type="int16" Size="8" Offset="0x2f3"/>
-		<Data ElementName="spell_visual_levels" Type="int8" Size="8" Offset="0x303"/>
-		<Data ElementName="action_state" Type="int16" Size="1" Offset="0x30b"/>
-		<Data ElementName="visual_state" Type="int16" Size="1" Offset="0x30d"/>
-		<Data ElementName="mood_state" Type="int16" Size="1" Offset="0x30f"/>
-		<Data ElementName="emote_state" Type="int16" Size="1" Offset="0x311"/>
-		<Data ElementName="race" Type="int8" Size="1" Offset="0x313"/>
-		<Data ElementName="gender" Type="int8" Size="1" Offset="0x314"/>
-		<Data ElementName="adv_class" Type="int8" Size="1" Offset="0x315"/>
-		<Data ElementName="difficulty" Type="int8" Size="1" Offset="0x316"/>
-		<Data ElementName="unknown20a" Type="int32" Size="3" Offset="0x317"/>
-		<Data ElementName="unknown20" Type="int8" Size="3" Offset="0x323"/>
+		<Data ElementName="size_mod" Type="float" Size="1" Offset="0x2ed"/>
+		<Data ElementName="spell_visuals" Type="int16" Size="8" Offset="0x2f1"/>
+		<Data ElementName="spell_visual_levels" Type="int8" Size="8" Offset="0x301"/>
+		<Data ElementName="action_state" Type="int16" Size="1" Offset="0x309"/>
+		<Data ElementName="visual_state" Type="int16" Size="1" Offset="0x30b"/>
+		<Data ElementName="mood_state" Type="int16" Size="1" Offset="0x30d"/>
+		<Data ElementName="emote_state" Type="int16" Size="1" Offset="0x30f"/>
+		<Data ElementName="race" Type="int8" Size="1" Offset="0x311"/>
+		<Data ElementName="gender" Type="int8" Size="1" Offset="0x312"/>
+		<Data ElementName="adv_class" Type="int8" Size="1" Offset="0x313"/>
+		<Data ElementName="difficulty" Type="int8" Size="1" Offset="0x314"/>
+		<Data ElementName="show_archtype_icon" Type="int8" Size="1" Offset="0x315"/>
+		<Data ElementName="unknown20a" Type="int8" Size="7" Offset="0x316"/>
+		<Data ElementName="primary_slot_state" Type="int16" Size="1" Offset="0x31d"/>
+		<Data ElementName="secondary_slot_state" Type="int16" Size="1" Offset="0x31f"/>
+		<Data ElementName="ranged_slot_state" Type="int16" Size="1" Offset="0x321"/>
+		<Data ElementName="unknown20" Type="int8" Size="1" Offset="0x323"/>
 	</Struct>
-	<Struct Name="Substruct_SpawnInfo" ClientVersion="60055" ByteSize="0x3d4">
+	<Struct Name="Substruct_SpawnInfo" ClientVersion="57080" ByteSize="0x394">
+		<Data ElementName="hp_percent" Type="int32" Size="1" Offset="0x0"/>
+		<Data ElementName="power_percent" Type="int32" Size="1" Offset="0x4"/>
+		<Data ElementName="spell_effects" Substruct="Substruct_TargetSpellInfo" Size="30" Offset="0x8"/>
+		<Data ElementName="target_id" Type="int32" Size="1" Offset="0x134"/>
+		<Data ElementName="follow_target" Type="int32" Size="1" Offset="0x138"/>
+		<Data ElementName="id_unknown" Type="int32" Size="1" Offset="0x13c"/>
+		<Data ElementName="pet_owner_id" Type="int32" Size="1" Offset="0x140"/>
+		<Data ElementName="entityFlags" Type="int32" Size="1" Offset="0x144"/>
+		<Data ElementName="entityFlags2" Type="int32" Size="1" Offset="0x148"/>
+		<Data ElementName="archetype" Type="int8" Size="1" Offset="0x14c"/>
+		<Data ElementName="orig_level" Type="int8" Size="1" Offset="0x14d"/>
+		<Data ElementName="level" Type="int8" Size="1" Offset="0x14e"/>
+		<Data ElementName="unknown5" Type="int8" Size="1" Offset="0x14f"/>
+		<Data ElementName="heroic_flag" Type="int8" Size="1" Offset="0x150"/>
+		<Data ElementName="activity_timer" Type="int32" Size="1" Offset="0x151"/>
+		<Data ElementName="heatLevel" Type="int8" Size="1" Offset="0x155"/>
+		<Data ElementName="torch_color" Type="EQ2_Color" Size="1" Offset="0x156"/>
+		<Data ElementName="model_type" Type="int32" Size="1" Offset="0x159"/>
+		<Data ElementName="soga_model_type" Type="int32" Size="1" Offset="0x15d"/>
+		<Data ElementName="skin_color" Type="EQ2_Color" Size="1" Offset="0x161"/>
+		<Data ElementName="eye_color" Type="EQ2_Color" Size="1" Offset="0x164"/>
+		<Data ElementName="model_color" Type="EQ2_Color" Size="1" Offset="0x167"/>
+		<Data ElementName="soga_eye_color" Type="EQ2_Color" Size="1" Offset="0x16a"/>
+		<Data ElementName="soga_skin_color" Type="EQ2_Color" Size="1" Offset="0x16d"/>
+		<Data ElementName="soga_model_color" Type="EQ2_Color" Size="1" Offset="0x170"/>
+		<Data ElementName="equipment_types" Type="int32" Size="24" Offset="0x173"/>
+		<Data ElementName="mount_adornment_type" Type="int32" Size="1" Offset="0x1d3"/>
+		<Data ElementName="mount_armor_type" Type="int32" Size="1" Offset="0x1d7"/>
+		<Data ElementName="textures_slot_type" Type="int32" Size="1" Offset="0x1db"/>
+		<Data ElementName="hair_type_id" Type="int32" Size="1" Offset="0x1df"/>
+		<Data ElementName="facial_hair_type_id" Type="int32" Size="1" Offset="0x1e3"/>
+		<Data ElementName="wing_type_id" Type="int32" Size="1" Offset="0x1e7"/>
+		<Data ElementName="chest_type_id" Type="int32" Size="1" Offset="0x1eb"/>
+		<Data ElementName="legs_type_id" Type="int32" Size="1" Offset="0x1ef"/>
+		<Data ElementName="back_slot_type_id" Type="int32" Size="1" Offset="0x1f3"/>
+		<Data ElementName="soga_hair_type_id" Type="int32" Size="1" Offset="0x1f7"/>
+		<Data ElementName="soga_facial_hair_type_id" Type="int32" Size="1" Offset="0x1fb"/>
+		<Data ElementName="equipment_colors" Type="EQ2_Color" Size="24" Offset="0x1ff"/>
+		<Data ElementName="mount_adornment_color" Type="EQ2_Color" Size="1" Offset="0x247"/>
+		<Data ElementName="mount_armor_color" Type="EQ2_Color" Size="1" Offset="0x24a"/>
+		<Data ElementName="textures_slot_color" Type="EQ2_Color" Size="1" Offset="0x24d"/>
+		<Data ElementName="hair_type_color" Type="EQ2_Color" Size="1" Offset="0x250"/>
+		<Data ElementName="hair_face_color" Type="EQ2_Color" Size="1" Offset="0x253"/>
+		<Data ElementName="wing_color1" Type="EQ2_Color" Size="1" Offset="0x256"/>
+		<Data ElementName="chest_type_color" Type="EQ2_Color" Size="1" Offset="0x259"/>
+		<Data ElementName="legs_type_color" Type="EQ2_Color" Size="1" Offset="0x25c"/>
+		<Data ElementName="back_slot_type_color" Type="EQ2_Color" Size="1" Offset="0x25f"/>
+		<Data ElementName="equipment_highlights" Type="EQ2_Color" Size="24" Offset="0x262"/>
+		<Data ElementName="mount_adornment_highlight" Type="EQ2_Color" Size="1" Offset="0x2aa"/>
+		<Data ElementName="mount_armor_highlight" Type="EQ2_Color" Size="1" Offset="0x2ad"/>
+		<Data ElementName="textures_slot_highlight" Type="EQ2_Color" Size="1" Offset="0x2b0"/>
+		<Data ElementName="hair_type_highlight_color" Type="EQ2_Color" Size="1" Offset="0x2b3"/>
+		<Data ElementName="hair_face_highlight_color" Type="EQ2_Color" Size="1" Offset="0x2b6"/>
+		<Data ElementName="wing_color2" Type="EQ2_Color" Size="1" Offset="0x2b9"/>
+		<Data ElementName="chest_type_highlight" Type="EQ2_Color" Size="1" Offset="0x2bc"/>
+		<Data ElementName="legs_type_highlight" Type="EQ2_Color" Size="1" Offset="0x2bf"/>
+		<Data ElementName="back_slot_type_highlight" Type="EQ2_Color" Size="1" Offset="0x2c2"/>
+		<Data ElementName="soga_hair_type_color" Type="EQ2_Color" Size="1" Offset="0x2c5"/>
+		<Data ElementName="soga_hair_type_highlight_color" Type="EQ2_Color" Size="1" Offset="0x2c8"/>
+		<Data ElementName="soga_hair_face_color" Type="EQ2_Color" Size="1" Offset="0x2cb"/>
+		<Data ElementName="soga_hair_face_highlight_color" Type="EQ2_Color" Size="1" Offset="0x2ce"/>
+		<Data ElementName="sliderBytes" Type="sint8" Size="26" Offset="0x2d1"/>
+		<Data ElementName="sogaSliderBytes" Type="sint8" Size="26" Offset="0x2eb"/>
+		<Data ElementName="heraldry" Type="int8" Size="7" Offset="0x305"/>
+		<Data ElementName="soga_heraldry" Type="int8" Size="7" Offset="0x30c"/>
+		<Data ElementName="mount_type" Type="int32" Size="1" Offset="0x313"/>
+		<Data ElementName="mount_color" Type="EQ2_Color" Size="1" Offset="0x317"/>
+		<Data ElementName="mount_saddle_color" Type="EQ2_Color" Size="1" Offset="0x31a"/>
+		<Data ElementName="hair_color1" Type="EQ2_Color" Size="1" Offset="0x31d"/>
+		<Data ElementName="hair_color2" Type="EQ2_Color" Size="1" Offset="0x320"/>
+		<Data ElementName="hair_highlight" Type="EQ2_Color" Size="1" Offset="0x323"/>
+		<Data ElementName="soga_hair_color1" Type="EQ2_Color" Size="1" Offset="0x326"/>
+		<Data ElementName="soga_hair_color2" Type="EQ2_Color" Size="1" Offset="0x329"/>
+		<Data ElementName="soga_hair_highlight" Type="EQ2_Color" Size="1" Offset="0x32c"/>
+		<Data ElementName="combat_voice" Type="int32" Size="1" Offset="0x32f"/>
+		<Data ElementName="emote_voice" Type="int32" Size="1" Offset="0x333"/>
+		<Data ElementName="ammo_type" Type="int32" Size="1" Offset="0x337"/>
+		<Data ElementName="visual_flag" Type="int8" Size="1" Offset="0x33b"/>
+		<Data ElementName="interaction_flag" Type="int8" Size="1" Offset="0x33c"/>
+		<Data ElementName="flag3" Type="int8" Size="1" Offset="0x33d"/>
+		<Data ElementName="flag4" Type="int8" Size="1" Offset="0x33e"/>
+		<Data ElementName="size_mod" Type="float" Size="1" Offset="0x33f"/>
+		<Data ElementName="spell_visuals" Type="int32" Size="8" Offset="0x343"/>
+		<Data ElementName="spell_visual_levels" Type="int8" Size="8" Offset="0x363"/>
+		<Data ElementName="action_state" Type="int32" Size="1" Offset="0x36b"/>
+		<Data ElementName="visual_state" Type="int32" Size="1" Offset="0x36f"/>
+		<Data ElementName="mood_state" Type="int32" Size="1" Offset="0x373"/>
+		<Data ElementName="emote_state" Type="int32" Size="1" Offset="0x377"/>
+		<Data ElementName="race" Type="int8" Size="1" Offset="0x37b"/>
+		<Data ElementName="gender" Type="int8" Size="1" Offset="0x37c"/>
+		<Data ElementName="adv_class" Type="int8" Size="1" Offset="0x37d"/>
+		<Data ElementName="difficulty" Type="int8" Size="1" Offset="0x37e"/>
+		<Data ElementName="show_archtype_icon" Type="int8" Size="1" Offset="0x37f"/>
+		<Data ElementName="unknown20a" Type="int8" Size="7" Offset="0x380"/>
+		<Data ElementName="primary_slot_state" Type="int32" Size="1" Offset="0x387"/>
+		<Data ElementName="secondary_slot_state" Type="int32" Size="1" Offset="0x38b"/>
+		<Data ElementName="ranged_slot_state" Type="int32" Size="1" Offset="0x38f"/>
+		<Data ElementName="unknown20" Type="int8" Size="1" Offset="0x393"/>
+	</Struct>
+	<Struct Name="Substruct_SpawnInfo" ClientVersion="60038" ByteSize="0x3d4">
 		<Data ElementName="model_type" Type="int32" Size="1" Offset="0x0"/>
 		<Data ElementName="soga_model_type" Type="int32" Size="1" Offset="0x4"/>
 		<Data ElementName="equipment_types" Type="int32" Size="24" Offset="0x8"/>
@@ -1431,7 +1762,7 @@
 		<Data ElementName="mount_type" Type="int32" Size="1" Offset="0x94"/>
 		<Data ElementName="combat_voice" Type="int32" Size="1" Offset="0x98"/>
 		<Data ElementName="emote_voice" Type="int32" Size="1" Offset="0x9c"/>
-		<Data ElementName="unknown17" Type="int8" Size="4" Offset="0xa0"/>
+		<Data ElementName="ammo_type" Type="int32" Size="1" Offset="0xa0"/>
 		<Data ElementName="visual_flag" Type="int8" Size="1" Offset="0xa4"/>
 		<Data ElementName="interaction_flag" Type="int8" Size="1" Offset="0xa5"/>
 		<Data ElementName="flag3" Type="int8" Size="1" Offset="0xa6"/>
@@ -1492,10 +1823,10 @@
 		<Data ElementName="spell_effects" Substruct="Substruct_TargetSpellInfo" Size="30" Offset="0x22c"/>
 		<Data ElementName="target_id" Type="int32" Size="1" Offset="0x394"/>
 		<Data ElementName="follow_target" Type="int32" Size="1" Offset="0x398"/>
-		<Data ElementName="size_unknown" Type="int32" Size="1" Offset="0x39c"/>
-		<Data ElementName="unknown3b" Type="int8" Size="4" Offset="0x3a0"/>
+		<Data ElementName="id_unknown" Type="int32" Size="1" Offset="0x39c"/>
+		<Data ElementName="pet_owner_id" Type="int32" Size="1" Offset="0x3a0"/>
 		<Data ElementName="entityFlags" Type="int32" Size="1" Offset="0x3a4"/>
-		<Data ElementName="unknownpk1" Type="int32" Size="1" Offset="0x3a8"/>
+		<Data ElementName="entityFlags2" Type="int32" Size="1" Offset="0x3a8"/>
 		<Data ElementName="activity_timer" Type="int32" Size="1" Offset="0x3ac"/>
 		<Data ElementName="cast_unknown" Type="int32" Size="1" Offset="0x3b0"/>
 		<Data ElementName="hp_percent" Type="int32" Size="1" Offset="0x3b4"/>
@@ -1535,7 +1866,7 @@
 		<Data ElementName="mount_type" Type="int32" Size="1" Offset="0x94"/>
 		<Data ElementName="combat_voice" Type="int32" Size="1" Offset="0x98"/>
 		<Data ElementName="emote_voice" Type="int32" Size="1" Offset="0x9c"/>
-		<Data ElementName="unknown17" Type="int8" Size="4" Offset="0xa0"/>
+		<Data ElementName="ammo_type" Type="int32" Size="1" Offset="0xa0"/>
 		<Data ElementName="visual_flag" Type="int8" Size="1" Offset="0xa4"/>
 		<Data ElementName="interaction_flag" Type="int8" Size="1" Offset="0xa5"/>
 		<Data ElementName="flag3" Type="int8" Size="1" Offset="0xa6"/>
@@ -1596,10 +1927,10 @@
 		<Data ElementName="spell_effects" Substruct="Substruct_TargetSpellInfo" Size="30" Offset="0x22c"/>
 		<Data ElementName="target_id" Type="int32" Size="1" Offset="0x394"/>
 		<Data ElementName="follow_target" Type="int32" Size="1" Offset="0x398"/>
-		<Data ElementName="size_unknown" Type="int32" Size="1" Offset="0x39c"/>
-		<Data ElementName="unknown3b" Type="int8" Size="4" Offset="0x3a0"/>
+		<Data ElementName="id_unknown" Type="int32" Size="1" Offset="0x39c"/>
+		<Data ElementName="pet_owner_id" Type="int32" Size="1" Offset="0x3a0"/>
 		<Data ElementName="entityFlags" Type="int32" Size="1" Offset="0x3a4"/>
-		<Data ElementName="unknownpk1" Type="int32" Size="1" Offset="0x3a8"/>
+		<Data ElementName="entityFlags2" Type="int32" Size="1" Offset="0x3a8"/>
 		<Data ElementName="activity_timer" Type="int32" Size="1" Offset="0x3ac"/>
 		<Data ElementName="cast_unknown" Type="int32" Size="1" Offset="0x3b0"/>
 		<Data ElementName="hp_percent" Type="int32" Size="1" Offset="0x3b4"/>
@@ -1641,7 +1972,7 @@
 		<Data ElementName="mount_type" Type="int32" Size="1" Offset="0x98"/>
 		<Data ElementName="combat_voice" Type="int32" Size="1" Offset="0x9c"/>
 		<Data ElementName="emote_voice" Type="int32" Size="1" Offset="0xa0"/>
-		<Data ElementName="unknown17" Type="int8" Size="4" Offset="0xa4"/>
+		<Data ElementName="ammo_type" Type="int32" Size="1" Offset="0xa4"/>
 		<Data ElementName="visual_flag" Type="int8" Size="1" Offset="0xa8"/>
 		<Data ElementName="interaction_flag" Type="int8" Size="1" Offset="0xa9"/>
 		<Data ElementName="flag3" Type="int8" Size="1" Offset="0xaa"/>
@@ -1705,10 +2036,10 @@
 		<Data ElementName="spell_effects" Substruct="Substruct_TargetSpellInfo" Size="30" Offset="0x238"/>
 		<Data ElementName="target_id" Type="int32" Size="1" Offset="0x3a0"/>
 		<Data ElementName="follow_target" Type="int32" Size="1" Offset="0x3a4"/>
-		<Data ElementName="size_unknown" Type="int32" Size="1" Offset="0x3a8"/>
-		<Data ElementName="unknown3b" Type="int8" Size="4" Offset="0x3ac"/>
+		<Data ElementName="id_unknown" Type="int32" Size="1" Offset="0x3a8"/>
+		<Data ElementName="pet_owner_id" Type="int32" Size="1" Offset="0x3ac"/>
 		<Data ElementName="entityFlags" Type="int32" Size="1" Offset="0x3b0"/>
-		<Data ElementName="unknownpk1" Type="int32" Size="1" Offset="0x3b4"/>
+		<Data ElementName="entityFlags2" Type="int32" Size="1" Offset="0x3b4"/>
 		<Data ElementName="activity_timer" Type="int32" Size="1" Offset="0x3b8"/>
 		<Data ElementName="cast_unknown" Type="int32" Size="1" Offset="0x3bc"/>
 		<Data ElementName="hp_percent" Type="int32" Size="1" Offset="0x3c0"/>
@@ -1731,113 +2062,133 @@
 		<Data ElementName="show_archtype_icon" Type="int8" Size="1" Offset="0x3e1"/>
 		<Data ElementName="unknown21" Type="int8" Size="2" Offset="0x3e2"/>
 	</Struct>
-	<Struct Name="Substruct_SpawnVisualization" ClientVersion="1">
-		<Data ElementName="considerDifficulty" Type="int8" Size="1"/>
-		<Data ElementName="locked_no_loot" Type="int8" Size="1"/>
-		<Data ElementName="factionCon" Type="sint8" Size="1"/>
-		<Data ElementName="quest_flag" Type="int8" Size="1"/>
-		<Data ElementName="vis_flags" Type="int16" Size="1"/>
-		<Data ElementName="unknownb" Type="int8" Size="3"/>
-		<Data ElementName="bShowHandFlag" Type="bool" Size="1"/>
+	<Struct Name="Substruct_SpawnVisualization" ClientVersion="1" ByteSize="0xb">
+		<Data ElementName="considerDifficulty" Type="int8" Size="1" Offset="0x0"/>
+		<Data ElementName="locked_no_loot" Type="int8" Size="1" Offset="0x1"/>
+		<Data ElementName="factionCon" Type="sint8" Size="1" Offset="0x2"/>
+		<Data ElementName="quest_flag" Type="int8" Size="1" Offset="0x3"/>
+		<Data ElementName="pet_threat" Type="int8" Size="1" Offset="0x4"/>
+		<Data ElementName="vis_flags" Type="int16" Size="1" Offset="0x5"/>
+		<Data ElementName="unknownb" Type="int8" Size="3" Offset="0x7"/>
+		<Data ElementName="bShowHandFlag" Type="bool" Size="1" Offset="0xa"/>
 	</Struct>
-	<Struct Name="Substruct_SpawnVisualization" ClientVersion="843">
-		<Data ElementName="considerDifficulty" Type="int8" Size="1"/>
-		<Data ElementName="locked_no_loot" Type="int8" Size="1"/>
-		<Data ElementName="factionCon" Type="sint8" Size="1"/>
-		<Data ElementName="quest_flag" Type="int8" Size="1"/>
-		<Data ElementName="vis_flags" Type="int16" Size="1"/>
-		<Data ElementName="unknownb" Type="int8" Size="3"/>
-		<Data ElementName="bShowHandFlag" Type="bool" Size="1"/>
+	<Struct Name="Substruct_SpawnVisualization" ClientVersion="936" ByteSize="0x11">
+		<Data ElementName="considerDifficulty" Type="int8" Size="1" Offset="0x0"/>
+		<Data ElementName="locked_no_loot" Type="int8" Size="1" Offset="0x1"/>
+		<Data ElementName="factionCon" Type="sint8" Size="1" Offset="0x2"/>
+		<Data ElementName="quest_flag" Type="int8" Size="1" Offset="0x3"/>
+		<Data ElementName="bShowAggro" Type="bool" Size="1" Offset="0x4"/>
+		<Data ElementName="pet_threat" Type="int8" Size="1" Offset="0x5"/>
+		<Data ElementName="vis_flags" Type="int16" Size="1" Offset="0x6"/>
+		<Data ElementName="unknownb" Type="int8" Size="3" Offset="0x8"/>
+		<Data ElementName="bShowHandFlag" Type="bool" Size="1" Offset="0xb"/>
+		<Data ElementName="unknown4" Type="int32" Size="1" Offset="0xc"/>
+		<Data ElementName="unknown2" Type="int8" Size="1" Offset="0x10"/>
 	</Struct>
-	<Struct Name="Substruct_SpawnVisualization" ClientVersion="936">
-		<Data ElementName="considerDifficulty" Type="int8" Size="1"/>
-		<Data ElementName="locked_no_loot" Type="int8" Size="1"/>
-		<Data ElementName="factionCon" Type="sint8" Size="1"/>
-		<Data ElementName="quest_flag" Type="int8" Size="1"/>
-		<Data ElementName="bShowAggro" Type="bool" Size="1"/>
-		<Data ElementName="vis_flags" Type="int16" Size="1"/>
-		<Data ElementName="unknownb" Type="int8" Size="3"/>
-		<Data ElementName="bShowHandFlag" Type="bool" Size="1"/>
-		<Data ElementName="unknown4" Type="int32" Size="1"/>
-		<Data ElementName="unknown2" Type="int8" Size="4"/>
+	<Struct Name="Substruct_SpawnVisualization" ClientVersion="955" ByteSize="0x11">
+		<Data ElementName="considerDifficulty" Type="int8" Size="1" Offset="0x0"/>
+		<Data ElementName="locked_no_loot" Type="int8" Size="1" Offset="0x1"/>
+		<Data ElementName="factionCon" Type="sint8" Size="1" Offset="0x2"/>
+		<Data ElementName="quest_flag" Type="int8" Size="1" Offset="0x3"/>
+		<Data ElementName="bShowAggro" Type="bool" Size="1" Offset="0x4"/>
+		<Data ElementName="pet_threat" Type="int8" Size="1" Offset="0x5"/>
+		<Data ElementName="vis_flags" Type="int16" Size="1" Offset="0x6"/>
+		<Data ElementName="unknownb" Type="int8" Size="3" Offset="0x8"/>
+		<Data ElementName="bShowHandFlag" Type="bool" Size="1" Offset="0xb"/>
+		<Data ElementName="unknown4" Type="int32" Size="1" Offset="0xc"/>
+		<Data ElementName="unknown2" Type="int8" Size="1" Offset="0x10"/>
 	</Struct>
-	<Struct Name="Substruct_SpawnVisualization" ClientVersion="955">
-		<Data ElementName="considerDifficulty" Type="int8" Size="1"/>
-		<Data ElementName="locked_no_loot" Type="int8" Size="1"/>
-		<Data ElementName="factionCon" Type="sint8" Size="1"/>
-		<Data ElementName="quest_flag" Type="int8" Size="1"/>
-		<Data ElementName="bShowAggro" Type="bool" Size="1"/>
-		<Data ElementName="vis_flags" Type="int16" Size="1"/>
-		<Data ElementName="unknownb" Type="int8" Size="3"/>
-		<Data ElementName="bShowHandFlag" Type="bool" Size="1"/>
-		<Data ElementName="unknown4" Type="int32" Size="1"/>
-		<Data ElementName="unknown2" Type="int8" Size="3"/>
+	<Struct Name="Substruct_SpawnVisualization" ClientVersion="1096" ByteSize="0x14">
+		<Data ElementName="considerDifficulty" Type="int8" Size="1" Offset="0x0"/>
+		<Data ElementName="locked_no_loot" Type="int8" Size="1" Offset="0x1"/>
+		<Data ElementName="factionCon" Type="sint8" Size="1" Offset="0x2"/>
+		<Data ElementName="quest_flag" Type="int8" Size="1" Offset="0x3"/>
+		<Data ElementName="bShowAggro" Type="bool" Size="1" Offset="0x4"/>
+		<Data ElementName="pet_threat" Type="int8" Size="1" Offset="0x5"/>
+		<Data ElementName="vis_flags" Type="int16" Size="1" Offset="0x6"/>
+		<Data ElementName="unknownb" Type="int8" Size="3" Offset="0x8"/>
+		<Data ElementName="bShowHandFlag" Type="bool" Size="1" Offset="0xb"/>
+		<Data ElementName="unknown4" Type="int32" Size="1" Offset="0xc"/>
+		<Data ElementName="unknown2" Type="int8" Size="1" Offset="0x10"/>
+		<Data ElementName="tag_icon" Type="int8" Size="1" Offset="0x11"/>
+		<Data ElementName="tag_number" Type="int8" Size="1" Offset="0x12"/>
+		<Data ElementName="unknown3" Type="int8" Size="1" Offset="0x13"/>
 	</Struct>
-	<Struct Name="Substruct_SpawnVisualization" ClientVersion="1008">
-		<Data ElementName="considerDifficulty" Type="int8" Size="1"/>
-		<Data ElementName="locked_no_loot" Type="int8" Size="1"/>
-		<Data ElementName="factionCon" Type="sint8" Size="1"/>
-		<Data ElementName="quest_flag" Type="int8" Size="1"/>
-		<Data ElementName="bShowAggro" Type="bool" Size="1"/>
-		<Data ElementName="vis_flags" Type="int16" Size="1"/>
-		<Data ElementName="unknownb" Type="int8" Size="3"/>
-		<Data ElementName="bShowHandFlag" Type="bool" Size="1"/>
-		<Data ElementName="unknown4" Type="int32" Size="1"/>
-		<Data ElementName="unknown2" Type="int8" Size="1"/>
+	<Struct Name="Substruct_SpawnVisualization" ClientVersion="1119" ByteSize="0x16">
+		<Data ElementName="considerDifficulty" Type="int8" Size="1" Offset="0x0"/>
+		<Data ElementName="locked_no_loot" Type="int8" Size="1" Offset="0x1"/>
+		<Data ElementName="factionCon" Type="sint8" Size="1" Offset="0x2"/>
+		<Data ElementName="quest_flag" Type="int8" Size="1" Offset="0x3"/>
+		<Data ElementName="merc_icon" Type="int8" Size="1" Offset="0x4"/>
+		<Data ElementName="bShowAggro" Type="bool" Size="1" Offset="0x5"/>
+		<Data ElementName="pet_threat" Type="int8" Size="1" Offset="0x6"/>
+		<Data ElementName="name_quest_icon" Type="int8" Size="1" Offset="0x7"/>
+		<Data ElementName="vis_flags" Type="int16" Size="1" Offset="0x8"/>
+		<Data ElementName="unknownb" Type="int8" Size="3" Offset="0xa"/>
+		<Data ElementName="bShowHandFlag" Type="bool" Size="1" Offset="0xd"/>
+		<Data ElementName="unknown4" Type="int32" Size="1" Offset="0xe"/>
+		<Data ElementName="unknown2" Type="int8" Size="1" Offset="0x12"/>
+		<Data ElementName="tag_icon" Type="int8" Size="1" Offset="0x13"/>
+		<Data ElementName="tag_number" Type="int8" Size="1" Offset="0x14"/>
+		<Data ElementName="unknown3" Type="int8" Size="1" Offset="0x15"/>
 	</Struct>
-	<Struct Name="Substruct_SpawnVisualization" ClientVersion="1142">
-		<Data ElementName="considerDifficulty" Type="int8" Size="1"/>
-		<Data ElementName="locked_no_loot" Type="int8" Size="1"/>
-		<Data ElementName="factionCon" Type="sint8" Size="1"/>
-		<Data ElementName="quest_flag" Type="int8" Size="1"/>
-		<Data ElementName="bShowAggro" Type="bool" Size="1"/>
-		<Data ElementName="pet_threat" Type="int8" Size="1"/>
-		<Data ElementName="vis_flags" Type="int16" Size="1"/>
-		<Data ElementName="unknownb" Type="int8" Size="1"/>
-		<Data ElementName="pvp_difficulty" Type="int8" Size="1"/>
-		<Data ElementName="bShowHandFlag" Type="bool" Size="1"/>
-		<Data ElementName="unknown4" Type="int32" Size="1"/>
-		<Data ElementName="unknown2" Type="int8" Size="6"/>
+	<Struct Name="Substruct_SpawnVisualization" ClientVersion="1142" ByteSize="0x14">
+		<Data ElementName="considerDifficulty" Type="int8" Size="1" Offset="0x0"/>
+		<Data ElementName="locked_no_loot" Type="int8" Size="1" Offset="0x1"/>
+		<Data ElementName="factionCon" Type="sint8" Size="1" Offset="0x2"/>
+		<Data ElementName="quest_flag" Type="int8" Size="1" Offset="0x3"/>
+		<Data ElementName="merc_icon" Type="int8" Size="1" Offset="0x4"/>
+		<Data ElementName="bShowAggro" Type="bool" Size="1" Offset="0x5"/>
+		<Data ElementName="pet_threat" Type="int8" Size="1" Offset="0x6"/>
+		<Data ElementName="vis_flags" Type="int16" Size="1" Offset="0x7"/>
+		<Data ElementName="name_quest_icon" Type="int8" Size="1" Offset="0x9"/>
+		<Data ElementName="unknownb" Type="int8" Size="1" Offset="0xa"/>
+		<Data ElementName="pvp_difficulty" Type="int8" Size="1" Offset="0xb"/>
+		<Data ElementName="bShowHandFlag" Type="bool" Size="1" Offset="0xc"/>
+		<Data ElementName="unknown4" Type="int32" Size="1" Offset="0xd"/>
+		<Data ElementName="tag_icon" Type="int8" Size="1" Offset="0x11"/>
+		<Data ElementName="tag_number" Type="int8" Size="1" Offset="0x12"/>
+		<Data ElementName="unknown3" Type="int8" Size="1" Offset="0x13"/>
 	</Struct>
-	<Struct Name="Substruct_SpawnVisualization" ClientVersion="1188">
-		<Data ElementName="considerDifficulty" Type="int8" Size="1"/>
-		<Data ElementName="locked_no_loot" Type="int8" Size="1"/>
-		<Data ElementName="factionCon" Type="sint8" Size="1"/>
-		<Data ElementName="quest_flag" Type="int8" Size="1"/>
-		<Data ElementName="merc_icon" Type="int8" Size="1"/>
-		<Data ElementName="bShowAggro" Type="bool" Size="1"/>
-		<Data ElementName="pet_threat" Type="int8" Size="1"/>
-		<Data ElementName="name_quest_icon" Type="int8" Size="1"/>
-		<Data ElementName="unknowna2" Type="int32" Size="1"/>
-		<Data ElementName="vis_flags" Type="int16" Size="1"/>
-		<Data ElementName="unknownb" Type="int8" Size="1"/>
-		<Data ElementName="pvp_difficulty" Type="int8" Size="1"/>
-		<Data ElementName="bShowHandFlag" Type="bool" Size="1"/>
-		<Data ElementName="unknown4" Type="int32" Size="1"/>
-		<Data ElementName="unknown2" Type="int8" Size="4"/>
-		<Data ElementName="tag_icon" Type="int8" Size="1"/>
-		<Data ElementName="tag_number" Type="int8" Size="1"/>
-		<Data ElementName="unknown3" Type="int8" Size="1"/>
+	<Struct Name="Substruct_SpawnVisualization" ClientVersion="1188" ByteSize="0x1c">
+		<Data ElementName="considerDifficulty" Type="int8" Size="1" Offset="0x0"/>
+		<Data ElementName="locked_no_loot" Type="int8" Size="1" Offset="0x1"/>
+		<Data ElementName="factionCon" Type="sint8" Size="1" Offset="0x2"/>
+		<Data ElementName="quest_flag" Type="int8" Size="1" Offset="0x3"/>
+		<Data ElementName="merc_icon" Type="int8" Size="1" Offset="0x4"/>
+		<Data ElementName="bShowAggro" Type="bool" Size="1" Offset="0x5"/>
+		<Data ElementName="pet_threat" Type="int8" Size="1" Offset="0x6"/>
+		<Data ElementName="name_quest_icon" Type="int8" Size="1" Offset="0x7"/>
+		<Data ElementName="unknowna2" Type="int32" Size="1" Offset="0x8"/>
+		<Data ElementName="vis_flags" Type="int16" Size="1" Offset="0xc"/>
+		<Data ElementName="unknownb" Type="int8" Size="1" Offset="0xe"/>
+		<Data ElementName="pvp_difficulty" Type="int8" Size="1" Offset="0xf"/>
+		<Data ElementName="bShowHandFlag" Type="bool" Size="1" Offset="0x10"/>
+		<Data ElementName="unknown4" Type="int32" Size="1" Offset="0x11"/>
+		<Data ElementName="unknown2" Type="int8" Size="4" Offset="0x15"/>
+		<Data ElementName="tag_icon" Type="int8" Size="1" Offset="0x19"/>
+		<Data ElementName="tag_number" Type="int8" Size="1" Offset="0x1a"/>
+		<Data ElementName="unknown3" Type="int8" Size="1" Offset="0x1b"/>
 	</Struct>
-	<Struct Name="Substruct_SpawnVisualization" ClientVersion="60055">
-		<Data ElementName="unknown" Type="int32" Size="1"/>
-		<Data ElementName="considerDifficulty" Type="int8" Size="1"/>
-		<Data ElementName="locked_no_loot" Type="int8" Size="1"/>
-		<Data ElementName="factionCon" Type="sint8" Size="1"/>
-		<Data ElementName="quest_flag" Type="int8" Size="1"/>
-		<Data ElementName="merc_icon" Type="int8" Size="1"/>
-		<Data ElementName="bShowAggro" Type="bool" Size="1"/>
-		<Data ElementName="pet_threat" Type="int8" Size="1"/>
-		<Data ElementName="name_quest_icon" Type="int8" Size="1"/>
-		<Data ElementName="unknowna2" Type="int32" Size="1"/>
-		<Data ElementName="vis_flags" Type="int16" Size="1"/>
-		<Data ElementName="unknownb" Type="int8" Size="1"/>
-		<Data ElementName="pvp_difficulty" Type="int8" Size="1"/>
-		<Data ElementName="bShowHandFlag" Type="bool" Size="1"/>
-		<Data ElementName="unknown4" Type="int32" Size="1"/>
-		<Data ElementName="tag_icon" Type="int8" Size="1"/>
-		<Data ElementName="tag_number" Type="int8" Size="1"/>
-		<Data ElementName="unknown3" Type="int8" Size="1"/>
+	<Struct Name="Substruct_SpawnVisualization" ClientVersion="60038" ByteSize="0x1c">
+		<Data ElementName="unknown" Type="int32" Size="1" Offset="0x0"/>
+		<Data ElementName="considerDifficulty" Type="int8" Size="1" Offset="0x4"/>
+		<Data ElementName="locked_no_loot" Type="int8" Size="1" Offset="0x5"/>
+		<Data ElementName="factionCon" Type="sint8" Size="1" Offset="0x6"/>
+		<Data ElementName="quest_flag" Type="int8" Size="1" Offset="0x7"/>
+		<Data ElementName="merc_icon" Type="int8" Size="1" Offset="0x8"/>
+		<Data ElementName="bShowAggro" Type="bool" Size="1" Offset="0x9"/>
+		<Data ElementName="pet_threat" Type="int8" Size="1" Offset="0xa"/>
+		<Data ElementName="name_quest_icon" Type="int8" Size="1" Offset="0xb"/>
+		<Data ElementName="unknowna2" Type="int32" Size="1" Offset="0xc"/>
+		<Data ElementName="vis_flags" Type="int16" Size="1" Offset="0x10"/>
+		<Data ElementName="unknownb" Type="int8" Size="1" Offset="0x12"/>
+		<Data ElementName="pvp_difficulty" Type="int8" Size="1" Offset="0x13"/>
+		<Data ElementName="bShowHandFlag" Type="bool" Size="1" Offset="0x14"/>
+		<Data ElementName="unknown4" Type="int32" Size="1" Offset="0x15"/>
+		<Data ElementName="tag_icon" Type="int8" Size="1" Offset="0x19"/>
+		<Data ElementName="tag_number" Type="int8" Size="1" Offset="0x1a"/>
+		<Data ElementName="unknown3" Type="int8" Size="1" Offset="0x1b"/>
 	</Struct>
 	<Struct Name="Substruct_Lerp" ClientVersion="1">
 		<Data ElementName="version" Type="int32" Size="1"/>
@@ -1935,7 +2286,7 @@
 		<Data ElementName="cancellable" Type="int8" Size="1"/>
 		<Data ElementName="unknown3" Type="int8" Size="1"/>
 	</Struct>
-	<Struct Name="Substruct_SpellEffects" ClientVersion="843">
+	<Struct Name="Substruct_SpellEffects" ClientVersion="839">
 		<Data ElementName="spell_id" Type="int32" Size="1"/>
 		<Data ElementName="total_time" Type="float" Size="1"/>
 		<Data ElementName="expire_timestamp" Type="int32" Size="1"/>
@@ -2301,8 +2652,109 @@
 		<Data ElementName="members" Substruct="Substruct_GroupMember" Size="24"/>
 		<Data ElementName="group_leaders" Type="sint8" Size="4"/>
 	</Struct>
-	<Struct Name="Substruct_SpellProps" ClientVersion="843">
-		<Data ElementName="blueStats" Type="float" Size="66"/>
+	<Struct Name="Substruct_SpellProps" ClientVersion="839">
+		<Data ElementName="hp_regen" Type="float" Size="1"/>
+		<Data ElementName="power_regen" Type="float" Size="1"/>
+		<Data ElementName="ooc_hp_regen" Type="float" Size="1"/>
+		<Data ElementName="ooc_power_regen" Type="float" Size="1"/>
+		<Data ElementName="ic_hp_regen_bonus" Type="float" Size="1"/>
+		<Data ElementName="ic_power_regen_bonus" Type="float" Size="1"/>
+		<Data ElementName="hp_max" Type="float" Size="1"/>
+		<Data ElementName="hp_max_sta_bonus" Type="float" Size="1"/>
+		<Data ElementName="hp_max_perc_total" Type="float" Size="1"/>
+		<Data ElementName="ooc_run_speed" Type="float" Size="1"/>
+		<Data ElementName="slow" Type="float" Size="1"/>
+		<Data ElementName="speed_mount_ground" Type="float" Size="1"/>
+		<Data ElementName="speed_mount_air" Type="float" Size="1"/>
+		<Data ElementName="speed_mount_leap" Type="float" Size="1"/>
+		<Data ElementName="mount_leap_distance" Type="float" Size="1"/>
+		<Data ElementName="glide_efficiency" Type="float" Size="1"/>
+		<Data ElementName="ic_run_speed" Type="float" Size="1"/>
+		<Data ElementName="haste" Type="float" Size="1"/>
+		<Data ElementName="haste_spell" Type="float" Size="1"/>
+		<Data ElementName="power_max" Type="float" Size="1"/>
+		<Data ElementName="power_max_perc" Type="float" Size="1"/>
+		<Data ElementName="all_attributes" Type="float" Size="1"/>
+		<Data ElementName="blur_vision" Type="float" Size="1"/>
+		<Data ElementName="magic_level_immunity" Type="float" Size="1"/>
+		<Data ElementName="hate_gain" Type="float" Size="1"/>
+		<Data ElementName="combat_xp_mod" Type="float" Size="1"/>
+		<Data ElementName="ts_xp_mod" Type="float" Size="1"/>
+		<Data ElementName="aa_xp_mod" Type="float" Size="1"/>
+		<Data ElementName="size_mod" Type="float" Size="1"/>
+		<Data ElementName="dps" Type="float" Size="1"/>
+		<Data ElementName="dps_spell" Type="float" Size="1"/>
+		<Data ElementName="stealth" Type="float" Size="1"/>
+		<Data ElementName="invis" Type="float" Size="1"/>
+		<Data ElementName="see_stealth" Type="float" Size="1"/>
+		<Data ElementName="see_invis" Type="float" Size="1"/>
+		<Data ElementName="effective_level_mod" Type="float" Size="1"/>
+		<Data ElementName="riposte_chance" Type="float" Size="1"/>
+		<Data ElementName="parry_chance" Type="float" Size="1"/>
+		<Data ElementName="dodge_chance" Type="float" Size="1"/>
+		<Data ElementName="ae_autoattack_chance" Type="float" Size="1"/>
+		<Data ElementName="ae_autoattack_chance_spell" Type="float" Size="1"/>
+		<Data ElementName="multi_attack_chance" Type="float" Size="1"/>
+		<Data ElementName="multi_attack_chance_pvp" Type="float" Size="1"/>
+		<Data ElementName="multi_attack_chance_spell" Type="float" Size="1"/>
+		<Data ElementName="multi_attack_chance_spell_pvp" Type="float" Size="1"/>
+		<Data ElementName="doublecast_chance_spell" Type="float" Size="1"/>
+		<Data ElementName="doublecast_chance_spell_pvp" Type="float" Size="1"/>
+		<Data ElementName="flurry_chance" Type="float" Size="1"/>
+		<Data ElementName="flurry_chance_spell" Type="float" Size="1"/>
+		<Data ElementName="melee_damage_multiplier" Type="float" Size="1"/>
+		<Data ElementName="bountiful_harvest" Type="float" Size="1"/>
+		<Data ElementName="block_chance_shield" Type="float" Size="1"/>
+		<Data ElementName="hp_regen_bonus" Type="float" Size="1"/>
+		<Data ElementName="power_regen_bonus" Type="float" Size="1"/>
+		<Data ElementName="crit_chance" Type="float" Size="1"/>
+		<Data ElementName="crit_avoidance" Type="float" Size="1"/>
+		<Data ElementName="crit_chance_beneficial" Type="float" Size="1"/>
+		<Data ElementName="crit_bonus" Type="float" Size="1"/>
+		<Data ElementName="crit_bonus_pvp" Type="float" Size="1"/>
+		<Data ElementName="potency" Type="float" Size="1"/>
+		<Data ElementName="potency_pvp" Type="float" Size="1"/>
+		<Data ElementName="hp_unconcious" Type="float" Size="1"/>
+		<Data ElementName="ability_reuse_speed" Type="float" Size="1"/>
+		<Data ElementName="ability_recovery_speed" Type="float" Size="1"/>
+		<Data ElementName="ability_casting_speed" Type="float" Size="1"/>
+		<Data ElementName="spell_reuse_speed" Type="float" Size="1"/>
+		<Data ElementName="melee_weapon_range" Type="float" Size="1"/>
+		<Data ElementName="ranged_weapon_range" Type="float" Size="1"/>
+		<Data ElementName="falling_damage_reduction" Type="float" Size="1"/>
+		<Data ElementName="riposte_damage" Type="float" Size="1"/>
+		<Data ElementName="block_chance_minimum" Type="float" Size="1"/>
+		<Data ElementName="movement_weave" Type="float" Size="1"/>
+		<Data ElementName="ic_hp_regen" Type="float" Size="1"/>
+		<Data ElementName="ic_power_regen" Type="float" Size="1"/>
+		<Data ElementName="speed_contest_only" Type="float" Size="1"/>
+		<Data ElementName="tracking_avoidance" Type="float" Size="1"/>
+		<Data ElementName="speed_stealth_invis" Type="float" Size="1"/>
+		<Data ElementName="loot_coin_mod" Type="float" Size="1"/>
+		<Data ElementName="mitigation_increase" Type="float" Size="1"/>
+		<Data ElementName="ammo_conservation_chance" Type="float" Size="1"/>
+		<Data ElementName="strikethrough" Type="float" Size="1"/>
+		<Data ElementName="status_bonus" Type="float" Size="1"/>
+		<Data ElementName="accuracy" Type="float" Size="1"/>
+		<Data ElementName="counter_strike" Type="float" Size="1"/>
+		<Data ElementName="shield_bash" Type="float" Size="1"/>
+		<Data ElementName="weapon_damage_bonus" Type="float" Size="1"/>
+		<Data ElementName="weapon_damage_bonus_melee" Type="float" Size="1"/>
+		<Data ElementName="riposte_chance_additional" Type="float" Size="1"/>
+		<Data ElementName="crit_mit" Type="float" Size="1"/>
+		<Data ElementName="toughness" Type="float" Size="1"/>
+		<Data ElementName="lethality" Type="float" Size="1"/>
+		<Data ElementName="stamina_bonus" Type="float" Size="1"/>
+		<Data ElementName="wis_mit_bonus" Type="float" Size="1"/>
+		<Data ElementName="heals_received" Type="float" Size="1"/>
+		<Data ElementName="heals_received_pct" Type="float" Size="1"/>
+		<Data ElementName="crit_mit_pvp" Type="float" Size="1"/>
+		<Data ElementName="avoidance_base_bonus" Type="float" Size="1"/>
+		<Data ElementName="ic_savagery_regen" Type="float" Size="1"/>
+		<Data ElementName="ooc_savagery_regen" Type="float" Size="1"/>
+		<Data ElementName="savagery_regen" Type="float" Size="1"/>
+		<Data ElementName="savagery_gain_mod" Type="float" Size="1"/>
+		<Data ElementName="savagery_level_max" Type="float" Size="1"/>
 	</Struct>
 	<Struct Name="Substruct_SpellProps" ClientVersion="844">
 		<Data ElementName="hp_regen" Type="float" Size="1"/>
@@ -3062,7 +3514,7 @@
 		<Data ElementName="bind_zone" Type="char" Size="32" Offset="0x15d9"/>
 		<Data ElementName="Unknown188" Type="int8" Size="27" Offset="0x15f9"/>
 	</Struct>
-	<Struct Name="UpdateCharacterSheetMsgData" ClientVersion="843" ByteSize="0x15d8">
+	<Struct Name="UpdateCharacterSheetMsgData" ClientVersion="843" ByteSize="0x1668">
 		<Data ElementName="char_name" Type="char" Size="42" Offset="0x0"/>
 		<Data ElementName="race" Type="int8" Size="1" Offset="0x2a"/>
 		<Data ElementName="gender" Type="int8" Size="1" Offset="0x2b"/>
@@ -3197,26 +3649,26 @@
 		<Data ElementName="flags2" Type="int32" Size="1" Offset="0x1038"/>
 		<Data ElementName="afk_message" Type="char" Size="256" Offset="0x103c"/>
 		<Data ElementName="pve_props" Substruct="Substruct_SpellProps" Size="1" Offset="0x113c"/>
-		<Data ElementName="unknown1244" Type="sint32" Size="1" Offset="0x1244"/>
-		<Data ElementName="spell_state_flags" Type="int16" Size="1" Offset="0x1248"/>
-		<Data ElementName="unknown124a" Type="int8" Size="10" Offset="0x124a"/>
-		<Data ElementName="groupSheet" Substruct="Substruct_GroupSheet" Size="1" Offset="0x1254"/>
-		<Data ElementName="petID" Type="sint32" Size="1" Offset="0x1514"/>
-		<Data ElementName="petName" Type="char" Size="41" Offset="0x1518"/>
-		<Data ElementName="petHealth" Type="float" Size="1" Offset="0x1541"/>
-		<Data ElementName="petPower" Type="float" Size="1" Offset="0x1545"/>
-		<Data ElementName="petUnknown" Type="int8" Size="1" Offset="0x1549"/>
-		<Data ElementName="petMovement" Type="int8" Size="1" Offset="0x154a"/>
-		<Data ElementName="petBehavior" Type="int8" Size="1" Offset="0x154b"/>
-		<Data ElementName="humidity" Type="float" Size="1" Offset="0x154c"/>
-		<Data ElementName="wind_direction" Type="float" Size="1" Offset="0x1550"/>
-		<Data ElementName="statusPoints" Type="int32" Size="1" Offset="0x1554"/>
-		<Data ElementName="guild_status" Type="int32" Size="1" Offset="0x1558"/>
-		<Data ElementName="unknownCOEa" Type="int8" Size="1" Offset="0x155c"/>
-		<Data ElementName="house_zone" Type="char" Size="48" Offset="0x155d"/>
-		<Data ElementName="Unknown526" Type="int8" Size="16" Offset="0x158d"/>
-		<Data ElementName="bind_zone" Type="char" Size="32" Offset="0x159d"/>
-		<Data ElementName="Unknown188" Type="int8" Size="27" Offset="0x15bd"/>
+		<Data ElementName="unknown1244" Type="sint32" Size="1" Offset="0x12d4"/>
+		<Data ElementName="spell_state_flags" Type="int16" Size="1" Offset="0x12d8"/>
+		<Data ElementName="unknown124a" Type="int8" Size="10" Offset="0x12da"/>
+		<Data ElementName="groupSheet" Substruct="Substruct_GroupSheet" Size="1" Offset="0x12e4"/>
+		<Data ElementName="petID" Type="sint32" Size="1" Offset="0x15a4"/>
+		<Data ElementName="petName" Type="char" Size="41" Offset="0x15a8"/>
+		<Data ElementName="petHealth" Type="float" Size="1" Offset="0x15d1"/>
+		<Data ElementName="petPower" Type="float" Size="1" Offset="0x15d5"/>
+		<Data ElementName="petUnknown" Type="int8" Size="1" Offset="0x15d9"/>
+		<Data ElementName="petMovement" Type="int8" Size="1" Offset="0x15da"/>
+		<Data ElementName="petBehavior" Type="int8" Size="1" Offset="0x15db"/>
+		<Data ElementName="humidity" Type="float" Size="1" Offset="0x15dc"/>
+		<Data ElementName="wind_direction" Type="float" Size="1" Offset="0x15e0"/>
+		<Data ElementName="statusPoints" Type="int32" Size="1" Offset="0x15e4"/>
+		<Data ElementName="guild_status" Type="int32" Size="1" Offset="0x15e8"/>
+		<Data ElementName="unknownCOEa" Type="int8" Size="1" Offset="0x15ec"/>
+		<Data ElementName="house_zone" Type="char" Size="48" Offset="0x15ed"/>
+		<Data ElementName="Unknown526" Type="int8" Size="16" Offset="0x161d"/>
+		<Data ElementName="bind_zone" Type="char" Size="32" Offset="0x162d"/>
+		<Data ElementName="Unknown188" Type="int8" Size="27" Offset="0x164d"/>
 	</Struct>
 	<Struct Name="UpdateCharacterSheetMsgData" ClientVersion="865" ByteSize="0x302e">
 		<Data ElementName="char_name" Type="char" Size="42" Offset="0x0"/>

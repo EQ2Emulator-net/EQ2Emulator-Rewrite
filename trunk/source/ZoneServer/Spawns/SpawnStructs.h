@@ -135,7 +135,8 @@ struct CompressedSpawnPositionData {
 
 class Substruct_SpawnPosition : public PacketEncodedData, public SpawnPositionStruct, protected CompressedSpawnPositionData  {
 public:
-	Substruct_SpawnPosition(uint32_t version) : PacketEncodedData(version) {	
+	Substruct_SpawnPosition(uint32_t version) : PacketEncodedData(version) {
+		bDumpOffsets = true;
 		RegisterElements();
 	}
 
@@ -209,6 +210,7 @@ class Substruct_SpawnVisualization : public SpawnVisualizationStruct, public Pac
 public:
 	Substruct_SpawnVisualization(uint32_t version) : PacketEncodedData(version) {
 		RegisterElements();
+		bDumpOffsets = true;
 	}
 
 	void RegisterElements();
@@ -223,15 +225,17 @@ public:
 	void RegisterElements() override {
 		RegisterInt32(spell_id);
 		RegisterInt16(spell_icon);
-		if (version > 864) {
+		//I'm thinking they removed this temporarily shortly after changing it to a 16 bit
+		//could have just been an alignment at the time as well
+		if (version >= 919 && (version < 936 || version >= 1188)) {
 			RegisterInt16(spell_triggercount);
 		}
 		RegisterUInt16(spell_icon_backdrop);
-		if (version <= 864) {
+		if (version < 919) {
 			RescopeToReference(spell_triggercount, uint8_t);
 			RegisterUInt8(spell_triggercount);
 		}
-		if (version >= 60055) {
+		if (version >= 60038) {
 			RegisterUInt16(unknown);
 		}
 	}
@@ -266,7 +270,8 @@ struct SpawnInfoStruct {
 	uint32_t						mount_type;
 	uint32_t						combat_voice;
 	uint32_t						emote_voice;
-	uint8_t 						unknown17[4];
+	uint32_t                        ammo_type;
+	uint32_t                        unknown17;
 	uint8_t							visual_flag;
 	uint8_t							interaction_flag;
 	uint8_t							flag3;
@@ -287,15 +292,14 @@ struct SpawnInfoStruct {
 	uint8_t                         spell_visual_levels[8];
 	uint32_t						target_id;
 	uint32_t						follow_target;
-	uint32_t						size_unknown;
-	uint8_t							unknown3b[7];
+	uint32_t                        pet_owner_id;
+	uint32_t						id_unknown;
 	//uint8_t						spawn_type;
 	//uint8_t						icon;
 	//uint32_t						activity_status;
 	//The first 4 bytes above were merged into EntityFlags, last 2 bytes of activityStatus into unknownpk1
 	uint32_t                        entityFlags;
-	uint16_t                        unknownpkShort;
-	uint32_t                        unknownpk1;
+	uint32_t                        entityFlags2;
 	uint8_t							unknown600554[10];
 	uint32_t						hp_percent; //this is sent as 100 ^ percentage remaining
 	uint32_t						power_percent;
@@ -316,6 +320,7 @@ struct SpawnInfoStruct {
 	uint8_t							show_archtype_icon;
 	uint8_t							unknown21[2];
 	uint16_t						unknownz5;
+	uint8_t                         archetype;
 	uint8_t							unknown6[6];
 	uint32_t						unknown6b;
 	uint8_t							unknown18[68];
@@ -329,7 +334,7 @@ struct SpawnInfoStruct {
 	uint8_t                         unknown19[2];
 	uint32_t                        activity_timer;
 	uint8_t                         unknown20[4];
-	uint32_t                        unknown20a[3];
+	uint8_t                         unknown20a[16];
 	uint8_t                         unknown13b;
 	uint8_t                         body_age;
 	float                           size_mod;

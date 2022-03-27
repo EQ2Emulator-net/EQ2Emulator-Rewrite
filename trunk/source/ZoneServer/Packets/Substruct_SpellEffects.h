@@ -36,7 +36,7 @@ private:
 		RegisterUInt16(icon_type);
 		RegisterUInt8(unknown2);
 		RegisterUInt8(cancellable);
-		if (GetVersion() < 843) {
+		if (GetVersion() < 839) {
 			RegisterUInt8(unknown3);
 		}
 		if (GetVersion() >= 1193) {
