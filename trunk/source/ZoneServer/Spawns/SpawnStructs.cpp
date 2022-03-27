@@ -770,7 +770,7 @@ void Substruct_SpawnInfo::RegisterElements() {
 					}
 					else {
 						RegisterUInt8(show_archtype_icon);
-						RegisterUInt8(unknown20a)->SetCount(3);
+						RegisterUInt8(unknown20a)->SetCount(5);
 					}
 				}
 				if (version < 58618) {
